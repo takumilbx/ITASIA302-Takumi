@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ITASIA302 Assignments Directory</title>
-<meta name="description" content="A collected index of Takumi's coursework for ITASIA302 (Introduction to Digital Technology and Society), UTokyo, Spring 2026.">
+<title>Class Assignments &middot; ITASIA302</title>
+<meta name="description" content="The required coursework for ITASIA302 two pieces produced for the syllabus.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -50,7 +50,7 @@
     min-height: 100vh;
   }
 
-  /* Atmospheric overlays verbatim from sub-pages */
+  /* Atmospheric overlays */
   .grain {
     position: fixed; inset: 0; z-index: 9999; pointer-events: none;
     opacity: .032;
@@ -121,7 +121,7 @@
   }
 
   /* ========================================================================
-     Reveal state same observer as sub-pages
+     Reveal state
      ======================================================================== */
   .reveal {
     opacity: 0;
@@ -207,11 +207,11 @@
   .hero-dek em { color: var(--ink); font-style: italic; }
 
   /* ========================================================================
-     Top-level grid three large clickable cards (auto-fits to viewport)
+     Two-card grid
      ======================================================================== */
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 22px;
     margin-bottom: 56px;
   }
@@ -228,10 +228,9 @@
     color: inherit;
     overflow: hidden;
     transition: border-color 280ms var(--ease), transform 280ms var(--ease), background 280ms var(--ease);
-    min-height: 260px;
+    min-height: 280px;
   }
   .card::before {
-    /* thin top accent rule, color set per card variant */
     content: "";
     position: absolute;
     top: 0; left: 0; right: 0;
@@ -249,18 +248,8 @@
     outline: none;
   }
 
-  /* Accent variants only the --card-accent token differs */
   .card.card-amber { --card-accent: var(--amber); }
   .card.card-teal  { --card-accent: var(--teal); }
-  .card.card-coral { --card-accent: var(--coral); }
-
-  /* "In progress" card subtle dashed top rule instead of solid */
-  .card.card-progress::before {
-    background: repeating-linear-gradient(90deg,
-                                          var(--card-accent, var(--teal)) 0 8px,
-                                          transparent 8px 14px);
-    opacity: .55;
-  }
 
   .card-num {
     position: absolute;
@@ -304,27 +293,6 @@
     flex-grow: 1;
   }
   .card-blurb em { font-style: italic; color: var(--ink); }
-
-  /* Sub-item hint under the Personal Project card */
-  .card-subitems {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.20em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-  .card-subitems .sub-dash {
-    display: inline-block;
-    width: 14px;
-    height: 1px;
-    background: var(--card-accent, var(--amber));
-    opacity: 0.7;
-    flex-shrink: 0;
-  }
 
   .card-foot {
     display: flex;
@@ -374,16 +342,14 @@
   /* ========================================================================
      Responsive
      ======================================================================== */
-
-  /* Wide screens up to course max (2008px) keep the index breathable */
   @media (min-width: 1600px) {
     main { max-width: 1320px; padding-top: 104px; }
   }
 
-  /* Narrow Notion embed and below */
   @media (max-width: 720px) {
-    .topbar { padding: 12px 22px; }
-    main { padding: 80px 22px 28px; }
+    .topbar { padding: 12px 22px; flex-wrap: wrap; row-gap: 4px; }
+    .topbar-title { font-size: 15px; }
+    main { padding: 88px 22px 28px; }
     .hero { margin-bottom: 36px; }
     .grid { gap: 18px; margin-bottom: 40px; }
     .card { min-height: 0; padding: 22px 22px 20px; }
@@ -396,15 +362,10 @@
     .topbar-meta { font-size: 8px; }
   }
 
-  /* Small mobile */
   @media (max-width: 480px) {
-    .topbar {
-      padding: 10px 18px;
-      flex-wrap: wrap;
-      row-gap: 4px;
-    }
-    .topbar-title { font-size: 15px; letter-spacing: -0.01em; }
-    main { padding: 76px 18px 24px; }
+    .topbar { padding: 10px 18px; }
+    .topbar-title { font-size: 14px; letter-spacing: -0.005em; }
+    main { padding: 84px 18px 24px; }
     .hero-title { font-size: clamp(28px, 9vw, 38px); }
     .hero-dek { font-size: 14.5px; }
     .card { padding: 20px 18px 18px; }
@@ -430,17 +391,17 @@
 <div class="edge-gradient"></div>
 
 <header class="topbar">
-  <div class="topbar-title">ITASIA302 <em>Assignments Directory</em></div>
-  <div class="topbar-meta">UTokyo &nbsp;&middot;&nbsp; Spring 2026</div>
+  <div class="topbar-title"><a class="journal-link back-link" href="../">&larr; All</a> &nbsp;&middot;&nbsp; Class <em>Assignments</em></div>
+  <div class="topbar-meta">ITASIA302 &nbsp;&bull;&nbsp; Spring 2026</div>
 </header>
 
 <main>
 
   <section class="hero">
-    <div class="hero-eyebrow reveal"><span class="dot"></span>ITASIA302 &nbsp;&middot;&nbsp; Spring 2026</div>
+    <div class="hero-eyebrow reveal"><span class="dot"></span>Section 01 &nbsp;&middot;&nbsp; Required coursework</div>
 
     <h1 class="hero-title reveal delay-1">
-      Introduction to <em>Digital Technology</em> and Society
+      The required <em>coursework</em>
     </h1>
 
     <div class="hero-byline reveal delay-2">
@@ -448,56 +409,41 @@
     </div>
 
     <p class="hero-dek reveal delay-3">
-      A collected index of coursework, ongoing personal work, and a public
-      account of method. Each card below opens a self-contained piece.
+      Two pieces produced for the syllabus. The first is a longform visual
+      scroll tracing how language around <em>AI and society</em> shifted
+      across five years of course readings. The second is a focused response
+      to a Week 3 reading on AI in primary education.
     </p>
   </section>
 
   <section class="grid">
 
-    <a class="card card-amber reveal delay-3" href="class-assignments/">
-      <span class="card-num">01</span>
-      <div class="card-label">Class Assignments</div>
-      <div class="card-headline">The required <em>coursework</em></div>
+    <a class="card card-amber reveal delay-3" href="../research-trends/">
+      <span class="card-num">01.1</span>
+      <div class="card-label">Research Trends</div>
+      <div class="card-headline">Five years of <em>AI &amp; Society</em> readings</div>
       <p class="card-blurb">
-        Two pieces produced for the syllabus the <em>AI &amp; Society</em>
-        five-year scroll narrative and a Week 3 reading response on AI in
-        primary education.
+        A scrollable visual essay tracing vocabulary, themes, and author
+        composition across the course's annotated bibliography from 2021 to
+        2025.
       </p>
       <div class="card-foot">
-        <span>2 pieces</span>
+        <span>Longform &nbsp;&middot;&nbsp; Scroll</span>
         <span class="card-arrow" aria-hidden="true">&rarr;</span>
       </div>
     </a>
 
-    <a class="card card-teal card-progress reveal delay-4" href="personal-project/">
-      <span class="card-num">02</span>
-      <div class="card-label">Personal Project</div>
-      <div class="card-headline">An independent inquiry, <em>still drafting</em></div>
+    <a class="card card-teal reveal delay-4" href="../reading-response/">
+      <span class="card-num">01.2</span>
+      <div class="card-label">Reading Response</div>
+      <div class="card-headline">AI in <em>primary education</em></div>
       <p class="card-blurb">
-        A self-directed project I am developing alongside the course. The
-        abstract is the first thing to land here once it stops moving.
-      </p>
-      <div class="card-subitems">
-        <span class="sub-dash"></span>
-        <span>02.1 &nbsp;Abstract</span>
-      </div>
-      <div class="card-foot">
-        <span>In progress</span>
-        <span class="card-arrow" aria-hidden="true">&rarr;</span>
-      </div>
-    </a>
-
-    <a class="card card-coral reveal delay-5" href="ai-statement/">
-      <span class="card-num">03</span>
-      <div class="card-label">AI Statement</div>
-      <div class="card-headline">How these pages were <em>made</em></div>
-      <p class="card-blurb">
-        An honest account of the AI tools used to produce the work on this
-        site what they did, what I did, and where the line sits.
+        A Week 3 response to the assigned reading on classroom AI
+        deployment framed as a short, editorial-style page with three
+        thematic takes.
       </p>
       <div class="card-foot">
-        <span>Disclosure</span>
+        <span>Week 3 &nbsp;&middot;&nbsp; Response</span>
         <span class="card-arrow" aria-hidden="true">&rarr;</span>
       </div>
     </a>
@@ -505,7 +451,7 @@
   </section>
 
   <footer class="footer reveal delay-5">
-    <div>Assignments Directory &nbsp;&middot;&nbsp; Introduction to Digital Technology and Society</div>
+    <div>Class Assignments &nbsp;&middot;&nbsp; <a class="journal-link" href="../">Return to directory</a></div>
     <div><em>ITASIA302</em> &nbsp;&middot;&nbsp; April 2026</div>
   </footer>
 
@@ -526,7 +472,6 @@
     }, { threshold: 0.12, rootMargin: "0px 0px -4% 0px" });
     observed.forEach(n => io.observe(n));
 
-    // Safety net for short viewports where the observer doesn't fire on load.
     setTimeout(() => {
       document.querySelectorAll(".reveal:not(.in-view)").forEach(n => {
         const r = n.getBoundingClientRect();

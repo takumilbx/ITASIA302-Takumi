@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Personal Project &middot; ITASIA302</title>
+<meta name="description" content="A self-directed project developing alongside the course currently under construction.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500;1,9..144,600&family=Geist+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg:        #080C14;
+    --bg-soft:   #0E1824;
+    --ink:       #EDE8E0;
+    --ink-dim:   #9AA3B0;
+    --ink-faint: #3A4A62;
+    --rule:      #132032;
+    --amber:     #F0A060;
+    --teal:      #5AC8B0;
+    --sky:       #5090C0;
+    --coral:     #D86878;
+
+    --serif:  "Fraunces", Georgia, "Times New Roman", serif;
+    --mono:   "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+    --ease: cubic-bezier(.22,.61,.36,1);
+  }
+
+  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--serif);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+    line-height: 1.45;
+    min-height: 100vh;
+  }
+
+  /* Atmospheric overlays */
+  .grain {
+    position: fixed; inset: 0; z-index: 9999; pointer-events: none;
+    opacity: .032;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/></filter><rect width='256' height='256' filter='url(%23n)'/></svg>");
+    background-size: 220px 220px;
+    mix-blend-mode: overlay;
+  }
+  .glow-tl, .glow-br { position: fixed; pointer-events: none; z-index: 0; }
+  .glow-tl {
+    top: 0; left: 0; width: 55vw; height: 55vh;
+    background: radial-gradient(at 0% 0%, rgba(90,200,176,0.09) 0%, transparent 60%);
+  }
+  .glow-br {
+    bottom: 0; right: 0; width: 50vw; height: 50vh;
+    background: radial-gradient(at 100% 100%, rgba(80,144,192,0.08) 0%, transparent 65%);
+  }
+  .edge-gradient {
+    position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 10000;
+    background: linear-gradient(90deg, transparent 0%, var(--teal) 22%, var(--amber) 62%, transparent 100%);
+    opacity: .55;
+    pointer-events: none;
+  }
+
+  /* Topbar */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 14px 48px 12px;
+    background: linear-gradient(180deg, rgba(8,12,20,0.88) 0%, rgba(8,12,20,0.60) 70%, transparent 100%);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+  .topbar-title {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: 17px;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+  .topbar-title em {
+    color: var(--teal);
+    font-style: italic;
+    font-weight: 400;
+  }
+  .topbar-meta {
+    font-family: var(--mono);
+    font-weight: 400;
+    font-size: 8.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  /* Journal link */
+  .journal-link {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px dotted var(--ink-faint);
+    transition: color 180ms ease, border-color 180ms ease;
+  }
+  .journal-link:hover,
+  .journal-link:focus-visible {
+    color: var(--teal);
+    border-bottom-color: var(--teal);
+    outline: none;
+  }
+
+  /* Reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity .9s var(--ease), transform .9s var(--ease);
+  }
+  .reveal.in-view { opacity: 1; transform: translateY(0); }
+  .reveal.delay-1 { transition-delay: .10s; }
+  .reveal.delay-2 { transition-delay: .20s; }
+  .reveal.delay-3 { transition-delay: .32s; }
+  .reveal.delay-4 { transition-delay: .46s; }
+  .reveal.delay-5 { transition-delay: .60s; }
+
+  /* Page shell */
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 92px 48px 36px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Hero */
+  .hero { margin-bottom: 48px; }
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 18px;
+  }
+  .hero-eyebrow .dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--teal);
+    margin: 0 12px 2px 0;
+    box-shadow: 0 0 10px var(--teal);
+    vertical-align: middle;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .hero-title {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(34px, 4.4vw, 54px);
+    line-height: 1.04;
+    letter-spacing: -0.028em;
+    color: var(--ink);
+    margin-bottom: 18px;
+    max-width: 22ch;
+  }
+  .hero-title em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--teal);
+  }
+  .hero-byline {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 22px;
+  }
+  .hero-byline em {
+    color: var(--teal);
+    font-style: normal;
+    letter-spacing: 0.14em;
+  }
+  .hero-dek {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(15.5px, 1.2vw, 18px);
+    line-height: 1.55;
+    color: var(--ink-dim);
+    max-width: 58ch;
+  }
+  .hero-dek em { color: var(--ink); font-style: italic; }
+
+  /* Construction sign a dashed-rule card containing the placeholder message */
+  .sign {
+    position: relative;
+    padding: 36px 34px 30px;
+    margin: 12px 0 56px;
+    background: linear-gradient(180deg, rgba(14,24,36,0.55) 0%, rgba(14,24,36,0.20) 100%);
+    border: 1px dashed var(--ink-faint);
+    border-radius: 2px;
+    max-width: 820px;
+    overflow: hidden;
+  }
+  .sign::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: repeating-linear-gradient(90deg,
+                                          var(--teal) 0 10px,
+                                          transparent 10px 18px);
+    opacity: .7;
+  }
+  .sign-label {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .sign-label .spin {
+    display: inline-block;
+    width: 10px; height: 10px;
+    border: 1.5px solid var(--teal);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 1.6s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .sign-headline {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(24px, 2.3vw, 30px);
+    line-height: 1.18;
+    letter-spacing: -0.018em;
+    color: var(--ink);
+    margin-bottom: 18px;
+    max-width: 28ch;
+  }
+  .sign-headline em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--teal);
+  }
+  .sign-body {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: var(--ink-dim);
+    max-width: 58ch;
+  }
+  .sign-body + .sign-body { margin-top: 14px; }
+  .sign-body em { font-style: italic; color: var(--ink); }
+
+  .sign-meta {
+    margin-top: 26px;
+    padding-top: 18px;
+    border-top: 1px dotted var(--ink-faint);
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px 28px;
+  }
+  .sign-meta .meta-item em {
+    color: var(--teal);
+    font-style: normal;
+    letter-spacing: 0.14em;
+  }
+
+  /* Abstract sub-section anchor-able, also under construction */
+  .abstract-section {
+    scroll-margin-top: 90px;
+    padding-top: 8px;
+    margin-bottom: 48px;
+  }
+  .section-label {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 16px;
+  }
+  .section-label em {
+    color: var(--teal);
+    font-style: normal;
+    letter-spacing: 0.14em;
+  }
+  .section-headline {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(26px, 2.6vw, 34px);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 18px;
+    max-width: 24ch;
+  }
+  .section-headline em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--teal);
+  }
+
+  .abstract-empty {
+    position: relative;
+    padding: 28px 30px;
+    background: linear-gradient(180deg, rgba(14,24,36,0.40) 0%, rgba(14,24,36,0.15) 100%);
+    border-left: 2px solid var(--teal);
+    max-width: 760px;
+  }
+  .abstract-empty p {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-dim);
+  }
+  .abstract-empty p em { font-style: italic; color: var(--ink); }
+  .abstract-empty .blink {
+    display: inline-block;
+    width: 7px;
+    height: 15px;
+    background: var(--teal);
+    margin-left: 4px;
+    vertical-align: text-bottom;
+    animation: blink 1.1s steps(2, end) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* Footer */
+  footer.footer {
+    margin-top: auto;
+    padding: 28px 0 4px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  footer.footer em {
+    color: var(--teal);
+    font-style: normal;
+    letter-spacing: 0.14em;
+  }
+
+  /* Responsive */
+  @media (min-width: 1600px) {
+    main { max-width: 1320px; padding-top: 104px; }
+  }
+
+  @media (max-width: 720px) {
+    .topbar { padding: 12px 22px; flex-wrap: wrap; row-gap: 4px; }
+    .topbar-title { font-size: 15px; }
+    main { padding: 88px 22px 28px; }
+    .hero { margin-bottom: 36px; }
+    .sign { padding: 28px 22px 24px; }
+    .abstract-empty { padding: 22px 22px; }
+    footer.footer {
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .topbar-meta { font-size: 8px; }
+  }
+
+  @media (max-width: 480px) {
+    .topbar { padding: 10px 18px; }
+    .topbar-title { font-size: 14px; letter-spacing: -0.005em; }
+    main { padding: 84px 18px 24px; }
+    .hero-title { font-size: clamp(28px, 9vw, 38px); }
+    .hero-dek { font-size: 14.5px; }
+    .sign { padding: 24px 18px 22px; }
+    .sign-meta { font-size: 9px; gap: 10px 18px; }
+    .abstract-empty { padding: 20px 18px; }
+    footer.footer { font-size: 9px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { transition: none !important; opacity: 1; transform: none; }
+    html { scroll-behavior: auto; }
+    .hero-eyebrow .dot { animation: none; }
+    .sign-label .spin { animation: none; border-top-color: var(--teal); }
+    .abstract-empty .blink { animation: none; opacity: 0.5; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+<div class="glow-tl"></div>
+<div class="glow-br"></div>
+<div class="edge-gradient"></div>
+
+<header class="topbar">
+  <div class="topbar-title"><a class="journal-link back-link" href="../">&larr; All</a> &nbsp;&middot;&nbsp; Personal <em>Project</em></div>
+  <div class="topbar-meta">ITASIA302 &nbsp;&bull;&nbsp; In progress</div>
+</header>
+
+<main>
+
+  <section class="hero">
+    <div class="hero-eyebrow reveal"><span class="dot"></span>Section 02 &nbsp;&middot;&nbsp; Work in progress</div>
+
+    <h1 class="hero-title reveal delay-1">
+      An independent inquiry, <em>still drafting</em>
+    </h1>
+
+    <div class="hero-byline reveal delay-2">
+      Takumi &nbsp;&middot;&nbsp; UTokyo &nbsp;&middot;&nbsp; <em>Spring 2026</em>
+    </div>
+
+    <p class="hero-dek reveal delay-3">
+      A self-directed project I am developing alongside the course. It is
+      not required reading it is the thing I am actually thinking about
+      when I am not being graded on something else. The page you are on now
+      is a placeholder, and it will stay a placeholder until the project
+      has a shape I am willing to commit to in writing.
+    </p>
+  </section>
+
+  <section class="sign reveal delay-3">
+    <div class="sign-label"><span class="spin"></span> Construction in progress</div>
+
+    <h2 class="sign-headline">
+      This section is <em>actively under excavation</em>
+    </h2>
+
+    <p class="sign-body">
+      Somewhere between <em>a research question</em> and <em>a prototype</em>
+      there is a middle stretch where a project is real enough to have
+      consumed your week, but not real enough to describe in a sentence.
+      That is where this one is.
+    </p>
+
+    <p class="sign-body">
+      I am resisting the urge to post something clean here just to make the
+      page look finished. A placeholder that says <em>nothing yet</em> is
+      more honest than a polished abstract that will contradict itself in a
+      month. So: nothing yet but soon.
+    </p>
+
+    <div class="sign-meta">
+      <span class="meta-item">Status &nbsp;&middot;&nbsp; <em>Drafting</em></span>
+      <span class="meta-item">ETA &nbsp;&middot;&nbsp; <em>When it is honest</em></span>
+      <span class="meta-item">Hard hat &nbsp;&middot;&nbsp; <em>Recommended</em></span>
+    </div>
+  </section>
+
+  <section id="abstract" class="abstract-section reveal delay-4">
+    <div class="section-label"><em>02.1</em> &nbsp;&middot;&nbsp; Abstract</div>
+
+    <h2 class="section-headline">
+      A paragraph that is <em>not here yet</em>
+    </h2>
+
+    <div class="abstract-empty">
+      <p>
+        The abstract will land here once the project stops moving. For now,
+        imagine a single paragraph that tells you what the project is
+        about, why it matters, and what it hopes to change about your
+        afternoon. That paragraph is <em>still being argued with</em><span class="blink" aria-hidden="true"></span>
+      </p>
+    </div>
+  </section>
+
+  <footer class="footer reveal delay-5">
+    <div>Personal Project &nbsp;&middot;&nbsp; <a class="journal-link" href="../">Return to directory</a></div>
+    <div><em>ITASIA302</em> &nbsp;&middot;&nbsp; April 2026</div>
+  </footer>
+
+</main>
+
+<script>
+  "use strict";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const observed = document.querySelectorAll(".reveal");
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add("in-view");
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -4% 0px" });
+    observed.forEach(n => io.observe(n));
+
+    setTimeout(() => {
+      document.querySelectorAll(".reveal:not(.in-view)").forEach(n => {
+        const r = n.getBoundingClientRect();
+        if (r.top < window.innerHeight * 0.95) n.classList.add("in-view");
+      });
+    }, 120);
+  });
+</script>
+
+</body>
+</html>
