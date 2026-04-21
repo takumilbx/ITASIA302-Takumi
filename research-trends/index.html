@@ -863,7 +863,7 @@
 
   .kw-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 28px 44px;
     margin: 14px 0 28px;
     max-width: 1100px;
@@ -871,6 +871,13 @@
   .kw-block {
     border-left: 2px solid var(--rule);
     padding: 4px 0 4px 20px;
+    min-width: 0;
+  }
+  /* Inside kw-block, regex patterns can be long allow them to wrap */
+  .kw-block code {
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
   }
   .kw-block .kw-title {
     font-family: var(--serif);
@@ -899,6 +906,16 @@
   /* ========================================================================
      Responsive
      ======================================================================== */
+
+  /* Extra-wide screens up to the course maximum (2008px).
+     Nudge up the scene max-width so the composition doesn't look
+     lost in the middle of a 2008px window. */
+  @media (min-width: 1600px) {
+    .scene, .hero-scene { max-width: 1440px; }
+    .appendix { max-width: 1360px; }
+    .kw-grid { max-width: 1200px; }
+  }
+
   @media (max-width: 900px) {
     .topbar { padding: 12px 24px; }
     .scene, .hero-scene { padding-left: 24px; padding-right: 24px; }
@@ -908,6 +925,40 @@
     .prev-row { grid-template-columns: 90px 1fr 40px; gap: 18px; }
     .prev-pct { font-size: 30px; }
     .x16-reveal { flex-direction: column; gap: 12px; }
+    .kw-grid { grid-template-columns: 1fr; gap: 22px; }
+    /* Long regexes in appendix prose also need to wrap at narrow widths */
+    .appendix code { white-space: normal; word-break: break-word; overflow-wrap: anywhere; }
+  }
+
+  /* Small mobile 414 and below: tighter padding, smaller hero */
+  @media (max-width: 480px) {
+    .topbar {
+      padding: 10px 18px;
+      flex-wrap: wrap;
+      row-gap: 4px;
+    }
+    .topbar-title { font-size: 15px; }
+    .topbar-meta { font-size: 8px; }
+    .scene { padding: 96px 20px 64px; }
+    .hero-scene { padding: 110px 20px 64px; }
+    .hero-stats {
+      grid-template-columns: 1fr 1fr;
+      gap: 28px 20px;
+    }
+    .appendix table { font-size: 11px; }
+    .appendix th, .appendix td { padding-right: 12px; }
+    .prev-row {
+      grid-template-columns: 72px 1fr 32px;
+      gap: 14px;
+      padding: 18px 2px 0;
+    }
+    .prev-pct { font-size: 26px; }
+    .prev-name { font-size: 11px; letter-spacing: 0.1em; }
+    footer.footer {
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-start;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

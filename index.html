@@ -341,8 +341,14 @@
   }
 
   /* ========================================================================
-     Responsive single column below 720px (the typical narrow Notion embed)
-     ======================================================================== */
+     Responsive: extra-wide screens (up to 2008px course max).
+     Keep the page breathable rather than aggressively filling width
+     this remains an index, not a scene. Slight max-width lift only. */
+  @media (min-width: 1600px) {
+    main { max-width: 1200px; padding-top: 104px; }
+  }
+
+  /* Responsive: single column below 720px (the typical narrow Notion embed) */
   @media (max-width: 720px) {
     .topbar { padding: 12px 22px; }
     main { padding: 80px 22px 28px; }
@@ -360,6 +366,23 @@
       align-items: flex-start;
     }
     .topbar-meta { font-size: 8px; }
+  }
+
+  /* Small mobile (≤480px) tighter paddings and stacked topbar */
+  @media (max-width: 480px) {
+    .topbar {
+      padding: 10px 18px;
+      flex-wrap: wrap;
+      row-gap: 4px;
+    }
+    .topbar-title { font-size: 15px; letter-spacing: -0.01em; }
+    main { padding: 76px 18px 24px; }
+    .hero-title { font-size: clamp(28px, 9vw, 38px); }
+    .hero-dek { font-size: 14.5px; }
+    .card { padding: 20px 18px 18px; }
+    .card-headline { font-size: 20px; }
+    .card-blurb { font-size: 14px; }
+    footer.footer { font-size: 9px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
