@@ -559,11 +559,22 @@
         accurate about how I did.
       </blockquote>
       <p>
-        The rest of this page is the long-form version of that. I list the
-        tools I used, what each one did on this site, and, for each
-        assignment, a split between what I brought and what the model
-        brought. I would rather be specific and wrong somewhere than vague
-        and technically correct everywhere.
+        So, specifically: I use AI for the tasks I am <em>not capable of
+        doing</em> despite 23 years (24 this year, thanks for asking) of
+        being alive on this planet. That list includes, in no particular
+        order of embarrassment: programming languages (I started learning
+        Python this year and I think Python is starting to tolerate me),
+        HTML, CSS, web design, and what I will collectively file under
+        <em>other coding stuff</em> <strong>really, I am trying to learn</strong>.
+        The site you are reading was built by someone who is still quietly
+        googling what <code style="font-family: var(--mono); font-size: 0.9em; color: var(--ink);">flex-direction</code>
+        does.
+      </p>
+      <p>
+        What follows is the long-form version of that confession: every
+        tool in the kit, what I pointed it at, and a per-assignment split
+        of who did what. I would rather be specific and <em>slightly
+        embarrassing</em> than vague and impressively, technically correct.
       </p>
     </div>
   </section>
@@ -599,14 +610,27 @@
         <div class="tool-used-for">Used for &nbsp;<em>site build, structure, copy iteration</em></div>
       </div>
 
+      <div class="tool-card tc-amber">
+        <div class="tool-name"><em>Claude Design</em></div>
+        <div class="tool-vendor">Anthropic</div>
+        <p class="tool-role">
+          Sits right next to Claude. Generates layout variants and
+          component concepts I can react to I use it to <em>see options</em>
+          faster than I could sketch them with my own two hands.
+        </p>
+        <div class="tool-used-for">Used for &nbsp;<em>page concepting, layout options</em></div>
+      </div>
+
       <div class="tool-card tc-sky">
         <div class="tool-name"><em>NotebookLM</em></div>
-        <div class="tool-vendor">Google</div>
+        <div class="tool-vendor">Google &nbsp;&middot;&nbsp; Called via Claude's MCP server</div>
         <p class="tool-role">
           Research synthesis across many sources at once. I load the
-          course's annotated bibliography and ask targeted questions
-          without the model making up citations <em>it can only answer
-          from what is in the notebook</em>.
+          course's annotated bibliography and ask targeted questions,
+          and <em>the model can only answer from what is in the notebook</em>.
+          I do not open it as a separate app I call it through a
+          <em>NotebookLM MCP server</em> wired into Claude, so the two
+          tools sit in the same conversation.
         </p>
         <div class="tool-used-for">Used for &nbsp;<em>Research Trends literature synthesis</em></div>
       </div>
@@ -631,17 +655,6 @@
           composition. Exploratory, not final.
         </p>
         <div class="tool-used-for">Used for &nbsp;<em>reference imagery, mood exploration</em></div>
-      </div>
-
-      <div class="tool-card tc-amber">
-        <div class="tool-name"><em>Claude Design</em></div>
-        <div class="tool-vendor">Anthropic</div>
-        <p class="tool-role">
-          Generates layout variants and component concepts I can react to.
-          I use it as a way to <em>see options</em> faster than I could
-          sketch them myself.
-        </p>
-        <div class="tool-used-for">Used for &nbsp;<em>page concepting, layout options</em></div>
       </div>
 
       <div class="tool-card tc-lilac">
@@ -696,17 +709,19 @@
         <div class="br-col col-me">
           <h4>What I did</h4>
           <ul>
-            <li>Chose the research question and the five-year window.</li>
-            <li>Read the annotated bibliography and picked which threads were worth tracing.</li>
+            <li>The five-year window came with the course, <em>not from me</em> so that one is not a personal flex.</li>
+            <li>Wrote the actual <em>content analysis code</em> that categorizes each paper into trend buckets. The categories are mine, the scaffolding is mine, the bugs were also mine.</li>
+            <li>Used Claude to help with scraping the source list, then <em>rechecked every number by hand</em> against the original bibliography. I did not trust counts I had not recounted.</li>
+            <li>Read the bibliography and picked which threads were worth tracing.</li>
             <li>Wrote every claim about the <em>meaning</em> of the shifts.</li>
             <li>Designed the scroll pacing and the tone.</li>
-            <li>Made the final call on which vocabulary changes actually matter.</li>
           </ul>
         </div>
         <div class="br-col col-ai">
           <h4>What the tools did</h4>
           <ul>
-            <li><em>NotebookLM</em> &nbsp;surfaced terminology trends across the source set.</li>
+            <li><em>Claude</em> &nbsp;helped me write the scraping script and later the content-analysis code (I still had to tell it what I wanted).</li>
+            <li><em>NotebookLM</em> &nbsp;(called via Claude's MCP server) surfaced terminology trends across the source set without inventing citations.</li>
             <li><em>Claude</em> &nbsp;drafted HTML/CSS and iterated on copy when asked.</li>
             <li><em>Grammarly</em> &nbsp;tightened prose at line level.</li>
             <li><em>Claude Design / Stitch</em> &nbsp;offered layout variants I pulled from.</li>
@@ -723,16 +738,17 @@
         <div class="br-col col-me">
           <h4>What I did</h4>
           <ul>
-            <li>Read the assigned text carefully; no AI summary substitute.</li>
-            <li>Chose my three themes and the angle on each.</li>
-            <li>Wrote the position I was willing to defend in class.</li>
-            <li>Made editorial calls on what to cut for pace.</li>
+            <li>Picked the reading that actually <em>overlapped with my own research interests</em> rather than the shortest one on the list.</li>
+            <li>Read the whole thing myself, in a chair, with coffee, before opening any model.</li>
+            <li>Only then used Claude (through its <em>NotebookLM MCP</em> and <em>learning mode</em>) to re-walk the paper and argue with me about it.</li>
+            <li>Pulled the discussion back toward my research interests and wrote the position from there.</li>
           </ul>
         </div>
         <div class="br-col col-ai">
           <h4>What the tools did</h4>
           <ul>
-            <li><em>Claude</em> &nbsp;pushed back on weak points in early drafts.</li>
+            <li><em>Claude</em> &nbsp;in learning mode walked me back through the paper question by question.</li>
+            <li><em>NotebookLM</em> &nbsp;(via the MCP connection) let Claude answer only from the paper itself, not from general memory.</li>
             <li><em>Grammarly</em> &nbsp;caught sentence-level awkwardness.</li>
             <li><em>Claude Design</em> &nbsp;suggested the theme-tile visual structure.</li>
           </ul>
@@ -800,20 +816,14 @@
     </h2>
     <div class="prose">
       <p>
-        Three things on this site are mine, even when a tool helped produce
-        the sentences around them.
+        A short list of things that stay with me even when a model helped
+        produce the sentences around them.
       </p>
       <p>
         <strong>The position.</strong> Whether the reading response takes
-        side A or side B is my call. I do not ask a model for its opinion
-        and then inherit it; I decide what I think and then use models to
-        test whether my reasoning holds up.
-      </p>
-      <p>
-        <strong>The editorial voice.</strong> If a draft sounds like a
-        chatbot it does not ship. I reject smoothed-over, explanatory,
-        middle-of-the-road AI prose. The voice on these pages has opinions
-        and a rhythm, and those are mine.
+        side A or side B is my call. I do not ask a model what it thinks
+        and then quietly inherit the answer; I decide what I think, and
+        then use models to test whether my reasoning holds up.
       </p>
       <p>
         <strong>The sources.</strong> I do not let models invent citations.
@@ -822,10 +832,12 @@
         documents I give it and cannot invent anything beyond them.
       </p>
       <p>
-        There is also a fourth, harder one: <strong>knowing when to stop.</strong>
-        AI tools make it easy to keep iterating forever. A deadline, and a
-        willingness to publish something a little less than perfect, is a
-        human decision I have tried to protect.
+        <strong>The accountability.</strong> If a sentence on this site is
+        wrong, self-important, or just badly argued, <em>that is on me</em>.
+        AI tools are happy to sit next to me while the work is going well
+        and mysteriously vanish the moment someone spots a typo. That is
+        not a split I am willing to accept. Credit goes where it goes,
+        but every mistake on this page has exactly one author.
       </p>
     </div>
   </section>
@@ -842,28 +854,33 @@
       <p>
         If you are reading this in an evaluative capacity, the honest
         summary is: <em>I used AI extensively, and I would have produced
-        worse work without it.</em> That is not a brag it is the same
-        thing a student in an earlier decade might have said about a
-        library with open stacks, or a spell-checker, or a laptop.
+        worse work without it.</em>
       </p>
       <p>
-        The interesting question, for this course in particular, is not
-        whether using these tools is acceptable, but whether the way I
-        used them <em>left me with more understanding or less</em>. My
-        claim is the former. I read more sources because NotebookLM made
-        the review tractable. I wrote more cleanly because Grammarly held
-        up a mirror. I designed better pages because Claude let me see
-        five layouts before committing to one. And I thought more
-        carefully about my positions because I had a partner available to
-        push back on them at any hour.
+        I want to tie that line to something more specific than
+        productivity. I am, first, a <strong>learner</strong>. From that
+        seat, these tools have mostly done two useful things for me: they
+        let my <em>ideas take an actual shape on the page</em>, and they
+        quietly covered for the places I still do not know enough. That is
+        not nothing. An idea I can show you is a different animal from one
+        I am still trying to describe at my desk while staring at a blank
+        editor.
       </p>
       <p>
-        The site is a record of that. Every piece here went through AI
-        hands; none of it, I hope, reads like AI wrote it.
+        And <strong>nevertheless</strong> (I like that word), I am
+        stubbornly still learning the fundamentals in parallel Python,
+        CSS, HTML, the parts of web design that are less glamorous than
+        they sound. The plan is not to ride on top of these tools forever
+        while pretending to understand what is underneath. The plan is to
+        build enough of the underlying skill that, a few years from now
+        when these tools are even faster and weirder, <em>I can steer them
+        instead of the other way around</em>.
       </p>
       <blockquote>
         The goal was never to hide the machinery. The goal was to make
-        sure the <em>judgment</em> in the work was still mine.
+        sure the <em>judgment</em> in the work was still mine and that
+        I am becoming someone who can keep up with the machinery, not
+        someone who needs it to keep up for them.
       </blockquote>
     </div>
   </section>
