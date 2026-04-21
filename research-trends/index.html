@@ -1,1469 +1,2420 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>What does a field think about AI? AI &amp; Society 2021–2025</title>
-<meta name="description" content="A five-year scrolling trace of 1,849 articles in the journal AI & Society, built for ITASIA302.">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>What does a field think about AI? AI &amp; Society 2021–2025</title>
+  <meta name="description"
+    content="A five-year scrolling trace of 1,849 articles in the journal AI & Society, built for ITASIA302.">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500;1,9..144,600&family=Geist+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500;1,9..144,600&family=Geist+Mono:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
 
-<style>
-  /* ========================================================================
+  <style>
+    /* ========================================================================
      Design tokens "Scientific Sublime"
      ======================================================================== */
-  :root {
-    --bg:        #080C14;
-    --bg-soft:   #0E1824;
-    --ink:       #EDE8E0;
-    --ink-dim:   #9AA3B0;
-    --ink-faint: #3A4A62;
-    --rule:      #132032;
-    --amber:     #F0A060;
-    --amber-lo:  #F0A06022;
-    --amber-hi:  #FFC890;
-    --teal:      #5AC8B0;
-    --sky:       #5090C0;
-    --coral:     #D86878;
-    --lilac:     #9E90D0;
-    --gold:      #E6B860;
+    :root {
+      --bg: #080C14;
+      --bg-soft: #0E1824;
+      --ink: #EDE8E0;
+      --ink-dim: #9AA3B0;
+      --ink-faint: #3A4A62;
+      --rule: #132032;
+      --amber: #F0A060;
+      --amber-lo: #F0A06022;
+      --amber-hi: #FFC890;
+      --teal: #5AC8B0;
+      --sky: #5090C0;
+      --coral: #D86878;
+      --lilac: #9E90D0;
+      --gold: #E6B860;
 
-    --serif:  "Fraunces", Georgia, "Times New Roman", serif;
-    --mono:   "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+      --serif: "Fraunces", Georgia, "Times New Roman", serif;
+      --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
-    --ease: cubic-bezier(.22,.61,.36,1);
-  }
+      --ease: cubic-bezier(.22, .61, .36, 1);
+    }
 
-  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-  html { scroll-behavior: smooth; }
-  body {
-    background: var(--bg);
-    color: var(--ink);
-    font-family: var(--serif);
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-    overflow-x: hidden;
-    line-height: 1.45;
-  }
+    html {
+      scroll-behavior: smooth;
+    }
 
-  /* Atmospheric overlays */
-  .grain {
-    position: fixed; inset: 0; z-index: 9999; pointer-events: none;
-    opacity: .032;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/></filter><rect width='256' height='256' filter='url(%23n)'/></svg>");
-    background-size: 220px 220px;
-    mix-blend-mode: overlay;
-  }
-  .glow-tl, .glow-br {
-    position: fixed; pointer-events: none; z-index: 0;
-  }
-  .glow-tl {
-    top: 0; left: 0; width: 55vw; height: 55vh;
-    background: radial-gradient(at 0% 0%, rgba(240,160,96,0.10) 0%, transparent 60%);
-  }
-  .glow-br {
-    bottom: 0; right: 0; width: 50vw; height: 50vh;
-    background: radial-gradient(at 100% 100%, rgba(80,144,192,0.08) 0%, transparent 65%);
-  }
-  .edge-gradient {
-    position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 10000;
-    background: linear-gradient(90deg, transparent 0%, var(--amber) 22%, var(--coral) 62%, transparent 100%);
-    opacity: .55;
-    pointer-events: none;
-  }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--serif);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+      line-height: 1.45;
+    }
 
-  /* ========================================================================
+    /* Atmospheric overlays */
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: .032;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/></filter><rect width='256' height='256' filter='url(%23n)'/></svg>");
+      background-size: 220px 220px;
+      mix-blend-mode: overlay;
+    }
+
+    .glow-tl,
+    .glow-br {
+      position: fixed;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .glow-tl {
+      top: 0;
+      left: 0;
+      width: 55vw;
+      height: 55vh;
+      background: radial-gradient(at 0% 0%, rgba(240, 160, 96, 0.10) 0%, transparent 60%);
+    }
+
+    .glow-br {
+      bottom: 0;
+      right: 0;
+      width: 50vw;
+      height: 50vh;
+      background: radial-gradient(at 100% 100%, rgba(80, 144, 192, 0.08) 0%, transparent 65%);
+    }
+
+    .edge-gradient {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      z-index: 10000;
+      background: linear-gradient(90deg, transparent 0%, var(--amber) 22%, var(--coral) 62%, transparent 100%);
+      opacity: .55;
+      pointer-events: none;
+    }
+
+    /* ========================================================================
      Topbar present on every scene
      ======================================================================== */
-  .topbar {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
-    display: flex; justify-content: space-between; align-items: baseline;
-    padding: 14px 48px 12px;
-    background: linear-gradient(180deg, rgba(8,12,20,0.88) 0%, rgba(8,12,20,0.60) 70%, transparent 100%);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-  }
-  .topbar-title {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: 17px;
-    letter-spacing: -0.015em;
-    color: var(--ink);
-  }
-  .topbar-title em {
-    color: var(--amber);
-    font-style: italic;
-    font-weight: 400;
-  }
-  .topbar-meta {
-    font-family: var(--mono);
-    font-weight: 400;
-    font-size: 8.5px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-  }
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 14px 48px 12px;
+      background: linear-gradient(180deg, rgba(8, 12, 20, 0.88) 0%, rgba(8, 12, 20, 0.60) 70%, transparent 100%);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
 
-  /* ========================================================================
+    .topbar-title {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 17px;
+      letter-spacing: -0.015em;
+      color: var(--ink);
+    }
+
+    .topbar-title em {
+      color: var(--amber);
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .topbar-meta {
+      font-family: var(--mono);
+      font-weight: 400;
+      font-size: 8.5px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    /* ========================================================================
      Scroll progress bar
      ======================================================================== */
-  .scroll-progress {
-    position: fixed; top: 0; left: 0; height: 2px; z-index: 60;
-    background: linear-gradient(90deg, var(--amber), var(--coral));
-    width: 0%;
-    transition: width .08s linear;
-  }
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      z-index: 60;
+      background: linear-gradient(90deg, var(--amber), var(--coral));
+      width: 0%;
+      transition: width .08s linear;
+    }
 
-  /* ========================================================================
+    /* ========================================================================
      Scene containers
      ======================================================================== */
-  main { position: relative; z-index: 1; }
+    main {
+      position: relative;
+      z-index: 1;
+    }
 
-  .scene {
-    min-height: 100vh;
-    padding: 120px 48px 80px;
-    max-width: 1280px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    position: relative;
-  }
-  .scene-tall { min-height: 110vh; }
+    .scene {
+      min-height: 100vh;
+      padding: 120px 48px 80px;
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
 
-  .scene-number {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-    margin-bottom: 24px;
-  }
-  .scene-number::before {
-    content: "";
-    display: inline-block;
-    width: 32px; height: 1px;
-    background: var(--amber);
-    vertical-align: middle;
-    margin-right: 14px;
-    transform: translateY(-3px);
-  }
+    .scene-tall {
+      min-height: 110vh;
+    }
 
-  /* ========================================================================
+    .scene-number {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 24px;
+    }
+
+    .scene-number::before {
+      content: "";
+      display: inline-block;
+      width: 32px;
+      height: 1px;
+      background: var(--amber);
+      vertical-align: middle;
+      margin-right: 14px;
+      transform: translateY(-3px);
+    }
+
+    /* ========================================================================
      Typography scale
      ======================================================================== */
-  .eyebrow {
-    font-family: var(--mono);
-    font-weight: 400;
-    font-size: 10px;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: var(--amber);
-    margin-bottom: 18px;
-  }
-  .headline {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(38px, 5.2vw, 68px);
-    line-height: 1.02;
-    letter-spacing: -0.028em;
-    color: var(--ink);
-    margin-bottom: 28px;
-    max-width: 20ch;
-  }
-  .headline em {
-    font-style: italic;
-    font-weight: 400;
-    color: var(--amber);
-  }
-  .headline-sm {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(28px, 3.2vw, 42px);
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    color: var(--ink);
-    margin-bottom: 20px;
-    max-width: 24ch;
-  }
-  .headline-sm em { color: var(--amber); font-style: italic; font-weight: 400; }
+    .eyebrow {
+      font-family: var(--mono);
+      font-weight: 400;
+      font-size: 10px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 18px;
+    }
 
-  .dek {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(17px, 1.4vw, 21px);
-    line-height: 1.55;
-    letter-spacing: -0.005em;
-    color: var(--ink-dim);
-    max-width: 58ch;
-    margin-bottom: 48px;
-  }
-  .dek em { font-style: italic; color: var(--ink); }
+    .headline {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(38px, 5.2vw, 68px);
+      line-height: 1.02;
+      letter-spacing: -0.028em;
+      color: var(--ink);
+      margin-bottom: 28px;
+      max-width: 20ch;
+    }
 
-  .label {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-  }
+    .headline em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--amber);
+    }
 
-  .annotation-text {
-    font-family: var(--serif);
-    font-style: italic;
-    font-weight: 300;
-    color: var(--ink);
-  }
+    .headline-sm {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(28px, 3.2vw, 42px);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 20px;
+      max-width: 24ch;
+    }
 
-  /* ========================================================================
+    .headline-sm em {
+      color: var(--amber);
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .dek {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(17px, 1.4vw, 21px);
+      line-height: 1.55;
+      letter-spacing: -0.005em;
+      color: var(--ink-dim);
+      max-width: 58ch;
+      margin-bottom: 48px;
+    }
+
+    .dek em {
+      font-style: italic;
+      color: var(--ink);
+    }
+
+    .label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .annotation-text {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 300;
+      color: var(--ink);
+    }
+
+    /* ========================================================================
      Reveal state (IntersectionObserver adds .in-view)
      ======================================================================== */
-  .reveal {
-    opacity: 0;
-    transform: translateY(18px);
-    transition: opacity .9s var(--ease), transform .9s var(--ease);
-  }
-  .reveal.in-view { opacity: 1; transform: translateY(0); }
-  .reveal.delay-1 { transition-delay: .12s; }
-  .reveal.delay-2 { transition-delay: .24s; }
-  .reveal.delay-3 { transition-delay: .36s; }
-  .reveal.delay-4 { transition-delay: .50s; }
-  .reveal.delay-5 { transition-delay: .64s; }
-  .reveal.delay-6 { transition-delay: .80s; }
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity .9s var(--ease), transform .9s var(--ease);
+    }
 
-  /* ========================================================================
+    .reveal.in-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal.delay-1 {
+      transition-delay: .12s;
+    }
+
+    .reveal.delay-2 {
+      transition-delay: .24s;
+    }
+
+    .reveal.delay-3 {
+      transition-delay: .36s;
+    }
+
+    .reveal.delay-4 {
+      transition-delay: .50s;
+    }
+
+    .reveal.delay-5 {
+      transition-delay: .64s;
+    }
+
+    .reveal.delay-6 {
+      transition-delay: .80s;
+    }
+
+    /* ========================================================================
      Scene 0 opening
      ======================================================================== */
-  .hero-scene {
-    min-height: 100vh;
-    padding: 140px 48px 80px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    position: relative;
-    max-width: 1280px;
-    margin: 0 auto;
-  }
-  .hero-kicker {
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-    margin-bottom: 32px;
-  }
-  .hero-kicker .dot {
-    display: inline-block;
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--amber);
-    margin: 0 12px 2px 0;
-    box-shadow: 0 0 10px var(--amber);
-    vertical-align: middle;
-  }
-  .hero-title {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(56px, 8.4vw, 128px);
-    line-height: 0.96;
-    letter-spacing: -0.038em;
-    color: var(--ink);
-    margin-bottom: 36px;
-    max-width: 16ch;
-  }
-  .hero-title em {
-    font-style: italic;
-    font-weight: 400;
-    color: var(--amber);
-  }
-  .hero-dek {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(18px, 1.55vw, 24px);
-    line-height: 1.5;
-    color: var(--ink-dim);
-    max-width: 52ch;
-    margin-bottom: 56px;
-  }
-  .hero-dek strong {
-    color: var(--ink);
-    font-weight: 400;
-  }
+    .hero-scene {
+      min-height: 100vh;
+      padding: 140px 48px 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      position: relative;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
 
-  /* Opening stat tiles */
-  .hero-stats {
-    display: grid;
-    grid-template-columns: repeat(3, auto);
-    gap: 56px;
-    margin-bottom: 64px;
-  }
-  .stat-tile .stat-num {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(38px, 4vw, 56px);
-    color: var(--amber);
-    letter-spacing: -0.025em;
-    line-height: 1;
-  }
-  .stat-tile .stat-num em { font-style: italic; font-weight: 400; }
-  .stat-tile .stat-label {
-    font-family: var(--mono);
-    font-size: 9.5px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-    margin-top: 10px;
-  }
+    .hero-kicker {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 32px;
+    }
 
-  .scroll-cue {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-  }
-  .scroll-cue .arrow {
-    width: 24px; height: 24px;
-    display: inline-flex;
-    align-items: center; justify-content: center;
-    animation: nudge 2.2s infinite var(--ease);
-  }
-  @keyframes nudge {
-    0%, 100% { transform: translateY(0); opacity: .6; }
-    50%     { transform: translateY(6px); opacity: 1; }
-  }
+    .hero-kicker .dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--amber);
+      margin: 0 12px 2px 0;
+      box-shadow: 0 0 10px var(--amber);
+      vertical-align: middle;
+    }
 
-  /* ========================================================================
+    .hero-title {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(56px, 8.4vw, 128px);
+      line-height: 0.96;
+      letter-spacing: -0.038em;
+      color: var(--ink);
+      margin-bottom: 36px;
+      max-width: 16ch;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--amber);
+    }
+
+    .hero-dek {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(18px, 1.55vw, 24px);
+      line-height: 1.5;
+      color: var(--ink-dim);
+      max-width: 52ch;
+      margin-bottom: 56px;
+    }
+
+    .hero-dek strong {
+      color: var(--ink);
+      font-weight: 400;
+    }
+
+    /* Opening stat tiles */
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, auto);
+      gap: 56px;
+      margin-bottom: 64px;
+    }
+
+    .stat-tile .stat-num {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(38px, 4vw, 56px);
+      color: var(--amber);
+      letter-spacing: -0.025em;
+      line-height: 1;
+    }
+
+    .stat-tile .stat-num em {
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .stat-tile .stat-label {
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-top: 10px;
+    }
+
+    .scroll-cue {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .scroll-cue .arrow {
+      width: 24px;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      animation: nudge 2.2s infinite var(--ease);
+    }
+
+    @keyframes nudge {
+
+      0%,
+      100% {
+        transform: translateY(0);
+        opacity: .6;
+      }
+
+      50% {
+        transform: translateY(6px);
+        opacity: 1;
+      }
+    }
+
+    /* ========================================================================
      Scene layouts two column (chart + copy)
      ======================================================================== */
-  .split {
-    display: grid;
-    grid-template-columns: 1fr 1.6fr;
-    gap: 80px;
-    align-items: center;
-  }
-  .split-copy { max-width: 42ch; }
-  .split-chart {
-    position: relative;
-    width: 100%;
-  }
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 80px;
+      align-items: center;
+    }
 
-  /* Insight card */
-  .insight {
-    border-left: 2px solid var(--amber);
-    padding: 14px 0 14px 22px;
-    margin-top: 28px;
-    max-width: 44ch;
-  }
-  .insight .insight-num {
-    font-family: var(--serif);
-    font-style: italic;
-    font-weight: 400;
-    font-size: 28px;
-    color: var(--amber);
-    letter-spacing: -0.02em;
-    display: block;
-    margin-bottom: 4px;
-  }
-  .insight .insight-copy {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: 16px;
-    line-height: 1.45;
-    color: var(--ink);
-  }
+    .split-copy {
+      max-width: 42ch;
+    }
 
-  /* Pull quote */
-  .pull-quote {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(26px, 2.6vw, 38px);
-    line-height: 1.2;
-    letter-spacing: -0.02em;
-    font-style: italic;
-    color: var(--ink);
-    max-width: 22ch;
-    border-left: 2px solid var(--amber);
-    padding-left: 28px;
-    margin: 64px 0;
-  }
-  .pull-quote .attr {
-    display: block;
-    font-family: var(--mono);
-    font-style: normal;
-    font-size: 10px;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: var(--amber);
-    margin-top: 18px;
-  }
+    .split-chart {
+      position: relative;
+      width: 100%;
+    }
 
-  /* ========================================================================
+    /* Insight card */
+    .insight {
+      border-left: 2px solid var(--amber);
+      padding: 14px 0 14px 22px;
+      margin-top: 28px;
+      max-width: 44ch;
+    }
+
+    .insight .insight-num {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 28px;
+      color: var(--amber);
+      letter-spacing: -0.02em;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .insight .insight-copy {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 16px;
+      line-height: 1.45;
+      color: var(--ink);
+    }
+
+    /* Pull quote */
+    .pull-quote {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(26px, 2.6vw, 38px);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      font-style: italic;
+      color: var(--ink);
+      max-width: 22ch;
+      border-left: 2px solid var(--amber);
+      padding-left: 28px;
+      margin: 64px 0;
+    }
+
+    .pull-quote .attr {
+      display: block;
+      font-family: var(--mono);
+      font-style: normal;
+      font-size: 10px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-top: 18px;
+    }
+
+    /* ========================================================================
      SVG chart defaults
      ======================================================================== */
-  svg { display: block; overflow: visible; }
-  svg text {
-    font-family: var(--mono);
-    font-weight: 400;
-  }
-  .axis-tick text,
-  .axis-label text,
-  .x-label,
-  .y-label {
-    fill: var(--ink-faint);
-    font-size: 10px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-  }
-  .value-label {
-    fill: var(--ink-dim);
-    font-size: 11px;
-    font-family: var(--mono);
-    font-weight: 500;
-    letter-spacing: 0.04em;
-  }
-  .value-label-strong {
-    fill: var(--amber);
-    font-size: 13px;
-    font-family: var(--mono);
-    font-weight: 600;
-    letter-spacing: 0.03em;
-  }
-  .grid-line { stroke: var(--rule); stroke-width: 1; }
+    svg {
+      display: block;
+      overflow: visible;
+    }
 
-  /* chart draw-in animations */
-  .draw-line {
-    stroke-dasharray: var(--dash, 2000);
-    stroke-dashoffset: var(--dash, 2000);
-    transition: stroke-dashoffset 1.8s var(--ease);
-  }
-  .in-view .draw-line { stroke-dashoffset: 0; }
+    svg text {
+      font-family: var(--mono);
+      font-weight: 400;
+    }
 
-  .draw-fill {
-    opacity: 0;
-    transition: opacity 1.4s var(--ease) .6s;
-  }
-  .in-view .draw-fill { opacity: 1; }
+    .axis-tick text,
+    .axis-label text,
+    .x-label,
+    .y-label {
+      fill: var(--ink-faint);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
 
-  .grow-bar {
-    transform-origin: bottom;
-    transform: scaleY(0);
-    transition: transform 1.1s var(--ease);
-  }
-  .in-view .grow-bar { transform: scaleY(1); }
+    .value-label {
+      fill: var(--ink-dim);
+      font-size: 11px;
+      font-family: var(--mono);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
 
-  .fade-point {
-    opacity: 0;
-    transition: opacity .7s var(--ease);
-  }
-  .in-view .fade-point { opacity: 1; }
+    .value-label-strong {
+      fill: var(--amber);
+      font-size: 13px;
+      font-family: var(--mono);
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
 
-  .fade-annot {
-    opacity: 0;
-    transition: opacity 1s var(--ease);
-  }
-  .in-view .fade-annot { opacity: 1; }
+    .grid-line {
+      stroke: var(--rule);
+      stroke-width: 1;
+    }
 
-  /* ========================================================================
+    /* chart draw-in animations */
+    .draw-line {
+      stroke-dasharray: var(--dash, 2000);
+      stroke-dashoffset: var(--dash, 2000);
+      transition: stroke-dashoffset 1.8s var(--ease);
+    }
+
+    .in-view .draw-line {
+      stroke-dashoffset: 0;
+    }
+
+    .draw-fill {
+      opacity: 0;
+      transition: opacity 1.4s var(--ease) .6s;
+    }
+
+    .in-view .draw-fill {
+      opacity: 1;
+    }
+
+    .grow-bar {
+      transform-origin: bottom;
+      transform: scaleY(0);
+      transition: transform 1.1s var(--ease);
+    }
+
+    .in-view .grow-bar {
+      transform: scaleY(1);
+    }
+
+    .fade-point {
+      opacity: 0;
+      transition: opacity .7s var(--ease);
+    }
+
+    .in-view .fade-point {
+      opacity: 1;
+    }
+
+    .fade-annot {
+      opacity: 0;
+      transition: opacity 1s var(--ease);
+    }
+
+    .in-view .fade-annot {
+      opacity: 1;
+    }
+
+    /* ========================================================================
      Scene 1 publication volume
      ======================================================================== */
-  .volume-chart-wrap {
-    margin-top: 48px;
-    padding: 48px 24px 12px;
-    border: 1px solid var(--rule);
-    border-radius: 2px;
-    background: linear-gradient(180deg, rgba(14,24,36,0.4) 0%, transparent 100%);
-  }
+    .volume-chart-wrap {
+      margin-top: 48px;
+      padding: 48px 24px 12px;
+      border: 1px solid var(--rule);
+      border-radius: 2px;
+      background: linear-gradient(180deg, rgba(14, 24, 36, 0.4) 0%, transparent 100%);
+    }
 
-  /* ========================================================================
+    /* ========================================================================
      Scene 2 GenAI surge (hero chart)
      ======================================================================== */
-  .genai-chart-wrap {
-    margin-top: 32px;
-    position: relative;
-  }
-  .chatgpt-band {
-    fill: var(--amber);
-    opacity: 0;
-    transition: opacity 1.2s var(--ease) 1s;
-  }
-  .in-view .chatgpt-band { opacity: 0.08; }
-  .chatgpt-label {
-    opacity: 0;
-    transition: opacity .9s var(--ease) 1.4s;
-  }
-  .in-view .chatgpt-label { opacity: 1; }
+    .genai-chart-wrap {
+      margin-top: 32px;
+      position: relative;
+    }
 
-  .x16-reveal {
-    display: flex;
-    align-items: baseline;
-    gap: 24px;
-    margin-top: 64px;
-    padding-top: 28px;
-    border-top: 1px solid var(--rule);
-  }
-  .x16-num {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(56px, 7vw, 96px);
-    color: var(--amber);
-    letter-spacing: -0.03em;
-    line-height: 0.9;
-    font-style: italic;
-    white-space: nowrap;
-  }
-  .x16-copy {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(18px, 1.4vw, 22px);
-    line-height: 1.45;
-    color: var(--ink-dim);
-    max-width: 32ch;
-  }
-  .x16-copy strong { color: var(--ink); font-weight: 400; }
+    .chatgpt-band {
+      fill: var(--amber);
+      opacity: 0;
+      transition: opacity 1.2s var(--ease) 1s;
+    }
 
-  /* ========================================================================
+    .in-view .chatgpt-band {
+      opacity: 0.08;
+    }
+
+    .chatgpt-label {
+      opacity: 0;
+      transition: opacity .9s var(--ease) 1.4s;
+    }
+
+    .in-view .chatgpt-label {
+      opacity: 1;
+    }
+
+    .x16-reveal {
+      display: flex;
+      align-items: baseline;
+      gap: 24px;
+      margin-top: 64px;
+      padding-top: 28px;
+      border-top: 1px solid var(--rule);
+    }
+
+    .x16-num {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(56px, 7vw, 96px);
+      color: var(--amber);
+      letter-spacing: -0.03em;
+      line-height: 0.9;
+      font-style: italic;
+      white-space: nowrap;
+    }
+
+    .x16-copy {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(18px, 1.4vw, 22px);
+      line-height: 1.45;
+      color: var(--ink-dim);
+      max-width: 32ch;
+    }
+
+    .x16-copy strong {
+      color: var(--ink);
+      font-weight: 400;
+    }
+
+    /* ========================================================================
      Scene 3 topic trajectories
      ======================================================================== */
-  .topic-controls {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin: 36px 0 16px;
-  }
-  .chip {
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    padding: 8px 14px;
-    border: 1px solid var(--rule);
-    border-radius: 999px;
-    color: var(--ink-dim);
-    background: transparent;
-    cursor: pointer;
-    transition: all .25s var(--ease);
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .chip:hover { color: var(--ink); border-color: var(--ink-faint); }
-  .chip .swatch {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--chip-color, var(--amber));
-    display: inline-block;
-    box-shadow: 0 0 8px var(--chip-color, var(--amber));
-  }
-  .chip.active {
-    color: var(--ink);
-    border-color: var(--chip-color, var(--amber));
-    background: color-mix(in oklab, var(--chip-color, var(--amber)) 10%, transparent);
-  }
-  .chip[data-topic="all"].active {
-    border-color: var(--ink);
-    background: rgba(237,232,224,0.05);
-  }
+    .topic-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 36px 0 16px;
+    }
 
-  .traj-annotations {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 24px 36px;
-    margin-top: 40px;
-  }
-  .traj-annot {
-    padding: 14px 0 14px 18px;
-    border-left: 2px solid var(--topic-color, var(--ink-faint));
-    transition: opacity .35s var(--ease);
-  }
-  .traj-annot .t-name {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--topic-color, var(--ink-dim));
-    margin-bottom: 6px;
-  }
-  .traj-annot .t-copy {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: 15px;
-    line-height: 1.4;
-    color: var(--ink);
-  }
-  .traj-annot .t-copy em {
-    font-style: italic;
-    color: var(--ink-dim);
-  }
-  .traj-annot .t-delta {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--topic-color, var(--amber));
-    margin-top: 6px;
-    letter-spacing: 0.04em;
-  }
+    .chip {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 8px 14px;
+      border: 1px solid var(--rule);
+      border-radius: 999px;
+      color: var(--ink-dim);
+      background: transparent;
+      cursor: pointer;
+      transition: all .25s var(--ease);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-  .traj-line {
-    stroke-width: 2;
-    fill: none;
-    transition: opacity .35s var(--ease), stroke-width .35s var(--ease);
-  }
-  .traj-line.dimmed { opacity: 0.14; }
-  .traj-line.focused { stroke-width: 3; }
-  .traj-label {
-    font-family: var(--mono);
-    font-size: 10.5px;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    transition: opacity .35s var(--ease);
-  }
-  .traj-label.dimmed { opacity: 0.18; }
+    .chip:hover {
+      color: var(--ink);
+      border-color: var(--ink-faint);
+    }
 
-  /* ========================================================================
+    .chip .swatch {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--chip-color, var(--amber));
+      display: inline-block;
+      box-shadow: 0 0 8px var(--chip-color, var(--amber));
+    }
+
+    .chip.active {
+      color: var(--ink);
+      border-color: var(--chip-color, var(--amber));
+      background: color-mix(in oklab, var(--chip-color, var(--amber)) 10%, transparent);
+    }
+
+    .chip[data-topic="all"].active {
+      border-color: var(--ink);
+      background: rgba(237, 232, 224, 0.05);
+    }
+
+    .traj-annotations {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 24px 36px;
+      margin-top: 40px;
+    }
+
+    .traj-annot {
+      padding: 14px 0 14px 18px;
+      border-left: 2px solid var(--topic-color, var(--ink-faint));
+      transition: opacity .35s var(--ease);
+    }
+
+    .traj-annot .t-name {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--topic-color, var(--ink-dim));
+      margin-bottom: 6px;
+    }
+
+    .traj-annot .t-copy {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 15px;
+      line-height: 1.4;
+      color: var(--ink);
+    }
+
+    .traj-annot .t-copy em {
+      font-style: italic;
+      color: var(--ink-dim);
+    }
+
+    .traj-annot .t-delta {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--topic-color, var(--amber));
+      margin-top: 6px;
+      letter-spacing: 0.04em;
+    }
+
+    .traj-line {
+      stroke-width: 2;
+      fill: none;
+      transition: opacity .35s var(--ease), stroke-width .35s var(--ease);
+    }
+
+    .traj-line.dimmed {
+      opacity: 0.14;
+    }
+
+    .traj-line.focused {
+      stroke-width: 3;
+    }
+
+    .traj-label {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      transition: opacity .35s var(--ease);
+    }
+
+    .traj-label.dimmed {
+      opacity: 0.18;
+    }
+
+    /* ========================================================================
      Scene 4 2025 snapshot (editorial prevalence list)
      ======================================================================== */
-  .prevalence-list {
-    margin-top: 48px;
-    border-top: 1px solid var(--rule);
-  }
-  .prev-row {
-    display: grid;
-    grid-template-columns: 130px 1fr 60px;
-    align-items: center;
-    gap: 32px;
-    padding: 22px 8px 0;
-    border-bottom: 1px solid var(--rule);
-    transition: background .3s var(--ease);
-  }
-  .prev-row:hover { background: rgba(240,160,96,0.03); }
-  .prev-pct {
-    font-family: var(--serif);
-    font-style: italic;
-    font-weight: 400;
-    font-size: 38px;
-    letter-spacing: -0.02em;
-    color: var(--row-color, var(--amber));
-    line-height: 1;
-  }
-  .prev-name {
-    font-family: var(--mono);
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--ink);
-  }
-  .prev-rank {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    color: var(--ink-faint);
-    text-align: right;
-  }
-  .prev-bar {
-    grid-column: 1 / -1;
-    height: 2px;
-    margin-top: 16px;
-    margin-bottom: 14px;
-    background: var(--rule);
-    position: relative;
-    overflow: hidden;
-  }
-  .prev-bar::after {
-    content: "";
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: var(--pct, 0%);
-    background: linear-gradient(90deg, var(--row-color, var(--amber)) 0%, color-mix(in oklab, var(--row-color, var(--amber)) 40%, transparent) 100%);
-    box-shadow: 0 0 12px var(--row-color, var(--amber));
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 1.2s var(--ease);
-    transition-delay: var(--delay, 0s);
-  }
-  .prev-row.in-view .prev-bar::after { transform: scaleX(1); }
+    .prevalence-list {
+      margin-top: 48px;
+      border-top: 1px solid var(--rule);
+    }
 
-  /* ========================================================================
+    .prev-row {
+      display: grid;
+      grid-template-columns: 130px 1fr 60px;
+      align-items: center;
+      gap: 32px;
+      padding: 22px 8px 0;
+      border-bottom: 1px solid var(--rule);
+      transition: background .3s var(--ease);
+    }
+
+    .prev-row:hover {
+      background: rgba(240, 160, 96, 0.03);
+    }
+
+    .prev-pct {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 38px;
+      letter-spacing: -0.02em;
+      color: var(--row-color, var(--amber));
+      line-height: 1;
+    }
+
+    .prev-name {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+
+    .prev-rank {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--ink-faint);
+      text-align: right;
+    }
+
+    .prev-bar {
+      grid-column: 1 / -1;
+      height: 2px;
+      margin-top: 16px;
+      margin-bottom: 14px;
+      background: var(--rule);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .prev-bar::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: var(--pct, 0%);
+      background: linear-gradient(90deg, var(--row-color, var(--amber)) 0%, color-mix(in oklab, var(--row-color, var(--amber)) 40%, transparent) 100%);
+      box-shadow: 0 0 12px var(--row-color, var(--amber));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 1.2s var(--ease);
+      transition-delay: var(--delay, 0s);
+    }
+
+    .prev-row.in-view .prev-bar::after {
+      transform: scaleX(1);
+    }
+
+    /* ========================================================================
      Scene 5 closing
      ======================================================================== */
-  .closing-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 64px;
-    margin-top: 48px;
-  }
-  .closing-body {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: 18px;
-    line-height: 1.6;
-    color: var(--ink-dim);
-    max-width: 48ch;
-  }
-  .closing-body p + p { margin-top: 16px; }
-  .closing-body em { font-style: italic; color: var(--ink); }
+    .closing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      margin-top: 48px;
+    }
 
-  .meta-block {
-    font-family: var(--mono);
-    font-size: 11px;
-    line-height: 1.75;
-    color: var(--ink-faint);
-    letter-spacing: 0.04em;
-  }
-  .meta-block .meta-key {
-    color: var(--ink-faint);
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    font-size: 9.5px;
-    display: block;
-    margin-bottom: 4px;
-  }
-  .meta-block .meta-val {
-    color: var(--ink);
-    display: block;
-    margin-bottom: 18px;
-  }
-  .meta-block .meta-val em { color: var(--amber); font-style: italic; }
+    .closing-body {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 18px;
+      line-height: 1.6;
+      color: var(--ink-dim);
+      max-width: 48ch;
+    }
 
-  footer.footer {
-    margin-top: 80px;
-    padding: 40px 0 60px;
-    border-top: 1px solid var(--rule);
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-  }
-  footer.footer em { color: var(--amber); font-style: normal; letter-spacing: 0.14em; }
+    .closing-body p+p {
+      margin-top: 16px;
+    }
 
-  /* ========================================================================
+    .closing-body em {
+      font-style: italic;
+      color: var(--ink);
+    }
+
+    .meta-block {
+      font-family: var(--mono);
+      font-size: 11px;
+      line-height: 1.75;
+      color: var(--ink-faint);
+      letter-spacing: 0.04em;
+    }
+
+    .meta-block .meta-key {
+      color: var(--ink-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      font-size: 9.5px;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .meta-block .meta-val {
+      color: var(--ink);
+      display: block;
+      margin-bottom: 18px;
+    }
+
+    .meta-block .meta-val em {
+      color: var(--amber);
+      font-style: italic;
+    }
+
+    footer.footer {
+      margin-top: 80px;
+      padding: 40px 0 60px;
+      border-top: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    footer.footer em {
+      color: var(--amber);
+      font-style: normal;
+      letter-spacing: 0.14em;
+    }
+
+    /* ========================================================================
      Journal link applied to the four places "AI & Society" appears
      ======================================================================== */
-  .journal-link {
-    color: inherit;
-    text-decoration: none;
-    border-bottom: 1px dotted var(--ink-faint);
-    transition: color 180ms ease, border-color 180ms ease;
-  }
-  .journal-link:hover,
-  .journal-link:focus-visible {
-    color: var(--amber);
-    border-bottom-color: var(--amber);
-    outline: none;
-  }
+    .journal-link {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px dotted var(--ink-faint);
+      transition: color 180ms ease, border-color 180ms ease;
+    }
 
-  /* ========================================================================
+    .journal-link:hover,
+    .journal-link:focus-visible {
+      color: var(--amber);
+      border-bottom-color: var(--amber);
+      outline: none;
+    }
+
+    /* ========================================================================
      Methodology appendix (scene 6)
      ======================================================================== */
-  .appendix { max-width: 1200px; }
-  .appendix .dek { max-width: 68ch; margin-bottom: 28px; }
+    .appendix {
+      max-width: 1200px;
+    }
 
-  .appendix h3 {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(22px, 2.2vw, 30px);
-    letter-spacing: -0.018em;
-    color: var(--ink);
-    margin: 72px 0 18px;
-    padding-top: 28px;
-    border-top: 1px solid var(--rule);
-    max-width: 28ch;
-  }
-  .appendix h3:first-of-type { margin-top: 16px; }
-  .appendix h4 {
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 400;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--amber);
-    margin: 36px 0 14px;
-  }
+    .appendix .dek {
+      max-width: 68ch;
+      margin-bottom: 28px;
+    }
 
-  .appendix p {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: 16px;
-    line-height: 1.6;
-    color: var(--ink-dim);
-    max-width: 72ch;
-    margin: 0 0 18px;
-  }
-  .appendix p em { font-style: italic; color: var(--ink); }
-  .appendix strong { color: var(--ink); font-weight: 500; }
+    .appendix h3 {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(22px, 2.2vw, 30px);
+      letter-spacing: -0.018em;
+      color: var(--ink);
+      margin: 72px 0 18px;
+      padding-top: 28px;
+      border-top: 1px solid var(--rule);
+      max-width: 28ch;
+    }
 
-  .appendix ul, .appendix ol {
-    padding-left: 22px;
-    margin: 0 0 24px;
-    max-width: 72ch;
-  }
-  .appendix li {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: 16px;
-    line-height: 1.6;
-    color: var(--ink-dim);
-    margin-bottom: 10px;
-  }
-  .appendix li em { font-style: italic; color: var(--ink); }
+    .appendix h3:first-of-type {
+      margin-top: 16px;
+    }
 
-  .appendix code {
-    font-family: var(--mono);
-    font-size: 0.86em;
-    background: rgba(90, 200, 176, 0.06);
-    border: 1px solid rgba(90, 200, 176, 0.15);
-    padding: 1px 6px;
-    border-radius: 3px;
-    color: var(--teal);
-    white-space: nowrap;
-  }
+    .appendix h4 {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin: 36px 0 14px;
+    }
 
-  .appendix table {
-    border-collapse: collapse;
-    margin: 12px 0 28px;
-    font-family: var(--mono);
-    font-size: 12.5px;
-    color: var(--ink-dim);
-  }
-  .appendix th, .appendix td {
-    padding: 9px 20px 9px 0;
-    text-align: left;
-    border-bottom: 1px solid var(--rule);
-  }
-  .appendix thead th {
-    font-size: 9.5px;
-    font-weight: 400;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-    border-bottom: 1px solid var(--amber);
-    padding-bottom: 10px;
-  }
-  .appendix td.num, .appendix th.num {
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-  }
-  .appendix tr.total td {
-    color: var(--ink);
-    padding-top: 14px;
-  }
-  .appendix tr.total td strong { color: var(--amber); }
+    .appendix p {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--ink-dim);
+      max-width: 72ch;
+      margin: 0 0 18px;
+    }
 
-  .kw-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 28px 44px;
-    margin: 14px 0 28px;
-    max-width: 1100px;
-  }
-  .kw-block {
-    border-left: 2px solid var(--rule);
-    padding: 4px 0 4px 20px;
-    min-width: 0;
-  }
-  /* Inside kw-block, regex patterns can be long allow them to wrap */
-  .kw-block code {
-    white-space: normal;
-    word-break: break-word;
-    overflow-wrap: anywhere;
-  }
-  .kw-block .kw-title {
-    font-family: var(--serif);
-    font-style: italic;
-    font-weight: 400;
-    font-size: 18px;
-    color: var(--ink);
-    margin-bottom: 10px;
-  }
-  .kw-block .kw-body {
-    font-family: var(--serif);
-    font-size: 14px;
-    line-height: 1.75;
-    color: var(--ink-faint);
-  }
-  .kw-block .kw-note {
-    display: block;
-    margin-top: 10px;
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 13px;
-    color: var(--ink-faint);
-  }
-  .kw-block .kw-note code { font-style: normal; }
+    .appendix p em {
+      font-style: italic;
+      color: var(--ink);
+    }
 
-  /* ========================================================================
+    .appendix strong {
+      color: var(--ink);
+      font-weight: 500;
+    }
+
+    .appendix ul,
+    .appendix ol {
+      padding-left: 22px;
+      margin: 0 0 24px;
+      max-width: 72ch;
+    }
+
+    .appendix li {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--ink-dim);
+      margin-bottom: 10px;
+    }
+
+    .appendix li em {
+      font-style: italic;
+      color: var(--ink);
+    }
+
+    .appendix code {
+      font-family: var(--mono);
+      font-size: 0.86em;
+      background: rgba(90, 200, 176, 0.06);
+      border: 1px solid rgba(90, 200, 176, 0.15);
+      padding: 1px 6px;
+      border-radius: 3px;
+      color: var(--teal);
+      white-space: nowrap;
+    }
+
+    .appendix table {
+      border-collapse: collapse;
+      margin: 12px 0 28px;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      color: var(--ink-dim);
+    }
+
+    .appendix th,
+    .appendix td {
+      padding: 9px 20px 9px 0;
+      text-align: left;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .appendix thead th {
+      font-size: 9.5px;
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      border-bottom: 1px solid var(--amber);
+      padding-bottom: 10px;
+    }
+
+    .appendix td.num,
+    .appendix th.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .appendix tr.total td {
+      color: var(--ink);
+      padding-top: 14px;
+    }
+
+    .appendix tr.total td strong {
+      color: var(--amber);
+    }
+
+    .kw-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 28px 44px;
+      margin: 14px 0 28px;
+      max-width: 1100px;
+    }
+
+    .kw-block {
+      border-left: 2px solid var(--rule);
+      padding: 4px 0 4px 20px;
+      min-width: 0;
+    }
+
+    /* Inside kw-block, regex patterns can be long allow them to wrap */
+    .kw-block code {
+      white-space: normal;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    .kw-block .kw-title {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 18px;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+
+    .kw-block .kw-body {
+      font-family: var(--serif);
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--ink-faint);
+    }
+
+    .kw-block .kw-note {
+      display: block;
+      margin-top: 10px;
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 13px;
+      color: var(--ink-faint);
+    }
+
+    .kw-block .kw-note code {
+      font-style: normal;
+    }
+
+    /* ========================================================================
+     Scene 5 Phase list (four temporal inflections)
+     ======================================================================== */
+    .phase-list {
+      margin: 8px 0 56px;
+      border-top: 1px solid var(--rule);
+    }
+
+    .phase {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 48px;
+      padding: 34px 4px 34px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .phase:last-child {
+      border-bottom: none;
+    }
+
+    .phase-year {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--amber);
+      padding-top: 10px;
+    }
+
+    .phase-year .phase-tag {
+      display: block;
+      margin-top: 6px;
+      font-size: 9.5px;
+      letter-spacing: 0.22em;
+      color: var(--ink-faint);
+      text-transform: uppercase;
+    }
+
+    .phase-body {
+      color: var(--ink-dim);
+    }
+
+    .phase-head {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(22px, 2.3vw, 30px);
+      line-height: 1.18;
+      color: var(--ink);
+      margin-bottom: 14px;
+      letter-spacing: -0.018em;
+      max-width: 28ch;
+    }
+
+    .phase-head em {
+      color: var(--amber);
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .phase-body p {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 17px;
+      line-height: 1.62;
+      max-width: 60ch;
+    }
+
+    .phase-body p+p {
+      margin-top: 14px;
+    }
+
+    .phase-body p em {
+      color: var(--ink);
+      font-style: italic;
+    }
+
+    /* ========================================================================
+     Scene 6 Education trajectory
+     ======================================================================== */
+    .edu-traj {
+      margin: 32px 0 56px;
+      border-top: 1px solid var(--rule);
+    }
+
+    .edu-row {
+      display: grid;
+      grid-template-columns: 90px 130px 1fr;
+      align-items: baseline;
+      gap: 28px;
+      padding: 22px 6px 0;
+      border-bottom: 1px solid var(--rule);
+      position: relative;
+    }
+
+    .edu-year {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .edu-row.peak .edu-year {
+      color: var(--amber);
+    }
+
+    .edu-row.low .edu-year {
+      color: var(--coral);
+    }
+
+    .edu-pct {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 34px;
+      letter-spacing: -0.02em;
+      color: var(--teal);
+      line-height: 1;
+    }
+
+    .edu-row.low .edu-pct {
+      color: var(--coral);
+    }
+
+    .edu-row.peak .edu-pct {
+      color: var(--amber);
+    }
+
+    .edu-n {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--ink-dim);
+    }
+
+    .edu-bar {
+      grid-column: 1 / -1;
+      height: 2px;
+      margin-top: 16px;
+      margin-bottom: 14px;
+      background: var(--rule);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .edu-bar::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: var(--edu-w, 0%);
+      background: linear-gradient(90deg, var(--teal) 0%, color-mix(in oklab, var(--teal) 35%, transparent) 100%);
+      box-shadow: 0 0 12px var(--teal);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 1.2s var(--ease);
+      transition-delay: var(--edu-delay, 0s);
+    }
+
+    .edu-row.low .edu-bar::after {
+      background: linear-gradient(90deg, var(--coral) 0%, color-mix(in oklab, var(--coral) 30%, transparent) 100%);
+      box-shadow: 0 0 12px var(--coral);
+    }
+
+    .edu-row.peak .edu-bar::after {
+      background: linear-gradient(90deg, var(--amber) 0%, color-mix(in oklab, var(--amber) 30%, transparent) 100%);
+      box-shadow: 0 0 12px var(--amber);
+    }
+
+    .edu-row.in-view .edu-bar::after {
+      transform: scaleX(1);
+    }
+
+    /* ========================================================================
      Responsive
      ======================================================================== */
 
-  /* Extra-wide screens up to the course maximum (2008px).
+    /* Extra-wide screens up to the course maximum (2008px).
      Nudge up the scene max-width so the composition doesn't look
      lost in the middle of a 2008px window. */
-  @media (min-width: 1600px) {
-    .scene, .hero-scene { max-width: 1440px; }
-    .appendix { max-width: 1360px; }
-    .kw-grid { max-width: 1200px; }
-  }
+    @media (min-width: 1600px) {
 
-  @media (max-width: 900px) {
-    .topbar { padding: 12px 24px; }
-    .scene, .hero-scene { padding-left: 24px; padding-right: 24px; }
-    .split { grid-template-columns: 1fr; gap: 48px; }
-    .closing-grid { grid-template-columns: 1fr; }
-    .hero-stats { gap: 32px; }
-    .prev-row { grid-template-columns: 90px 1fr 40px; gap: 18px; }
-    .prev-pct { font-size: 30px; }
-    .x16-reveal { flex-direction: column; gap: 12px; }
-    .kw-grid { grid-template-columns: 1fr; gap: 22px; }
-    /* Long regexes in appendix prose also need to wrap at narrow widths */
-    .appendix code { white-space: normal; word-break: break-word; overflow-wrap: anywhere; }
-  }
+      .scene,
+      .hero-scene {
+        max-width: 1440px;
+      }
 
-  /* Small mobile 414 and below: tighter padding, smaller hero */
-  @media (max-width: 480px) {
-    .topbar {
-      padding: 10px 18px;
-      flex-wrap: wrap;
-      row-gap: 4px;
-    }
-    .topbar-title { font-size: 15px; }
-    .topbar-meta { font-size: 8px; }
-    .scene { padding: 96px 20px 64px; }
-    .hero-scene { padding: 110px 20px 64px; }
-    .hero-stats {
-      grid-template-columns: 1fr 1fr;
-      gap: 28px 20px;
-    }
-    .appendix table { font-size: 11px; }
-    .appendix th, .appendix td { padding-right: 12px; }
-    .prev-row {
-      grid-template-columns: 72px 1fr 32px;
-      gap: 14px;
-      padding: 18px 2px 0;
-    }
-    .prev-pct { font-size: 26px; }
-    .prev-name { font-size: 11px; letter-spacing: 0.1em; }
-    footer.footer {
-      flex-direction: column;
-      gap: 8px;
-      align-items: flex-start;
-    }
-  }
+      .appendix {
+        max-width: 1360px;
+      }
 
-  @media (prefers-reduced-motion: reduce) {
-    .reveal, .draw-line, .draw-fill, .grow-bar, .fade-point, .fade-annot,
-    .chatgpt-band, .chatgpt-label, .prev-row.in-view .prev-bar::after {
-      transition: none !important;
+      .kw-grid {
+        max-width: 1200px;
+      }
     }
-    .reveal { opacity: 1; transform: none; }
-    .draw-line { stroke-dashoffset: 0; }
-    .draw-fill, .fade-point, .fade-annot, .chatgpt-band, .chatgpt-label { opacity: 1; }
-    .grow-bar { transform: scaleY(1); }
-    .prev-row .prev-bar::after { transform: scaleX(1); }
-    html { scroll-behavior: auto; }
-  }
-</style>
+
+    @media (max-width: 900px) {
+      .topbar {
+        padding: 12px 24px;
+      }
+
+      .scene,
+      .hero-scene {
+        padding-left: 24px;
+        padding-right: 24px;
+      }
+
+      .split {
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+
+      .closing-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-stats {
+        gap: 32px;
+      }
+
+      .prev-row {
+        grid-template-columns: 90px 1fr 40px;
+        gap: 18px;
+      }
+
+      .prev-pct {
+        font-size: 30px;
+      }
+
+      .x16-reveal {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .kw-grid {
+        grid-template-columns: 1fr;
+        gap: 22px;
+      }
+
+      .phase {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        padding: 28px 2px;
+      }
+
+      .phase-year {
+        padding-top: 0;
+      }
+
+      .edu-row {
+        grid-template-columns: 72px 100px 1fr;
+        gap: 16px;
+        padding: 18px 2px 0;
+      }
+
+      .edu-pct {
+        font-size: 28px;
+      }
+
+      /* Long regexes in appendix prose also need to wrap at narrow widths */
+      .appendix code {
+        white-space: normal;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+      }
+    }
+
+    /* Small mobile 414 and below: tighter padding, smaller hero */
+    @media (max-width: 480px) {
+      .topbar {
+        padding: 10px 18px;
+        flex-wrap: wrap;
+        row-gap: 4px;
+      }
+
+      .topbar-title {
+        font-size: 15px;
+      }
+
+      .topbar-meta {
+        font-size: 8px;
+      }
+
+      .scene {
+        padding: 96px 20px 64px;
+      }
+
+      .hero-scene {
+        padding: 110px 20px 64px;
+      }
+
+      .hero-stats {
+        grid-template-columns: 1fr 1fr;
+        gap: 28px 20px;
+      }
+
+      .appendix table {
+        font-size: 11px;
+      }
+
+      .appendix th,
+      .appendix td {
+        padding-right: 12px;
+      }
+
+      .prev-row {
+        grid-template-columns: 72px 1fr 32px;
+        gap: 14px;
+        padding: 18px 2px 0;
+      }
+
+      .prev-pct {
+        font-size: 26px;
+      }
+
+      .prev-name {
+        font-size: 11px;
+        letter-spacing: 0.1em;
+      }
+
+      footer.footer {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      .reveal,
+      .draw-line,
+      .draw-fill,
+      .grow-bar,
+      .fade-point,
+      .fade-annot,
+      .chatgpt-band,
+      .chatgpt-label,
+      .prev-row.in-view .prev-bar::after,
+      .edu-row.in-view .edu-bar::after {
+        transition: none !important;
+      }
+
+      .reveal {
+        opacity: 1;
+        transform: none;
+      }
+
+      .draw-line {
+        stroke-dashoffset: 0;
+      }
+
+      .draw-fill,
+      .fade-point,
+      .fade-annot,
+      .chatgpt-band,
+      .chatgpt-label {
+        opacity: 1;
+      }
+
+      .grow-bar {
+        transform: scaleY(1);
+      }
+
+      .prev-row .prev-bar::after {
+        transform: scaleX(1);
+      }
+
+      .edu-row .edu-bar::after {
+        transform: scaleX(1);
+      }
+
+      html {
+        scroll-behavior: auto;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<div class="grain"></div>
-<div class="glow-tl"></div>
-<div class="glow-br"></div>
-<div class="edge-gradient"></div>
+  <div class="grain"></div>
+  <div class="glow-tl"></div>
+  <div class="glow-br"></div>
+  <div class="edge-gradient"></div>
 
-<div class="scroll-progress" id="scroll-progress"></div>
+  <div class="scroll-progress" id="scroll-progress"></div>
 
-<header class="topbar">
-  <div class="topbar-title"><a class="journal-link back-link" href="../">&larr; All assignments</a> &nbsp;&middot;&nbsp; <a class="journal-link" href="https://link.springer.com/journal/146" target="_blank" rel="noopener noreferrer">AI &amp; Society</a> <em>Research Trends</em></div>
-  <div class="topbar-meta">ITASIA302 &nbsp;&bull;&nbsp; April 2026</div>
-</header>
+  <header class="topbar">
+    <div class="topbar-title"><a class="journal-link back-link" href="../">&larr; All assignments</a>
+      &nbsp;&middot;&nbsp; <a class="journal-link" href="https://link.springer.com/journal/146" target="_blank"
+        rel="noopener noreferrer">AI &amp; Society</a> <em>Research Trends</em></div>
+    <div class="topbar-meta">ITASIA302 &nbsp;&bull;&nbsp; April 2026</div>
+  </header>
 
-<main>
+  <main>
 
-  <!-- ===============================================================
+    <!-- ===============================================================
        Scene 0 Opening hook
        =============================================================== -->
-  <section class="hero-scene" id="scene-0">
-    <div class="hero-kicker reveal"><span class="dot"></span>A five-year trace of one journal</div>
+    <section class="hero-scene" id="scene-0">
+      <div class="hero-kicker reveal"><span class="dot"></span>A five-year trace of one journal</div>
 
-    <h1 class="hero-title reveal delay-1">
-      What does a field <em>think</em> about AI?
-    </h1>
+      <h1 class="hero-title reveal delay-1">
+        What does a field <em>think</em> about AI?
+      </h1>
 
-    <p class="hero-dek reveal delay-2">
-      Between 2021 and 2025, the journal <strong><a class="journal-link" href="https://link.springer.com/journal/146" target="_blank" rel="noopener noreferrer">AI &amp; Society</a></strong> published
-      <strong>1,653&nbsp;articles</strong> asking what artificial intelligence does
-      to us to ethics, to creativity, to the classroom, to human labour.
-      Scroll to see where the field's attention went.
-    </p>
+      <p class="hero-dek reveal delay-2">
+        Between 2021 and 2025, the journal <strong><a class="journal-link" href="https://link.springer.com/journal/146"
+            target="_blank" rel="noopener noreferrer">AI &amp; Society</a></strong> published
+        <strong>1,653&nbsp;articles</strong> asking what artificial intelligence does
+        to us to ethics, to creativity, to the classroom, to human labour.
+        Scroll to see where the field's attention went.
+      </p>
 
-    <div class="hero-stats reveal delay-3">
-      <div class="stat-tile">
-        <div class="stat-num" data-counter="1653" data-decimals="0" data-suffix="">0</div>
-        <div class="stat-label">Articles analysed</div>
+      <div class="hero-stats reveal delay-3">
+        <div class="stat-tile">
+          <div class="stat-num" data-counter="1653" data-decimals="0" data-suffix="">0</div>
+          <div class="stat-label">Articles analysed</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-num">&times;<span data-counter="3.3" data-decimals="1">0</span></div>
+          <div class="stat-label">Output growth 2021 &rarr; 2025</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-num"><em><span data-counter="24" data-decimals="0">0</span>%</em></div>
+          <div class="stat-label">Of 2025 papers engage GenAI</div>
+        </div>
       </div>
-      <div class="stat-tile">
-        <div class="stat-num">&times;<span data-counter="3.3" data-decimals="1">0</span></div>
-        <div class="stat-label">Output growth 2021 &rarr; 2025</div>
-      </div>
-      <div class="stat-tile">
-        <div class="stat-num"><em><span data-counter="24" data-decimals="0">0</span>%</em></div>
-        <div class="stat-label">Of 2025 papers engage GenAI</div>
-      </div>
-    </div>
 
-    <div class="scroll-cue reveal delay-5">
-      Scroll to begin
-      <span class="arrow" aria-hidden="true">
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-          <path d="M9 3V15M9 15L4.5 10.5M9 15L13.5 10.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </span>
-    </div>
-  </section>
+      <div class="scroll-cue reveal delay-5">
+        Scroll to begin
+        <span class="arrow" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M9 3V15M9 15L4.5 10.5M9 15L13.5 10.5" stroke="currentColor" stroke-width="1.2"
+              stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </span>
+      </div>
+    </section>
 
-  <!-- ===============================================================
+    <!-- ===============================================================
        Scene 1 Publication volume
        =============================================================== -->
-  <section class="scene" id="scene-1">
-    <div class="scene-number reveal">01 &nbsp;&middot;&nbsp; Volume</div>
+    <section class="scene" id="scene-1">
+      <div class="scene-number reveal">01 &nbsp;&middot;&nbsp; Volume</div>
 
-    <h2 class="headline reveal delay-1">
-      Output nearly <em>doubled</em> in a single year.
-    </h2>
+      <h2 class="headline reveal delay-1">
+        Output nearly <em>doubled</em> in a single year.
+      </h2>
 
-    <p class="dek reveal delay-2">
-      From 2021 to 2024 the journal averaged roughly <em>250 articles a year</em>.
-      Then, in 2025, it published <em>643</em> more than any previous twelve
-      months and almost as many as the three years before it, combined.
-    </p>
+      <p class="dek reveal delay-2">
+        From 2021 to 2024 the journal averaged roughly <em>250 articles a year</em>.
+        Then, in 2025, it published <em>643</em> more than any previous twelve
+        months and almost as many as the three years before it, combined.
+      </p>
 
-    <div class="volume-chart-wrap reveal delay-3" id="volume-chart-wrap">
-      <svg id="volume-chart" viewBox="0 0 1000 340" preserveAspectRatio="xMidYMid meet" aria-label="Articles per year"></svg>
-    </div>
+      <div class="volume-chart-wrap reveal delay-3" id="volume-chart-wrap">
+        <svg id="volume-chart" viewBox="0 0 1000 340" preserveAspectRatio="xMidYMid meet"
+          aria-label="Articles per year"></svg>
+      </div>
 
-    <div class="insight reveal delay-4">
-      <span class="insight-num">+94% YoY</span>
-      <span class="insight-copy">
-        The 2025 surge is not incremental growth it is a phase change. The
-        field didn't grow; it <em>accelerated</em>.
-      </span>
-    </div>
-  </section>
+      <div class="insight reveal delay-4">
+        <span class="insight-num">+94% YoY</span>
+        <span class="insight-copy">
+          The 2025 surge is not incremental growth it is a phase change. The
+          field didn't grow; it <em>accelerated</em>.
+        </span>
+      </div>
+    </section>
 
-  <!-- ===============================================================
+    <!-- ===============================================================
        Scene 2 GenAI surge (hero)
        =============================================================== -->
-  <section class="scene scene-tall" id="scene-2">
-    <div class="scene-number reveal">02 &nbsp;&middot;&nbsp; The GenAI Surge</div>
+    <section class="scene scene-tall" id="scene-2">
+      <div class="scene-number reveal">02 &nbsp;&middot;&nbsp; The GenAI Surge</div>
 
-    <h2 class="headline reveal delay-1">
-      From nowhere to <em>one in four</em> in three years.
-    </h2>
+      <h2 class="headline reveal delay-1">
+        From nowhere to <em>one in four</em> in three years.
+      </h2>
 
-    <p class="dek reveal delay-2">
-      In 2021, essentially no articles engaged with what we now call generative AI
-      the vocabulary did not yet exist. After ChatGPT's launch in
-      <em>November 2022</em>, the share climbs almost linearly. By 2025,
-      <em>one in four papers</em> in the journal reads AI through the GenAI lens.
-    </p>
+      <p class="dek reveal delay-2">
+        In 2021, essentially no articles engaged with what we now call generative AI
+        the vocabulary did not yet exist. After ChatGPT's launch in
+        <em>November 2022</em>, the share climbs almost linearly. By 2025,
+        <em>one in four papers</em> in the journal reads AI through the GenAI lens.
+      </p>
 
-    <div class="genai-chart-wrap reveal delay-3" id="genai-chart-wrap">
-      <svg id="genai-chart" viewBox="0 0 1000 460" preserveAspectRatio="xMidYMid meet" aria-label="GenAI share of articles per year"></svg>
-    </div>
-
-    <div class="x16-reveal reveal delay-4">
-      <div class="x16-num">0 &rarr; 24%</div>
-      <div class="x16-copy">
-        in three calendar years. <strong>From a vocabulary that did not exist
-        to the dominant lens</strong> through which the journal now reads AI.
+      <div class="genai-chart-wrap reveal delay-3" id="genai-chart-wrap">
+        <svg id="genai-chart" viewBox="0 0 1000 460" preserveAspectRatio="xMidYMid meet"
+          aria-label="GenAI share of articles per year"></svg>
       </div>
-    </div>
-  </section>
 
-  <!-- ===============================================================
+      <div class="x16-reveal reveal delay-4">
+        <div class="x16-num">0 &rarr; 24%</div>
+        <div class="x16-copy">
+          in three calendar years. <strong>From a vocabulary that did not exist
+            to the dominant lens</strong> through which the journal now reads AI.
+        </div>
+      </div>
+    </section>
+
+    <!-- ===============================================================
        Scene 3 Topic trajectories (interactive)
        =============================================================== -->
-  <section class="scene scene-tall" id="scene-3">
-    <div class="scene-number reveal">03 &nbsp;&middot;&nbsp; Five trajectories</div>
+    <section class="scene scene-tall" id="scene-3">
+      <div class="scene-number reveal">03 &nbsp;&middot;&nbsp; Five trajectories</div>
 
-    <h2 class="headline reveal delay-1">
-      Five topics. <em>Five</em> different stories.
-    </h2>
+      <h2 class="headline reveal delay-1">
+        Five topics. <em>Five</em> different stories.
+      </h2>
 
-    <p class="dek reveal delay-2">
-      Zoom out from generative AI and the field's attention map is more varied than
-      it looks. Ethics holds steady as the constant anchor. Creativity turns out to
-      be the quiet second pillar. Bias climbs slowly. Robots collapse. Education
-      barely moves. Click any topic below to isolate its trajectory.
-    </p>
+      <p class="dek reveal delay-2">
+        Zoom out from generative AI and the field's attention map is more varied than
+        it looks. Ethics holds steady as the constant anchor. Creativity turns out to
+        be the quiet second pillar. Bias climbs slowly. Robots collapse. Education
+        barely moves. Click any topic below to isolate its trajectory.
+      </p>
 
-    <div class="topic-controls reveal delay-3" id="topic-controls" role="tablist">
-      <!-- filled by JS -->
-    </div>
+      <div class="topic-controls reveal delay-3" id="topic-controls" role="tablist">
+        <!-- filled by JS -->
+      </div>
 
-    <svg id="traj-chart" viewBox="0 0 1000 420" preserveAspectRatio="xMidYMid meet" class="reveal delay-3" aria-label="Topic prevalence trajectories 2021 to 2025"></svg>
+      <svg id="traj-chart" viewBox="0 0 1000 420" preserveAspectRatio="xMidYMid meet" class="reveal delay-3"
+        aria-label="Topic prevalence trajectories 2021 to 2025"></svg>
 
-    <div class="traj-annotations reveal delay-4" id="traj-annotations">
-      <!-- filled by JS -->
-    </div>
-  </section>
+      <div class="traj-annotations reveal delay-4" id="traj-annotations">
+        <!-- filled by JS -->
+      </div>
+    </section>
 
-  <!-- ===============================================================
+    <!-- ===============================================================
        Scene 4 2025 snapshot
        =============================================================== -->
-  <section class="scene" id="scene-4">
-    <div class="scene-number reveal">04 &nbsp;&middot;&nbsp; 2025 Snapshot</div>
+    <section class="scene" id="scene-4">
+      <div class="scene-number reveal">04 &nbsp;&middot;&nbsp; 2025 Snapshot</div>
 
-    <h2 class="headline reveal delay-1">
-      Where the field <em>stands</em> now.
-    </h2>
+      <h2 class="headline reveal delay-1">
+        Where the field <em>stands</em> now.
+      </h2>
 
-    <p class="dek reveal delay-2">
-      Eight topics, ranked by share of 2025 articles. Articles often engage more
-      than one theme, so percentages do not sum to 100 each is the share
-      of papers that touch the topic at all. The surprises are in the middle of
-      the list: <em>creativity</em> is the third-largest theme, and
-      <em>generative AI</em>, so new it barely existed in 2021, is now second.
-    </p>
+      <p class="dek reveal delay-2">
+        Eight topics, ranked by share of 2025 articles. Articles often engage more
+        than one theme, so percentages do not sum to 100 each is the share
+        of papers that touch the topic at all. The surprises are in the middle of
+        the list: <em>creativity</em> is the third-largest theme, and
+        <em>generative AI</em>, so new it barely existed in 2021, is now second.
+      </p>
 
-    <div class="prevalence-list" id="prevalence-list">
-      <!-- filled by JS -->
-    </div>
-  </section>
+      <div class="prevalence-list" id="prevalence-list">
+        <!-- filled by JS -->
+      </div>
+    </section>
 
-  <!-- ===============================================================
+    <!-- ===============================================================
        Scene 5 Closing reflection
        =============================================================== -->
-  <section class="scene" id="scene-5">
-    <div class="scene-number reveal">05 &nbsp;&middot;&nbsp; So what</div>
+    <section class="scene" id="scene-5">
+      <div class="scene-number reveal">05 &nbsp;&middot;&nbsp; So what</div>
 
-    <h2 class="headline reveal delay-1">
-      A field is <em>what</em> it chooses to study.
-    </h2>
+      <h2 class="headline reveal delay-1">
+        A field is <em>what</em> it chooses to study.
+      </h2>
 
-    <div class="closing-grid">
-      <div class="closing-body reveal delay-2">
-        <p>
-          Over five years, the same journal moves from <em>19%</em> of its pages on
-          robots to <em>4%</em>, and from essentially <em>zero</em> on generative AI
-          to <em>24%</em>. This is not a shift in the technology alone. It is a
-          shift in what the field finds urgent enough to write about.
-        </p>
-        <p>
-          One thing does not move: about a <em>quarter</em> of every year's pages
-          belong to <em>ethics and governance</em>, whatever else is in fashion.
-          The field's conscience is a constant.
-        </p>
-        <p>
-          Less visible, but equally steady: <em>creativity and the arts</em>
-          art, music, literature, aesthetics sit at roughly
-          <em>17%</em> every year. Not a trend, a foundation.
-        </p>
-        <p>
-          What remains undiscussed is equally telling. In a corpus of 1,653
-          articles about AI and society, the <em>classroom</em> where most
-          people first meet these systems is still a minority theme at
-          <em>10%</em>. That is the gap this line of work tries to close.
-        </p>
+      <p class="dek reveal delay-2">
+        I scraped <em>1,849</em> articles for this page and sat with the numbers
+        for a while. What surprised me wasn't any single statistic. It was how
+        often the journal seems to swap what it cares about. Roughly every
+        eighteen months, the urgent question changes. These are the four topic changes in this journal that I found it
+        interesting.
+      </p>
+
+      <div class="phase-list reveal delay-3">
+
+        <article class="phase">
+          <div class="phase-year">2021&ndash;2022</div>
+          <div class="phase-body">
+            <h3 class="phase-head">Robots, ethics, <em>and a pandemic</em>.</h3>
+            <p>
+              When I started reading the 2021 archive, I was expecting a lot of
+              algorithm talk. What I actually found was <em>robots</em>. Robots
+              &amp; HRI is the single biggest theme of 2021 at <em>18.9%</em>,
+              about one in five papers that year. Next to it, Ethics &amp;
+              Governance at <em>25.5%</em>, mostly about moral-responsibility and
+              agency.
+            </p>
+            <p>
+              What I didn't expect was a whole cluster on <em>archives</em> &mdash;
+              email collections, born-digital records, digital preservation
+              &mdash; and a little bit on COVID-era digital life.
+            </p>
+          </div>
+        </article>
+
+        <article class="phase">
+          <div class="phase-year">2023</div>
+          <div class="phase-body">
+            <h3 class="phase-head">Something <em>shifts</em>.</h3>
+            <p>
+              Then 2023 reads like a different journal. Ethics is still the
+              constant at <em>26.6%</em>, but the conversation underneath it
+              changes. I kept running into the word <em>coloniality</em>.
+              Representation bias. Who actually controls these systems. The
+              field stops asking <em>is this ethical?</em> and starts asking
+              <em>whose ethics, shaped by whom?</em>
+            </p>
+          </div>
+        </article>
+
+        <article class="phase">
+          <div class="phase-year">2024&ndash;2025</div>
+          <div class="phase-body">
+            <h3 class="phase-head">And then <em>ChatGPT</em>.</h3>
+            <p>
+              Two years after ChatGPT launched, the literature finally shows up.
+              Generative AI goes from a vocabulary that essentially did not
+              exist in 2021 to <em>one in four</em> papers in 2025
+              (<em>24.0%</em>). Volume nearly doubles too, with <em>203</em>
+              articles in 2023 to <em>643</em> in 2025.
+            </p>
+            <p>
+              What I noticed about this writing is that it isn't speculative
+              anymore. It is no longer <em>what if LLMs could do X?</em> It is
+              <em>the tools are already here, here is what they are doing</em>
+              to students' essays, to artists' studios, to journalists' drafts.
+            </p>
+          </div>
+        </article>
+
+        <article class="phase">
+          <div class="phase-year">2026 <span class="phase-tag">partial year</span></div>
+          <div class="phase-body">
+            <h3 class="phase-head">Something shifts <em>again</em>.</h3>
+            <p>
+              The first <em>196</em> articles of 2026 (January through
+              mid-April) look different again. Ethics &amp; Governance jumps to
+              about <em>38%</em>, a ten-point leap from 2025.
+              <em>Governance</em> as a keyword shows up in <em>22%</em> of
+              submissions, <em>accountability</em> in <em>12%</em>. Generative
+              AI dips to around <em>20%</em>.
+            </p>
+            <p>
+              From my understanding (even though it's been only 4 months), the field has stopped asking <em>what can
+                these systems do?</em> and started asking <em>how do we do damage control?</em>
+            </p>
+          </div>
+        </article>
+
       </div>
 
-      <div class="meta-block reveal delay-3">
-        <span class="meta-key">Source</span>
-        <span class="meta-val"><a class="journal-link" href="https://link.springer.com/journal/146" target="_blank" rel="noopener noreferrer"><em>AI &amp; Society</em></a>, Springer Nature. Articles with publication date between 2021-01-01 and 2025-12-31.</span>
+      <div class="closing-grid">
+        <div class="closing-body reveal delay-4">
+          <p>
+            Two things don't really change these 5 year. A <em>quarter</em> of
+            every year's pages always goes to ethics and governance. And <em>creativity and the arts</em> &mdash;
+            art, music, literature, aesthetics sit at about
+            <em>17%</em> every year.
+          </p>
+          <p>
+            But there's a third pattern I want to raise, because it's the one
+            <em>I'm</em> actually writing a thesis in, which is the classroom. Even across all
+            <em>1,653</em> articles, education stays a minority theme.
+          </p>
+        </div>
 
-        <span class="meta-key">Method</span>
-        <span class="meta-val">Topic assignment via strict-keyword regex matching on title and abstract. Word boundaries and compound phrases used to avoid false positives. Percentages are share of articles where the topic was detected; overlaps allowed.</span>
+        <div class="meta-block reveal delay-5">
+          <span class="meta-key">Source</span>
+          <span class="meta-val"><a class="journal-link" href="https://link.springer.com/journal/146" target="_blank"
+              rel="noopener noreferrer"><em>AI &amp; Society</em></a>, Springer Nature. Articles with publication date
+            between 2021-01-01 and 2025-12-31.</span>
 
-        <span class="meta-key">Scope</span>
-        <span class="meta-val">N = 1,653 articles across five calendar years.</span>
+          <span class="meta-key">Method</span>
+          <span class="meta-val">Topic assignment via strict-keyword regex matching on title and abstract. Word
+            boundaries and compound phrases used to avoid false positives. Percentages are share of articles where the
+            topic was detected; overlaps allowed.</span>
 
-        <span class="meta-key">Author</span>
-        <span class="meta-val">Takumi <em>ITASIA302</em></span>
+          <span class="meta-key">Scope</span>
+          <span class="meta-val">N = <em>1,653</em> articles across five calendar years. <em>196</em> additional
+            articles from 2026-01 to 2026-04 are present in the underlying archive and referenced for the 2026 phase,
+            but sit outside the main analysis window.</span>
+
+          <span class="meta-key">Author</span>
+          <span class="meta-val">Takumi <em>ITASIA302</em></span>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ===============================================================
-       Scene 6 Methodology appendix
+    <!-- ===============================================================
+       Scene 6 Education deep dive (the classroom trajectory)
        =============================================================== -->
-  <section class="scene appendix" id="scene-6">
-    <div class="scene-number reveal">06 &nbsp;&middot;&nbsp; Methodology appendix</div>
+    <section class="scene" id="scene-6">
+      <div class="scene-number reveal">06 &nbsp;&middot;&nbsp; The classroom</div>
 
-    <h2 class="headline-sm reveal delay-1">
-      How these numbers were <em>built</em>.
-    </h2>
+      <h2 class="headline reveal delay-1">
+        The place we <em>meet these systems</em> first.
+      </h2>
 
-    <p class="dek reveal delay-2">
-      A companion to the visualization: what was counted, how topics were
-      detected, and where the method stops short. The full text version lives
-      in <a class="journal-link" href="methodology.md">methodology.md</a>
-      alongside this page.
-    </p>
+      <p class="dek reveal delay-2">
+        Of all the patterns in the archive, education is the one I keep staring
+        at. It's never a major theme, and its never more than about
+        <em>14%</em> of any year. But the shift of its trend is strange,
+        and I think it says something about how this field reacts to what's
+        happening in the real world.
+      </p>
 
-    <div class="appendix-body">
+      <div class="edu-traj reveal delay-3">
 
-      <h3>Corpus</h3>
-      <ul>
-        <li><strong>Journal:</strong> <em>AI &amp; Society</em>, Springer Nature.</li>
-        <li><strong>Scraping window:</strong> all articles with publication date &ge; 2021-01-01 present in the online archive at the time of collection.</li>
-        <li><strong>Analysis window:</strong> calendar years 2021 through 2025 inclusive (five full years). Articles dated 2026-01 to 2026-04 are present in the underlying dataset but excluded because 2026 is incomplete at the time of analysis.</li>
-        <li><strong>N analysed:</strong> 1,653 articles.</li>
-        <li><strong>Fields used:</strong> <code>Title</code> (never null); <code>Abstract</code> (null in 549 of 1,849 full-dataset rows treated as empty strings for matching); <code>Date Published</code>.</li>
-      </ul>
-
-      <h4>Per-year article counts</h4>
-      <table>
-        <thead>
-          <tr><th>Year</th><th class="num">Articles</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>2021</td><td class="num">196</td></tr>
-          <tr><td>2022</td><td class="num">280</td></tr>
-          <tr><td>2023</td><td class="num">203</td></tr>
-          <tr><td>2024</td><td class="num">331</td></tr>
-          <tr><td>2025</td><td class="num">643</td></tr>
-          <tr class="total"><td><strong>Total (2021&ndash;2025)</strong></td><td class="num"><strong>1,653</strong></td></tr>
-        </tbody>
-      </table>
-      <p>The jump to <em>643</em> articles in 2025 roughly <em>1.94&times;</em> the 2024 output is by far the steepest year-over-year change in the five-year window.</p>
-
-      <h3>Topic classification</h3>
-      <p>Each article is checked against a set of regex patterns for each of eight topics. A match in either the title or the abstract tags the article with that topic. Articles may carry multiple topics (overlap is permitted); percentages are the share of that year&rsquo;s articles where the topic was detected and do not sum to 100.</p>
-
-      <h4>Design principles</h4>
-      <ol>
-        <li><strong>Word boundaries (<code>\b</code>) on every pattern</strong> to avoid substring false positives <code>bias</code> does not match <code>biasing</code> or <code>unbiased</code> unless explicitly allowed.</li>
-        <li><strong>Compound phrases over bare common words</strong> where a word is too generic on its own. <code>\bwork\b</code> alone matches hundreds of irrelevant articles (&ldquo;this work argues&rdquo;, &ldquo;framework&rdquo;, &ldquo;worked on&rdquo;); the tightened <em>work</em> pattern requires compounds such as <code>labour market</code>, <code>future of work</code>, <code>workplace</code>, <code>gig economy</code>, <code>workforce</code>, <code>employment</code>.</li>
-        <li><strong>Cross-topic hygiene.</strong> Each word belongs to exactly one topic. <code>regulation</code> is a <em>policy</em> word, not an <em>ethics</em> word; <code>governance</code> is an <em>ethics</em> word, not a <em>policy</em> word. Without this discipline, Ethics and Policy would double-count roughly half of each other&rsquo;s articles.</li>
-        <li><strong>Morphological variants</strong> through regex alternation (<code>robot|robotic|robots|robotics</code>), not through substring matching.</li>
-      </ol>
-
-      <h4>Per-topic keyword sets</h4>
-      <p>Patterns are compiled with <code>re.IGNORECASE</code>. Alternation within groups follows Python regex syntax.</p>
-
-      <div class="kw-grid">
-
-        <div class="kw-block">
-          <div class="kw-title">Generative AI</div>
-          <div class="kw-body">
-            <code>generative ai</code>, <code>gen-ai</code>, <code>large language model(s)</code>, <code>llm(s)</code>, <code>chatgpt</code>, <code>gpt(-\d+)?</code>, <code>foundation model(s)</code>, <code>generative (model|system|tool|technolog|image|video|text)</code>, <code>text-to-(image|video|speech)</code>, <code>diffusion model(s)</code>, <code>stable diffusion</code>, <code>midjourney</code>, <code>dall-e</code>, <code>prompt engineering</code>, <code>gemini</code>, <code>ai-generated</code>.
-          </div>
+        <div class="edu-row" style="--edu-w:66%; --edu-delay:0s;">
+          <span class="edu-year">2021</span>
+          <span class="edu-pct">6.6%</span>
+          <span class="edu-n">~13 of 196 articles</span>
+          <div class="edu-bar"></div>
         </div>
 
-        <div class="kw-block">
-          <div class="kw-title">Ethics &amp; Governance</div>
-          <div class="kw-body">
-            <code>ethics?</code>, <code>ethical (ai|concerns?|implications?|issues?|dilemma|frameworks?|analysis|questions?|principles?)</code>, <code>ai ethics</code>, <code>governance</code>, <code>responsible ai</code>, <code>accountab(le|ility)</code>, <code>moral(ity|\s+status|\s+agency|\s+responsibility|\s+patiency|\s+reasoning)</code>, <code>normative (framework|analysis|concerns|considerations)</code>, <code>trustworthy ai</code>, <code>value alignment</code>.
-            <span class="kw-note">Does <em>not</em> include <code>regulat*</code> that belongs to Policy.</span>
-          </div>
+        <div class="edu-row" style="--edu-w:64%; --edu-delay:0.12s;">
+          <span class="edu-year">2022</span>
+          <span class="edu-pct">6.4%</span>
+          <span class="edu-n">~18 of 280 articles</span>
+          <div class="edu-bar"></div>
         </div>
 
-        <div class="kw-block">
-          <div class="kw-title">Policy &amp; Regulation</div>
-          <div class="kw-body">
-            <code>ai (policy|regulation|law|legislation|governance|act)</code>, <code>technology policy</code>, <code>digital (policy|regulation|law|legislation)</code>, <code>eu ai act</code>, <code>gdpr</code>, <code>regulat(e|ing|ion|ions|ory|ed)</code>, <code>legislat(e|ion|ive|ing|ed)</code>, <code>compliance</code>, <code>public policy</code>.
-          </div>
+        <div class="edu-row low" style="--edu-w:25%; --edu-delay:0.24s;">
+          <span class="edu-year">2023</span>
+          <span class="edu-pct">2.5%</span>
+          <span class="edu-n">~5 of 203 articles</span>
+          <div class="edu-bar"></div>
         </div>
 
-        <div class="kw-block">
-          <div class="kw-title">Creativity &amp; Arts</div>
-          <div class="kw-body">
-            <code>creativ(e|ity)</code>, <code>art(s|ist|ists|istic|istry|work|works)</code>, <code>music(al|ian|ians)?</code>, <code>poetry</code>, <code>literature</code>, <code>paint(er|ing|ers|ings)</code>, <code>aesthetic(s|)</code>, <code>film(making|maker|makers|s)?</code>, <code>compos(er|ers|ition|itional|ing)</code>, <code>choreograph(y|er|ers|ic)</code>, <code>perform(ance|ative|ing|ers?) (art|arts|practice)</code>.
-            <span class="kw-note">Does <em>not</em> include bare <code>design</code>, <code>writing</code>, <code>author</code>, <code>culture</code> too generic.</span>
-          </div>
+        <div class="edu-row" style="--edu-w:79%; --edu-delay:0.36s;">
+          <span class="edu-year">2024</span>
+          <span class="edu-pct">7.9%</span>
+          <span class="edu-n">~26 of 331 articles</span>
+          <div class="edu-bar"></div>
         </div>
 
-        <div class="kw-block">
-          <div class="kw-title">Bias &amp; Fairness</div>
-          <div class="kw-body">
-            <code>bias(es|ed)?</code>, <code>fairness</code>, <code>algorithmic (fair|fairness|justice|equity|discrimination|bias)</code>, <code>discriminat(e|ion|ory|ing)</code>, <code>racial bias</code>, <code>gender bias</code>, <code>racial discrimination</code>, <code>equit(y|able)</code>, <code>marginali[sz]ed</code>.
-          </div>
+        <div class="edu-row" style="--edu-w:98%; --edu-delay:0.48s;">
+          <span class="edu-year">2025</span>
+          <span class="edu-pct">9.8%</span>
+          <span class="edu-n">63 of 643 articles</span>
+          <div class="edu-bar"></div>
         </div>
 
-        <div class="kw-block">
-          <div class="kw-title">Education &amp; Learning</div>
-          <div class="kw-body">
-            <code>teacher(s)?</code>, <code>teaching</code>, <code>student(s)?</code>, <code>pupil(s)?</code>, <code>classroom</code>, <code>school(s|ing)</code>, <code>higher education</code>, <code>education(al)? (system|context|technolog|institution|policy|setting|practice|research)</code>, <code>k-12</code>, <code>curricul(um|a)</code>, <code>pedagog(y|ical|ies)</code>, <code>literacy</code>, <code>learner(s)?</code>, <code>universit(y|ies)</code>, <code>ai-(literacy|education)</code>.
-            <span class="kw-note">Does <em>not</em> include bare <code>learning</code> it matches <em>machine learning</em> on every AI paper.</span>
-          </div>
-        </div>
-
-        <div class="kw-block">
-          <div class="kw-title">Work &amp; Labour</div>
-          <div class="kw-body">
-            <code>labou?r (market|force|relations|rights|conditions)</code>, <code>future of (work|labou?r)</code>, <code>workplace</code>, <code>workforce</code>, <code>worker(s)? (rights?|conditions|protections?)</code>, <code>gig (economy|work|worker|workers)</code>, <code>automation (of|and) (work|labou?r|jobs|employment)</code>, <code>job (loss|losses|displacement|market|insecurity|polarization)</code>, <code>employment</code>, <code>unemployment</code>, <code>occupation(s|al)</code>, <code>human resources?</code>, <code>(algorithmic|ai) management</code>, <code>platform work(er|ers)?</code>, <code>technolog(y|ical) unemployment</code>, <code>digital labou?r</code>.
-          </div>
-        </div>
-
-        <div class="kw-block">
-          <div class="kw-title">Robots &amp; HRI</div>
-          <div class="kw-body">
-            <code>robot(s)?</code>, <code>robotic(s)?</code>, <code>human-robot</code>, <code>hri</code>, <code>android(s)?</code>, <code>humanoid(s)?</code>, <code>cobot(s)?</code>, <code>social robot(s|ics)?</code>, <code>service robot(s)?</code>, <code>care robot(s)?</code>.
-          </div>
+        <div class="edu-row peak" style="--edu-w:100%; --edu-delay:0.60s;">
+          <span class="edu-year">2026 &middot; partial</span>
+          <span class="edu-pct">~14%</span>
+          <span class="edu-n">28 of 196 articles to date</span>
+          <div class="edu-bar"></div>
         </div>
 
       </div>
 
-      <h4>Per-year prevalence (% of articles)</h4>
-      <table>
-        <thead>
-          <tr>
-            <th>Topic</th>
-            <th class="num">2021</th>
-            <th class="num">2022</th>
-            <th class="num">2023</th>
-            <th class="num">2024</th>
-            <th class="num">2025</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>Ethics &amp; Governance</td><td class="num">25.5</td><td class="num">25.4</td><td class="num">26.6</td><td class="num">22.4</td><td class="num">27.5</td></tr>
-          <tr><td>Generative AI</td><td class="num">0.0</td><td class="num">1.1</td><td class="num">9.9</td><td class="num">17.8</td><td class="num">24.0</td></tr>
-          <tr><td>Creativity &amp; Arts</td><td class="num">16.3</td><td class="num">17.5</td><td class="num">16.7</td><td class="num">17.8</td><td class="num">18.8</td></tr>
-          <tr><td>Bias &amp; Fairness</td><td class="num">8.7</td><td class="num">12.1</td><td class="num">12.3</td><td class="num">11.2</td><td class="num">16.2</td></tr>
-          <tr><td>Policy &amp; Regulation</td><td class="num">10.7</td><td class="num">10.0</td><td class="num">9.9</td><td class="num">14.2</td><td class="num">11.8</td></tr>
-          <tr><td>Education &amp; Learning</td><td class="num">6.6</td><td class="num">6.4</td><td class="num">2.5</td><td class="num">7.9</td><td class="num">9.8</td></tr>
-          <tr><td>Work &amp; Labour</td><td class="num">1.5</td><td class="num">2.5</td><td class="num">2.5</td><td class="num">4.5</td><td class="num">4.4</td></tr>
-          <tr><td>Robots &amp; HRI</td><td class="num">18.9</td><td class="num">7.5</td><td class="num">11.8</td><td class="num">5.7</td><td class="num">3.7</td></tr>
-        </tbody>
-      </table>
+      <div class="closing-grid">
+        <div class="closing-body reveal delay-4">
+          <h3 class="phase-head">The <em>2023 dip</em>.</h3>
+          <p>
+            In 2023, only <em>five</em> of 203 articles touched education by the
+            strict definition I used. That's <em>2.5%</em>, the lowest
+            share for any topic in any year, except Robots in 2025. And it's
+            the same year the journal pivoted to coloniality and power.
+          </p>
+          <p>
+            I don't think the classroom suddenly mattered less. I think the
+            field's attention just went somewhere else, and honestly maybe
+            rightly so. But it does mean that when ChatGPT landed a few
+            months later, the education literature was starting from almost
+            nothing.
+          </p>
 
-      <h3>Limitations</h3>
-      <ol>
-        <li><strong>Title + abstract only.</strong> Full-text was not available through scraping. A topic discussed in the body but not mentioned in the abstract will not be detected. This biases the analysis toward topics that appear in article framing.</li>
-        <li><strong>English only.</strong> All patterns are English; non-English articles (a small minority) will under-match.</li>
-        <li><strong>Keyword precision is a design choice.</strong> A looser keyword set (bare <code>work</code>, bare <code>learning</code>, bare <code>design</code>) inflates topics at the cost of precision; a stricter set loses genuine-but-unusually-phrased matches. This report errs on the side of precision. A looser pass tested earlier produced dramatically different rankings (<em>Work</em> appeared as 42% of 2025 rather than 4.4%, driven almost entirely by incidental &ldquo;work&rdquo; usage).</li>
-        <li><strong>Overlap is allowed by design.</strong> A paper on &ldquo;fair GenAI in education&rdquo; tags three topics. Percentages therefore quantify <em>engagement</em>, not exclusive topic share.</li>
-        <li><strong>2025 volume is genuine but skewed.</strong> 643 articles is an unusually large year for the journal. Patterns observed for 2025 may partly reflect editorial or indexing changes at the publisher as well as scholarly attention.</li>
-      </ol>
+          <h3 class="phase-head">The <em>post-ChatGPT climb</em>.</h3>
+          <p>
+            Then education comes back and keeps climbing. <em>2.5%</em> in 2023,
+            <em>7.9%</em> in 2024, <em>9.8%</em> in 2025, and about <em>14%</em>
+            in the first four months of 2026. In raw numbers that's a
+            <em>~12&times;</em> jump from 2023 to 2025, and 2026 is already
+            outpacing the rest.
+          </p>
+          <p>
+            ChatGPT affected how students do their homework in late 2022. The literature took roughly two
+            years to catch up. Two years is a long time when a tool is already
+            in every classroom.
+          </p>
 
-      <h3>Reproducibility</h3>
-      <p>The analysis is implemented in <code>step3_categorize.py</code> (permissive baseline) and <code>step5_tight.py</code> (final strict set, used for this report). Both operate directly on the source xlsx <code>AI_SOCIETY_Articles_2021_onwards.xlsx</code>. The regex patterns listed above are the exact patterns used in <code>step5_tight.py</code>.</p>
+          <h3 class="phase-head">Why <em>I</em> keep writing about this.</h3>
+          <p>
+            Even at this peak, education is still less than one in seven
+            articles.
+          </p>
+          <p>
+            But the place most students and teachers are <em>actually</em>
+            meeting these tools first is the classroom, and we might ask <em>who designs the lesson when the tool writes
+              the answer?</em> This question is still being worked out in real time,
+            by actual teachers, with almost no guidance from the literature.
+            My <a class="journal-link" href="../reading-response/">reading
+              response on Polat &amp; Sarıdaş</a>, <em>31 March 2026</em>, is one
+            of the <em>28</em> 2026 articles in this count. So keep on reading if you're interested in how AI is shaping
+            education.
+          </p>
+        </div>
 
-    </div><!-- .appendix-body -->
+        <div class="meta-block reveal delay-5">
+          <span class="meta-key">Topic definition</span>
+          <span class="meta-val">Strict matches on <em>teacher</em>, <em>student</em>, <em>classroom</em>,
+            <em>pedagogy</em>, <em>curriculum</em>, <em>higher education</em>, <em>AI literacy</em>, and related terms.
+            Bare <em>learning</em> was excluded because it would match <em>machine learning</em> on nearly every
+            article.</span>
 
-    <footer class="footer">
-      <div><a class="journal-link" href="https://link.springer.com/journal/146" target="_blank" rel="noopener noreferrer">AI &amp; Society</a> &nbsp;&middot;&nbsp; Research Trends 2021&ndash;2025</div>
-      <div><em>ITASIA302</em> &nbsp;&middot;&nbsp; April 2026</div>
-    </footer>
-  </section>
+          <span class="meta-key">Five-year span</span>
+          <span class="meta-val">Roughly <em>125</em> education-tagged articles total (2021&ndash;2025). Over
+            <em>half</em> of them are from 2025 alone.</span>
 
-</main>
+          <span class="meta-key">2026 to date</span>
+          <span class="meta-val"><em>28</em> of 196 articles through 2026-04-13 &mdash; <em>~14%</em>. If that share
+            holds, 2026 will be the first year education out-ranks policy, bias, and (possibly) creativity.</span>
 
-<script>
-  "use strict";
+          <span class="meta-key">Where this work goes</span>
+          <span class="meta-val">ITASIA302 reading response &amp; ongoing research on pedagogy in ICT-integrated
+            classrooms.</span>
+        </div>
+      </div>
+    </section>
 
-  // =======================================================================
-  //  Data
-  // =======================================================================
+    <!-- ===============================================================
+       Scene 7 Methodology appendix
+       =============================================================== -->
+    <section class="scene appendix" id="scene-7">
+      <div class="scene-number reveal">07 &nbsp;&middot;&nbsp; Methodology appendix</div>
 
-  const YEARS = [2021, 2022, 2023, 2024, 2025];
+      <h2 class="headline-sm reveal delay-1">
+        How these numbers were <em>built</em>.
+      </h2>
 
-  const volumeData = [196, 280, 203, 331, 643];
+      <p class="dek reveal delay-2">
+        A companion to the visualization: what was counted, how topics were
+        detected, and where the method stops short. The full text version lives
+        in <a class="journal-link" href="methodology.md">methodology.md</a>
+        alongside this page.
+      </p>
 
-  const genaiData = [0.0, 1.1, 9.9, 17.8, 24.0];
+      <div class="appendix-body">
 
-  // Topic trajectories, % of articles per year touching each topic.
-  // Computed from strict-keyword regex matching on title + abstract
-  // across all 1,653 articles published 2021-2025. See methodology
-  // appendix for the exact keyword sets used.
-  const TOPICS = [
-    { id: "ethics",     name: "Ethics & Governance",  color: "#5AC8B0",
-      values: [25.5, 25.4, 26.6, 22.4, 27.5],
-      blurb: "The field's conscience. Roughly a quarter of every year's pages, regardless of what else is in fashion.",
-      delta: "Stable around 25\u201328%" },
-    { id: "creativity", name: "Creativity & Arts",    color: "#B08CD8",
-      values: [16.3, 17.5, 16.7, 17.8, 18.8],
-      blurb: "Quietly the third-largest theme every year. Art, music, literature \u2014 not passing footnotes.",
-      delta: "Stable around 17\u201319%" },
-    { id: "robots",     name: "Robots & HRI",         color: "#D86878",
-      values: [18.9, 7.5, 11.8, 5.7, 3.7],
-      blurb: "Displaced by software AI. Hardware receded as the conversation moved on.",
-      delta: "\u221215 pts (2021 \u2192 2025)" },
-    { id: "bias",       name: "Bias & Fairness",      color: "#9E90D0",
-      values: [8.7, 12.1, 12.3, 11.2, 16.2],
-      blurb: "From a footnote concern to a framing concept.",
-      delta: "+7 pts (2021 \u2192 2025)" },
-    { id: "edu",        name: "Education & Learning", color: "#5090C0",
-      values: [6.6, 6.4, 2.5, 7.9, 9.8],
-      blurb: "Policy and pedagogy catch up with the classroom \u2014 slowly. Still a minority theme in 2025.",
-      delta: "+3 pts (2021 \u2192 2025)" }
-  ];
+        <h3>Corpus</h3>
+        <ul>
+          <li><strong>Journal:</strong> <em>AI &amp; Society</em>, Springer Nature.</li>
+          <li><strong>Scraping window:</strong> all articles with publication date &ge; 2021-01-01 present in the online
+            archive at the time of collection.</li>
+          <li><strong>Analysis window:</strong> calendar years 2021 through 2025 inclusive (five full years). Articles
+            dated 2026-01 to 2026-04 are present in the underlying dataset but excluded because 2026 is incomplete at
+            the time of analysis.</li>
+          <li><strong>N analysed:</strong> 1,653 articles.</li>
+          <li><strong>Fields used:</strong> <code>Title</code> (never null); <code>Abstract</code> (null in 549 of 1,849
+            full-dataset rows treated as empty strings for matching); <code>Date Published</code>.</li>
+        </ul>
 
-  // 2025 topic prevalence (8 topics). Percentages are share of 2025 articles.
-  const prevalence2025 = [
-    { name: "Ethics & Governance",   pct: 27.5, color: "#5AC8B0" },
-    { name: "Generative AI",         pct: 24.0, color: "#FFC890" },
-    { name: "Creativity & Arts",     pct: 18.8, color: "#B08CD8" },
-    { name: "Bias & Fairness",       pct: 16.2, color: "#9E90D0" },
-    { name: "Policy & Regulation",   pct: 11.8, color: "#E6B860" },
-    { name: "Education & Learning",  pct:  9.8, color: "#5090C0" },
-    { name: "Work & Labour",         pct:  4.4, color: "#F0A060" },
-    { name: "Robots & HRI",          pct:  3.7, color: "#D86878" }
-  ];
+        <h4>Per-year article counts</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th class="num">Articles</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>2021</td>
+              <td class="num">196</td>
+            </tr>
+            <tr>
+              <td>2022</td>
+              <td class="num">280</td>
+            </tr>
+            <tr>
+              <td>2023</td>
+              <td class="num">203</td>
+            </tr>
+            <tr>
+              <td>2024</td>
+              <td class="num">331</td>
+            </tr>
+            <tr>
+              <td>2025</td>
+              <td class="num">643</td>
+            </tr>
+            <tr class="total">
+              <td><strong>Total (2021&ndash;2025)</strong></td>
+              <td class="num"><strong>1,653</strong></td>
+            </tr>
+          </tbody>
+        </table>
+        <p>The jump to <em>643</em> articles in 2025 roughly <em>1.94&times;</em> the 2024 output is by far the steepest
+          year-over-year change in the five-year window.</p>
 
-  // =======================================================================
-  //  Utilities
-  // =======================================================================
+        <h3>Topic classification</h3>
+        <p>Each article is checked against a set of regex patterns for each of eight topics. A match in either the title
+          or the abstract tags the article with that topic. Articles may carry multiple topics (overlap is permitted);
+          percentages are the share of that year&rsquo;s articles where the topic was detected and do not sum to 100.
+        </p>
 
-  const SVGNS = "http://www.w3.org/2000/svg";
-  const el = (name, attrs = {}, children = []) => {
-    const node = document.createElementNS(SVGNS, name);
-    for (const k in attrs) {
-      if (attrs[k] !== undefined && attrs[k] !== null)
-        node.setAttribute(k, attrs[k]);
-    }
-    (Array.isArray(children) ? children : [children]).forEach(c => {
-      if (c == null) return;
-      if (typeof c === "string") node.appendChild(document.createTextNode(c));
-      else node.appendChild(c);
-    });
-    return node;
-  };
-  const text = (x, y, content, cls, extra = {}) =>
-    el("text", { x, y, class: cls, ...extra }, [String(content)]);
+        <h4>Design principles</h4>
+        <ol>
+          <li><strong>Word boundaries (<code>\b</code>) on every pattern</strong> to avoid substring false positives
+            <code>bias</code> does not match <code>biasing</code> or <code>unbiased</code> unless explicitly allowed.
+          </li>
+          <li><strong>Compound phrases over bare common words</strong> where a word is too generic on its own.
+            <code>\bwork\b</code> alone matches hundreds of irrelevant articles (&ldquo;this work argues&rdquo;,
+            &ldquo;framework&rdquo;, &ldquo;worked on&rdquo;); the tightened <em>work</em> pattern requires compounds
+            such as <code>labour market</code>, <code>future of work</code>, <code>workplace</code>,
+            <code>gig economy</code>, <code>workforce</code>, <code>employment</code>.
+          </li>
+          <li><strong>Cross-topic hygiene.</strong> Each word belongs to exactly one topic. <code>regulation</code> is a
+            <em>policy</em> word, not an <em>ethics</em> word; <code>governance</code> is an <em>ethics</em> word, not a
+            <em>policy</em> word. Without this discipline, Ethics and Policy would double-count roughly half of each
+            other&rsquo;s articles.
+          </li>
+          <li><strong>Morphological variants</strong> through regex alternation
+            (<code>robot|robotic|robots|robotics</code>), not through substring matching.</li>
+        </ol>
 
-  const fmt = (n, decimals = 0) => {
-    const f = Number(n).toFixed(decimals);
-    return decimals === 0
-      ? Number(f).toLocaleString("en-US")
-      : f;
-  };
+        <h4>Per-topic keyword sets</h4>
+        <p>Patterns are compiled with <code>re.IGNORECASE</code>. Alternation within groups follows Python regex syntax.
+        </p>
 
-  // linear scale helper
-  const scale = (domain, range) => v =>
-    range[0] + (v - domain[0]) * (range[1] - range[0]) / (domain[1] - domain[0]);
+        <div class="kw-grid">
 
-  // =======================================================================
-  //  Chart: publication volume (bar)
-  // =======================================================================
+          <div class="kw-block">
+            <div class="kw-title">Generative AI</div>
+            <div class="kw-body">
+              <code>generative ai</code>, <code>gen-ai</code>, <code>large language model(s)</code>,
+              <code>llm(s)</code>, <code>chatgpt</code>, <code>gpt(-\d+)?</code>, <code>foundation model(s)</code>,
+              <code>generative (model|system|tool|technolog|image|video|text)</code>,
+              <code>text-to-(image|video|speech)</code>, <code>diffusion model(s)</code>, <code>stable diffusion</code>,
+              <code>midjourney</code>, <code>dall-e</code>, <code>prompt engineering</code>, <code>gemini</code>,
+              <code>ai-generated</code>.
+            </div>
+          </div>
 
-  function buildVolumeChart() {
-    const svg = document.getElementById("volume-chart");
-    svg.innerHTML = "";
+          <div class="kw-block">
+            <div class="kw-title">Ethics &amp; Governance</div>
+            <div class="kw-body">
+              <code>ethics?</code>,
+              <code>ethical (ai|concerns?|implications?|issues?|dilemma|frameworks?|analysis|questions?|principles?)</code>,
+              <code>ai ethics</code>, <code>governance</code>, <code>responsible ai</code>,
+              <code>accountab(le|ility)</code>,
+              <code>moral(ity|\s+status|\s+agency|\s+responsibility|\s+patiency|\s+reasoning)</code>,
+              <code>normative (framework|analysis|concerns|considerations)</code>, <code>trustworthy ai</code>,
+              <code>value alignment</code>.
+              <span class="kw-note">Does <em>not</em> include <code>regulat*</code> that belongs to Policy.</span>
+            </div>
+          </div>
 
-    const W = 1000, H = 340;
-    const M = { t: 28, r: 20, b: 58, l: 60 };
-    const innerW = W - M.l - M.r;
-    const innerH = H - M.t - M.b;
-    const maxVal = 720;
-    const barPad = 0.34;
+          <div class="kw-block">
+            <div class="kw-title">Policy &amp; Regulation</div>
+            <div class="kw-body">
+              <code>ai (policy|regulation|law|legislation|governance|act)</code>, <code>technology policy</code>,
+              <code>digital (policy|regulation|law|legislation)</code>, <code>eu ai act</code>, <code>gdpr</code>,
+              <code>regulat(e|ing|ion|ions|ory|ed)</code>, <code>legislat(e|ion|ive|ing|ed)</code>,
+              <code>compliance</code>, <code>public policy</code>.
+            </div>
+          </div>
 
-    // defs
-    const defs = el("defs");
-    defs.innerHTML = `
+          <div class="kw-block">
+            <div class="kw-title">Creativity &amp; Arts</div>
+            <div class="kw-body">
+              <code>creativ(e|ity)</code>, <code>art(s|ist|ists|istic|istry|work|works)</code>,
+              <code>music(al|ian|ians)?</code>, <code>poetry</code>, <code>literature</code>,
+              <code>paint(er|ing|ers|ings)</code>, <code>aesthetic(s|)</code>,
+              <code>film(making|maker|makers|s)?</code>, <code>compos(er|ers|ition|itional|ing)</code>,
+              <code>choreograph(y|er|ers|ic)</code>, <code>perform(ance|ative|ing|ers?) (art|arts|practice)</code>.
+              <span class="kw-note">Does <em>not</em> include bare <code>design</code>, <code>writing</code>,
+                <code>author</code>, <code>culture</code> too generic.</span>
+            </div>
+          </div>
+
+          <div class="kw-block">
+            <div class="kw-title">Bias &amp; Fairness</div>
+            <div class="kw-body">
+              <code>bias(es|ed)?</code>, <code>fairness</code>,
+              <code>algorithmic (fair|fairness|justice|equity|discrimination|bias)</code>,
+              <code>discriminat(e|ion|ory|ing)</code>, <code>racial bias</code>, <code>gender bias</code>,
+              <code>racial discrimination</code>, <code>equit(y|able)</code>, <code>marginali[sz]ed</code>.
+            </div>
+          </div>
+
+          <div class="kw-block">
+            <div class="kw-title">Education &amp; Learning</div>
+            <div class="kw-body">
+              <code>teacher(s)?</code>, <code>teaching</code>, <code>student(s)?</code>, <code>pupil(s)?</code>,
+              <code>classroom</code>, <code>school(s|ing)</code>, <code>higher education</code>,
+              <code>education(al)? (system|context|technolog|institution|policy|setting|practice|research)</code>,
+              <code>k-12</code>, <code>curricul(um|a)</code>, <code>pedagog(y|ical|ies)</code>, <code>literacy</code>,
+              <code>learner(s)?</code>, <code>universit(y|ies)</code>, <code>ai-(literacy|education)</code>.
+              <span class="kw-note">Does <em>not</em> include bare <code>learning</code> it matches <em>machine
+                  learning</em> on every AI paper.</span>
+            </div>
+          </div>
+
+          <div class="kw-block">
+            <div class="kw-title">Work &amp; Labour</div>
+            <div class="kw-body">
+              <code>labou?r (market|force|relations|rights|conditions)</code>, <code>future of (work|labou?r)</code>,
+              <code>workplace</code>, <code>workforce</code>, <code>worker(s)? (rights?|conditions|protections?)</code>,
+              <code>gig (economy|work|worker|workers)</code>,
+              <code>automation (of|and) (work|labou?r|jobs|employment)</code>,
+              <code>job (loss|losses|displacement|market|insecurity|polarization)</code>, <code>employment</code>,
+              <code>unemployment</code>, <code>occupation(s|al)</code>, <code>human resources?</code>,
+              <code>(algorithmic|ai) management</code>, <code>platform work(er|ers)?</code>,
+              <code>technolog(y|ical) unemployment</code>, <code>digital labou?r</code>.
+            </div>
+          </div>
+
+          <div class="kw-block">
+            <div class="kw-title">Robots &amp; HRI</div>
+            <div class="kw-body">
+              <code>robot(s)?</code>, <code>robotic(s)?</code>, <code>human-robot</code>, <code>hri</code>,
+              <code>android(s)?</code>, <code>humanoid(s)?</code>, <code>cobot(s)?</code>,
+              <code>social robot(s|ics)?</code>, <code>service robot(s)?</code>, <code>care robot(s)?</code>.
+            </div>
+          </div>
+
+        </div>
+
+        <h4>Per-year prevalence (% of articles)</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Topic</th>
+              <th class="num">2021</th>
+              <th class="num">2022</th>
+              <th class="num">2023</th>
+              <th class="num">2024</th>
+              <th class="num">2025</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Ethics &amp; Governance</td>
+              <td class="num">25.5</td>
+              <td class="num">25.4</td>
+              <td class="num">26.6</td>
+              <td class="num">22.4</td>
+              <td class="num">27.5</td>
+            </tr>
+            <tr>
+              <td>Generative AI</td>
+              <td class="num">0.0</td>
+              <td class="num">1.1</td>
+              <td class="num">9.9</td>
+              <td class="num">17.8</td>
+              <td class="num">24.0</td>
+            </tr>
+            <tr>
+              <td>Creativity &amp; Arts</td>
+              <td class="num">16.3</td>
+              <td class="num">17.5</td>
+              <td class="num">16.7</td>
+              <td class="num">17.8</td>
+              <td class="num">18.8</td>
+            </tr>
+            <tr>
+              <td>Bias &amp; Fairness</td>
+              <td class="num">8.7</td>
+              <td class="num">12.1</td>
+              <td class="num">12.3</td>
+              <td class="num">11.2</td>
+              <td class="num">16.2</td>
+            </tr>
+            <tr>
+              <td>Policy &amp; Regulation</td>
+              <td class="num">10.7</td>
+              <td class="num">10.0</td>
+              <td class="num">9.9</td>
+              <td class="num">14.2</td>
+              <td class="num">11.8</td>
+            </tr>
+            <tr>
+              <td>Education &amp; Learning</td>
+              <td class="num">6.6</td>
+              <td class="num">6.4</td>
+              <td class="num">2.5</td>
+              <td class="num">7.9</td>
+              <td class="num">9.8</td>
+            </tr>
+            <tr>
+              <td>Work &amp; Labour</td>
+              <td class="num">1.5</td>
+              <td class="num">2.5</td>
+              <td class="num">2.5</td>
+              <td class="num">4.5</td>
+              <td class="num">4.4</td>
+            </tr>
+            <tr>
+              <td>Robots &amp; HRI</td>
+              <td class="num">18.9</td>
+              <td class="num">7.5</td>
+              <td class="num">11.8</td>
+              <td class="num">5.7</td>
+              <td class="num">3.7</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Limitations</h3>
+        <ol>
+          <li><strong>Title + abstract only.</strong> Full-text was not available through scraping. A topic discussed in
+            the body but not mentioned in the abstract will not be detected. This biases the analysis toward topics that
+            appear in article framing.</li>
+          <li><strong>English only.</strong> All patterns are English; non-English articles (a small minority) will
+            under-match.</li>
+          <li><strong>Keyword precision is a design choice.</strong> A looser keyword set (bare <code>work</code>, bare
+            <code>learning</code>, bare <code>design</code>) inflates topics at the cost of precision; a stricter set
+            loses genuine-but-unusually-phrased matches. This report errs on the side of precision. A looser pass tested
+            earlier produced dramatically different rankings (<em>Work</em> appeared as 42% of 2025 rather than 4.4%,
+            driven almost entirely by incidental &ldquo;work&rdquo; usage).
+          </li>
+          <li><strong>Overlap is allowed by design.</strong> A paper on &ldquo;fair GenAI in education&rdquo; tags three
+            topics. Percentages therefore quantify <em>engagement</em>, not exclusive topic share.</li>
+          <li><strong>2025 volume is genuine but skewed.</strong> 643 articles is an unusually large year for the
+            journal. Patterns observed for 2025 may partly reflect editorial or indexing changes at the publisher as
+            well as scholarly attention.</li>
+        </ol>
+
+        <h3>Reproducibility</h3>
+        <p>The analysis is implemented in <code>step3_categorize.py</code> (permissive baseline) and
+          <code>step5_tight.py</code> (final strict set, used for this report). Both operate directly on the source xlsx
+          <code>AI_SOCIETY_Articles_2021_onwards.xlsx</code>. The regex patterns listed above are the exact patterns
+          used in <code>step5_tight.py</code>.
+        </p>
+
+      </div><!-- .appendix-body -->
+
+      <footer class="footer">
+        <div><a class="journal-link" href="https://link.springer.com/journal/146" target="_blank"
+            rel="noopener noreferrer">AI &amp; Society</a> &nbsp;&middot;&nbsp; Research Trends 2021&ndash;2025</div>
+        <div><em>ITASIA302</em> &nbsp;&middot;&nbsp; April 2026</div>
+      </footer>
+    </section>
+
+  </main>
+
+  <script>
+    "use strict";
+
+    // =======================================================================
+    //  Data
+    // =======================================================================
+
+    const YEARS = [2021, 2022, 2023, 2024, 2025];
+
+    const volumeData = [196, 280, 203, 331, 643];
+
+    const genaiData = [0.0, 1.1, 9.9, 17.8, 24.0];
+
+    // Topic trajectories, % of articles per year touching each topic.
+    // Computed from strict-keyword regex matching on title + abstract
+    // across all 1,653 articles published 2021-2025. See methodology
+    // appendix for the exact keyword sets used.
+    const TOPICS = [
+      {
+        id: "ethics", name: "Ethics & Governance", color: "#5AC8B0",
+        values: [25.5, 25.4, 26.6, 22.4, 27.5],
+        blurb: "The field's conscience. Roughly a quarter of every year's pages, regardless of what else is in fashion.",
+        delta: "Stable around 25\u201328%"
+      },
+      {
+        id: "creativity", name: "Creativity & Arts", color: "#B08CD8",
+        values: [16.3, 17.5, 16.7, 17.8, 18.8],
+        blurb: "Quietly the third-largest theme every year. Art, music, literature \u2014 not passing footnotes.",
+        delta: "Stable around 17\u201319%"
+      },
+      {
+        id: "robots", name: "Robots & HRI", color: "#D86878",
+        values: [18.9, 7.5, 11.8, 5.7, 3.7],
+        blurb: "Displaced by software AI. Hardware receded as the conversation moved on.",
+        delta: "\u221215 pts (2021 \u2192 2025)"
+      },
+      {
+        id: "bias", name: "Bias & Fairness", color: "#9E90D0",
+        values: [8.7, 12.1, 12.3, 11.2, 16.2],
+        blurb: "From a footnote concern to a framing concept.",
+        delta: "+7 pts (2021 \u2192 2025)"
+      },
+      {
+        id: "edu", name: "Education & Learning", color: "#5090C0",
+        values: [6.6, 6.4, 2.5, 7.9, 9.8],
+        blurb: "Policy and pedagogy catch up with the classroom \u2014 slowly. Still a minority theme in 2025.",
+        delta: "+3 pts (2021 \u2192 2025)"
+      }
+    ];
+
+    // 2025 topic prevalence (8 topics). Percentages are share of 2025 articles.
+    const prevalence2025 = [
+      { name: "Ethics & Governance", pct: 27.5, color: "#5AC8B0" },
+      { name: "Generative AI", pct: 24.0, color: "#FFC890" },
+      { name: "Creativity & Arts", pct: 18.8, color: "#B08CD8" },
+      { name: "Bias & Fairness", pct: 16.2, color: "#9E90D0" },
+      { name: "Policy & Regulation", pct: 11.8, color: "#E6B860" },
+      { name: "Education & Learning", pct: 9.8, color: "#5090C0" },
+      { name: "Work & Labour", pct: 4.4, color: "#F0A060" },
+      { name: "Robots & HRI", pct: 3.7, color: "#D86878" }
+    ];
+
+    // =======================================================================
+    //  Utilities
+    // =======================================================================
+
+    const SVGNS = "http://www.w3.org/2000/svg";
+    const el = (name, attrs = {}, children = []) => {
+      const node = document.createElementNS(SVGNS, name);
+      for (const k in attrs) {
+        if (attrs[k] !== undefined && attrs[k] !== null)
+          node.setAttribute(k, attrs[k]);
+      }
+      (Array.isArray(children) ? children : [children]).forEach(c => {
+        if (c == null) return;
+        if (typeof c === "string") node.appendChild(document.createTextNode(c));
+        else node.appendChild(c);
+      });
+      return node;
+    };
+    const text = (x, y, content, cls, extra = {}) =>
+      el("text", { x, y, class: cls, ...extra }, [String(content)]);
+
+    const fmt = (n, decimals = 0) => {
+      const f = Number(n).toFixed(decimals);
+      return decimals === 0
+        ? Number(f).toLocaleString("en-US")
+        : f;
+    };
+
+    // linear scale helper
+    const scale = (domain, range) => v =>
+      range[0] + (v - domain[0]) * (range[1] - range[0]) / (domain[1] - domain[0]);
+
+    // =======================================================================
+    //  Chart: publication volume (bar)
+    // =======================================================================
+
+    function buildVolumeChart() {
+      const svg = document.getElementById("volume-chart");
+      svg.innerHTML = "";
+
+      const W = 1000, H = 340;
+      const M = { t: 28, r: 20, b: 58, l: 60 };
+      const innerW = W - M.l - M.r;
+      const innerH = H - M.t - M.b;
+      const maxVal = 720;
+      const barPad = 0.34;
+
+      // defs
+      const defs = el("defs");
+      defs.innerHTML = `
       <filter id="soft-glow" x="-20%" y="-20%" width="140%" height="140%">
         <feGaussianBlur stdDeviation="8" result="b"/>
         <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
@@ -1473,103 +2424,103 @@
         <stop offset="100%" stop-color="#F0A060" stop-opacity="0.6"/>
       </linearGradient>
     `;
-    svg.appendChild(defs);
+      svg.appendChild(defs);
 
-    // y-axis ticks
-    const yTicks = [0, 200, 400, 600];
-    yTicks.forEach(tv => {
-      const y = M.t + innerH - (tv / maxVal) * innerH;
-      svg.appendChild(el("line", {
-        x1: M.l, x2: M.l + innerW, y1: y, y2: y, class: "grid-line"
-      }));
-      svg.appendChild(text(M.l - 14, y + 4, tv.toString(), "y-label",
-        { "text-anchor": "end" }));
-    });
-
-    // bars
-    const n = volumeData.length;
-    const bandW = innerW / n;
-    const barW = bandW * (1 - barPad);
-
-    volumeData.forEach((val, i) => {
-      const cx = M.l + bandW * i + bandW / 2;
-      const x = cx - barW / 2;
-      const h = (val / maxVal) * innerH;
-      const y = M.t + innerH - h;
-      const year = YEARS[i];
-      const isLast = i === n - 1;
-
-      if (isLast) {
-        svg.appendChild(el("rect", {
-          x: x - 4, y: y - 4, width: barW + 8, height: h + 8,
-          fill: "#F0A060", opacity: 0.12, class: "grow-bar",
-          filter: "url(#soft-glow)"
+      // y-axis ticks
+      const yTicks = [0, 200, 400, 600];
+      yTicks.forEach(tv => {
+        const y = M.t + innerH - (tv / maxVal) * innerH;
+        svg.appendChild(el("line", {
+          x1: M.l, x2: M.l + innerW, y1: y, y2: y, class: "grid-line"
         }));
-      }
+        svg.appendChild(text(M.l - 14, y + 4, tv.toString(), "y-label",
+          { "text-anchor": "end" }));
+      });
 
-      svg.appendChild(el("rect", {
-        x, y, width: barW, height: h,
-        fill: isLast ? "url(#vol-amber)" : "#1E334D",
-        stroke: isLast ? "#FFC890" : "none",
-        "stroke-width": isLast ? 1 : 0,
-        class: "grow-bar",
-        style: `transition-delay:${0.15 * i}s`
-      }));
+      // bars
+      const n = volumeData.length;
+      const bandW = innerW / n;
+      const barW = bandW * (1 - barPad);
 
-      svg.appendChild(text(
-        cx, y - 10, fmt(val),
-        isLast ? "value-label-strong" : "value-label",
-        {
-          "text-anchor": "middle",
-          class: (isLast ? "value-label-strong" : "value-label") + " fade-point",
-          style: `transition-delay:${0.15 * i + 0.6}s`
+      volumeData.forEach((val, i) => {
+        const cx = M.l + bandW * i + bandW / 2;
+        const x = cx - barW / 2;
+        const h = (val / maxVal) * innerH;
+        const y = M.t + innerH - h;
+        const year = YEARS[i];
+        const isLast = i === n - 1;
+
+        if (isLast) {
+          svg.appendChild(el("rect", {
+            x: x - 4, y: y - 4, width: barW + 8, height: h + 8,
+            fill: "#F0A060", opacity: 0.12, class: "grow-bar",
+            filter: "url(#soft-glow)"
+          }));
         }
-      ));
 
-      svg.appendChild(text(
-        cx, M.t + innerH + 24, year.toString(),
-        "x-label",
-        { "text-anchor": "middle" }
-      ));
+        svg.appendChild(el("rect", {
+          x, y, width: barW, height: h,
+          fill: isLast ? "url(#vol-amber)" : "#1E334D",
+          stroke: isLast ? "#FFC890" : "none",
+          "stroke-width": isLast ? 1 : 0,
+          class: "grow-bar",
+          style: `transition-delay:${0.15 * i}s`
+        }));
 
-      if (isLast) {
         svg.appendChild(text(
-          cx, y - 36, "+94% YoY",
-          "fade-annot",
+          cx, y - 10, fmt(val),
+          isLast ? "value-label-strong" : "value-label",
           {
             "text-anchor": "middle",
-            "font-family": "Fraunces, Georgia, serif",
-            "font-style": "italic",
-            "font-size": 17,
-            "fill": "#FFC890",
-            "style": "transition-delay:1.5s"
+            class: (isLast ? "value-label-strong" : "value-label") + " fade-point",
+            style: `transition-delay:${0.15 * i + 0.6}s`
           }
         ));
-      }
-    });
 
-    svg.appendChild(text(
-      M.l, M.t - 10, "Articles published",
-      "y-label",
-      { "text-anchor": "start" }
-    ));
-  }
+        svg.appendChild(text(
+          cx, M.t + innerH + 24, year.toString(),
+          "x-label",
+          { "text-anchor": "middle" }
+        ));
 
-  // =======================================================================
-  //  Chart: GenAI surge (area + annotations)
-  // =======================================================================
+        if (isLast) {
+          svg.appendChild(text(
+            cx, y - 36, "+94% YoY",
+            "fade-annot",
+            {
+              "text-anchor": "middle",
+              "font-family": "Fraunces, Georgia, serif",
+              "font-style": "italic",
+              "font-size": 17,
+              "fill": "#FFC890",
+              "style": "transition-delay:1.5s"
+            }
+          ));
+        }
+      });
 
-  function buildGenaiChart() {
-    const svg = document.getElementById("genai-chart");
-    svg.innerHTML = "";
+      svg.appendChild(text(
+        M.l, M.t - 10, "Articles published",
+        "y-label",
+        { "text-anchor": "start" }
+      ));
+    }
 
-    const W = 1000, H = 460;
-    const M = { t: 32, r: 60, b: 60, l: 64 };
-    const innerW = W - M.l - M.r;
-    const innerH = H - M.t - M.b;
+    // =======================================================================
+    //  Chart: GenAI surge (area + annotations)
+    // =======================================================================
 
-    const defs = el("defs");
-    defs.innerHTML = `
+    function buildGenaiChart() {
+      const svg = document.getElementById("genai-chart");
+      svg.innerHTML = "";
+
+      const W = 1000, H = 460;
+      const M = { t: 32, r: 60, b: 60, l: 64 };
+      const innerW = W - M.l - M.r;
+      const innerH = H - M.t - M.b;
+
+      const defs = el("defs");
+      defs.innerHTML = `
       <linearGradient id="amber-fill" x1="0" x2="0" y1="0" y2="1">
         <stop offset="0%"  stop-color="#F0A060" stop-opacity="0.48"/>
         <stop offset="60%" stop-color="#F0A060" stop-opacity="0.12"/>
@@ -1580,448 +2531,449 @@
         <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
       </filter>
     `;
-    svg.appendChild(defs);
+      svg.appendChild(defs);
 
-    const xScale = scale([0, YEARS.length - 1], [M.l, M.l + innerW]);
-    const yMax = 28;
-    const yScale = scale([0, yMax], [M.t + innerH, M.t]);
+      const xScale = scale([0, YEARS.length - 1], [M.l, M.l + innerW]);
+      const yMax = 28;
+      const yScale = scale([0, yMax], [M.t + innerH, M.t]);
 
-    const yTicks = [0, 5, 10, 15, 20, 25];
-    yTicks.forEach(tv => {
-      const y = yScale(tv);
-      svg.appendChild(el("line", {
-        x1: M.l, x2: M.l + innerW, y1: y, y2: y, class: "grid-line"
-      }));
-      svg.appendChild(text(M.l - 12, y + 4, tv + "%", "y-label",
-        { "text-anchor": "end" }));
-    });
-
-    YEARS.forEach((yr, i) => {
-      svg.appendChild(text(
-        xScale(i), M.t + innerH + 26, yr.toString(),
-        "x-label", { "text-anchor": "middle" }
-      ));
-    });
-
-    // ChatGPT launch band (Nov 2022 approx between idx 1 and 2)
-    const chatBandX1 = xScale(1.80);
-    const chatBandX2 = xScale(2.00);
-    svg.appendChild(el("rect", {
-      x: chatBandX1, y: M.t,
-      width: chatBandX2 - chatBandX1, height: innerH,
-      class: "chatgpt-band"
-    }));
-
-    const chatLabel = el("g", { class: "chatgpt-label" });
-    chatLabel.appendChild(el("line", {
-      x1: chatBandX2, x2: chatBandX2, y1: M.t, y2: M.t + innerH,
-      stroke: "#F0A060", "stroke-width": 1, "stroke-dasharray": "3 4",
-      opacity: 0.55
-    }));
-    chatLabel.appendChild(text(
-      chatBandX2 + 10, M.t + 20, "Nov 2022",
-      "",
-      {
-        "font-family": "Geist Mono, monospace",
-        "font-size": 10,
-        "letter-spacing": "0.2em",
-        "fill": "#F0A060"
-      }
-    ));
-    chatLabel.appendChild(text(
-      chatBandX2 + 10, M.t + 40, "ChatGPT launches",
-      "",
-      {
-        "font-family": "Fraunces, Georgia, serif",
-        "font-style": "italic",
-        "font-size": 16,
-        "fill": "#FFC890"
-      }
-    ));
-    svg.appendChild(chatLabel);
-
-    const linePts = genaiData.map((v, i) => [xScale(i), yScale(v)]);
-    const linePath = "M " + linePts.map(p => p.join(" ")).join(" L ");
-    const areaPath =
-      linePath
-      + ` L ${xScale(YEARS.length - 1)} ${yScale(0)}`
-      + ` L ${xScale(0)} ${yScale(0)} Z`;
-
-    svg.appendChild(el("path", {
-      d: areaPath,
-      fill: "url(#amber-fill)",
-      class: "draw-fill"
-    }));
-
-    const lineNode = el("path", {
-      d: linePath,
-      fill: "none",
-      stroke: "#F0A060",
-      "stroke-width": 2.2,
-      "stroke-linecap": "round",
-      "stroke-linejoin": "round",
-      "filter": "url(#line-glow)",
-      class: "draw-line"
-    });
-    svg.appendChild(lineNode);
-    requestAnimationFrame(() => {
-      const len = lineNode.getTotalLength ? lineNode.getTotalLength() : 2400;
-      lineNode.style.setProperty("--dash", Math.ceil(len));
-      lineNode.setAttribute("stroke-dasharray", Math.ceil(len));
-    });
-
-    linePts.forEach(([x, y], i) => {
-      const isLast = i === linePts.length - 1;
-      svg.appendChild(el("circle", {
-        cx: x, cy: y, r: isLast ? 7 : 4,
-        fill: "#080C14",
-        stroke: "#F0A060",
-        "stroke-width": isLast ? 2 : 1.6,
-        class: "fade-point",
-        style: `transition-delay:${1.2 + i * 0.15}s`
-      }));
-      if (isLast) {
-        svg.appendChild(el("circle", {
-          cx: x, cy: y, r: 12,
-          fill: "none", stroke: "#FFC890",
-          "stroke-width": 1, opacity: 0.5,
-          class: "fade-point",
-          style: `transition-delay:1.8s`
+      const yTicks = [0, 5, 10, 15, 20, 25];
+      yTicks.forEach(tv => {
+        const y = yScale(tv);
+        svg.appendChild(el("line", {
+          x1: M.l, x2: M.l + innerW, y1: y, y2: y, class: "grid-line"
         }));
-      }
-    });
+        svg.appendChild(text(M.l - 12, y + 4, tv + "%", "y-label",
+          { "text-anchor": "end" }));
+      });
 
-    // Annotations
-    const annot = (dataIdx, title, body, opts) => {
-      const anchor = (opts && opts.anchor) || "start";
-      const dx = (opts && opts.dx) || 14;
-      const dy = (opts && opts.dy) || -40;
-      const delay = (opts && opts.delay) || 1.4;
+      YEARS.forEach((yr, i) => {
+        svg.appendChild(text(
+          xScale(i), M.t + innerH + 26, yr.toString(),
+          "x-label", { "text-anchor": "middle" }
+        ));
+      });
 
-      const [ax, ay] = linePts[dataIdx];
-      const g = el("g", { class: "fade-annot", style: `transition-delay:${delay}s` });
-
-      g.appendChild(el("line", {
-        x1: ax, y1: ay, x2: ax + dx, y2: ay + dy,
-        stroke: "#F0A060", "stroke-width": 1, opacity: 0.55
+      // ChatGPT launch band (Nov 2022 approx between idx 1 and 2)
+      const chatBandX1 = xScale(1.80);
+      const chatBandX2 = xScale(2.00);
+      svg.appendChild(el("rect", {
+        x: chatBandX1, y: M.t,
+        width: chatBandX2 - chatBandX1, height: innerH,
+        class: "chatgpt-band"
       }));
 
-      const tx = ax + dx + (anchor === "end" ? -6 : 6);
-      g.appendChild(text(
-        tx, ay + dy - 14, title, "",
+      const chatLabel = el("g", { class: "chatgpt-label" });
+      chatLabel.appendChild(el("line", {
+        x1: chatBandX2, x2: chatBandX2, y1: M.t, y2: M.t + innerH,
+        stroke: "#F0A060", "stroke-width": 1, "stroke-dasharray": "3 4",
+        opacity: 0.55
+      }));
+      chatLabel.appendChild(text(
+        chatBandX2 + 10, M.t + 20, "Nov 2022",
+        "",
         {
           "font-family": "Geist Mono, monospace",
           "font-size": 10,
-          "letter-spacing": "0.22em",
-          "fill": "#F0A060",
-          "text-anchor": anchor
+          "letter-spacing": "0.2em",
+          "fill": "#F0A060"
         }
       ));
-      g.appendChild(text(
-        tx, ay + dy + 6, body, "",
+      chatLabel.appendChild(text(
+        chatBandX2 + 10, M.t + 40, "ChatGPT launches",
+        "",
         {
           "font-family": "Fraunces, Georgia, serif",
           "font-style": "italic",
-          "font-size": 17,
-          "fill": "#EDE8E0",
-          "text-anchor": anchor
+          "font-size": 16,
+          "fill": "#FFC890"
         }
       ));
-      svg.appendChild(g);
-    };
+      svg.appendChild(chatLabel);
 
-    annot(0, "2021", "0% \u2014 not yet a topic",   { anchor: "start", dx: 14, dy: -44, delay: 1.35 });
-    annot(2, "2023", "post-ChatGPT inflection",    { anchor: "start", dx: 14, dy: -44, delay: 1.55 });
-    annot(3, "2024", "the field pivots",           { anchor: "end",   dx: -14, dy: -52, delay: 1.8 });
-    annot(4, "2025", "1 in 4 papers engage GenAI", { anchor: "end",   dx: -14, dy: -64, delay: 2.1 });
+      const linePts = genaiData.map((v, i) => [xScale(i), yScale(v)]);
+      const linePath = "M " + linePts.map(p => p.join(" ")).join(" L ");
+      const areaPath =
+        linePath
+        + ` L ${xScale(YEARS.length - 1)} ${yScale(0)}`
+        + ` L ${xScale(0)} ${yScale(0)} Z`;
 
-    svg.appendChild(text(
-      M.l, M.t - 10, "Share of articles engaging generative AI",
-      "y-label",
-      { "text-anchor": "start" }
-    ));
-  }
+      svg.appendChild(el("path", {
+        d: areaPath,
+        fill: "url(#amber-fill)",
+        class: "draw-fill"
+      }));
 
-  // =======================================================================
-  //  Chart: topic trajectories (multi-line, interactive)
-  // =======================================================================
+      const lineNode = el("path", {
+        d: linePath,
+        fill: "none",
+        stroke: "#F0A060",
+        "stroke-width": 2.2,
+        "stroke-linecap": "round",
+        "stroke-linejoin": "round",
+        "filter": "url(#line-glow)",
+        class: "draw-line"
+      });
+      svg.appendChild(lineNode);
+      requestAnimationFrame(() => {
+        const len = lineNode.getTotalLength ? lineNode.getTotalLength() : 2400;
+        lineNode.style.setProperty("--dash", Math.ceil(len));
+        lineNode.setAttribute("stroke-dasharray", Math.ceil(len));
+      });
 
-  let currentFocus = "all";
+      linePts.forEach(([x, y], i) => {
+        const isLast = i === linePts.length - 1;
+        svg.appendChild(el("circle", {
+          cx: x, cy: y, r: isLast ? 7 : 4,
+          fill: "#080C14",
+          stroke: "#F0A060",
+          "stroke-width": isLast ? 2 : 1.6,
+          class: "fade-point",
+          style: `transition-delay:${1.2 + i * 0.15}s`
+        }));
+        if (isLast) {
+          svg.appendChild(el("circle", {
+            cx: x, cy: y, r: 12,
+            fill: "none", stroke: "#FFC890",
+            "stroke-width": 1, opacity: 0.5,
+            class: "fade-point",
+            style: `transition-delay:1.8s`
+          }));
+        }
+      });
 
-  function buildTrajectoriesChart() {
-    const svg = document.getElementById("traj-chart");
-    svg.innerHTML = "";
+      // Annotations
+      const annot = (dataIdx, title, body, opts) => {
+        const anchor = (opts && opts.anchor) || "start";
+        const dx = (opts && opts.dx) || 14;
+        const dy = (opts && opts.dy) || -40;
+        const delay = (opts && opts.delay) || 1.4;
 
-    const W = 1000, H = 420;
-    const M = { t: 28, r: 210, b: 52, l: 58 };
-    const innerW = W - M.l - M.r;
-    const innerH = H - M.t - M.b;
+        const [ax, ay] = linePts[dataIdx];
+        const g = el("g", { class: "fade-annot", style: `transition-delay:${delay}s` });
 
-    const xScale = scale([0, YEARS.length - 1], [M.l, M.l + innerW]);
-    const yMax = 30;
-    const yScale = scale([0, yMax], [M.t + innerH, M.t]);
+        g.appendChild(el("line", {
+          x1: ax, y1: ay, x2: ax + dx, y2: ay + dy,
+          stroke: "#F0A060", "stroke-width": 1, opacity: 0.55
+        }));
 
-    const defs = el("defs");
-    defs.innerHTML = `
+        const tx = ax + dx + (anchor === "end" ? -6 : 6);
+        g.appendChild(text(
+          tx, ay + dy - 14, title, "",
+          {
+            "font-family": "Geist Mono, monospace",
+            "font-size": 10,
+            "letter-spacing": "0.22em",
+            "fill": "#F0A060",
+            "text-anchor": anchor
+          }
+        ));
+        g.appendChild(text(
+          tx, ay + dy + 6, body, "",
+          {
+            "font-family": "Fraunces, Georgia, serif",
+            "font-style": "italic",
+            "font-size": 17,
+            "fill": "#EDE8E0",
+            "text-anchor": anchor
+          }
+        ));
+        svg.appendChild(g);
+      };
+
+      annot(0, "2021", "0% \u2014 not yet a topic", { anchor: "start", dx: 14, dy: -44, delay: 1.35 });
+      annot(2, "2023", "post-ChatGPT inflection", { anchor: "start", dx: 14, dy: -44, delay: 1.55 });
+      annot(3, "2024", "the field pivots", { anchor: "end", dx: -14, dy: -52, delay: 1.8 });
+      annot(4, "2025", "1 in 4 papers engage GenAI", { anchor: "end", dx: -14, dy: -64, delay: 2.1 });
+
+      svg.appendChild(text(
+        M.l, M.t - 10, "Share of articles engaging generative AI",
+        "y-label",
+        { "text-anchor": "start" }
+      ));
+    }
+
+    // =======================================================================
+    //  Chart: topic trajectories (multi-line, interactive)
+    // =======================================================================
+
+    let currentFocus = "all";
+
+    function buildTrajectoriesChart() {
+      const svg = document.getElementById("traj-chart");
+      svg.innerHTML = "";
+
+      const W = 1000, H = 420;
+      const M = { t: 28, r: 210, b: 52, l: 58 };
+      const innerW = W - M.l - M.r;
+      const innerH = H - M.t - M.b;
+
+      const xScale = scale([0, YEARS.length - 1], [M.l, M.l + innerW]);
+      const yMax = 30;
+      const yScale = scale([0, yMax], [M.t + innerH, M.t]);
+
+      const defs = el("defs");
+      defs.innerHTML = `
       <filter id="traj-glow" x="-5%" y="-5%" width="110%" height="110%">
         <feGaussianBlur stdDeviation="2.5" result="b"/>
         <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
       </filter>
     `;
-    svg.appendChild(defs);
+      svg.appendChild(defs);
 
-    const yTicks = [0, 5, 10, 15, 20, 25, 30];
-    yTicks.forEach(tv => {
-      const y = yScale(tv);
-      svg.appendChild(el("line", {
-        x1: M.l, x2: M.l + innerW, y1: y, y2: y, class: "grid-line"
-      }));
-      svg.appendChild(text(M.l - 12, y + 4, tv + "%", "y-label",
-        { "text-anchor": "end" }));
-    });
+      const yTicks = [0, 5, 10, 15, 20, 25, 30];
+      yTicks.forEach(tv => {
+        const y = yScale(tv);
+        svg.appendChild(el("line", {
+          x1: M.l, x2: M.l + innerW, y1: y, y2: y, class: "grid-line"
+        }));
+        svg.appendChild(text(M.l - 12, y + 4, tv + "%", "y-label",
+          { "text-anchor": "end" }));
+      });
 
-    YEARS.forEach((yr, i) => {
+      YEARS.forEach((yr, i) => {
+        svg.appendChild(text(
+          xScale(i), M.t + innerH + 24, yr.toString(),
+          "x-label", { "text-anchor": "middle" }
+        ));
+      });
+
+      // Label vertical-anti-collision: sort lines by 2025 value desc and
+      // stagger their labels a little if too close.
+      const endYValues = TOPICS.map(t => yScale(t.values[t.values.length - 1]));
+
+      TOPICS.forEach((topic, ti) => {
+        const pts = topic.values.map((v, i) => [xScale(i), yScale(v)]);
+        const d = "M " + pts.map(p => p.join(" ")).join(" L ");
+
+        const g = el("g", { "data-topic": topic.id });
+
+        const line = el("path", {
+          d,
+          stroke: topic.color,
+          "stroke-width": 2,
+          fill: "none",
+          "stroke-linecap": "round",
+          "stroke-linejoin": "round",
+          filter: "url(#traj-glow)",
+          class: "traj-line draw-line",
+          style: `transition-delay:${0.2 * ti}s`
+        });
+        g.appendChild(line);
+
+        const endX = pts[pts.length - 1][0];
+        const endY = pts[pts.length - 1][1];
+        g.appendChild(el("circle", {
+          cx: endX, cy: endY, r: 4,
+          fill: "#080C14", stroke: topic.color, "stroke-width": 1.6,
+          class: "fade-point",
+          style: `transition-delay:${1.3 + ti * 0.1}s`
+        }));
+        g.appendChild(text(
+          endX + 12, endY + 4,
+          `${topic.name}`,
+          "traj-label fade-point",
+          {
+            "fill": topic.color,
+            "style": `transition-delay:${1.5 + ti * 0.1}s`
+          }
+        ));
+        g.appendChild(text(
+          endX + 12, endY + 20,
+          `${topic.values[topic.values.length - 1]}%`,
+          "traj-label fade-point",
+          {
+            "fill": topic.color,
+            "opacity": 0.6,
+            "style": `transition-delay:${1.55 + ti * 0.1}s`,
+            "font-size": 10
+          }
+        ));
+
+        svg.appendChild(g);
+
+        requestAnimationFrame(() => {
+          const len = line.getTotalLength ? line.getTotalLength() : 1400;
+          line.style.setProperty("--dash", Math.ceil(len));
+          line.setAttribute("stroke-dasharray", Math.ceil(len));
+        });
+      });
+
       svg.appendChild(text(
-        xScale(i), M.t + innerH + 24, yr.toString(),
-        "x-label", { "text-anchor": "middle" }
+        M.l, M.t - 10, "Share of articles engaging topic",
+        "y-label",
+        { "text-anchor": "start" }
       ));
-    });
+    }
 
-    // Label vertical-anti-collision: sort lines by 2025 value desc and
-    // stagger their labels a little if too close.
-    const endYValues = TOPICS.map(t => yScale(t.values[t.values.length - 1]));
+    function buildTopicControls() {
+      const host = document.getElementById("topic-controls");
+      host.innerHTML = "";
 
-    TOPICS.forEach((topic, ti) => {
-      const pts = topic.values.map((v, i) => [xScale(i), yScale(v)]);
-      const d = "M " + pts.map(p => p.join(" ")).join(" L ");
+      const mkChip = (id, label, color) => {
+        const btn = document.createElement("button");
+        btn.className = "chip" + (id === currentFocus ? " active" : "");
+        btn.dataset.topic = id;
+        btn.setAttribute("role", "tab");
+        btn.setAttribute("aria-selected", id === currentFocus ? "true" : "false");
+        if (color) btn.style.setProperty("--chip-color", color);
+        btn.innerHTML =
+          (color ? `<span class="swatch"></span>` : "") + label;
+        btn.addEventListener("click", () => setFocus(id));
+        return btn;
+      };
 
-      const g = el("g", { "data-topic": topic.id });
+      host.appendChild(mkChip("all", "All topics"));
+      TOPICS.forEach(t => host.appendChild(mkChip(t.id, t.name, t.color)));
+    }
 
-      const line = el("path", {
-        d,
-        stroke: topic.color,
-        "stroke-width": 2,
-        fill: "none",
-        "stroke-linecap": "round",
-        "stroke-linejoin": "round",
-        filter: "url(#traj-glow)",
-        class: "traj-line draw-line",
-        style: `transition-delay:${0.2 * ti}s`
-      });
-      g.appendChild(line);
-
-      const endX = pts[pts.length - 1][0];
-      const endY = pts[pts.length - 1][1];
-      g.appendChild(el("circle", {
-        cx: endX, cy: endY, r: 4,
-        fill: "#080C14", stroke: topic.color, "stroke-width": 1.6,
-        class: "fade-point",
-        style: `transition-delay:${1.3 + ti * 0.1}s`
-      }));
-      g.appendChild(text(
-        endX + 12, endY + 4,
-        `${topic.name}`,
-        "traj-label fade-point",
-        {
-          "fill": topic.color,
-          "style": `transition-delay:${1.5 + ti * 0.1}s`
-        }
-      ));
-      g.appendChild(text(
-        endX + 12, endY + 20,
-        `${topic.values[topic.values.length - 1]}%`,
-        "traj-label fade-point",
-        {
-          "fill": topic.color,
-          "opacity": 0.6,
-          "style": `transition-delay:${1.55 + ti * 0.1}s`,
-          "font-size": 10
-        }
-      ));
-
-      svg.appendChild(g);
-
-      requestAnimationFrame(() => {
-        const len = line.getTotalLength ? line.getTotalLength() : 1400;
-        line.style.setProperty("--dash", Math.ceil(len));
-        line.setAttribute("stroke-dasharray", Math.ceil(len));
-      });
-    });
-
-    svg.appendChild(text(
-      M.l, M.t - 10, "Share of articles engaging topic",
-      "y-label",
-      { "text-anchor": "start" }
-    ));
-  }
-
-  function buildTopicControls() {
-    const host = document.getElementById("topic-controls");
-    host.innerHTML = "";
-
-    const mkChip = (id, label, color) => {
-      const btn = document.createElement("button");
-      btn.className = "chip" + (id === currentFocus ? " active" : "");
-      btn.dataset.topic = id;
-      btn.setAttribute("role", "tab");
-      btn.setAttribute("aria-selected", id === currentFocus ? "true" : "false");
-      if (color) btn.style.setProperty("--chip-color", color);
-      btn.innerHTML =
-        (color ? `<span class="swatch"></span>` : "") + label;
-      btn.addEventListener("click", () => setFocus(id));
-      return btn;
-    };
-
-    host.appendChild(mkChip("all", "All topics"));
-    TOPICS.forEach(t => host.appendChild(mkChip(t.id, t.name, t.color)));
-  }
-
-  function buildTrajectoriesAnnotations() {
-    const host = document.getElementById("traj-annotations");
-    host.innerHTML = "";
-    TOPICS.forEach(t => {
-      const card = document.createElement("div");
-      card.className = "traj-annot";
-      card.dataset.topic = t.id;
-      card.style.setProperty("--topic-color", t.color);
-      card.innerHTML = `
+    function buildTrajectoriesAnnotations() {
+      const host = document.getElementById("traj-annotations");
+      host.innerHTML = "";
+      TOPICS.forEach(t => {
+        const card = document.createElement("div");
+        card.className = "traj-annot";
+        card.dataset.topic = t.id;
+        card.style.setProperty("--topic-color", t.color);
+        card.innerHTML = `
         <div class="t-name">${t.name}</div>
         <div class="t-copy">${t.blurb}</div>
         <div class="t-delta">${t.delta}</div>
       `;
-      host.appendChild(card);
-    });
-  }
+        host.appendChild(card);
+      });
+    }
 
-  function setFocus(id) {
-    currentFocus = id;
-    document.querySelectorAll(".chip").forEach(c => {
-      const isOn = c.dataset.topic === id;
-      c.classList.toggle("active", isOn);
-      c.setAttribute("aria-selected", isOn ? "true" : "false");
-    });
-    const trajChart = document.getElementById("traj-chart");
-    trajChart.querySelectorAll("g[data-topic]").forEach(g => {
-      const on = id === "all" || g.dataset.topic === id;
-      const line = g.querySelector(".traj-line");
-      const labels = g.querySelectorAll(".traj-label");
-      if (line) {
-        line.classList.toggle("dimmed", !on);
-        line.classList.toggle("focused", id !== "all" && on);
-      }
-      labels.forEach(lbl => lbl.classList.toggle("dimmed", !on));
-    });
-    document.querySelectorAll(".traj-annot").forEach(card => {
-      if (id === "all") card.style.opacity = "1";
-      else card.style.opacity = card.dataset.topic === id ? "1" : "0.28";
-    });
-  }
+    function setFocus(id) {
+      currentFocus = id;
+      document.querySelectorAll(".chip").forEach(c => {
+        const isOn = c.dataset.topic === id;
+        c.classList.toggle("active", isOn);
+        c.setAttribute("aria-selected", isOn ? "true" : "false");
+      });
+      const trajChart = document.getElementById("traj-chart");
+      trajChart.querySelectorAll("g[data-topic]").forEach(g => {
+        const on = id === "all" || g.dataset.topic === id;
+        const line = g.querySelector(".traj-line");
+        const labels = g.querySelectorAll(".traj-label");
+        if (line) {
+          line.classList.toggle("dimmed", !on);
+          line.classList.toggle("focused", id !== "all" && on);
+        }
+        labels.forEach(lbl => lbl.classList.toggle("dimmed", !on));
+      });
+      document.querySelectorAll(".traj-annot").forEach(card => {
+        if (id === "all") card.style.opacity = "1";
+        else card.style.opacity = card.dataset.topic === id ? "1" : "0.28";
+      });
+    }
 
-  // =======================================================================
-  //  Prevalence list (2025 snapshot)
-  // =======================================================================
+    // =======================================================================
+    //  Prevalence list (2025 snapshot)
+    // =======================================================================
 
-  function buildPrevalenceList() {
-    const host = document.getElementById("prevalence-list");
-    host.innerHTML = "";
-    prevalence2025.forEach((row, i) => {
-      const r = document.createElement("div");
-      r.className = "prev-row reveal";
-      r.style.setProperty("--row-color", row.color);
-      // Scale bar width: max ~28% pct maps to ~92% of row width.
-      r.style.setProperty("--pct", `${Math.min(100, (row.pct / 30) * 100)}%`);
-      r.style.transitionDelay = `${0.08 * i}s`;
-      r.innerHTML = `
+    function buildPrevalenceList() {
+      const host = document.getElementById("prevalence-list");
+      host.innerHTML = "";
+      prevalence2025.forEach((row, i) => {
+        const r = document.createElement("div");
+        r.className = "prev-row reveal";
+        r.style.setProperty("--row-color", row.color);
+        // Scale bar width: max ~28% pct maps to ~92% of row width.
+        r.style.setProperty("--pct", `${Math.min(100, (row.pct / 30) * 100)}%`);
+        r.style.transitionDelay = `${0.08 * i}s`;
+        r.innerHTML = `
         <div class="prev-pct">${row.pct}<span style="font-size:.55em;letter-spacing:0;">%</span></div>
         <div class="prev-name">${row.name}</div>
         <div class="prev-rank">#${(i + 1).toString().padStart(2, "0")}</div>
         <div class="prev-bar"></div>
       `;
-      host.appendChild(r);
-    });
-  }
-
-  // =======================================================================
-  //  Animated counters
-  // =======================================================================
-
-  function animateCounter(node) {
-    const target = parseFloat(node.dataset.counter);
-    const decimals = parseInt(node.dataset.decimals || "0", 10);
-    const suffix = node.dataset.suffix || "";
-    const duration = 1700;
-    const start = performance.now();
-
-    function frame(now) {
-      const t = Math.min(1, (now - start) / duration);
-      const eased = 1 - Math.pow(1 - t, 3);
-      const val = target * eased;
-      node.textContent = fmt(val, decimals) + suffix;
-      if (t < 1) requestAnimationFrame(frame);
-      else node.textContent = fmt(target, decimals) + suffix;
+        host.appendChild(r);
+      });
     }
-    requestAnimationFrame(frame);
-  }
 
-  // =======================================================================
-  //  Scroll progress bar
-  // =======================================================================
+    // =======================================================================
+    //  Animated counters
+    // =======================================================================
 
-  function updateScrollProgress() {
-    const h = document.documentElement;
-    const max = h.scrollHeight - h.clientHeight;
-    const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
-    document.getElementById("scroll-progress").style.width = pct + "%";
-  }
+    function animateCounter(node) {
+      const target = parseFloat(node.dataset.counter);
+      const decimals = parseInt(node.dataset.decimals || "0", 10);
+      const suffix = node.dataset.suffix || "";
+      const duration = 1700;
+      const start = performance.now();
 
-  // =======================================================================
-  //  IntersectionObserver for reveals
-  // =======================================================================
+      function frame(now) {
+        const t = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - t, 3);
+        const val = target * eased;
+        node.textContent = fmt(val, decimals) + suffix;
+        if (t < 1) requestAnimationFrame(frame);
+        else node.textContent = fmt(target, decimals) + suffix;
+      }
+      requestAnimationFrame(frame);
+    }
 
-  function setupObservers() {
-    const selectors = ".reveal, #scene-1, #scene-2, #scene-3, #volume-chart-wrap, #genai-chart-wrap, #traj-chart";
-    const observed = document.querySelectorAll(selectors);
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add("in-view");
-          e.target.querySelectorAll("[data-counter]").forEach(c => {
-            if (!c.dataset.fired) {
-              c.dataset.fired = "1";
-              animateCounter(c);
-            }
-          });
-        }
-      });
-    }, { threshold: 0.18, rootMargin: "0px 0px -8% 0px" });
+    // =======================================================================
+    //  Scroll progress bar
+    // =======================================================================
 
-    observed.forEach(n => io.observe(n));
+    function updateScrollProgress() {
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+      document.getElementById("scroll-progress").style.width = pct + "%";
+    }
 
-    // Hero counters fire right after load (they'd otherwise wait for
-    // observer to report the already-visible element).
-    setTimeout(() => {
-      document.querySelectorAll("#scene-0 [data-counter]").forEach(c => {
-        if (!c.dataset.fired) { c.dataset.fired = "1"; animateCounter(c); }
-      });
-    }, 650);
-  }
+    // =======================================================================
+    //  IntersectionObserver for reveals
+    // =======================================================================
 
-  // =======================================================================
-  //  Boot
-  // =======================================================================
+    function setupObservers() {
+      const selectors = ".reveal, .edu-row, #scene-1, #scene-2, #scene-3, #volume-chart-wrap, #genai-chart-wrap, #traj-chart";
+      const observed = document.querySelectorAll(selectors);
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add("in-view");
+            e.target.querySelectorAll("[data-counter]").forEach(c => {
+              if (!c.dataset.fired) {
+                c.dataset.fired = "1";
+                animateCounter(c);
+              }
+            });
+          }
+        });
+      }, { threshold: 0.18, rootMargin: "0px 0px -8% 0px" });
 
-  document.addEventListener("DOMContentLoaded", () => {
-    buildVolumeChart();
-    buildGenaiChart();
-    buildTrajectoriesChart();
-    buildTopicControls();
-    buildTrajectoriesAnnotations();
-    buildPrevalenceList();
-    setupObservers();
-    updateScrollProgress();
-    window.addEventListener("scroll", updateScrollProgress, { passive: true });
-  });
-</script>
+      observed.forEach(n => io.observe(n));
+
+      // Hero counters fire right after load (they'd otherwise wait for
+      // observer to report the already-visible element).
+      setTimeout(() => {
+        document.querySelectorAll("#scene-0 [data-counter]").forEach(c => {
+          if (!c.dataset.fired) { c.dataset.fired = "1"; animateCounter(c); }
+        });
+      }, 650);
+    }
+
+    // =======================================================================
+    //  Boot
+    // =======================================================================
+
+    document.addEventListener("DOMContentLoaded", () => {
+      buildVolumeChart();
+      buildGenaiChart();
+      buildTrajectoriesChart();
+      buildTopicControls();
+      buildTrajectoriesAnnotations();
+      buildPrevalenceList();
+      setupObservers();
+      updateScrollProgress();
+      window.addEventListener("scroll", updateScrollProgress, { passive: true });
+    });
+  </script>
 
 </body>
+
 </html>
