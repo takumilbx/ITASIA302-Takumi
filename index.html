@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ITASIA302 — Assignments Directory</title>
+<meta name="description" content="A collected index of coursework for ITASIA302 (Introduction to Digital Technology and Society), UTokyo, Spring 2026.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500;1,9..144,600&family=Geist+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  /* ========================================================================
+     Design tokens — shared across all ITASIA302 pages ("Scientific Sublime")
+     ======================================================================== */
+  :root {
+    --bg:        #080C14;
+    --bg-soft:   #0E1824;
+    --ink:       #EDE8E0;
+    --ink-dim:   #9AA3B0;
+    --ink-faint: #3A4A62;
+    --rule:      #132032;
+    --amber:     #F0A060;
+    --amber-lo:  #F0A06022;
+    --amber-hi:  #FFC890;
+    --teal:      #5AC8B0;
+    --sky:       #5090C0;
+    --coral:     #D86878;
+    --lilac:     #9E90D0;
+    --gold:      #E6B860;
+
+    --serif:  "Fraunces", Georgia, "Times New Roman", serif;
+    --mono:   "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+    --ease: cubic-bezier(.22,.61,.36,1);
+  }
+
+  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--serif);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+    line-height: 1.45;
+    min-height: 100vh;
+  }
+
+  /* Atmospheric overlays — verbatim from sub-pages */
+  .grain {
+    position: fixed; inset: 0; z-index: 9999; pointer-events: none;
+    opacity: .032;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/></filter><rect width='256' height='256' filter='url(%23n)'/></svg>");
+    background-size: 220px 220px;
+    mix-blend-mode: overlay;
+  }
+  .glow-tl, .glow-br { position: fixed; pointer-events: none; z-index: 0; }
+  .glow-tl {
+    top: 0; left: 0; width: 55vw; height: 55vh;
+    background: radial-gradient(at 0% 0%, rgba(240,160,96,0.10) 0%, transparent 60%);
+  }
+  .glow-br {
+    bottom: 0; right: 0; width: 50vw; height: 50vh;
+    background: radial-gradient(at 100% 100%, rgba(80,144,192,0.08) 0%, transparent 65%);
+  }
+  .edge-gradient {
+    position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 10000;
+    background: linear-gradient(90deg, transparent 0%, var(--amber) 22%, var(--coral) 62%, transparent 100%);
+    opacity: .55;
+    pointer-events: none;
+  }
+
+  /* ========================================================================
+     Topbar — same rhythm as sub-pages
+     ======================================================================== */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 14px 48px 12px;
+    background: linear-gradient(180deg, rgba(8,12,20,0.88) 0%, rgba(8,12,20,0.60) 70%, transparent 100%);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+  .topbar-title {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: 17px;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+  .topbar-title em {
+    color: var(--amber);
+    font-style: italic;
+    font-weight: 400;
+  }
+  .topbar-meta {
+    font-family: var(--mono);
+    font-weight: 400;
+    font-size: 8.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  /* Shared journal-link treatment (used here for the topbar label hover, etc.) */
+  .journal-link {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px dotted var(--ink-faint);
+    transition: color 180ms ease, border-color 180ms ease;
+  }
+  .journal-link:hover,
+  .journal-link:focus-visible {
+    color: var(--amber);
+    border-bottom-color: var(--amber);
+    outline: none;
+  }
+
+  /* ========================================================================
+     Reveal state — same observer as sub-pages
+     ======================================================================== */
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity .9s var(--ease), transform .9s var(--ease);
+  }
+  .reveal.in-view { opacity: 1; transform: translateY(0); }
+  .reveal.delay-1 { transition-delay: .10s; }
+  .reveal.delay-2 { transition-delay: .20s; }
+  .reveal.delay-3 { transition-delay: .32s; }
+  .reveal.delay-4 { transition-delay: .46s; }
+  .reveal.delay-5 { transition-delay: .60s; }
+
+  /* ========================================================================
+     Page shell — narrow, editorial, fits a Notion iframe (~720px tall)
+     ======================================================================== */
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 92px 48px 36px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Hero block */
+  .hero {
+    margin-bottom: 52px;
+  }
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 18px;
+  }
+  .hero-eyebrow .dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--amber);
+    margin: 0 12px 2px 0;
+    box-shadow: 0 0 10px var(--amber);
+    vertical-align: middle;
+  }
+  .hero-title {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(34px, 4.4vw, 54px);
+    line-height: 1.04;
+    letter-spacing: -0.028em;
+    color: var(--ink);
+    margin-bottom: 18px;
+    max-width: 22ch;
+  }
+  .hero-title em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--amber);
+  }
+  .hero-byline {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 22px;
+  }
+  .hero-byline em {
+    color: var(--amber);
+    font-style: normal;
+    letter-spacing: 0.14em;
+  }
+  .hero-dek {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(15.5px, 1.2vw, 18px);
+    line-height: 1.55;
+    color: var(--ink-dim);
+    max-width: 56ch;
+  }
+  .hero-dek em { color: var(--ink); font-style: italic; }
+
+  /* ========================================================================
+     Assignments grid — two large clickable cards
+     ======================================================================== */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    margin-bottom: 56px;
+  }
+
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 28px 28px 26px;
+    background: linear-gradient(180deg, rgba(14,24,36,0.55) 0%, rgba(14,24,36,0.25) 100%);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    text-decoration: none;
+    color: inherit;
+    overflow: hidden;
+    transition: border-color 280ms var(--ease), transform 280ms var(--ease), background 280ms var(--ease);
+    min-height: 240px;
+  }
+  .card::before {
+    /* thin top accent rule, stays visible at rest */
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, var(--amber) 0%, transparent 70%);
+    opacity: .55;
+    transition: opacity 280ms var(--ease);
+  }
+  .card.card-teal::before {
+    background: linear-gradient(90deg, var(--teal) 0%, transparent 70%);
+  }
+  .card:hover, .card:focus-visible {
+    border-color: var(--amber);
+    background: linear-gradient(180deg, rgba(240,160,96,0.05) 0%, rgba(14,24,36,0.30) 100%);
+    transform: translateY(-2px);
+    outline: none;
+  }
+  .card.card-teal:hover, .card.card-teal:focus-visible {
+    border-color: var(--teal);
+    background: linear-gradient(180deg, rgba(90,200,176,0.05) 0%, rgba(14,24,36,0.30) 100%);
+  }
+
+  .card-label {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 16px;
+  }
+  .card.card-teal .card-label { color: var(--teal); }
+
+  .card-headline {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(22px, 2.2vw, 28px);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 14px;
+    max-width: 22ch;
+  }
+  .card-headline em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--ink);
+  }
+
+  .card-blurb {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--ink-dim);
+    margin-bottom: 22px;
+    max-width: 44ch;
+    flex-grow: 1;
+  }
+  .card-blurb em { font-style: italic; color: var(--ink); }
+
+  .card-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .card-arrow {
+    font-family: var(--serif);
+    font-size: 18px;
+    color: var(--amber);
+    letter-spacing: 0;
+    line-height: 1;
+    transition: transform 280ms var(--ease), color 280ms var(--ease);
+  }
+  .card.card-teal .card-arrow { color: var(--teal); }
+  .card:hover .card-arrow,
+  .card:focus-visible .card-arrow {
+    transform: translateX(4px);
+  }
+
+  /* ========================================================================
+     Footer — same rhythm as sub-pages
+     ======================================================================== */
+  footer.footer {
+    margin-top: auto;
+    padding: 28px 0 4px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  footer.footer em {
+    color: var(--amber);
+    font-style: normal;
+    letter-spacing: 0.14em;
+  }
+
+  /* ========================================================================
+     Responsive — single column below 720px (the typical narrow Notion embed)
+     ======================================================================== */
+  @media (max-width: 720px) {
+    .topbar { padding: 12px 22px; }
+    main { padding: 80px 22px 28px; }
+    .hero { margin-bottom: 36px; }
+    .grid {
+      grid-template-columns: 1fr;
+      gap: 18px;
+      margin-bottom: 40px;
+    }
+    .card { min-height: 0; padding: 22px 22px 20px; }
+    .card-headline { max-width: none; }
+    footer.footer {
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .topbar-meta { font-size: 8px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { transition: none !important; opacity: 1; transform: none; }
+    html { scroll-behavior: auto; }
+    .card { transition: none !important; }
+    .card-arrow { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+<div class="glow-tl"></div>
+<div class="glow-br"></div>
+<div class="edge-gradient"></div>
+
+<header class="topbar">
+  <div class="topbar-title">ITASIA302 &mdash; <em>Assignments Directory</em></div>
+  <div class="topbar-meta">UTokyo &nbsp;&middot;&nbsp; Spring 2026</div>
+</header>
+
+<main>
+
+  <section class="hero">
+    <div class="hero-eyebrow reveal"><span class="dot"></span>ITASIA302 &nbsp;&middot;&nbsp; Spring 2026</div>
+
+    <h1 class="hero-title reveal delay-1">
+      Introduction to <em>Digital Technology</em> and Society
+    </h1>
+
+    <div class="hero-byline reveal delay-2">
+      Takumi &nbsp;&middot;&nbsp; UTokyo &nbsp;&middot;&nbsp; <em>Spring 2026</em>
+    </div>
+
+    <p class="hero-dek reveal delay-3">
+      A collected index of coursework for ITASIA302 &mdash; visualizations,
+      reading responses, and short analyses produced this term. Each card
+      below opens a self-contained piece.
+    </p>
+  </section>
+
+  <section class="grid">
+
+    <a class="card reveal delay-3" href="research-trends/">
+      <div class="card-label">Research Trends &nbsp;&middot;&nbsp; Independent Project</div>
+      <div class="card-headline">How AI reshaped five years of <em>AI &amp; Society</em></div>
+      <p class="card-blurb">
+        A scroll-narrative visualization of every article published in
+        <em>AI &amp; Society</em> between 2021 and 2025 &mdash; 1,653 articles,
+        eight topics, one clear inflection in 2023.
+      </p>
+      <div class="card-foot">
+        <span>April 2026</span>
+        <span class="card-arrow" aria-hidden="true">&rarr;</span>
+      </div>
+    </a>
+
+    <a class="card card-teal reveal delay-4" href="reading-response/">
+      <div class="card-label">Reading Response &nbsp;&middot;&nbsp; Week 3</div>
+      <div class="card-headline">Does it matter who <em>teaches</em> anymore?</div>
+      <p class="card-blurb">
+        A response to Polat &amp; Sar&#x131;da&#x15F;'s meta-synthesis on AI in
+        primary education &mdash; and what their findings suggest for Japan's
+        GIGA School Program and Thailand's digital classroom initiatives.
+      </p>
+      <div class="card-foot">
+        <span>April 2026</span>
+        <span class="card-arrow" aria-hidden="true">&rarr;</span>
+      </div>
+    </a>
+
+  </section>
+
+  <footer class="footer reveal delay-5">
+    <div>Assignments Directory &nbsp;&middot;&nbsp; Introduction to Digital Technology and Society</div>
+    <div><em>ITASIA302</em> &nbsp;&middot;&nbsp; April 2026</div>
+  </footer>
+
+</main>
+
+<script>
+  "use strict";
+
+  // IntersectionObserver for reveals — matches the pattern used on sub-pages.
+  document.addEventListener("DOMContentLoaded", () => {
+    const observed = document.querySelectorAll(".reveal");
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add("in-view");
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -4% 0px" });
+    observed.forEach(n => io.observe(n));
+
+    // Safety net: if anything is already in view (or for very short viewports
+    // where the observer threshold won't fire on initial load), reveal it.
+    setTimeout(() => {
+      document.querySelectorAll(".reveal:not(.in-view)").forEach(n => {
+        const r = n.getBoundingClientRect();
+        if (r.top < window.innerHeight * 0.95) n.classList.add("in-view");
+      });
+    }, 120);
+  });
+</script>
+
+</body>
+</html>
