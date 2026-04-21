@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ITASIA302 — Assignments Directory</title>
+<title>ITASIA302 Assignments Directory</title>
 <meta name="description" content="A collected index of coursework for ITASIA302 (Introduction to Digital Technology and Society), UTokyo, Spring 2026.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,7 +12,7 @@
 
 <style>
   /* ========================================================================
-     Design tokens — shared across all ITASIA302 pages ("Scientific Sublime")
+     Design tokens shared across all ITASIA302 pages ("Scientific Sublime")
      ======================================================================== */
   :root {
     --bg:        #080C14;
@@ -50,7 +50,7 @@
     min-height: 100vh;
   }
 
-  /* Atmospheric overlays — verbatim from sub-pages */
+  /* Atmospheric overlays verbatim from sub-pages */
   .grain {
     position: fixed; inset: 0; z-index: 9999; pointer-events: none;
     opacity: .032;
@@ -75,7 +75,7 @@
   }
 
   /* ========================================================================
-     Topbar — same rhythm as sub-pages
+     Topbar same rhythm as sub-pages
      ======================================================================== */
   .topbar {
     position: fixed; top: 0; left: 0; right: 0; z-index: 50;
@@ -121,7 +121,7 @@
   }
 
   /* ========================================================================
-     Reveal state — same observer as sub-pages
+     Reveal state same observer as sub-pages
      ======================================================================== */
   .reveal {
     opacity: 0;
@@ -136,7 +136,7 @@
   .reveal.delay-5 { transition-delay: .60s; }
 
   /* ========================================================================
-     Page shell — narrow, editorial, fits a Notion iframe (~720px tall)
+     Page shell narrow, editorial, fits a Notion iframe (~720px tall)
      ======================================================================== */
   main {
     position: relative;
@@ -209,7 +209,7 @@
   .hero-dek em { color: var(--ink); font-style: italic; }
 
   /* ========================================================================
-     Assignments grid — two large clickable cards
+     Assignments grid two large clickable cards
      ======================================================================== */
   .grid {
     display: grid;
@@ -319,7 +319,7 @@
   }
 
   /* ========================================================================
-     Footer — same rhythm as sub-pages
+     Footer same rhythm as sub-pages
      ======================================================================== */
   footer.footer {
     margin-top: auto;
@@ -341,7 +341,7 @@
   }
 
   /* ========================================================================
-     Responsive — single column below 720px (the typical narrow Notion embed)
+     Responsive single column below 720px (the typical narrow Notion embed)
      ======================================================================== */
   @media (max-width: 720px) {
     .topbar { padding: 12px 22px; }
@@ -378,7 +378,7 @@
 <div class="edge-gradient"></div>
 
 <header class="topbar">
-  <div class="topbar-title">ITASIA302 &mdash; <em>Assignments Directory</em></div>
+  <div class="topbar-title">ITASIA302 <em>Assignments Directory</em></div>
   <div class="topbar-meta">UTokyo &nbsp;&middot;&nbsp; Spring 2026</div>
 </header>
 
@@ -396,7 +396,7 @@
     </div>
 
     <p class="hero-dek reveal delay-3">
-      A collected index of coursework for ITASIA302 &mdash; visualizations,
+      A collected index of coursework for ITASIA302 visualizations,
       reading responses, and short analyses produced this term. Each card
       below opens a self-contained piece.
     </p>
@@ -409,7 +409,7 @@
       <div class="card-headline">How AI reshaped five years of <em>AI &amp; Society</em></div>
       <p class="card-blurb">
         A scroll-narrative visualization of every article published in
-        <em>AI &amp; Society</em> between 2021 and 2025 &mdash; 1,653 articles,
+        <em>AI &amp; Society</em> between 2021 and 2025 1,653 articles,
         eight topics, one clear inflection in 2023.
       </p>
       <div class="card-foot">
@@ -423,7 +423,7 @@
       <div class="card-headline">Does it matter who <em>teaches</em> anymore?</div>
       <p class="card-blurb">
         A response to Polat &amp; Sar&#x131;da&#x15F;'s meta-synthesis on AI in
-        primary education &mdash; and what their findings suggest for Japan's
+        primary education and what their findings suggest for Japan's
         GIGA School Program and Thailand's digital classroom initiatives.
       </p>
       <div class="card-foot">
@@ -444,7 +444,7 @@
 <script>
   "use strict";
 
-  // IntersectionObserver for reveals — matches the pattern used on sub-pages.
+  // IntersectionObserver for reveals matches the pattern used on sub-pages.
   document.addEventListener("DOMContentLoaded", () => {
     const observed = document.querySelectorAll(".reveal");
     const io = new IntersectionObserver((entries) => {
