@@ -4,3 +4,5 @@
 *.patch
 .DS_Store
 *.patch
+.DS_Store
+*.patch
