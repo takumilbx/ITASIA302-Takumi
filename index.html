@@ -749,6 +749,154 @@
   footer.footer em { color: var(--amber); font-style: normal; letter-spacing: 0.14em; }
 
   /* ========================================================================
+     Journal link — applied to the four places "AI & Society" appears
+     ======================================================================== */
+  .journal-link {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px dotted var(--ink-faint);
+    transition: color 180ms ease, border-color 180ms ease;
+  }
+  .journal-link:hover,
+  .journal-link:focus-visible {
+    color: var(--amber);
+    border-bottom-color: var(--amber);
+    outline: none;
+  }
+
+  /* ========================================================================
+     Methodology appendix (scene 6)
+     ======================================================================== */
+  .appendix { max-width: 1200px; }
+  .appendix .dek { max-width: 68ch; margin-bottom: 28px; }
+
+  .appendix h3 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(22px, 2.2vw, 30px);
+    letter-spacing: -0.018em;
+    color: var(--ink);
+    margin: 72px 0 18px;
+    padding-top: 28px;
+    border-top: 1px solid var(--rule);
+    max-width: 28ch;
+  }
+  .appendix h3:first-of-type { margin-top: 16px; }
+  .appendix h4 {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin: 36px 0 14px;
+  }
+
+  .appendix p {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-dim);
+    max-width: 72ch;
+    margin: 0 0 18px;
+  }
+  .appendix p em { font-style: italic; color: var(--ink); }
+  .appendix strong { color: var(--ink); font-weight: 500; }
+
+  .appendix ul, .appendix ol {
+    padding-left: 22px;
+    margin: 0 0 24px;
+    max-width: 72ch;
+  }
+  .appendix li {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-dim);
+    margin-bottom: 10px;
+  }
+  .appendix li em { font-style: italic; color: var(--ink); }
+
+  .appendix code {
+    font-family: var(--mono);
+    font-size: 0.86em;
+    background: rgba(90, 200, 176, 0.06);
+    border: 1px solid rgba(90, 200, 176, 0.15);
+    padding: 1px 6px;
+    border-radius: 3px;
+    color: var(--teal);
+    white-space: nowrap;
+  }
+
+  .appendix table {
+    border-collapse: collapse;
+    margin: 12px 0 28px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--ink-dim);
+  }
+  .appendix th, .appendix td {
+    padding: 9px 20px 9px 0;
+    text-align: left;
+    border-bottom: 1px solid var(--rule);
+  }
+  .appendix thead th {
+    font-size: 9.5px;
+    font-weight: 400;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    border-bottom: 1px solid var(--amber);
+    padding-bottom: 10px;
+  }
+  .appendix td.num, .appendix th.num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .appendix tr.total td {
+    color: var(--ink);
+    padding-top: 14px;
+  }
+  .appendix tr.total td strong { color: var(--amber); }
+
+  .kw-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 44px;
+    margin: 14px 0 28px;
+    max-width: 1100px;
+  }
+  .kw-block {
+    border-left: 2px solid var(--rule);
+    padding: 4px 0 4px 20px;
+  }
+  .kw-block .kw-title {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 18px;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+  .kw-block .kw-body {
+    font-family: var(--serif);
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--ink-faint);
+  }
+  .kw-block .kw-note {
+    display: block;
+    margin-top: 10px;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ink-faint);
+  }
+  .kw-block .kw-note code { font-style: normal; }
+
+  /* ========================================================================
      Responsive
      ======================================================================== */
   @media (max-width: 900px) {
@@ -786,7 +934,7 @@
 <div class="scroll-progress" id="scroll-progress"></div>
 
 <header class="topbar">
-  <div class="topbar-title">AI &amp; Society &mdash; <em>Research Trends</em></div>
+  <div class="topbar-title"><a class="journal-link" href="https://link.springer.com/journal/146" target="_blank" rel="noopener noreferrer">AI &amp; Society</a> &mdash; <em>Research Trends</em></div>
   <div class="topbar-meta">ITASIA302 &nbsp;&bull;&nbsp; April 2026</div>
 </header>
 
@@ -803,7 +951,7 @@
     </h1>
 
     <p class="hero-dek reveal delay-2">
-      Between 2021 and 2025, the journal <strong>AI &amp; Society</strong> published
+      Between 2021 and 2025, the journal <strong><a class="journal-link" href="https://link.springer.com/journal/146" target="_blank" rel="noopener noreferrer">AI &amp; Society</a></strong> published
       <strong>1,653&nbsp;articles</strong> asking what artificial intelligence does
       to us &mdash; to ethics, to creativity, to the classroom, to human labour.
       Scroll to see where the field's attention went.
@@ -905,8 +1053,9 @@
 
     <p class="dek reveal delay-2">
       Zoom out from generative AI and the field's attention map is more varied than
-      it looks. Some themes rose sharply. One collapsed. Ethics held its ground.
-      Click any topic below to isolate its trajectory.
+      it looks. Ethics holds steady as the constant anchor. Creativity turns out to
+      be the quiet second pillar. Bias climbs slowly. Robots collapse. Education
+      barely moves. Click any topic below to isolate its trajectory.
     </p>
 
     <div class="topic-controls reveal delay-3" id="topic-controls" role="tablist">
@@ -932,8 +1081,10 @@
 
     <p class="dek reveal delay-2">
       Eight topics, ranked by share of 2025 articles. Articles often engage more
-      than one theme, so the percentages do not sum to 100 &mdash; each is the
-      share of papers that touch the topic at all.
+      than one theme, so percentages do not sum to 100 &mdash; each is the share
+      of papers that touch the topic at all. The surprises are in the middle of
+      the list: <em>creativity</em> is the third-largest theme, and
+      <em>generative AI</em>, so new it barely existed in 2021, is now second.
     </p>
 
     <div class="prevalence-list" id="prevalence-list">
@@ -955,40 +1106,205 @@
       <div class="closing-body reveal delay-2">
         <p>
           Over five years, the same journal moves from <em>19%</em> of its pages on
-          robots to <em>4%</em>, and from <em>1.5%</em> on generative AI to
-          <em>24%</em>. This is not a shift in the technology alone. It is a shift
-          in what the field finds urgent enough to write about.
+          robots to <em>4%</em>, and from essentially <em>zero</em> on generative AI
+          to <em>24%</em>. This is not a shift in the technology alone. It is a
+          shift in what the field finds urgent enough to write about.
         </p>
         <p>
-          One thing does not move: about a third of every year's pages belong to
-          <em>ethics and governance</em>, whatever else is in fashion. The field's
-          conscience is a constant.
+          One thing does not move: about a <em>quarter</em> of every year's pages
+          belong to <em>ethics and governance</em>, whatever else is in fashion.
+          The field's conscience is a constant.
         </p>
         <p>
-          What remains undiscussed is equally telling. In a corpus of 1,849
+          Less visible, but equally steady: <em>creativity and the arts</em>
+          &mdash; art, music, literature, aesthetics &mdash; sit at roughly
+          <em>17%</em> every year. Not a trend, a foundation.
+        </p>
+        <p>
+          What remains undiscussed is equally telling. In a corpus of 1,653
           articles about AI and society, the <em>classroom</em> &mdash; where most
-          people first meet these systems &mdash; is still a minority theme. That
-          is the gap this line of work tries to close.
+          people first meet these systems &mdash; is still a minority theme at
+          <em>10%</em>. That is the gap this line of work tries to close.
         </p>
       </div>
 
       <div class="meta-block reveal delay-3">
         <span class="meta-key">Source</span>
-        <span class="meta-val"><em>AI &amp; Society</em>, Springer Nature. Articles with publication date between 2021-01-01 and 2025-12-31.</span>
+        <span class="meta-val"><a class="journal-link" href="https://link.springer.com/journal/146" target="_blank" rel="noopener noreferrer"><em>AI &amp; Society</em></a>, Springer Nature. Articles with publication date between 2021-01-01 and 2025-12-31.</span>
 
         <span class="meta-key">Method</span>
-        <span class="meta-val">Topic assignment via keyword matching on title and abstract. Percentages are share of articles where the topic was detected; overlaps allowed.</span>
+        <span class="meta-val">Topic assignment via strict-keyword regex matching on title and abstract. Word boundaries and compound phrases used to avoid false positives. Percentages are share of articles where the topic was detected; overlaps allowed.</span>
 
         <span class="meta-key">Scope</span>
-        <span class="meta-val">N = 1,849 articles across five calendar years.</span>
+        <span class="meta-val">N = 1,653 articles across five calendar years.</span>
 
         <span class="meta-key">Author</span>
         <span class="meta-val">Takumi &mdash; <em>ITASIA302</em></span>
       </div>
     </div>
+  </section>
+
+  <!-- ===============================================================
+       Scene 6 — Methodology appendix
+       =============================================================== -->
+  <section class="scene appendix" id="scene-6">
+    <div class="scene-number reveal">06 &nbsp;&middot;&nbsp; Methodology appendix</div>
+
+    <h2 class="headline-sm reveal delay-1">
+      How these numbers were <em>built</em>.
+    </h2>
+
+    <p class="dek reveal delay-2">
+      A companion to the visualization: what was counted, how topics were
+      detected, and where the method stops short. The full text version lives
+      in <a class="journal-link" href="methodology.md">methodology.md</a>
+      alongside this page.
+    </p>
+
+    <div class="appendix-body">
+
+      <h3>Corpus</h3>
+      <ul>
+        <li><strong>Journal:</strong> <em>AI &amp; Society</em>, Springer Nature.</li>
+        <li><strong>Scraping window:</strong> all articles with publication date &ge; 2021-01-01 present in the online archive at the time of collection.</li>
+        <li><strong>Analysis window:</strong> calendar years 2021 through 2025 inclusive (five full years). Articles dated 2026-01 to 2026-04 are present in the underlying dataset but excluded because 2026 is incomplete at the time of analysis.</li>
+        <li><strong>N analysed:</strong> 1,653 articles.</li>
+        <li><strong>Fields used:</strong> <code>Title</code> (never null); <code>Abstract</code> (null in 549 of 1,849 full-dataset rows &mdash; treated as empty strings for matching); <code>Date Published</code>.</li>
+      </ul>
+
+      <h4>Per-year article counts</h4>
+      <table>
+        <thead>
+          <tr><th>Year</th><th class="num">Articles</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>2021</td><td class="num">196</td></tr>
+          <tr><td>2022</td><td class="num">280</td></tr>
+          <tr><td>2023</td><td class="num">203</td></tr>
+          <tr><td>2024</td><td class="num">331</td></tr>
+          <tr><td>2025</td><td class="num">643</td></tr>
+          <tr class="total"><td><strong>Total (2021&ndash;2025)</strong></td><td class="num"><strong>1,653</strong></td></tr>
+        </tbody>
+      </table>
+      <p>The jump to <em>643</em> articles in 2025 &mdash; roughly <em>1.94&times;</em> the 2024 output &mdash; is by far the steepest year-over-year change in the five-year window.</p>
+
+      <h3>Topic classification</h3>
+      <p>Each article is checked against a set of regex patterns for each of eight topics. A match in either the title or the abstract tags the article with that topic. Articles may carry multiple topics (overlap is permitted); percentages are the share of that year&rsquo;s articles where the topic was detected and do not sum to 100.</p>
+
+      <h4>Design principles</h4>
+      <ol>
+        <li><strong>Word boundaries (<code>\b</code>) on every pattern</strong> to avoid substring false positives &mdash; <code>bias</code> does not match <code>biasing</code> or <code>unbiased</code> unless explicitly allowed.</li>
+        <li><strong>Compound phrases over bare common words</strong> where a word is too generic on its own. <code>\bwork\b</code> alone matches hundreds of irrelevant articles (&ldquo;this work argues&rdquo;, &ldquo;framework&rdquo;, &ldquo;worked on&rdquo;); the tightened <em>work</em> pattern requires compounds such as <code>labour market</code>, <code>future of work</code>, <code>workplace</code>, <code>gig economy</code>, <code>workforce</code>, <code>employment</code>.</li>
+        <li><strong>Cross-topic hygiene.</strong> Each word belongs to exactly one topic. <code>regulation</code> is a <em>policy</em> word, not an <em>ethics</em> word; <code>governance</code> is an <em>ethics</em> word, not a <em>policy</em> word. Without this discipline, Ethics and Policy would double-count roughly half of each other&rsquo;s articles.</li>
+        <li><strong>Morphological variants</strong> through regex alternation (<code>robot|robotic|robots|robotics</code>), not through substring matching.</li>
+      </ol>
+
+      <h4>Per-topic keyword sets</h4>
+      <p>Patterns are compiled with <code>re.IGNORECASE</code>. Alternation within groups follows Python regex syntax.</p>
+
+      <div class="kw-grid">
+
+        <div class="kw-block">
+          <div class="kw-title">Generative AI</div>
+          <div class="kw-body">
+            <code>generative ai</code>, <code>gen-ai</code>, <code>large language model(s)</code>, <code>llm(s)</code>, <code>chatgpt</code>, <code>gpt(-\d+)?</code>, <code>foundation model(s)</code>, <code>generative (model|system|tool|technolog|image|video|text)</code>, <code>text-to-(image|video|speech)</code>, <code>diffusion model(s)</code>, <code>stable diffusion</code>, <code>midjourney</code>, <code>dall-e</code>, <code>prompt engineering</code>, <code>gemini</code>, <code>ai-generated</code>.
+          </div>
+        </div>
+
+        <div class="kw-block">
+          <div class="kw-title">Ethics &amp; Governance</div>
+          <div class="kw-body">
+            <code>ethics?</code>, <code>ethical (ai|concerns?|implications?|issues?|dilemma|frameworks?|analysis|questions?|principles?)</code>, <code>ai ethics</code>, <code>governance</code>, <code>responsible ai</code>, <code>accountab(le|ility)</code>, <code>moral(ity|\s+status|\s+agency|\s+responsibility|\s+patiency|\s+reasoning)</code>, <code>normative (framework|analysis|concerns|considerations)</code>, <code>trustworthy ai</code>, <code>value alignment</code>.
+            <span class="kw-note">Does <em>not</em> include <code>regulat*</code> &mdash; that belongs to Policy.</span>
+          </div>
+        </div>
+
+        <div class="kw-block">
+          <div class="kw-title">Policy &amp; Regulation</div>
+          <div class="kw-body">
+            <code>ai (policy|regulation|law|legislation|governance|act)</code>, <code>technology policy</code>, <code>digital (policy|regulation|law|legislation)</code>, <code>eu ai act</code>, <code>gdpr</code>, <code>regulat(e|ing|ion|ions|ory|ed)</code>, <code>legislat(e|ion|ive|ing|ed)</code>, <code>compliance</code>, <code>public policy</code>.
+          </div>
+        </div>
+
+        <div class="kw-block">
+          <div class="kw-title">Creativity &amp; Arts</div>
+          <div class="kw-body">
+            <code>creativ(e|ity)</code>, <code>art(s|ist|ists|istic|istry|work|works)</code>, <code>music(al|ian|ians)?</code>, <code>poetry</code>, <code>literature</code>, <code>paint(er|ing|ers|ings)</code>, <code>aesthetic(s|)</code>, <code>film(making|maker|makers|s)?</code>, <code>compos(er|ers|ition|itional|ing)</code>, <code>choreograph(y|er|ers|ic)</code>, <code>perform(ance|ative|ing|ers?) (art|arts|practice)</code>.
+            <span class="kw-note">Does <em>not</em> include bare <code>design</code>, <code>writing</code>, <code>author</code>, <code>culture</code> &mdash; too generic.</span>
+          </div>
+        </div>
+
+        <div class="kw-block">
+          <div class="kw-title">Bias &amp; Fairness</div>
+          <div class="kw-body">
+            <code>bias(es|ed)?</code>, <code>fairness</code>, <code>algorithmic (fair|fairness|justice|equity|discrimination|bias)</code>, <code>discriminat(e|ion|ory|ing)</code>, <code>racial bias</code>, <code>gender bias</code>, <code>racial discrimination</code>, <code>equit(y|able)</code>, <code>marginali[sz]ed</code>.
+          </div>
+        </div>
+
+        <div class="kw-block">
+          <div class="kw-title">Education &amp; Learning</div>
+          <div class="kw-body">
+            <code>teacher(s)?</code>, <code>teaching</code>, <code>student(s)?</code>, <code>pupil(s)?</code>, <code>classroom</code>, <code>school(s|ing)</code>, <code>higher education</code>, <code>education(al)? (system|context|technolog|institution|policy|setting|practice|research)</code>, <code>k-12</code>, <code>curricul(um|a)</code>, <code>pedagog(y|ical|ies)</code>, <code>literacy</code>, <code>learner(s)?</code>, <code>universit(y|ies)</code>, <code>ai-(literacy|education)</code>.
+            <span class="kw-note">Does <em>not</em> include bare <code>learning</code> &mdash; it matches <em>machine learning</em> on every AI paper.</span>
+          </div>
+        </div>
+
+        <div class="kw-block">
+          <div class="kw-title">Work &amp; Labour</div>
+          <div class="kw-body">
+            <code>labou?r (market|force|relations|rights|conditions)</code>, <code>future of (work|labou?r)</code>, <code>workplace</code>, <code>workforce</code>, <code>worker(s)? (rights?|conditions|protections?)</code>, <code>gig (economy|work|worker|workers)</code>, <code>automation (of|and) (work|labou?r|jobs|employment)</code>, <code>job (loss|losses|displacement|market|insecurity|polarization)</code>, <code>employment</code>, <code>unemployment</code>, <code>occupation(s|al)</code>, <code>human resources?</code>, <code>(algorithmic|ai) management</code>, <code>platform work(er|ers)?</code>, <code>technolog(y|ical) unemployment</code>, <code>digital labou?r</code>.
+          </div>
+        </div>
+
+        <div class="kw-block">
+          <div class="kw-title">Robots &amp; HRI</div>
+          <div class="kw-body">
+            <code>robot(s)?</code>, <code>robotic(s)?</code>, <code>human-robot</code>, <code>hri</code>, <code>android(s)?</code>, <code>humanoid(s)?</code>, <code>cobot(s)?</code>, <code>social robot(s|ics)?</code>, <code>service robot(s)?</code>, <code>care robot(s)?</code>.
+          </div>
+        </div>
+
+      </div>
+
+      <h4>Per-year prevalence (% of articles)</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Topic</th>
+            <th class="num">2021</th>
+            <th class="num">2022</th>
+            <th class="num">2023</th>
+            <th class="num">2024</th>
+            <th class="num">2025</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Ethics &amp; Governance</td><td class="num">25.5</td><td class="num">25.4</td><td class="num">26.6</td><td class="num">22.4</td><td class="num">27.5</td></tr>
+          <tr><td>Generative AI</td><td class="num">0.0</td><td class="num">1.1</td><td class="num">9.9</td><td class="num">17.8</td><td class="num">24.0</td></tr>
+          <tr><td>Creativity &amp; Arts</td><td class="num">16.3</td><td class="num">17.5</td><td class="num">16.7</td><td class="num">17.8</td><td class="num">18.8</td></tr>
+          <tr><td>Bias &amp; Fairness</td><td class="num">8.7</td><td class="num">12.1</td><td class="num">12.3</td><td class="num">11.2</td><td class="num">16.2</td></tr>
+          <tr><td>Policy &amp; Regulation</td><td class="num">10.7</td><td class="num">10.0</td><td class="num">9.9</td><td class="num">14.2</td><td class="num">11.8</td></tr>
+          <tr><td>Education &amp; Learning</td><td class="num">6.6</td><td class="num">6.4</td><td class="num">2.5</td><td class="num">7.9</td><td class="num">9.8</td></tr>
+          <tr><td>Work &amp; Labour</td><td class="num">1.5</td><td class="num">2.5</td><td class="num">2.5</td><td class="num">4.5</td><td class="num">4.4</td></tr>
+          <tr><td>Robots &amp; HRI</td><td class="num">18.9</td><td class="num">7.5</td><td class="num">11.8</td><td class="num">5.7</td><td class="num">3.7</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Limitations</h3>
+      <ol>
+        <li><strong>Title + abstract only.</strong> Full-text was not available through scraping. A topic discussed in the body but not mentioned in the abstract will not be detected. This biases the analysis toward topics that appear in article framing.</li>
+        <li><strong>English only.</strong> All patterns are English; non-English articles (a small minority) will under-match.</li>
+        <li><strong>Keyword precision is a design choice.</strong> A looser keyword set (bare <code>work</code>, bare <code>learning</code>, bare <code>design</code>) inflates topics at the cost of precision; a stricter set loses genuine-but-unusually-phrased matches. This report errs on the side of precision. A looser pass tested earlier produced dramatically different rankings (<em>Work</em> appeared as 42% of 2025 rather than 4.4%, driven almost entirely by incidental &ldquo;work&rdquo; usage).</li>
+        <li><strong>Overlap is allowed by design.</strong> A paper on &ldquo;fair GenAI in education&rdquo; tags three topics. Percentages therefore quantify <em>engagement</em>, not exclusive topic share.</li>
+        <li><strong>2025 volume is genuine but skewed.</strong> 643 articles is an unusually large year for the journal. Patterns observed for 2025 may partly reflect editorial or indexing changes at the publisher as well as scholarly attention.</li>
+      </ol>
+
+      <h3>Reproducibility</h3>
+      <p>The analysis is implemented in <code>step3_categorize.py</code> (permissive baseline) and <code>step5_tight.py</code> (final strict set, used for this report). Both operate directly on the source xlsx <code>AI_SOCIETY_Articles_2021_onwards.xlsx</code>. The regex patterns listed above are the exact patterns used in <code>step5_tight.py</code>.</p>
+
+    </div><!-- .appendix-body -->
 
     <footer class="footer">
-      <div>AI &amp; Society &nbsp;&middot;&nbsp; Research Trends 2021&ndash;2025</div>
+      <div><a class="journal-link" href="https://link.springer.com/journal/146" target="_blank" rel="noopener noreferrer">AI &amp; Society</a> &nbsp;&middot;&nbsp; Research Trends 2021&ndash;2025</div>
       <div><em>ITASIA302</em> &nbsp;&middot;&nbsp; April 2026</div>
     </footer>
   </section>
