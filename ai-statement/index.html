@@ -1,920 +1,1302 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Statement &middot; ITASIA302</title>
-<meta name="description" content="An honest account of the AI tools used to produce the work on this site what they did, what I did, and where the line sits.">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Statement &middot; ITASIA302</title>
+  <meta name="description"
+    content="An honest account of the AI tools used to produce the work on this site what they did, what I did, and where the line sits.">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500;1,9..144,600&family=Geist+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500;1,9..144,600&family=Geist+Mono:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
 
-<style>
-  :root {
-    --bg:        #080C14;
-    --bg-soft:   #0E1824;
-    --ink:       #EDE8E0;
-    --ink-dim:   #9AA3B0;
-    --ink-faint: #3A4A62;
-    --rule:      #132032;
-    --amber:     #F0A060;
-    --teal:      #5AC8B0;
-    --sky:       #5090C0;
-    --coral:     #D86878;
-    --lilac:     #9E90D0;
-    --gold:      #E6B860;
+  <style>
+    :root {
+      --bg: #080C14;
+      --bg-soft: #0E1824;
+      --ink: #EDE8E0;
+      --ink-dim: #9AA3B0;
+      --ink-faint: #3A4A62;
+      --rule: #132032;
+      --amber: #F0A060;
+      --teal: #5AC8B0;
+      --sky: #5090C0;
+      --coral: #D86878;
+      --lilac: #9E90D0;
+      --gold: #E6B860;
 
-    --serif:  "Fraunces", Georgia, "Times New Roman", serif;
-    --mono:   "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+      --serif: "Fraunces", Georgia, "Times New Roman", serif;
+      --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
-    --ease: cubic-bezier(.22,.61,.36,1);
-  }
-
-  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; }
-  body {
-    background: var(--bg);
-    color: var(--ink);
-    font-family: var(--serif);
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-    overflow-x: hidden;
-    line-height: 1.45;
-    min-height: 100vh;
-  }
-
-  /* Atmospheric overlays */
-  .grain {
-    position: fixed; inset: 0; z-index: 9999; pointer-events: none;
-    opacity: .032;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/></filter><rect width='256' height='256' filter='url(%23n)'/></svg>");
-    background-size: 220px 220px;
-    mix-blend-mode: overlay;
-  }
-  .glow-tl, .glow-br { position: fixed; pointer-events: none; z-index: 0; }
-  .glow-tl {
-    top: 0; left: 0; width: 55vw; height: 55vh;
-    background: radial-gradient(at 0% 0%, rgba(216,104,120,0.10) 0%, transparent 60%);
-  }
-  .glow-br {
-    bottom: 0; right: 0; width: 50vw; height: 50vh;
-    background: radial-gradient(at 100% 100%, rgba(240,160,96,0.08) 0%, transparent 65%);
-  }
-  .edge-gradient {
-    position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 10000;
-    background: linear-gradient(90deg, transparent 0%, var(--coral) 22%, var(--amber) 62%, transparent 100%);
-    opacity: .55;
-    pointer-events: none;
-  }
-
-  /* Topbar */
-  .topbar {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
-    display: flex; justify-content: space-between; align-items: baseline;
-    padding: 14px 48px 12px;
-    background: linear-gradient(180deg, rgba(8,12,20,0.88) 0%, rgba(8,12,20,0.60) 70%, transparent 100%);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-  }
-  .topbar-title {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: 17px;
-    letter-spacing: -0.015em;
-    color: var(--ink);
-  }
-  .topbar-title em {
-    color: var(--coral);
-    font-style: italic;
-    font-weight: 400;
-  }
-  .topbar-meta {
-    font-family: var(--mono);
-    font-weight: 400;
-    font-size: 8.5px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-  }
-
-  /* Journal link */
-  .journal-link {
-    color: inherit;
-    text-decoration: none;
-    border-bottom: 1px dotted var(--ink-faint);
-    transition: color 180ms ease, border-color 180ms ease;
-  }
-  .journal-link:hover,
-  .journal-link:focus-visible {
-    color: var(--coral);
-    border-bottom-color: var(--coral);
-    outline: none;
-  }
-
-  /* Reveal */
-  .reveal {
-    opacity: 0;
-    transform: translateY(14px);
-    transition: opacity .9s var(--ease), transform .9s var(--ease);
-  }
-  .reveal.in-view { opacity: 1; transform: translateY(0); }
-  .reveal.delay-1 { transition-delay: .10s; }
-  .reveal.delay-2 { transition-delay: .20s; }
-  .reveal.delay-3 { transition-delay: .32s; }
-  .reveal.delay-4 { transition-delay: .46s; }
-  .reveal.delay-5 { transition-delay: .60s; }
-
-  /* Page shell */
-  main {
-    position: relative;
-    z-index: 1;
-    max-width: 1180px;
-    margin: 0 auto;
-    padding: 92px 48px 36px;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* Hero */
-  .hero { margin-bottom: 56px; }
-  .hero-eyebrow {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-    margin-bottom: 18px;
-  }
-  .hero-eyebrow .dot {
-    display: inline-block;
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--coral);
-    margin: 0 12px 2px 0;
-    box-shadow: 0 0 10px var(--coral);
-    vertical-align: middle;
-  }
-  .hero-title {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(34px, 4.4vw, 54px);
-    line-height: 1.04;
-    letter-spacing: -0.028em;
-    color: var(--ink);
-    margin-bottom: 18px;
-    max-width: 22ch;
-  }
-  .hero-title em {
-    font-style: italic;
-    font-weight: 400;
-    color: var(--coral);
-  }
-  .hero-byline {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-    margin-bottom: 22px;
-  }
-  .hero-byline em {
-    color: var(--coral);
-    font-style: normal;
-    letter-spacing: 0.14em;
-  }
-  .hero-dek {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(16px, 1.25vw, 19px);
-    line-height: 1.58;
-    color: var(--ink-dim);
-    max-width: 60ch;
-  }
-  .hero-dek em { color: var(--ink); font-style: italic; }
-
-  /* Section shell */
-  section.block {
-    margin-bottom: 68px;
-    scroll-margin-top: 90px;
-  }
-  .section-label {
-    font-family: var(--mono);
-    font-size: 9.5px;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-    margin-bottom: 18px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-  .section-label em {
-    color: var(--coral);
-    font-style: normal;
-    letter-spacing: 0.14em;
-  }
-  .section-label::before {
-    content: "";
-    display: inline-block;
-    width: 28px;
-    height: 1px;
-    background: var(--coral);
-  }
-  .section-headline {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(26px, 2.8vw, 38px);
-    line-height: 1.1;
-    letter-spacing: -0.022em;
-    color: var(--ink);
-    margin-bottom: 24px;
-    max-width: 26ch;
-  }
-  .section-headline em {
-    font-style: italic;
-    font-weight: 400;
-    color: var(--coral);
-  }
-
-  /* Prose */
-  .prose {
-    max-width: 64ch;
-  }
-  .prose p {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(15.5px, 1.15vw, 17.5px);
-    line-height: 1.65;
-    color: var(--ink-dim);
-  }
-  .prose p + p { margin-top: 16px; }
-  .prose p em { font-style: italic; color: var(--ink); }
-  .prose p strong {
-    color: var(--ink);
-    font-weight: 500;
-  }
-  .prose blockquote {
-    margin: 22px 0;
-    padding: 4px 0 4px 22px;
-    border-left: 2px solid var(--coral);
-    font-family: var(--serif);
-    font-weight: 300;
-    font-style: italic;
-    font-size: clamp(16.5px, 1.25vw, 19px);
-    line-height: 1.55;
-    color: var(--ink);
-    max-width: 56ch;
-  }
-
-  /* Tools grid */
-  .tools-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 18px;
-    margin-top: 10px;
-  }
-  .tool-card {
-    position: relative;
-    padding: 22px 22px 20px;
-    background: linear-gradient(180deg, rgba(14,24,36,0.55) 0%, rgba(14,24,36,0.22) 100%);
-    border: 1px solid var(--rule);
-    border-radius: 2px;
-    overflow: hidden;
-    transition: border-color 260ms var(--ease), background 260ms var(--ease);
-  }
-  .tool-card::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, var(--tool-accent, var(--coral)) 0%, transparent 70%);
-    opacity: .6;
-  }
-  .tool-card:hover {
-    border-color: var(--tool-accent, var(--coral));
-    background: linear-gradient(180deg,
-                                color-mix(in oklab, var(--tool-accent, var(--coral)) 5%, transparent) 0%,
-                                rgba(14,24,36,0.25) 100%);
-  }
-  .tool-card.tc-amber  { --tool-accent: var(--amber); }
-  .tool-card.tc-teal   { --tool-accent: var(--teal); }
-  .tool-card.tc-coral  { --tool-accent: var(--coral); }
-  .tool-card.tc-sky    { --tool-accent: var(--sky); }
-  .tool-card.tc-lilac  { --tool-accent: var(--lilac); }
-  .tool-card.tc-gold   { --tool-accent: var(--gold); }
-
-  .tool-name {
-    font-family: var(--serif);
-    font-weight: 400;
-    font-size: 18px;
-    line-height: 1.15;
-    letter-spacing: -0.012em;
-    color: var(--ink);
-    margin-bottom: 4px;
-  }
-  .tool-name em { font-style: italic; color: var(--tool-accent, var(--coral)); }
-  .tool-vendor {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-    margin-bottom: 14px;
-  }
-  .tool-role {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: 14px;
-    line-height: 1.55;
-    color: var(--ink-dim);
-    margin-bottom: 12px;
-  }
-  .tool-role em { color: var(--ink); font-style: italic; }
-  .tool-used-for {
-    font-family: var(--mono);
-    font-size: 9.5px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-    padding-top: 12px;
-    border-top: 1px dotted var(--ink-faint);
-  }
-  .tool-used-for em {
-    color: var(--tool-accent, var(--coral));
-    font-style: normal;
-    letter-spacing: 0.10em;
-  }
-
-  /* Per-assignment breakdown table (two-col: "What I did" / "What AI did") */
-  .breakdown {
-    margin-top: 18px;
-  }
-  .breakdown-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0;
-    padding: 26px 0;
-    border-bottom: 1px solid var(--rule);
-  }
-  .breakdown-row:first-of-type { border-top: 1px solid var(--rule); }
-  @media (min-width: 820px) {
-    .breakdown-row {
-      grid-template-columns: 220px minmax(0, 1fr) minmax(0, 1fr);
-      gap: 36px;
-      align-items: start;
+      --ease: cubic-bezier(.22, .61, .36, 1);
     }
-  }
-  .br-title {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: 20px;
-    line-height: 1.2;
-    color: var(--ink);
-    letter-spacing: -0.015em;
-  }
-  .br-title em {
-    font-style: italic;
-    font-weight: 400;
-    color: var(--coral);
-  }
-  .br-title .br-tag {
-    display: block;
-    margin-top: 8px;
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-  }
-  .br-col h4 {
-    font-family: var(--mono);
-    font-size: 9.5px;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-    margin: 0 0 10px;
-    font-weight: 400;
-  }
-  .br-col.col-me h4 { color: var(--amber); }
-  .br-col.col-ai h4 { color: var(--coral); }
-  .br-col ul {
-    list-style: none;
-    margin: 0; padding: 0;
-  }
-  .br-col li {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: 14.5px;
-    line-height: 1.55;
-    color: var(--ink-dim);
-    padding-left: 14px;
-    position: relative;
-    margin-bottom: 6px;
-  }
-  .br-col li::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 10px;
-    width: 6px;
-    height: 1px;
-    background: var(--ink-faint);
-  }
-  .br-col.col-me li::before { background: var(--amber); }
-  .br-col.col-ai li::before { background: var(--coral); }
-  .br-col li em { font-style: italic; color: var(--ink); }
 
-  @media (max-width: 820px) {
-    .br-col + .br-col { margin-top: 18px; }
-    .br-title { margin-bottom: 14px; }
-  }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-  /* Footer */
-  footer.footer {
-    margin-top: auto;
-    padding: 28px 0 4px;
-    border-top: 1px solid var(--rule);
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-  }
-  footer.footer em {
-    color: var(--coral);
-    font-style: normal;
-    letter-spacing: 0.14em;
-  }
+    html {
+      scroll-behavior: smooth;
+    }
 
-  /* Responsive */
-  @media (min-width: 1600px) {
-    main { max-width: 1320px; padding-top: 104px; }
-  }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--serif);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+      line-height: 1.45;
+      min-height: 100vh;
+    }
 
-  @media (max-width: 720px) {
-    .topbar { padding: 12px 22px; flex-wrap: wrap; row-gap: 4px; }
-    .topbar-title { font-size: 15px; }
-    main { padding: 88px 22px 28px; }
-    .hero { margin-bottom: 42px; }
-    section.block { margin-bottom: 52px; }
-    .tools-grid { gap: 14px; }
-    .tool-card { padding: 20px 18px 18px; }
-    footer.footer {
+    /* Atmospheric overlays */
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: .032;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/></filter><rect width='256' height='256' filter='url(%23n)'/></svg>");
+      background-size: 220px 220px;
+      mix-blend-mode: overlay;
+    }
+
+    .glow-tl,
+    .glow-br {
+      position: fixed;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .glow-tl {
+      top: 0;
+      left: 0;
+      width: 55vw;
+      height: 55vh;
+      background: radial-gradient(at 0% 0%, rgba(216, 104, 120, 0.10) 0%, transparent 60%);
+    }
+
+    .glow-br {
+      bottom: 0;
+      right: 0;
+      width: 50vw;
+      height: 50vh;
+      background: radial-gradient(at 100% 100%, rgba(240, 160, 96, 0.08) 0%, transparent 65%);
+    }
+
+    .edge-gradient {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      z-index: 10000;
+      background: linear-gradient(90deg, transparent 0%, var(--coral) 22%, var(--amber) 62%, transparent 100%);
+      opacity: .55;
+      pointer-events: none;
+    }
+
+    /* Topbar */
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 14px 48px 12px;
+      background: linear-gradient(180deg, rgba(8, 12, 20, 0.88) 0%, rgba(8, 12, 20, 0.60) 70%, transparent 100%);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .topbar-title {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 17px;
+      letter-spacing: -0.015em;
+      color: var(--ink);
+    }
+
+    .topbar-title em {
+      color: var(--coral);
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .topbar-meta {
+      font-family: var(--mono);
+      font-weight: 400;
+      font-size: 8.5px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    /* Journal link */
+    .journal-link {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px dotted var(--ink-faint);
+      transition: color 180ms ease, border-color 180ms ease;
+    }
+
+    .journal-link:hover,
+    .journal-link:focus-visible {
+      color: var(--coral);
+      border-bottom-color: var(--coral);
+      outline: none;
+    }
+
+    /* Reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity .9s var(--ease), transform .9s var(--ease);
+    }
+
+    .reveal.in-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal.delay-1 {
+      transition-delay: .10s;
+    }
+
+    .reveal.delay-2 {
+      transition-delay: .20s;
+    }
+
+    .reveal.delay-3 {
+      transition-delay: .32s;
+    }
+
+    .reveal.delay-4 {
+      transition-delay: .46s;
+    }
+
+    .reveal.delay-5 {
+      transition-delay: .60s;
+    }
+
+    /* Page shell */
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 92px 48px 36px;
+      min-height: 100vh;
+      display: flex;
       flex-direction: column;
-      gap: 8px;
-      align-items: flex-start;
     }
-    .topbar-meta { font-size: 8px; }
-  }
 
-  @media (max-width: 480px) {
-    .topbar { padding: 10px 18px; }
-    .topbar-title { font-size: 14px; letter-spacing: -0.005em; }
-    main { padding: 84px 18px 24px; }
-    .hero-title { font-size: clamp(28px, 9vw, 38px); }
-    .hero-dek { font-size: 14.5px; }
-    .section-headline { font-size: 24px; }
-    .prose p { font-size: 14.5px; }
-    .prose blockquote { font-size: 16px; }
-    .br-title { font-size: 18px; }
-    .br-col li { font-size: 13.5px; }
-    footer.footer { font-size: 9px; }
-  }
+    /* Hero */
+    .hero {
+      margin-bottom: 56px;
+    }
 
-  @media (prefers-reduced-motion: reduce) {
-    .reveal { transition: none !important; opacity: 1; transform: none; }
-    html { scroll-behavior: auto; }
-    .tool-card { transition: none !important; }
-  }
-</style>
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 18px;
+    }
+
+    .hero-eyebrow .dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--coral);
+      margin: 0 12px 2px 0;
+      box-shadow: 0 0 10px var(--coral);
+      vertical-align: middle;
+    }
+
+    .hero-title {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(34px, 4.4vw, 54px);
+      line-height: 1.04;
+      letter-spacing: -0.028em;
+      color: var(--ink);
+      margin-bottom: 18px;
+      max-width: 22ch;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--coral);
+    }
+
+    .hero-byline {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 22px;
+    }
+
+    .hero-byline em {
+      color: var(--coral);
+      font-style: normal;
+      letter-spacing: 0.14em;
+    }
+
+    .hero-dek {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(16px, 1.25vw, 19px);
+      line-height: 1.58;
+      color: var(--ink-dim);
+      max-width: 60ch;
+    }
+
+    .hero-dek em {
+      color: var(--ink);
+      font-style: italic;
+    }
+
+    /* Section shell */
+    section.block {
+      margin-bottom: 68px;
+      scroll-margin-top: 90px;
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .section-label em {
+      color: var(--coral);
+      font-style: normal;
+      letter-spacing: 0.14em;
+    }
+
+    .section-label::before {
+      content: "";
+      display: inline-block;
+      width: 28px;
+      height: 1px;
+      background: var(--coral);
+    }
+
+    .section-headline {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(26px, 2.8vw, 38px);
+      line-height: 1.1;
+      letter-spacing: -0.022em;
+      color: var(--ink);
+      margin-bottom: 24px;
+      max-width: 26ch;
+    }
+
+    .section-headline em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--coral);
+    }
+
+    /* Prose */
+    .prose {
+      max-width: 64ch;
+    }
+
+    .prose p {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(15.5px, 1.15vw, 17.5px);
+      line-height: 1.65;
+      color: var(--ink-dim);
+    }
+
+    .prose p+p {
+      margin-top: 16px;
+    }
+
+    .prose p em {
+      font-style: italic;
+      color: var(--ink);
+    }
+
+    .prose p strong {
+      color: var(--ink);
+      font-weight: 500;
+    }
+
+    .prose blockquote {
+      margin: 22px 0;
+      padding: 4px 0 4px 22px;
+      border-left: 2px solid var(--coral);
+      font-family: var(--serif);
+      font-weight: 300;
+      font-style: italic;
+      font-size: clamp(16.5px, 1.25vw, 19px);
+      line-height: 1.55;
+      color: var(--ink);
+      max-width: 56ch;
+    }
+
+    /* Tools grid */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+      margin-top: 10px;
+    }
+
+    .tool-card {
+      position: relative;
+      padding: 22px 22px 20px;
+      background: linear-gradient(180deg, rgba(14, 24, 36, 0.55) 0%, rgba(14, 24, 36, 0.22) 100%);
+      border: 1px solid var(--rule);
+      border-radius: 2px;
+      overflow: hidden;
+      transition: border-color 260ms var(--ease), background 260ms var(--ease);
+    }
+
+    .tool-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--tool-accent, var(--coral)) 0%, transparent 70%);
+      opacity: .6;
+    }
+
+    .tool-card:hover {
+      border-color: var(--tool-accent, var(--coral));
+      background: linear-gradient(180deg,
+          color-mix(in oklab, var(--tool-accent, var(--coral)) 5%, transparent) 0%,
+          rgba(14, 24, 36, 0.25) 100%);
+    }
+
+    .tool-card.tc-amber {
+      --tool-accent: var(--amber);
+    }
+
+    .tool-card.tc-teal {
+      --tool-accent: var(--teal);
+    }
+
+    .tool-card.tc-coral {
+      --tool-accent: var(--coral);
+    }
+
+    .tool-card.tc-sky {
+      --tool-accent: var(--sky);
+    }
+
+    .tool-card.tc-lilac {
+      --tool-accent: var(--lilac);
+    }
+
+    .tool-card.tc-gold {
+      --tool-accent: var(--gold);
+    }
+
+    .tool-name {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: 18px;
+      line-height: 1.15;
+      letter-spacing: -0.012em;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+
+    .tool-name em {
+      font-style: italic;
+      color: var(--tool-accent, var(--coral));
+    }
+
+    .tool-vendor {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 14px;
+    }
+
+    .tool-role {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--ink-dim);
+      margin-bottom: 12px;
+    }
+
+    .tool-role em {
+      color: var(--ink);
+      font-style: italic;
+    }
+
+    .tool-used-for {
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      padding-top: 12px;
+      border-top: 1px dotted var(--ink-faint);
+    }
+
+    .tool-used-for em {
+      color: var(--tool-accent, var(--coral));
+      font-style: normal;
+      letter-spacing: 0.10em;
+    }
+
+    /* Honorable mention — the ex-BFF card */
+    .honorable-mention {
+      position: relative;
+      margin-top: 26px;
+      padding: 22px 24px 22px;
+      background: linear-gradient(180deg, rgba(14, 24, 36, 0.35) 0%, rgba(14, 24, 36, 0.12) 100%);
+      border: 1px dashed var(--ink-faint);
+      border-radius: 2px;
+      overflow: hidden;
+      filter: grayscale(0.55);
+      opacity: 0.88;
+      transition: filter 300ms var(--ease), opacity 300ms var(--ease), border-color 300ms var(--ease);
+    }
+
+    .honorable-mention:hover {
+      filter: grayscale(0.15);
+      opacity: 1;
+      border-color: var(--ink-dim);
+    }
+
+    .honorable-mention::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--ink-faint) 0%, transparent 80%);
+      opacity: 0.6;
+    }
+
+    .honorable-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: baseline;
+    }
+
+    .honorable-label .hl-ping {
+      color: var(--ink-dim);
+      letter-spacing: 0.18em;
+    }
+
+    .honorable-name {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: 20px;
+      line-height: 1.15;
+      letter-spacing: -0.012em;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+
+    .honorable-name em {
+      font-style: italic;
+      color: var(--ink-dim);
+    }
+
+    .honorable-vendor {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 14px;
+    }
+
+    .honorable-vendor .years {
+      text-decoration: line-through;
+      text-decoration-color: var(--ink-faint);
+      opacity: 0.85;
+    }
+
+    .honorable-body {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 14.5px;
+      line-height: 1.62;
+      color: var(--ink-dim);
+    }
+
+    .honorable-body p {
+      margin: 0 0 10px;
+    }
+
+    .honorable-body p:last-child {
+      margin-bottom: 0;
+    }
+
+    .honorable-body em {
+      color: var(--ink);
+      font-style: italic;
+    }
+
+    .honorable-body .beg {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: 0.06em;
+      text-transform: none;
+      color: var(--ink-faint);
+      display: block;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px dotted var(--ink-faint);
+    }
+
+    .honorable-body .beg em {
+      color: var(--ink-dim);
+      font-style: italic;
+    }
+
+    /* Per-assignment breakdown table (two-col: "What I did" / "What AI did") */
+    .breakdown {
+      margin-top: 18px;
+    }
+
+    .breakdown-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+      padding: 26px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .breakdown-row:first-of-type {
+      border-top: 1px solid var(--rule);
+    }
+
+    @media (min-width: 820px) {
+      .breakdown-row {
+        grid-template-columns: 220px minmax(0, 1fr) minmax(0, 1fr);
+        gap: 36px;
+        align-items: start;
+      }
+    }
+
+    .br-title {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 20px;
+      line-height: 1.2;
+      color: var(--ink);
+      letter-spacing: -0.015em;
+    }
+
+    .br-title em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--coral);
+    }
+
+    .br-title .br-tag {
+      display: block;
+      margin-top: 8px;
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .br-col h4 {
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin: 0 0 10px;
+      font-weight: 400;
+    }
+
+    .br-col.col-me h4 {
+      color: var(--amber);
+    }
+
+    .br-col.col-ai h4 {
+      color: var(--coral);
+    }
+
+    .br-col ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .br-col li {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 14.5px;
+      line-height: 1.55;
+      color: var(--ink-dim);
+      padding-left: 14px;
+      position: relative;
+      margin-bottom: 6px;
+    }
+
+    .br-col li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 6px;
+      height: 1px;
+      background: var(--ink-faint);
+    }
+
+    .br-col.col-me li::before {
+      background: var(--amber);
+    }
+
+    .br-col.col-ai li::before {
+      background: var(--coral);
+    }
+
+    .br-col li em {
+      font-style: italic;
+      color: var(--ink);
+    }
+
+    @media (max-width: 820px) {
+      .br-col+.br-col {
+        margin-top: 18px;
+      }
+
+      .br-title {
+        margin-bottom: 14px;
+      }
+    }
+
+    /* Footer */
+    footer.footer {
+      margin-top: auto;
+      padding: 28px 0 4px;
+      border-top: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    footer.footer em {
+      color: var(--coral);
+      font-style: normal;
+      letter-spacing: 0.14em;
+    }
+
+    /* Responsive */
+    @media (min-width: 1600px) {
+      main {
+        max-width: 1320px;
+        padding-top: 104px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .topbar {
+        padding: 12px 22px;
+        flex-wrap: wrap;
+        row-gap: 4px;
+      }
+
+      .topbar-title {
+        font-size: 15px;
+      }
+
+      main {
+        padding: 88px 22px 28px;
+      }
+
+      .hero {
+        margin-bottom: 42px;
+      }
+
+      section.block {
+        margin-bottom: 52px;
+      }
+
+      .tools-grid {
+        gap: 14px;
+      }
+
+      .tool-card {
+        padding: 20px 18px 18px;
+      }
+
+      footer.footer {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+      }
+
+      .topbar-meta {
+        font-size: 8px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .topbar {
+        padding: 10px 18px;
+      }
+
+      .topbar-title {
+        font-size: 14px;
+        letter-spacing: -0.005em;
+      }
+
+      main {
+        padding: 84px 18px 24px;
+      }
+
+      .hero-title {
+        font-size: clamp(28px, 9vw, 38px);
+      }
+
+      .hero-dek {
+        font-size: 14.5px;
+      }
+
+      .section-headline {
+        font-size: 24px;
+      }
+
+      .prose p {
+        font-size: 14.5px;
+      }
+
+      .prose blockquote {
+        font-size: 16px;
+      }
+
+      .br-title {
+        font-size: 18px;
+      }
+
+      .br-col li {
+        font-size: 13.5px;
+      }
+
+      footer.footer {
+        font-size: 9px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal {
+        transition: none !important;
+        opacity: 1;
+        transform: none;
+      }
+
+      html {
+        scroll-behavior: auto;
+      }
+
+      .tool-card {
+        transition: none !important;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<div class="grain"></div>
-<div class="glow-tl"></div>
-<div class="glow-br"></div>
-<div class="edge-gradient"></div>
+  <div class="grain"></div>
+  <div class="glow-tl"></div>
+  <div class="glow-br"></div>
+  <div class="edge-gradient"></div>
 
-<header class="topbar">
-  <div class="topbar-title"><a class="journal-link back-link" href="../">&larr; All</a> &nbsp;&middot;&nbsp; AI <em>Statement</em></div>
-  <div class="topbar-meta">Disclosure &nbsp;&bull;&nbsp; Method &nbsp;&bull;&nbsp; April 2026</div>
-</header>
+  <header class="topbar">
+    <div class="topbar-title"><a class="journal-link back-link" href="../">&larr; All</a> &nbsp;&middot;&nbsp; AI
+      <em>Statement</em>
+    </div>
+    <div class="topbar-meta">Disclosure &nbsp;&bull;&nbsp; Method &nbsp;&bull;&nbsp; April 2026</div>
+  </header>
 
-<main>
+  <main>
 
-  <!-- =====================================================================
+    <!-- =====================================================================
        HERO
        ===================================================================== -->
-  <section class="hero">
-    <div class="hero-eyebrow reveal"><span class="dot"></span>Section 03 &nbsp;&middot;&nbsp; Disclosure &amp; Method</div>
+    <section class="hero">
+      <div class="hero-eyebrow reveal"><span class="dot"></span>Section 03 &nbsp;&middot;&nbsp; Disclosure &amp; Method
+      </div>
 
-    <h1 class="hero-title reveal delay-1">
-      How these pages were <em>made</em>
-    </h1>
+      <h1 class="hero-title reveal delay-1">
+        How these pages were <em>made</em>
+      </h1>
 
-    <div class="hero-byline reveal delay-2">
-      Takumi &nbsp;&middot;&nbsp; UTokyo &nbsp;&middot;&nbsp; <em>Spring 2026</em>
-    </div>
+      <div class="hero-byline reveal delay-2">
+        Takumi &nbsp;&middot;&nbsp; UTokyo &nbsp;&middot;&nbsp; <em>Spring 2026</em>
+      </div>
 
-    <p class="hero-dek reveal delay-3">
-      Every page on this site was produced with help from AI tools. This is
-      the page where I say which ones, what they did, and what I still
-      insist on doing myself. I wrote this because a good statement about
-      AI should be <em>specific enough to argue with</em> not a badge, not a
-      disclaimer, but a record of method.
-    </p>
-  </section>
+      <p class="hero-dek reveal delay-3">
+        Every page on this site was produced with help from AI tools. This is
+        the page where I say which ones, what they did, and what I still
+        insist on doing myself.
+      </p>
+    </section>
 
-  <!-- =====================================================================
+    <!-- =====================================================================
        THE PRINCIPLE
        ===================================================================== -->
-  <section class="block reveal">
-    <div class="section-label"><em>03.1</em> &nbsp;&middot;&nbsp; The principle</div>
-    <h2 class="section-headline">
-      Disclosure should be <em>specific</em>, not performative
-    </h2>
-    <div class="prose">
-      <p>
-        A lot of AI disclosure right now is ceremonial a paragraph at the
-        bottom of a page that says <em>AI was used in the creation of this
-        work</em> and then leaves you with no way to tell what that means.
-        That sentence is compatible with almost anything: a spell-checker,
-        a ghostwriter, a co-author who made every argument.
-      </p>
-      <p>
-        For a course on <em>Digital Technology and Society</em>, I think
-        that is the wrong instinct. The question is not whether AI was
-        used. It is <strong>what it was used for</strong>, <strong>where
-        judgment stayed with me</strong>, and <strong>what someone reading
-        my work should trust more or less as a result</strong>.
-      </p>
-      <blockquote>
-        The goal is not to prove I did not use AI. The goal is to be
-        accurate about how I did.
-      </blockquote>
-      <p>
-        So, specifically: I use AI for the tasks I am <em>not capable of
-        doing</em> despite 23 years (24 this year, thanks for asking) of
-        being alive on this planet. That list includes, in no particular
-        order of embarrassment: programming languages (I started learning
-        Python this year and I think Python is starting to tolerate me),
-        HTML, CSS, web design, and what I will collectively file under
-        <em>other coding stuff</em> <strong>really, I am trying to learn</strong>.
-        The site you are reading was built by someone who is still quietly
-        googling what <code style="font-family: var(--mono); font-size: 0.9em; color: var(--ink);">flex-direction</code>
-        does.
-      </p>
-      <p>
-        What follows is the long-form version of that confession: every
-        tool in the kit, what I pointed it at, and a per-assignment split
-        of who did what. I would rather be specific and <em>slightly
-        embarrassing</em> than vague and impressively, technically correct.
-      </p>
-    </div>
-  </section>
+    <section class="block reveal">
+      <div class="section-label"><em>03.1</em> &nbsp;&middot;&nbsp; The principle</div>
+      <h2 class="section-headline">
+        Disclosure should be <em>specific</em>, not performative
+      </h2>
+      <div class="prose">
+        <p>
+          A lot of AI disclosure right now is ceremonial a paragraph at the
+          bottom of a page that says <em>AI was used in the creation of this
+            work</em> and then leaves you with no way to tell what that means.
+          Not only does it not help you evaluate the work, it also does not
+          help you understand how the work was made (and for me to copy their working style and produce mine too lol).
+        </p>
+        <p>
+          So, specifically I use AI for the tasks I am <em>not capable of
+            doing</em> despite 23 years (24 this year, thanks for asking) of
+          being alive on this planet. That list includes, in no particular
+          order of embarrassment: programming languages (I started learning
+          Python this year and I think Python is starting to tolerate me),
+          HTML, CSS, web design, and what I will collectively file under
+          <em>other coding stuff</em> <strong>really, I am trying to learn</strong>.
+          The site you are reading was built by someone who is still quietly
+          googling what <code
+            style="font-family: var(--mono); font-size: 0.9em; color: var(--ink);">flex-direction</code>
+          does.
+        </p>
+        <p>
+          What follows is the long-form version of that confession: every
+          tool in the kit, what I pointed it at, and a per-assignment split
+          of who did what. I would rather be specific and <em>slightly
+            embarrassing</em> than vague and impressively, technically correct.
+        </p>
+      </div>
+    </section>
 
-  <!-- =====================================================================
+    <!-- =====================================================================
        TOOLS GRID
        ===================================================================== -->
-  <section class="block reveal">
-    <div class="section-label"><em>03.2</em> &nbsp;&middot;&nbsp; The tools</div>
-    <h2 class="section-headline">
-      Seven tools, <em>each used for something different</em>
-    </h2>
-    <div class="prose" style="margin-bottom: 26px;">
-      <p>
-        Different tools are good at different things. Treating <em>AI</em>
-        as one monolith flattens a real distinction between a research
-        assistant, a grammar checker, and an image generator. Below is the
-        actual kit, and the role each one played.
-      </p>
-    </div>
-
-    <div class="tools-grid">
-
-      <div class="tool-card tc-coral">
-        <div class="tool-name"><em>Claude</em></div>
-        <div class="tool-vendor">Anthropic &nbsp;&middot;&nbsp; Cowork &amp; Claude Code</div>
-        <p class="tool-role">
-          The main collaborator. I use Claude through Cowork (a desktop
-          assistant) and Claude Code (a terminal agent) as a <em>thinking
-          partner</em> and an <em>implementer</em> that can read, write,
-          and run code in my workspace.
+    <section class="block reveal">
+      <div class="section-label"><em>03.2</em> &nbsp;&middot;&nbsp; The tools</div>
+      <h2 class="section-headline">
+        Seven tools, <em>each used for something different</em>
+      </h2>
+      <div class="prose" style="margin-bottom: 26px;">
+        <p>
+          Different tools are good at different things. Below is the
+          actual kit, and the role each one played.
         </p>
-        <div class="tool-used-for">Used for &nbsp;<em>site build, structure, copy iteration</em></div>
       </div>
 
-      <div class="tool-card tc-amber">
-        <div class="tool-name"><em>Claude Design</em></div>
-        <div class="tool-vendor">Anthropic</div>
-        <p class="tool-role">
-          Sits right next to Claude. Generates layout variants and
-          component concepts I can react to I use it to <em>see options</em>
-          faster than I could sketch them with my own two hands.
-        </p>
-        <div class="tool-used-for">Used for &nbsp;<em>page concepting, layout options</em></div>
+      <div class="tools-grid">
+
+        <div class="tool-card tc-coral">
+          <div class="tool-name"><em>Claude</em></div>
+          <div class="tool-vendor">Anthropic &nbsp;&middot;&nbsp; Cowork &amp; Claude Code</div>
+          <p class="tool-role">
+            The main collaborator. I use Claude through Cowork (a desktop
+            assistant) and Claude Code (a terminal agent) as a <em>thinking
+              partner</em> and an <em>implementer</em> that can read, write,
+            and run code in my workspace.
+          </p>
+          <div class="tool-used-for">Used for &nbsp;<em>site build, structure, copy iteration</em></div>
+        </div>
+
+        <div class="tool-card tc-amber">
+          <div class="tool-name"><em>Claude Design</em></div>
+          <div class="tool-vendor">Anthropic</div>
+          <p class="tool-role">
+            Sits right next to Claude. Generates layout variants and
+            component concepts I can react to I use it to <em>see options</em>
+            faster than I could sketch them with my own two hands.
+          </p>
+          <div class="tool-used-for">Used for &nbsp;<em>page concepting, layout options</em></div>
+        </div>
+
+        <div class="tool-card tc-sky">
+          <div class="tool-name"><em>NotebookLM</em></div>
+          <div class="tool-vendor">Google &nbsp;&middot;&nbsp; Called via Claude's MCP server</div>
+          <p class="tool-role">
+            Research synthesis across many sources at once. I load the
+            course's annotated bibliography and ask targeted questions,
+            and <em>the model can only answer from what is in the notebook</em>.
+            I do not open it as a separate app I call it through a
+            <em>NotebookLM MCP server</em> wired into Claude, so the two
+            tools sit in the same conversation.
+          </p>
+          <div class="tool-used-for">Used for &nbsp;<em>Research Trends literature synthesis</em></div>
+        </div>
+
+        <div class="tool-card tc-teal">
+          <div class="tool-name"><em>Grammarly</em> AI</div>
+          <div class="tool-vendor">Grammarly</div>
+          <p class="tool-role">
+            You know what this is for at this point.
+          </p>
+          <div class="tool-used-for">Used for &nbsp;<em>correcting grammar, obviously.</em></div>
+        </div>
+
+        <div class="tool-card tc-gold">
+          <div class="tool-name">Google <em>Nano Banana</em></div>
+          <div class="tool-vendor">Google</div>
+          <p class="tool-role">
+            A fast image model I use for quick visual sketches along with Claude Design when I want
+            to see what a concept could look like before I commit.
+          </p>
+          <div class="tool-used-for">Used for &nbsp;<em>reference imagery, mood exploration</em></div>
+        </div>
+
+        <div class="tool-card tc-lilac">
+          <div class="tool-name">Google <em>Stitch</em></div>
+          <div class="tool-vendor">Google</div>
+          <p class="tool-role">
+            UI generation from a brief. Produces mocks that I pull apart for
+            ideas rather than use wholesale the useful output is usually a
+            detail, not the whole screen.
+          </p>
+          <div class="tool-used-for">Used for &nbsp;<em>UI exploration, component inspiration</em></div>
+        </div>
+
+        <div class="tool-card tc-teal">
+          <div class="tool-name">Google <em>Antigravity</em></div>
+          <div class="tool-vendor">Google &nbsp;&middot;&nbsp; Gemini 3.1 Pro</div>
+          <p class="tool-role">
+            A coding-focused agentic tool I use for larger code changes
+            where I want a second model's read on the same problem. Running
+            two assistants against the same task exposes <em>what is actually
+              load-bearing</em>.
+          </p>
+          <div class="tool-used-for">Used for &nbsp;<em>code review, cross-model checks</em></div>
+        </div>
+
       </div>
 
-      <div class="tool-card tc-sky">
-        <div class="tool-name"><em>NotebookLM</em></div>
-        <div class="tool-vendor">Google &nbsp;&middot;&nbsp; Called via Claude's MCP server</div>
-        <p class="tool-role">
-          Research synthesis across many sources at once. I load the
-          course's annotated bibliography and ask targeted questions,
-          and <em>the model can only answer from what is in the notebook</em>.
-          I do not open it as a separate app I call it through a
-          <em>NotebookLM MCP server</em> wired into Claude, so the two
-          tools sit in the same conversation.
-        </p>
-        <div class="tool-used-for">Used for &nbsp;<em>Research Trends literature synthesis</em></div>
+      <!-- Honorable mention — Google Gemini, ex-BFF -->
+      <div class="honorable-mention">
+        <div class="honorable-label">
+          <span>Honorable &nbsp;Mention</span>
+          <span class="hl-ping">In loving memory of a friendship &middot; Status: it's complicated</span>
+        </div>
+        <div class="honorable-name">Google <em>Gemini</em></div>
+        <div class="honorable-vendor">
+          Google &nbsp;&middot;&nbsp; <span class="years">BFF 2021&ndash;2025</span> &nbsp;&middot;&nbsp; Currently: ghosted
+        </div>
+        <div class="honorable-body">
+          <p>
+            Listen. We had <em>four good years</em>. You were there for late-night
+            essay panics, for me pretending to understand statistics, for every
+            half-formed thought I typed at 2am. You were the first chatbot I
+            actually trusted with a brief, and for a while it really felt like
+            we were going to go the distance together.
+          </p>
+          <p>
+            Then something happened. I don't know if it was a quiet model
+            swap, an overzealous safety tune, or just <em>vibes</em>, but
+            sometime in 2025 you started answering a different question than
+            the one I asked and confidently linking to sources that did not
+            exist. I would ask for a sharp take and get a committee-written
+            brochure. I would ask for help and receive <em>a disclaimer</em>.
+          </p>
+          <p>
+            Meanwhile, Claude Cowork slid into the group chat and, I am
+            sorry to say, <em>came in clutch</em>. It read the room. It read
+            my files. It actually did the thing.
+          </p>
+          <p class="beg">
+            &mdash;&nbsp; this is an open letter: <em>please upgrade your AI model</em>.
+            I am genuinely rooting for you. Come back smarter and we can
+            talk. Until then, you live here, in the honorable mentions,
+            fondly remembered and occasionally opened by accident.
+          </p>
+        </div>
       </div>
+    </section>
 
-      <div class="tool-card tc-teal">
-        <div class="tool-name"><em>Grammarly</em> AI</div>
-        <div class="tool-vendor">Grammarly</div>
-        <p class="tool-role">
-          A quiet, line-level editor. It does not rewrite my voice; it
-          flags the places I have written a five-clause sentence on
-          autopilot and quietly offers a shorter one.
-        </p>
-        <div class="tool-used-for">Used for &nbsp;<em>prose cleanup, tone consistency</em></div>
-      </div>
-
-      <div class="tool-card tc-gold">
-        <div class="tool-name">Google <em>Nano Banana</em></div>
-        <div class="tool-vendor">Google</div>
-        <p class="tool-role">
-          A fast image model I use for quick visual sketches when I want
-          to see what a concept could look like before I commit to a
-          composition. Exploratory, not final.
-        </p>
-        <div class="tool-used-for">Used for &nbsp;<em>reference imagery, mood exploration</em></div>
-      </div>
-
-      <div class="tool-card tc-lilac">
-        <div class="tool-name">Google <em>Stitch</em></div>
-        <div class="tool-vendor">Google</div>
-        <p class="tool-role">
-          UI generation from a brief. Produces mocks that I pull apart for
-          ideas rather than use wholesale the useful output is usually a
-          detail, not the whole screen.
-        </p>
-        <div class="tool-used-for">Used for &nbsp;<em>UI exploration, component inspiration</em></div>
-      </div>
-
-      <div class="tool-card tc-teal">
-        <div class="tool-name">Google <em>Antigravity</em></div>
-        <div class="tool-vendor">Google &nbsp;&middot;&nbsp; Gemini 3.1 Pro</div>
-        <p class="tool-role">
-          A coding-focused agentic tool I use for larger code changes
-          where I want a second model's read on the same problem. Running
-          two assistants against the same task exposes <em>what is actually
-          load-bearing</em>.
-        </p>
-        <div class="tool-used-for">Used for &nbsp;<em>code review, cross-model checks</em></div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- =====================================================================
+    <!-- =====================================================================
        PER-ASSIGNMENT BREAKDOWN
        ===================================================================== -->
-  <section class="block reveal">
-    <div class="section-label"><em>03.3</em> &nbsp;&middot;&nbsp; Per-assignment breakdown</div>
-    <h2 class="section-headline">
-      What I did &nbsp;/&nbsp; <em>what the models did</em>
-    </h2>
-    <div class="prose" style="margin-bottom: 10px;">
-      <p>
-        For each piece on this site, here is the split. Nothing hidden,
-        nothing dressed up.
-      </p>
-    </div>
-
-    <div class="breakdown">
-
-      <!-- Research Trends -->
-      <div class="breakdown-row">
-        <div class="br-title">
-          Research <em>Trends</em>
-          <span class="br-tag">Class Assignment &nbsp;&middot;&nbsp; Longform scroll</span>
-        </div>
-        <div class="br-col col-me">
-          <h4>What I did</h4>
-          <ul>
-            <li>The five-year window came with the course, <em>not from me</em> so that one is not a personal flex.</li>
-            <li>Wrote the actual <em>content analysis code</em> that categorizes each paper into trend buckets. The categories are mine, the scaffolding is mine, the bugs were also mine.</li>
-            <li>Used Claude to help with scraping the source list, then <em>rechecked every number by hand</em> against the original bibliography. I did not trust counts I had not recounted.</li>
-            <li>Read the bibliography and picked which threads were worth tracing.</li>
-            <li>Wrote every claim about the <em>meaning</em> of the shifts.</li>
-            <li>Designed the scroll pacing and the tone.</li>
-          </ul>
-        </div>
-        <div class="br-col col-ai">
-          <h4>What the tools did</h4>
-          <ul>
-            <li><em>Claude</em> &nbsp;helped me write the scraping script and later the content-analysis code (I still had to tell it what I wanted).</li>
-            <li><em>NotebookLM</em> &nbsp;(called via Claude's MCP server) surfaced terminology trends across the source set without inventing citations.</li>
-            <li><em>Claude</em> &nbsp;drafted HTML/CSS and iterated on copy when asked.</li>
-            <li><em>Grammarly</em> &nbsp;tightened prose at line level.</li>
-            <li><em>Claude Design / Stitch</em> &nbsp;offered layout variants I pulled from.</li>
-          </ul>
-        </div>
+    <section class="block reveal">
+      <div class="section-label"><em>03.3</em> &nbsp;&middot;&nbsp; Per-assignment breakdown</div>
+      <h2 class="section-headline">
+        What I did &nbsp;/&nbsp; <em>what the models did</em>
+      </h2>
+      <div class="prose" style="margin-bottom: 10px;">
+        <p>
+          For each piece on this site, here is the split. Nothing hidden,
+          nothing dressed up.
+        </p>
       </div>
 
-      <!-- Reading Response -->
-      <div class="breakdown-row">
-        <div class="br-title">
-          Reading <em>Response</em>
-          <span class="br-tag">Class Assignment &nbsp;&middot;&nbsp; Week 3</span>
+      <div class="breakdown">
+
+        <!-- Research Trends -->
+        <div class="breakdown-row">
+          <div class="br-title">
+            Research <em>Trends</em>
+            <span class="br-tag">Class Assignment &nbsp;&middot;&nbsp; Longform scroll</span>
+          </div>
+          <div class="br-col col-me">
+            <h4>What I did</h4>
+            <ul>
+              <li>The five-year window came with the course, <em>not from me</em> so that one is not a personal flex.
+              </li>
+              <li>Wrote the actual <em>content analysis code</em> that categorizes each paper into trend buckets. The
+                categories are mine, the scaffolding is mine, the bugs were also mine.</li>
+              <li>Used Claude to help with scraping the source list, then <em>rechecked every number by hand</em>
+                against the original bibliography. I did not trust counts I had not recounted.</li>
+              <li>Read the bibliography and picked which threads were worth tracing.</li>
+              <li>Wrote every claim about the <em>meaning</em> of the shifts.</li>
+              <li>Designed the scroll pacing and the tone.</li>
+            </ul>
+          </div>
+          <div class="br-col col-ai">
+            <h4>What the tools did</h4>
+            <ul>
+              <li><em>Claude</em> &nbsp;helped me write the scraping script and later the content-analysis code (I still
+                had to tell it what I wanted).</li>
+              <li><em>NotebookLM</em> &nbsp;(called via Claude's MCP server) surfaced terminology trends across the
+                source set without inventing citations.</li>
+              <li><em>Claude</em> &nbsp;drafted HTML/CSS and iterated on copy when asked.</li>
+              <li><em>Grammarly</em> &nbsp;do grammar and not make me look like an IELTS BAND 5.5 student.</li>
+              <li><em>Claude Design / Stitch</em> &nbsp;offered layout variants I pulled from.</li>
+            </ul>
+          </div>
         </div>
-        <div class="br-col col-me">
-          <h4>What I did</h4>
-          <ul>
-            <li>Picked the reading that actually <em>overlapped with my own research interests</em> rather than the shortest one on the list.</li>
-            <li>Read the whole thing myself, in a chair, with coffee, before opening any model.</li>
-            <li>Only then used Claude (through its <em>NotebookLM MCP</em> and <em>learning mode</em>) to re-walk the paper and argue with me about it.</li>
-            <li>Pulled the discussion back toward my research interests and wrote the position from there.</li>
-          </ul>
+
+        <!-- Reading Response -->
+        <div class="breakdown-row">
+          <div class="br-title">
+            Reading <em>Response</em>
+            <span class="br-tag">Class Assignment &nbsp;&middot;&nbsp; Week 3</span>
+          </div>
+          <div class="br-col col-me">
+            <h4>What I did</h4>
+            <ul>
+              <li>Picked the reading that actually <em>overlapped with my own research interests</em>.</li>
+              <li>Read the whole thing myself, in a chair, with freshly dripped coffee (you're welcome to try).</li>
+              <li>Then used Claude (through its <em>NotebookLM MCP</em> and <em>learning mode</em>) to re-walk the
+                paper and argue with me about it.</li>
+              <li>Pulled the discussion back toward my research interests and wrote the position from there.</li>
+            </ul>
+          </div>
+          <div class="br-col col-ai">
+            <h4>What the tools did</h4>
+            <ul>
+              <li><em>Claude</em> &nbsp;in learning mode walked me back through the paper question by question.</li>
+              <li><em>NotebookLM</em> &nbsp;(via the MCP connection) let Claude answer only from the paper itself, not
+                from general memory.</li>
+              <li><em>Grammarly</em> &nbsp;again, make me look like a native speaker.</li>
+              <li><em>Claude Design</em> &nbsp;suggested the theme-tile visual structure.</li>
+            </ul>
+          </div>
         </div>
-        <div class="br-col col-ai">
-          <h4>What the tools did</h4>
-          <ul>
-            <li><em>Claude</em> &nbsp;in learning mode walked me back through the paper question by question.</li>
-            <li><em>NotebookLM</em> &nbsp;(via the MCP connection) let Claude answer only from the paper itself, not from general memory.</li>
-            <li><em>Grammarly</em> &nbsp;caught sentence-level awkwardness.</li>
-            <li><em>Claude Design</em> &nbsp;suggested the theme-tile visual structure.</li>
-          </ul>
+
+        <!-- Personal Project -->
+        <div class="breakdown-row">
+          <div class="br-title">
+            Personal <em>Project</em>
+            <span class="br-tag">Independent work &nbsp;&middot;&nbsp; In progress</span>
+          </div>
+          <div class="br-col col-me">
+            <h4>What I did</h4>
+            <ul>
+              <li>Picked the topic and what the project is actually trying to do.</li>
+              <li>Am still working out the shape of the argument.</li>
+              <li>Deliberately held the page back rather than posting a clean placeholder that would misrepresent where
+                I am.</li>
+            </ul>
+          </div>
+          <div class="br-col col-ai">
+            <h4>What the tools did</h4>
+            <ul>
+              <li><em>Claude</em> &nbsp;is helping me stress-test framings in conversation.</li>
+              <li>No AI-generated abstract is on the page, <em>by choice</em>, until I have written one I stand behind.
+              </li>
+            </ul>
+          </div>
         </div>
+
+        <!-- Site itself -->
+        <div class="breakdown-row">
+          <div class="br-title">
+            The <em>site itself</em>
+            <span class="br-tag">Infrastructure &nbsp;&middot;&nbsp; Design system</span>
+          </div>
+          <div class="br-col col-me">
+            <h4>What I did</h4>
+            <ul>
+              <li>Specified the aesthetic (<em>Scientific Sublime</em>) and the editorial stance.</li>
+              <li>Decided the information architecture and URL structure.</li>
+              <li>Reviewed every page at multiple viewport sizes and flagged regressions.</li>
+              <li>Own the GitHub repo and the deploys.</li>
+            </ul>
+          </div>
+          <div class="br-col col-ai">
+            <h4>What the tools did</h4>
+            <ul>
+              <li><em>Claude</em> &nbsp;and <em>Antigravity</em> wrote most of the HTML and CSS.</li>
+              <li><em>Claude Design / Stitch</em> &nbsp;generated the first-pass layout ideas.</li>
+              <li><em>Nano Banana</em> &nbsp;produced exploratory imagery I did not end up using.</li>
+            </ul>
+          </div>
+        </div>
+
       </div>
+    </section>
 
-      <!-- Personal Project -->
-      <div class="breakdown-row">
-        <div class="br-title">
-          Personal <em>Project</em>
-          <span class="br-tag">Independent work &nbsp;&middot;&nbsp; In progress</span>
-        </div>
-        <div class="br-col col-me">
-          <h4>What I did</h4>
-          <ul>
-            <li>Picked the topic and what the project is actually trying to do.</li>
-            <li>Am still working out the shape of the argument.</li>
-            <li>Deliberately held the page back rather than posting a clean placeholder that would misrepresent where I am.</li>
-          </ul>
-        </div>
-        <div class="br-col col-ai">
-          <h4>What the tools did</h4>
-          <ul>
-            <li><em>Claude</em> &nbsp;is helping me stress-test framings in conversation.</li>
-            <li>No AI-generated abstract is on the page, <em>by choice</em>, until I have written one I stand behind.</li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Site itself -->
-      <div class="breakdown-row">
-        <div class="br-title">
-          The <em>site itself</em>
-          <span class="br-tag">Infrastructure &nbsp;&middot;&nbsp; Design system</span>
-        </div>
-        <div class="br-col col-me">
-          <h4>What I did</h4>
-          <ul>
-            <li>Specified the aesthetic (<em>Scientific Sublime</em>) and the editorial stance.</li>
-            <li>Decided the information architecture and URL structure.</li>
-            <li>Reviewed every page at multiple viewport sizes and flagged regressions.</li>
-            <li>Own the GitHub repo and the deploys.</li>
-          </ul>
-        </div>
-        <div class="br-col col-ai">
-          <h4>What the tools did</h4>
-          <ul>
-            <li><em>Claude</em> &nbsp;and <em>Antigravity</em> wrote most of the HTML and CSS.</li>
-            <li><em>Claude Design / Stitch</em> &nbsp;generated the first-pass layout ideas.</li>
-            <li><em>Nano Banana</em> &nbsp;produced exploratory imagery I did not end up using.</li>
-          </ul>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- =====================================================================
+    <!-- =====================================================================
        WHAT I STILL DO
        ===================================================================== -->
-  <section class="block reveal">
-    <div class="section-label"><em>03.4</em> &nbsp;&middot;&nbsp; What I still do</div>
-    <h2 class="section-headline">
-      The parts I will not <em>delegate</em>
-    </h2>
-    <div class="prose">
-      <p>
-        A short list of things that stay with me even when a model helped
-        produce the sentences around them.
-      </p>
-      <p>
-        <strong>The position.</strong> Whether the reading response takes
-        side A or side B is my call. I do not ask a model what it thinks
-        and then quietly inherit the answer; I decide what I think, and
-        then use models to test whether my reasoning holds up.
-      </p>
-      <p>
-        <strong>The sources.</strong> I do not let models invent citations.
-        If a claim is sourced, I have read the source. NotebookLM is
-        useful precisely because it can only speak <em>from</em> the
-        documents I give it and cannot invent anything beyond them.
-      </p>
-      <p>
-        <strong>The accountability.</strong> If a sentence on this site is
-        wrong, self-important, or just badly argued, <em>that is on me</em>.
-        AI tools are happy to sit next to me while the work is going well
-        and mysteriously vanish the moment someone spots a typo. That is
-        not a split I am willing to accept. Credit goes where it goes,
-        but every mistake on this page has exactly one author.
-      </p>
-    </div>
-  </section>
+    <section class="block reveal">
+      <div class="section-label"><em>03.4</em> &nbsp;&middot;&nbsp; What I still do</div>
+      <h2 class="section-headline">
+        The parts I will not <em>delegate</em>
+      </h2>
+      <div class="prose">
+        <p>
+          A short list of things that stay with me even when a model helped
+          produce the sentences around them.
+        </p>
+        <p>
+          <strong>The position.</strong> Whether the reading response takes
+          side A or side B is my call. I do not ask a model what it thinks
+          and then quietly inherit the answer; I decide what I think, and
+          then use models to test whether my reasoning holds up.
+        </p>
+        <p>
+          <strong>The sources.</strong> I do not let models invent citations.
+          If a claim is sourced, I have read the source. NotebookLM is
+          useful precisely because it can only speak <em>from</em> the
+          documents I give it and cannot invent anything beyond them.
+        </p>
+        <p>
+          <strong>The accountability.</strong> If a sentence on this site is
+          wrong, self-important, or just badly argued, <em>that is on me</em>.
+          AI tools are happy to sit next to me while the work is going well
+          and mysteriously vanish the moment someone spots a typo. That is
+          not a split I am willing to accept. Credit goes where it goes,
+          but every mistake on this page has exactly one author (me).
+        </p>
+      </div>
+    </section>
 
-  <!-- =====================================================================
+    <!-- =====================================================================
        CLOSING REFLECTION
        ===================================================================== -->
-  <section class="block reveal">
-    <div class="section-label"><em>03.5</em> &nbsp;&middot;&nbsp; Closing</div>
-    <h2 class="section-headline">
-      A note to anyone reading <em>as a grader</em>
-    </h2>
-    <div class="prose">
-      <p>
-        If you are reading this in an evaluative capacity, the honest
-        summary is: <em>I used AI extensively, and I would have produced
-        worse work without it.</em>
-      </p>
-      <p>
-        I want to tie that line to something more specific than
-        productivity. I am, first, a <strong>learner</strong>. From that
-        seat, these tools have mostly done two useful things for me: they
-        let my <em>ideas take an actual shape on the page</em>, and they
-        quietly covered for the places I still do not know enough. That is
-        not nothing. An idea I can show you is a different animal from one
-        I am still trying to describe at my desk while staring at a blank
-        editor.
-      </p>
-      <p>
-        And <strong>nevertheless</strong> (I like that word), I am
-        stubbornly still learning the fundamentals in parallel Python,
-        CSS, HTML, the parts of web design that are less glamorous than
-        they sound. The plan is not to ride on top of these tools forever
-        while pretending to understand what is underneath. The plan is to
-        build enough of the underlying skill that, a few years from now
-        when these tools are even faster and weirder, <em>I can steer them
-        instead of the other way around</em>.
-      </p>
-      <blockquote>
-        The goal was never to hide the machinery. The goal was to make
-        sure the <em>judgment</em> in the work was still mine and that
-        I am becoming someone who can keep up with the machinery, not
-        someone who needs it to keep up for them.
-      </blockquote>
-    </div>
-  </section>
+    <section class="block reveal">
+      <div class="section-label"><em>03.5</em> &nbsp;&middot;&nbsp; Closing</div>
+      <h2 class="section-headline">
+        A note to anyone that is <em>still here</em>
+      </h2>
+      <div class="prose">
+        <p>
+          If you are reading this, the honest
+          summary is: <em>I used AI extensively, and I would have produced
+            worse work without it.</em>
+        </p>
+        <p>
+          I want to tie that line to something more specific than
+          productivity. I am, first, a <strong>learner</strong>. From that
+          seat, these tools have mostly done two useful things for me: they
+          let my <em>ideas take an actual shape on the page</em>, and they
+          quietly covered for the places I still do not know enough.
+        </p>
+        <p>
+          And <strong>nevertheless</strong> (I like that word), I am
+          stubbornly still learning the fundamentals in parallel Python,
+          CSS, HTML, the parts of web design that are less glamorous than
+          they sound. The plan is not to ride on top of these tools forever
+          while pretending to understand what is underneath (otherwise there will be no seat for me in the job market
+          T^T). The plan is to
+          build enough of the underlying skill that, a few years from now
+          when these tools are even faster and weirder, <em>I can steer them
+            instead of the other way around</em>.
+        </p>
+      </div>
+    </section>
 
-  <footer class="footer reveal delay-5">
-    <div>AI Statement &nbsp;&middot;&nbsp; <a class="journal-link" href="../">Return to directory</a></div>
-    <div><em>ITASIA302</em> &nbsp;&middot;&nbsp; April 2026</div>
-  </footer>
+    <footer class="footer reveal delay-5">
+      <div>AI Statement &nbsp;&middot;&nbsp; <a class="journal-link" href="../">Return to directory</a></div>
+      <div><em>ITASIA302</em> &nbsp;&middot;&nbsp; April 2026</div>
+    </footer>
 
-</main>
+  </main>
 
-<script>
-  "use strict";
+  <script>
+    "use strict";
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const observed = document.querySelectorAll(".reveal");
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add("in-view");
-          io.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.12, rootMargin: "0px 0px -4% 0px" });
-    observed.forEach(n => io.observe(n));
+    document.addEventListener("DOMContentLoaded", () => {
+      const observed = document.querySelectorAll(".reveal");
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add("in-view");
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: "0px 0px -4% 0px" });
+      observed.forEach(n => io.observe(n));
 
-    setTimeout(() => {
-      document.querySelectorAll(".reveal:not(.in-view)").forEach(n => {
-        const r = n.getBoundingClientRect();
-        if (r.top < window.innerHeight * 0.95) n.classList.add("in-view");
-      });
-    }, 120);
-  });
-</script>
+      setTimeout(() => {
+        document.querySelectorAll(".reveal:not(.in-view)").forEach(n => {
+          const r = n.getBoundingClientRect();
+          if (r.top < window.innerHeight * 0.95) n.classList.add("in-view");
+        });
+      }, 120);
+    });
+  </script>
 
 </body>
+
 </html>
