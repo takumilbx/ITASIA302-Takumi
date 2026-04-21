@@ -1074,6 +1074,27 @@
       white-space: nowrap;
     }
 
+    .repro-link {
+      text-decoration: none;
+      color: inherit;
+      transition: filter 180ms ease;
+    }
+
+    .repro-link code {
+      transition: background 180ms ease, border-color 180ms ease, color 180ms ease;
+    }
+
+    .repro-link:hover code,
+    .repro-link:focus-visible code {
+      background: rgba(240, 160, 96, 0.10);
+      border-color: rgba(240, 160, 96, 0.45);
+      color: var(--amber);
+    }
+
+    .repro-link:focus-visible {
+      outline: none;
+    }
+
     .appendix table {
       border-collapse: collapse;
       margin: 12px 0 28px;
@@ -2285,10 +2306,10 @@
         </ol>
 
         <h3>Reproducibility</h3>
-        <p>The analysis is implemented in <code>step3_categorize.py</code> (permissive baseline) and
-          <code>step5_tight.py</code> (final strict set, used for this report). Both operate directly on the source xlsx
-          <code>AI_SOCIETY_Articles_2021_onwards.xlsx</code>. The regex patterns listed above are the exact patterns
-          used in <code>step5_tight.py</code>.
+        <p>The analysis is implemented in <a class="repro-link" href="step3_categorize.py" download><code>step3_categorize.py</code></a> (permissive baseline) and
+          <a class="repro-link" href="step5_tight.py" download><code>step5_tight.py</code></a> (final strict set, used for this report). Both operate directly on the source xlsx
+          <a class="repro-link" href="AI_SOCIETY_Articles_2021_onwards.xlsx" download><code>AI_SOCIETY_Articles_2021_onwards.xlsx</code></a>. The regex patterns listed above are the exact patterns
+          used in <a class="repro-link" href="step5_tight.py" download><code>step5_tight.py</code></a>.
         </p>
 
       </div><!-- .appendix-body -->
