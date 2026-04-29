@@ -469,6 +469,85 @@
       }
     }
 
+    /* 02.2 — Research Trends Dashboard launch card */
+    .launch-card {
+      position: relative;
+      display: block;
+      padding: 26px 30px 28px;
+      background: linear-gradient(180deg, rgba(240, 160, 96, 0.08) 0%, rgba(240, 160, 96, 0.02) 100%);
+      border-left: 2px solid var(--amber);
+      max-width: 760px;
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.25s var(--ease), transform 0.25s var(--ease);
+    }
+    .launch-card:hover {
+      background: linear-gradient(180deg, rgba(240, 160, 96, 0.14) 0%, rgba(240, 160, 96, 0.04) 100%);
+    }
+    .launch-card .launch-eyebrow {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 10px;
+    }
+    .launch-card .launch-title {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: 20px;
+      line-height: 1.3;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+    .launch-card .launch-title em {
+      font-style: italic;
+      color: var(--amber);
+    }
+    .launch-card p {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--ink-dim);
+      margin-bottom: 14px;
+    }
+    .launch-card .launch-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 14px;
+    }
+    .launch-card .launch-meta em {
+      color: var(--ink);
+      font-style: normal;
+    }
+    .launch-card .launch-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--amber);
+      padding-top: 12px;
+      border-top: 1px solid rgba(240, 160, 96, 0.18);
+    }
+    .launch-card .launch-arrow {
+      font-family: var(--mono);
+      font-size: 14px;
+      transition: transform 0.25s var(--ease);
+    }
+    .launch-card:hover .launch-arrow {
+      transform: translateX(4px);
+    }
+
     /* Footer */
     footer.footer {
       margin-top: auto;
@@ -683,6 +762,35 @@
           afternoon. That paragraph is <em>still being argued with</em><span class="blink" aria-hidden="true"></span>
         </p>
       </div>
+    </section>
+
+    <section id="trends" class="abstract-section reveal delay-5">
+      <div class="section-label"><em>02.2</em> &nbsp;&middot;&nbsp; Research Trends Dashboard</div>
+
+      <h2 class="section-headline">
+        Half a century of <em>Japanese EdTech</em> research
+      </h2>
+
+      <a class="launch-card" href="jp-edtech-trends/">
+        <div class="launch-eyebrow">Interactive · multi-tab dashboard</div>
+        <div class="launch-title">JMET / JJET <em>research trends, 1977&ndash;2025</em></div>
+        <p>
+          A reading of two Japanese educational technology journals across 49 years.
+          Theme prevalence over time, inflection points, co-occurrence structure, a
+          research-gap map, and a policy timeline that traces how MEXT and cabinet
+          decisions show up in the literature one to three years later.
+        </p>
+        <div class="launch-meta">
+          <span>Articles &nbsp;&middot;&nbsp; <em>2,942</em></span>
+          <span>Years &nbsp;&middot;&nbsp; <em>1977&ndash;2025</em></span>
+          <span>Themes &nbsp;&middot;&nbsp; <em>32</em></span>
+          <span>Policy events &nbsp;&middot;&nbsp; <em>31</em></span>
+        </div>
+        <div class="launch-foot">
+          <span>Open the dashboard</span>
+          <span class="launch-arrow" aria-hidden="true">&rarr;</span>
+        </div>
+      </a>
     </section>
 
     <footer class="footer reveal delay-5">
