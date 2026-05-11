@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Research Journey — Two Countries, One Question</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #080C14; }
+  canvas { display: block; }
+
+  #back-btn {
+    position: fixed; top: 18px; left: 22px; z-index: 100;
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: #3A4A62; background: none; border: none; cursor: pointer;
+    transition: color 200ms ease;
+    display: none;
+  }
+  #back-btn:hover { color: #9AA3B0; }
+  #back-btn.visible { display: block; }
+
+  #title-overlay {
+    position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
+    text-align: center; pointer-events: none; z-index: 100;
+    transition: opacity 400ms ease;
+  }
+  #title-overlay .eyebrow {
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase;
+    color: #3A4A62; margin-bottom: 4px;
+  }
+  #title-overlay .main-title {
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 300; font-size: 16px; letter-spacing: -0.01em;
+    color: #9AA3B0;
+  }
+  #title-overlay .main-title em { font-style: italic; color: #EDE8E0; }
+
+  /* Card popup */
+  #card {
+    position: fixed; z-index: 200;
+    width: 280px;
+    background: #0E1824;
+    border: 1px solid #132032;
+    border-radius: 3px;
+    padding: 20px 22px 18px;
+    pointer-events: none;
+    opacity: 0; transform: scale(0.94) translateY(6px);
+    transition: opacity 280ms cubic-bezier(.22,.61,.36,1),
+                transform 280ms cubic-bezier(.22,.61,.36,1);
+  }
+  #card.visible { opacity: 1; transform: scale(1) translateY(0); pointer-events: auto; }
+  #card .card-label {
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 8.5px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--card-accent, #F0A060); margin-bottom: 8px;
+  }
+  #card .card-title {
+    font-family: Georgia, serif; font-weight: 400; font-size: 15px;
+    color: #EDE8E0; line-height: 1.3; margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  #card .card-desc {
+    font-family: Georgia, serif; font-weight: 300; font-size: 12.5px;
+    color: #9AA3B0; line-height: 1.55;
+  }
+  #card .card-close {
+    position: absolute; top: 10px; right: 14px;
+    font-family: "SF Mono", monospace; font-size: 10px;
+    color: #3A4A62; cursor: pointer; pointer-events: auto;
+    transition: color 180ms ease;
+  }
+  #card .card-close:hover { color: #9AA3B0; }
+
+  /* Scrubber */
+  #scrubber {
+    position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 0; z-index: 100;
+    background: rgba(8,12,20,0.7);
+    border: 1px solid #132032; border-radius: 2px;
+    backdrop-filter: blur(6px);
+  }
+  .scrub-btn {
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: #3A4A62; background: none; border: none;
+    padding: 10px 22px; cursor: pointer;
+    position: relative; transition: color 200ms ease;
+    border-right: 1px solid #132032;
+  }
+  .scrub-btn:last-child { border-right: none; }
+  .scrub-btn::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--btn-color); transform: scaleX(0);
+    transform-origin: left; transition: transform 300ms cubic-bezier(.22,.61,.36,1);
+  }
+  .scrub-btn:hover { color: #9AA3B0; }
+  .scrub-btn.active { color: #EDE8E0; }
+  .scrub-btn.active::before { transform: scaleX(1); }
+
+  #hint {
+    position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%);
+    font-family: "SF Mono", monospace; font-size: 9px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: #3A4A62; pointer-events: none;
+    transition: opacity 600ms ease;
+  }
+  #hint.hidden { opacity: 0; }
+</style>
+</head>
+<body>
+
+<canvas id="c"></canvas>
+
+<button id="back-btn">← Back to overview</button>
+
+<div id="title-overlay">
+  <div class="eyebrow">Master's Thesis · Research Journey</div>
+  <div class="main-title">Two Countries, <em>One Question</em></div>
+</div>
+
+<div id="card">
+  <span class="card-close" id="card-close">✕</span>
+  <div class="card-label" id="card-label">Chapter</div>
+  <div class="card-title" id="card-title">Node title</div>
+  <div class="card-desc" id="card-desc">Description</div>
+</div>
+
+<div id="scrubber">
+  <button class="scrub-btn active" data-ch="0" style="--btn-color:#F0A060">Inspirations</button>
+  <button class="scrub-btn" data-ch="1" style="--btn-color:#5090C0">Past Research</button>
+  <button class="scrub-btn" data-ch="2" style="--btn-color:#5AC8B0">Iterations</button>
+  <button class="scrub-btn" data-ch="3" style="--btn-color:#9E90D0">Now</button>
+</div>
+
+<div id="hint">Click a cluster to explore</div>
+
+<script>
+"use strict";
+
+const CHAPTERS = [
+  {
+    id: 0, label: "Inspirations", color: "#F0A060", dim: "#3a2010",
+    nodes: [
+      { title: "Thai Education System", desc: "9 years embedded in Thailand's education sector — observing gaps in digital readiness, teacher confidence, and infrastructure at every level." },
+      { title: "SEAYLP 2019", desc: "South East Asia Youth Leadership Program at Northern Illinois University. Saw how US teachers used technology naturally; contrast with Thai classrooms stuck me." },
+      { title: "Education Upload (2018)", desc: "Directed a documentary on life skills gaps in Thai education for KOB Junior. Won 2nd place nationally. First formal inquiry into how schools fail students." },
+      { title: "Panyaprateep HS — Art & Japanese", desc: "Studied in an arts-Japanese stream. Experienced a learning environment where the medium shaped the message — aesthetic education as a different form of knowing." },
+      { title: "Shutter Story 2018", desc: "Taught photography and visual storytelling to underserved Bangkok students. Saw how access to creative tools transformed confidence and self-expression." },
+      { title: "MIDL Youth Camp 2019", desc: "Designed and led Media Information & Digital Literacy activities. Began thinking seriously about how media shapes cognition, not just content." },
+      { title: "CMIC / Samui 2019", desc: "Led design thinking workshops for young social innovators on Koh Samui. Recognized as one of 100 Cheewid Impact Contributors in Thailand." },
+      { title: "Saturday School — Japanese Teacher", desc: "Volunteered as a Japanese teacher at Wat Ang Keaw School, Bangkok. Co-designed curriculum around enjoyable learning principles. Direct classroom experience." },
+      { title: "Bilibili Thailand 2020–2024", desc: "Translated 70+ anime series for Thai streaming audiences. Developed deep sensitivity to how language and framing shape learner interpretation." },
+      { title: "Thammasat BA — Global Studies", desc: "First Class Honors, GPA 3.72. Cross-disciplinary lens on development, inequality, and technology's role in systemic change." },
+      { title: "BMA Internship 2023", desc: "Data visualization for Bangkok Metropolitan Administration's education projects — UNESCO Learning Cities, BMA Strategy Kick-off, Thai Scholarship DB." },
+      { title: "TDRI Internship 2019", desc: "10-day internship at Thailand Development Research Institute. First exposure to policy-level thinking about structural problems in Thai education." },
+      { title: "E-sports Curriculum — Saturday School 2022", desc: "Helped pilot E-sports classrooms across 8 Bangkok schools with SEA (Garena) Thailand. Saw 1:1 device classrooms in action — and saw teachers struggle." },
+      { title: "Hult Prize @ Thammasat 2020", desc: "Designed design thinking, storytelling, and pitching workshops. Observed how pedagogical structure changes what students can imagine." },
+      { title: "TikTok @takumyi — Japanese Learning", desc: "85k+ followers learning Japanese through short-form video. Evidence that informal EdTech works when motivation is intrinsic and content is well-designed." },
+      { title: "Edsy — Japan Market 2024", desc: "Validated Japan market for an AI English coaching platform. Met teachers across Japanese schools; saw GIGA rollout artifacts — devices unused, teachers uncertain." },
+      { title: "UTokyo ITASIA Program 2025", desc: "Entering the program as a practitioner-researcher. ITASIA's interdisciplinary lens gave me vocabulary to frame what I had been observing for years." },
+      { title: "\"The Creator\" Documentary 2016", desc: "Finalist, KOB Junior 8. Explored how technology burdens future generations. First articulation of tech as a cultural force, not just a tool." }
+    ]
+  },
+  {
+    id: 1, label: "Past Research", color: "#5090C0", dim: "#0e1e30",
+    nodes: [
+      { title: "Mishra & Koehler — TPACK (2006)", desc: "The foundational framework: Technological Pedagogical Content Knowledge. Teachers need all three intersecting knowledge types to teach effectively with technology." },
+      { title: "GIGA School Program — Japan", desc: "Japan's 2020–2021 1:1 device rollout for all K-12 students. Largest forced adoption of EdTech in Japanese history. Created natural research conditions." },
+      { title: "Thailand 4.0 — EdTech Policy", desc: "National digital economy strategy shaping Thai education's technology investment. Top-down policy vs. ground-level classroom reality." },
+      { title: "1:1 Device Classroom Studies", desc: "Literature on what happens when every student has a device: engagement patterns, teacher workflow disruption, equity effects." },
+      { title: "Teacher Professional Development in Thailand", desc: "Research on CPD systems, in-service training gaps, and how Thai teachers conceptualize their own growth." },
+      { title: "Comparative Education — Japan & Thailand", desc: "Cross-national studies examining how cultural context shapes educational practice, teacher identity, and institutional change." },
+      { title: "Technology Integration Models", desc: "SAMR, RAT, TPACK — comparing frameworks for describing how teachers move from substitution to transformation in tech use." },
+      { title: "Teacher Beliefs & Technology", desc: "Research showing that beliefs about learning, teaching, and technology predict adoption behavior more than training alone." },
+      { title: "Digital Divide in Asian Classrooms", desc: "Infrastructure inequality is documented; less studied is the pedagogical divide — access without pedagogical shift." },
+      { title: "Constructivist Learning Theory", desc: "Vygotsky, Piaget, and 1:1 learning: how does individual device access align with (or undermine) social constructivism?" },
+      { title: "TPACK Assessment Frameworks", desc: "Survey instruments and observation rubrics developed to measure teacher TPACK levels — methodological toolbox for this study." },
+      { title: "Cross-Cultural EdTech Studies", desc: "Research bridging Asia-Pacific educational contexts: similar infrastructure challenges, different cultural pedagogical defaults." },
+      { title: "Qualitative Research in Education", desc: "Case study methodology, interview design, and classroom observation protocols — methodological grounding for the study design." },
+      { title: "Elementary Teacher Identity", desc: "How primary school teachers construct professional identity and how technology adoption threatens or extends that identity." },
+      { title: "UN ESCAP — Digital Inclusion 2024", desc: "Research translation work on digital inclusion for older persons in Japan, Korea, China. Connected policy framing to classroom-level digital transition." }
+    ]
+  },
+  {
+    id: 2, label: "Iterations", color: "#5AC8B0", dim: "#0a2820",
+    nodes: [
+      { title: "Starting Point: Technology in Thai Classrooms", desc: "Initial, broad framing — 'how is technology used in Thai schools?' Too wide, no theoretical anchor." },
+      { title: "Discovering TPACK", desc: "First read of Mishra & Koehler. Realized I needed a framework that captured the intersection of content, pedagogy, and technology — not just one dimension." },
+      { title: "Adding Comparative Lens", desc: "Expanded beyond Thailand after Edsy fieldwork in Japan. GIGA School created a natural comparative case that matched Thailand's device-push." },
+      { title: "Focusing on Elementary Level", desc: "Narrowed from K-12 to elementary. Primary school teachers have the least subject-specialist content support but the most pressure to integrate devices." },
+      { title: "The 1:1 Constraint", desc: "Specified '1:1 device classrooms' as the environment. This is the policy outcome both governments are funding — the real-world context of the research." },
+      { title: "Framing the Transition", desc: "The word 'transition' became central. Not 'adoption' (passive) or 'mastery' (endpoint), but ongoing professional becoming." },
+      { title: "Research Question Draft v1", desc: "First written RQ: too long, three parts, unresolvable. Feedback: simplify to one thing you can actually answer with data." },
+      { title: "Methodology Choice: Qualitative", desc: "Rejected survey-based TPACK measurement. Chose qualitative comparative case study — richer, messier, truer to the complexity." },
+      { title: "Interview Protocol Design", desc: "Drafted semi-structured interview guide. Piloted with two Japanese teachers. Revised to reduce leading questions, add scenario prompts." },
+      { title: "Observation Framework", desc: "Built classroom observation rubric adapting TPACK indicators to 1:1 settings. Identifying what TPACK looks like in practice, not on paper." },
+      { title: "Ethics & Fieldwork Planning", desc: "IRB/ethics process, school partner recruitment, scheduling across two countries. Complexity of cross-national qualitative research." },
+      { title: "Literature Gap Identification", desc: "TPACK is well-studied in secondary and higher education. Elementary comparative studies in Japan-Thailand: nearly absent. That's the gap." },
+      { title: "Cultural Context as Variable", desc: "Realized teacher identity in Japan (specialist, hierarchical) and Thailand (generalist, relational) would shape TPACK development differently — this became theoretically important." },
+      { title: "Title Crystallization", desc: "\"Two Countries, One Question\" — the transition from working title to a phrase that holds the comparative logic and the research focus together." },
+      { title: "Chapter Outline Draft", desc: "Five chapters: Introduction, Literature Review, Methodology, Findings, Discussion. Mapped how TPACK framework threads through all of them." },
+      { title: "Advisor Alignment", desc: "Supervisor meetings refined scope: feasible within program timeline, sufficient methodological rigor, clear contribution to comparative EdTech literature." },
+      { title: "Connecting to Coursework", desc: "ITASIA302 and other courses feeding directly into theoretical grounding — digitally-mediated society as the context for why teacher TPACK matters now." },
+      { title: "Writing Chapter 1 — Introduction", desc: "Began the actual thesis text. From research question to situated problem statement, from abstract claim to concrete classroom observation." },
+      { title: "Recognizing My Positionality", desc: "Practitioner-researcher, bilingual, cross-cultural background — this isn't incidental. It's what makes this comparative study possible and credible." },
+      { title: "Current Version", desc: "TPACK transition in elementary teachers in Japan–Thailand 1:1 classrooms. Qualitative comparative case study. Data collection: 2026." }
+    ]
+  },
+  {
+    id: 3, label: "Now", color: "#9E90D0", dim: "#1a1530",
+    nodes: [
+      { title: "Research Question (Working)", desc: "How do elementary school teachers transition into TPACK-based teaching in 1:1 device classrooms across Japan and Thailand?" },
+      { title: "Qualitative Comparative Case Study", desc: "Two-country, multi-site design. Elementary schools in Japan (post-GIGA) and Thailand (device rollout ongoing) as parallel cases." },
+      { title: "Participants: Elementary Teachers", desc: "Target: 6–10 elementary classroom teachers per country. Purposive sampling for range of tech experience, years teaching, school context." },
+      { title: "Methods: Interviews + Observation", desc: "Semi-structured interviews plus classroom observations. Each teacher: 2 interviews (before/after observation) and 2 observed lessons." },
+      { title: "Literature Review — In Progress", desc: "Synthesizing TPACK literature, 1:1 device studies, Japan-Thailand educational context, and teacher professional development frameworks." },
+      { title: "Fieldwork Planning — 2026", desc: "Japan sites: Tokyo and surrounding prefectures. Thailand sites: Bangkok and Chiang Mai. Fieldwork window: mid-to-late 2026." },
+      { title: "Chapter 1 — Introduction Writing", desc: "Drafting the research problem, context, significance, and chapter overview. Making the case for why this study matters now." },
+      { title: "Advisor Consultations", desc: "Regular meetings shaping the study design, theoretical framing, and fieldwork approach. Ongoing collaborative development." },
+      { title: "ITASIA Coursework Integration", desc: "Using ITASIA302 and other courses as live thinking spaces — assignments as early exploratory writing toward the thesis." },
+      { title: "Positionality Statement", desc: "Trilingual Thai-Japanese researcher, 9 years in Thai education, 1 year in Japan. This position is an asset — named and theorized explicitly." },
+      { title: "Language as Research Asset", desc: "Thai + Japanese + English fluency means no translation intermediary. Direct access to participants' own words in their own languages." },
+      { title: "Connecting Practice to Theory", desc: "Everything from Bilibili translation to Edsy fieldwork to Saturday School teaching threads into the researcher's practical knowledge base." },
+      { title: "Digital Storytelling Approach", desc: "The thesis won't just be written — it will be communicated. This portfolio is part of that public research narrative." },
+      { title: "Publication Goals", desc: "Targeting a conference paper (2026) and a journal submission based on the comparative findings. Building toward academic contribution." },
+      { title: "Expected Completion: 2027", desc: "On track for UTokyo ITASIA master's program timeline. Research, writing, and defense within the 2-year program window." }
+    ]
+  }
+];
+
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+
+let W, H;
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize", () => { resize(); computeLayout(); });
+
+// Camera
+const cam = { x: 0, y: 0, z: 1, tx: 0, ty: 0, tz: 1 };
+const EASE = 0.07;
+
+// State
+let focusedChapter = null;
+let time = 0;
+
+// Layout
+const clusters = [];
+
+function computeLayout() {
+  clusters.length = 0;
+  const cx = W / 2, cy = H / 2;
+  const radius = Math.min(W, H) * 0.28;
+  const angles = [-Math.PI * 0.6, -Math.PI * 0.1, Math.PI * 0.4, Math.PI * 0.9];
+
+  CHAPTERS.forEach((ch, i) => {
+    const hx = cx + Math.cos(angles[i]) * radius;
+    const hy = cy + Math.sin(angles[i]) * radius * 0.72;
+    const subRadius = Math.min(W, H) * 0.095;
+    const subnodes = ch.nodes.map((n, j) => {
+      const a = (j / ch.nodes.length) * Math.PI * 2;
+      const r = subRadius * (0.7 + 0.3 * ((j * 7 + 3) % 5) / 4);
+      return {
+        ...n,
+        bx: hx + Math.cos(a) * r,
+        by: hy + Math.sin(a) * r,
+        ox: 0, oy: 0,
+        phase: j * 0.74 + i * 1.3,
+        speed: 0.21 + (j % 5) * 0.014,
+        amp: 1.5 + (j % 3) * 0.5
+      };
+    });
+    clusters.push({
+      ...ch,
+      hx, hy,
+      ox: 0, oy: 0,
+      phase: i * 2.1,
+      speed: 0.22 + i * 0.018,
+      amp: 2.5 + i * 0.3,
+      subnodes
+    });
+  });
+}
+computeLayout();
+
+// Hit test helpers
+function screenToWorld(sx, sy) {
+  return {
+    x: (sx - W / 2) / cam.z + cam.x,
+    y: (sy - H / 2) / cam.z + cam.y
+  };
+}
+function dist(ax, ay, bx, by) {
+  return Math.hypot(ax - bx, ay - by);
+}
+
+// Animate nodes
+function tickNodes() {
+  clusters.forEach(cl => {
+    cl.ox = Math.sin(time * cl.speed + cl.phase) * cl.amp;
+    cl.oy = Math.cos(time * cl.speed * 0.7 + cl.phase + 1) * cl.amp;
+    cl.subnodes.forEach(sn => {
+      sn.ox = Math.sin(time * sn.speed + sn.phase) * sn.amp;
+      sn.oy = Math.cos(time * sn.speed * 0.8 + sn.phase + 2) * sn.amp;
+    });
+  });
+}
+
+// Draw
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+
+  // Background gradient
+  const bg = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Math.max(W, H) * 0.7);
+  bg.addColorStop(0, "#0C1220");
+  bg.addColorStop(1, "#080C14");
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.save();
+  ctx.translate(W / 2, H / 2);
+  ctx.scale(cam.z, cam.z);
+  ctx.translate(-cam.x, -cam.y);
+
+  clusters.forEach((cl, ci) => {
+    const dimmed = focusedChapter !== null && focusedChapter !== ci;
+    const focused = focusedChapter === ci;
+    const alpha = dimmed ? 0.15 : 1;
+
+    const hx = cl.hx + cl.ox;
+    const hy = cl.hy + cl.oy;
+
+    // Sub-node connections + nodes (only when zoomed in or near)
+    if (!dimmed) {
+      cl.subnodes.forEach(sn => {
+        const sx = sn.bx + sn.ox;
+        const sy = sn.by + sn.oy;
+
+        // Connection line
+        ctx.beginPath();
+        ctx.moveTo(hx, hy);
+        ctx.lineTo(sx, sy);
+        ctx.strokeStyle = cl.color + "28";
+        ctx.lineWidth = 0.8 / cam.z;
+        ctx.stroke();
+
+        // Sub-node dot
+        const r = focused ? 5 : 3.5;
+        ctx.beginPath();
+        ctx.arc(sx, sy, r, 0, Math.PI * 2);
+        ctx.fillStyle = cl.color + (focused ? "cc" : "66");
+        ctx.fill();
+
+        if (focused) {
+          // Label
+          ctx.font = `300 10px "SF Mono", monospace`;
+          ctx.fillStyle = "#9AA3B0";
+          ctx.textAlign = "center";
+          ctx.fillText(sn.title, sx, sy - 10);
+        }
+      });
+    }
+
+    // Glow halo
+    const grd = ctx.createRadialGradient(hx, hy, 0, hx, hy, 55);
+    grd.addColorStop(0, cl.color + "22");
+    grd.addColorStop(1, "transparent");
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = grd;
+    ctx.beginPath();
+    ctx.arc(hx, hy, 55, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // Hub circle
+    const hubR = focused ? 16 : 12;
+    ctx.beginPath();
+    ctx.arc(hx, hy, hubR, 0, Math.PI * 2);
+    ctx.fillStyle = dimmed ? cl.dim : cl.color + "33";
+    ctx.fill();
+    ctx.strokeStyle = dimmed ? cl.color + "22" : cl.color;
+    ctx.lineWidth = (focused ? 2 : 1.5) / cam.z;
+    ctx.stroke();
+
+    // Hub label
+    if (!dimmed) {
+      ctx.font = `500 ${focused ? 11 : 10}px "SF Mono", monospace`;
+      ctx.fillStyle = dimmed ? cl.color + "44" : cl.color;
+      ctx.textAlign = "center";
+      ctx.fillText(cl.label.toUpperCase(), hx, hy + hubR + 16);
+
+      const nodeCount = cl.nodes.length;
+      ctx.font = `300 9px "SF Mono", monospace`;
+      ctx.fillStyle = "#3A4A62";
+      ctx.fillText(nodeCount + " nodes", hx, hy + hubR + 28);
+    }
+  });
+
+  ctx.restore();
+}
+
+// Camera lerp
+function updateCamera() {
+  cam.x += (cam.tx - cam.x) * EASE;
+  cam.y += (cam.ty - cam.y) * EASE;
+  cam.z += (cam.tz - cam.z) * EASE;
+}
+
+// Main loop
+function loop() {
+  time += 0.012;
+  tickNodes();
+  updateCamera();
+  draw();
+  requestAnimationFrame(loop);
+}
+loop();
+
+// Focus on chapter
+function focusChapter(ci) {
+  focusedChapter = ci;
+  const cl = clusters[ci];
+  cam.tx = cl.hx;
+  cam.ty = cl.hy;
+  cam.tz = Math.min(W, H) > 600 ? 2.4 : 1.8;
+
+  document.getElementById("back-btn").classList.add("visible");
+  document.getElementById("hint").classList.add("hidden");
+  setScrubActive(ci);
+}
+
+function resetView() {
+  focusedChapter = null;
+  cam.tx = 0; cam.ty = 0; cam.tz = 1;
+  document.getElementById("back-btn").classList.remove("visible");
+  hideCard();
+  document.getElementById("hint").classList.remove("hidden");
+}
+
+function setScrubActive(ci) {
+  document.querySelectorAll(".scrub-btn").forEach((b, i) => {
+    b.classList.toggle("active", i === ci);
+  });
+}
+
+// Card
+function showCard(node, chapterLabel, color, x, y) {
+  const card = document.getElementById("card");
+  document.getElementById("card-label").textContent = chapterLabel;
+  document.getElementById("card-label").style.setProperty("--card-accent", color);
+  document.getElementById("card-title").textContent = node.title;
+  document.getElementById("card-desc").textContent = node.desc;
+
+  // Position card near click, avoid edges
+  let cx = x + 20, cy = y - 20;
+  if (cx + 300 > W) cx = x - 300;
+  if (cy + 160 > H) cy = H - 170;
+  if (cy < 60) cy = 60;
+  card.style.left = cx + "px";
+  card.style.top = cy + "px";
+  card.classList.add("visible");
+}
+
+function hideCard() {
+  document.getElementById("card").classList.remove("visible");
+}
+
+// Click handling
+canvas.addEventListener("click", (e) => {
+  const wx = screenToWorld(e.clientX, e.clientY);
+
+  if (focusedChapter === null) {
+    // Check hub hit
+    for (let ci = 0; ci < clusters.length; ci++) {
+      const cl = clusters[ci];
+      const hx = cl.hx + cl.ox, hy = cl.hy + cl.oy;
+      if (dist(wx.x, wx.y, hx, hy) < 28) {
+        focusChapter(ci);
+        return;
+      }
+    }
+    return;
+  }
+
+  // Check sub-node hit
+  const cl = clusters[focusedChapter];
+  for (const sn of cl.subnodes) {
+    const sx = sn.bx + sn.ox, sy = sn.by + sn.oy;
+    if (dist(wx.x, wx.y, sx, sy) < 14) {
+      showCard(sn, cl.label, cl.color, e.clientX, e.clientY);
+      return;
+    }
+  }
+  // Click empty space: close card
+  hideCard();
+});
+
+// Back button
+document.getElementById("back-btn").addEventListener("click", resetView);
+document.getElementById("card-close").addEventListener("click", hideCard);
+
+// Scrubber
+document.querySelectorAll(".scrub-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const ci = parseInt(btn.dataset.ch);
+    focusChapter(ci);
+    hideCard();
+  });
+});
+
+// Touch support
+canvas.addEventListener("touchend", (e) => {
+  const t = e.changedTouches[0];
+  canvas.dispatchEvent(new MouseEvent("click", { clientX: t.clientX, clientY: t.clientY }));
+});
+</script>
+</body>
+</html>

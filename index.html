@@ -19,20 +19,20 @@
      Design tokens shared across all ITASIA302 pages ("Scientific Sublime")
      ======================================================================== */
     :root {
-      --bg: #080C14;
-      --bg-soft: #0E1824;
-      --ink: #EDE8E0;
-      --ink-dim: #9AA3B0;
-      --ink-faint: #3A4A62;
-      --rule: #132032;
-      --amber: #F0A060;
-      --amber-lo: #F0A06022;
-      --amber-hi: #FFC890;
-      --teal: #5AC8B0;
-      --sky: #5090C0;
-      --coral: #D86878;
-      --lilac: #9E90D0;
-      --gold: #E6B860;
+      --bg: #05060e;
+      --bg-soft: #0b0d1a;
+      --ink: #e0e6f0;
+      --ink-dim: #8899b8;
+      --ink-faint: #2e3a55;
+      --rule: #182030;
+      --amber: #4db8cc;
+      --amber-lo: #4db8cc14;
+      --amber-hi: #7dd3e8;
+      --teal: #45a884;
+      --sky: #5299c8;
+      --coral: #7a60b8;
+      --lilac: #7272c0;
+      --gold: #4db8cc;
 
       --serif: "Fraunces", Georgia, "Times New Roman", serif;
       --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
@@ -54,12 +54,16 @@
 
     body {
       background: var(--bg);
+      background-image:
+        linear-gradient(rgba(77,184,204,.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(77,184,204,.022) 1px, transparent 1px);
+      background-size: 52px 52px;
       color: var(--ink);
       font-family: var(--serif);
       -webkit-font-smoothing: antialiased;
       text-rendering: optimizeLegibility;
       overflow-x: hidden;
-      line-height: 1.45;
+      line-height: 1.6;
       min-height: 100vh;
     }
 
@@ -87,7 +91,7 @@
       left: 0;
       width: 55vw;
       height: 55vh;
-      background: radial-gradient(at 0% 0%, rgba(240, 160, 96, 0.10) 0%, transparent 60%);
+      background: radial-gradient(at 0% 0%, rgba(77, 184, 204, 0.07) 0%, transparent 60%);
     }
 
     .glow-br {
@@ -95,7 +99,7 @@
       right: 0;
       width: 50vw;
       height: 50vh;
-      background: radial-gradient(at 100% 100%, rgba(80, 144, 192, 0.08) 0%, transparent 65%);
+      background: radial-gradient(at 100% 100%, rgba(114, 114, 192, 0.07) 0%, transparent 65%);
     }
 
     .edge-gradient {
@@ -105,8 +109,8 @@
       right: 0;
       height: 2px;
       z-index: 10000;
-      background: linear-gradient(90deg, transparent 0%, var(--amber) 22%, var(--coral) 62%, transparent 100%);
-      opacity: .55;
+      background: linear-gradient(90deg, transparent 0%, var(--sky) 22%, var(--lilac) 62%, transparent 100%);
+      opacity: .9;
       pointer-events: none;
     }
 
@@ -123,7 +127,7 @@
       justify-content: space-between;
       align-items: baseline;
       padding: 14px 48px 12px;
-      background: linear-gradient(180deg, rgba(8, 12, 20, 0.88) 0%, rgba(8, 12, 20, 0.60) 70%, transparent 100%);
+      background: linear-gradient(180deg, rgba(5, 6, 14, 0.95) 0%, rgba(5, 6, 14, 0.70) 70%, transparent 100%);
       backdrop-filter: blur(4px);
       -webkit-backdrop-filter: blur(4px);
     }
@@ -235,7 +239,7 @@
       border-radius: 50%;
       background: var(--amber);
       margin: 0 12px 2px 0;
-      box-shadow: 0 0 10px var(--amber);
+      box-shadow: 0 0 8px var(--amber), 0 0 16px rgba(77,184,204,.12);
       vertical-align: middle;
     }
 
@@ -254,6 +258,7 @@
       font-style: italic;
       font-weight: 400;
       color: var(--amber);
+      text-shadow: 0 0 22px rgba(77, 184, 204, .22);
     }
 
     .hero-byline {
@@ -300,14 +305,21 @@
       display: flex;
       flex-direction: column;
       padding: 26px 26px 22px;
-      background: linear-gradient(180deg, rgba(14, 24, 36, 0.55) 0%, rgba(14, 24, 36, 0.25) 100%);
+      background: linear-gradient(180deg, rgba(20, 22, 40, 0.75) 0%, rgba(10, 11, 22, 0.35) 100%);
       border: 1px solid var(--rule);
       border-radius: 2px;
       text-decoration: none;
       color: inherit;
       overflow: hidden;
+      cursor: pointer;
       transition: border-color 280ms var(--ease), transform 280ms var(--ease), background 280ms var(--ease);
       min-height: 260px;
+    }
+
+    .card:active {
+      transform: translateY(0px) scale(0.99);
+      opacity: 0.88;
+      transition-duration: 80ms;
     }
 
     .card::before {
@@ -327,15 +339,21 @@
     .card:focus-visible {
       border-color: var(--card-accent, var(--amber));
       background: linear-gradient(180deg,
-          color-mix(in oklab, var(--card-accent, var(--amber)) 6%, transparent) 0%,
-          rgba(14, 24, 36, 0.30) 100%);
-      transform: translateY(-2px);
+          color-mix(in oklab, var(--card-accent, var(--amber)) 12%, rgba(13,15,28,0.9)) 0%,
+          rgba(13, 15, 28, 0.50) 100%);
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--card-accent, var(--amber)) 40%, transparent),
+                  0 8px 40px color-mix(in srgb, var(--card-accent, var(--amber)) 15%, transparent),
+                  inset 0 0 30px color-mix(in srgb, var(--card-accent, var(--amber)) 4%, transparent);
       outline: none;
     }
 
     /* Accent variants only the --card-accent token differs */
     .card.card-amber {
       --card-accent: var(--amber);
+    }
+
+    .card.card-sky {
+      --card-accent: var(--sky);
     }
 
     .card.card-teal {
@@ -477,6 +495,242 @@
     }
 
     /* ========================================================================
+     CLI animations
+     ======================================================================== */
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      z-index: 9998;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(0, 0, 0, 0.025) 3px,
+        rgba(0, 0, 0, 0.025) 4px
+      );
+    }
+
+    /* ── Login screen ── */
+    #login-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 100000;
+      background: #05060e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .login-box {
+      width: min(420px, 88vw);
+      border: 1px solid var(--rule);
+      padding: 36px 40px 32px;
+      position: relative;
+    }
+    .login-box::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: -1px;
+      width: 22px; height: 22px;
+      border-top: 2px solid var(--sky);
+      border-left: 2px solid var(--sky);
+      box-shadow: -2px -2px 12px rgba(122,162,247,.3);
+    }
+    .login-box::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; right: -1px;
+      width: 22px; height: 22px;
+      border-bottom: 2px solid var(--lilac);
+      border-right: 2px solid var(--lilac);
+      box-shadow: 2px 2px 12px rgba(187,154,247,.3);
+    }
+    .login-logo {
+      font-family: var(--mono);
+      font-size: 18px;
+      letter-spacing: 0.18em;
+      color: var(--sky);
+      text-shadow: 0 0 16px rgba(77,184,204,.28);
+      margin-bottom: 4px;
+    }
+    .login-ver {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      color: var(--ink-faint);
+      margin-bottom: 26px;
+    }
+    .login-sep {
+      border: none;
+      border-top: 1px solid var(--rule);
+      margin: 0 0 20px;
+    }
+    .login-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      margin-bottom: 26px;
+    }
+    .lf {
+      display: flex;
+      font-family: var(--mono);
+      font-size: 11px;
+      gap: 8px;
+    }
+    .lf-key {
+      color: var(--ink-faint);
+      letter-spacing: 0.1em;
+      min-width: 96px;
+    }
+    .lf-val { color: var(--ink-dim); }
+    .lf-val.ok {
+      color: var(--teal);
+      text-shadow: 0 0 8px rgba(69, 168, 132, .25);
+    }
+    .login-btn {
+      display: block;
+      width: 100%;
+      padding: 13px 20px;
+      background: transparent;
+      border: 1px solid var(--sky);
+      color: var(--sky);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.2s ease, box-shadow 0.2s ease, text-shadow 0.2s ease;
+      box-shadow: 0 0 8px rgba(77,184,204,.08), inset 0 0 8px rgba(77,184,204,.03);
+    }
+    .login-btn::before {
+      content: '';
+      position: absolute;
+      top: -100%; left: 0; right: 0; height: 100%;
+      background: linear-gradient(180deg, transparent, rgba(77,184,204,.12), transparent);
+      transition: top 0.5s ease;
+    }
+    .login-btn:hover {
+      background: rgba(77,184,204,.07);
+      box-shadow: 0 0 16px rgba(77,184,204,.18), inset 0 0 16px rgba(77,184,204,.04);
+      text-shadow: 0 0 8px rgba(77,184,204,.5);
+    }
+    .login-btn:hover::before { top: 100%; }
+    .login-hint {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      color: var(--ink-faint);
+      text-align: center;
+      margin-top: 14px;
+      animation: hint-pulse 2.5s ease-in-out infinite;
+    }
+    @keyframes hint-pulse { 0%,100%{opacity:.4} 50%{opacity:.9} }
+
+    /* ── Boot overlay (hidden until login clicked) ── */
+    #boot-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: #05060e;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .boot-inner {
+      width: min(480px, 88vw);
+    }
+    .boot-log {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      line-height: 2;
+      color: var(--ink-faint);
+    }
+    .boot-log .bl {
+      opacity: 0;
+      transform: translateX(-8px);
+      transition: opacity 0.14s ease, transform 0.14s ease;
+    }
+    .boot-log .bl.show { opacity: 1; transform: translateX(0); }
+    .boot-log .hi { color: var(--sky); }
+    .boot-log .ok { color: var(--teal); }
+    .boot-log .ready {
+      color: var(--ink);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+    .boot-progress-wrap {
+      margin-top: 20px;
+      height: 2px;
+      background: var(--rule);
+      border-radius: 1px;
+      overflow: hidden;
+    }
+    #boot-progress {
+      height: 100%;
+      background: linear-gradient(90deg, var(--sky), var(--lilac));
+      width: 0%;
+      transition: width 1.1s cubic-bezier(0.22, 0.61, 0.36, 1);
+    }
+
+    .cmd-prompt {
+      color: var(--teal);
+      font-style: normal;
+      user-select: none;
+    }
+
+    .blink-cursor {
+      display: inline-block;
+      width: 7px;
+      height: 10px;
+      background: var(--sky);
+      vertical-align: middle;
+      margin-left: 2px;
+      animation: cur-blink 1s step-end infinite;
+      border-radius: 1px;
+    }
+
+    @keyframes cur-blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .blink-cursor.steady {
+      animation: cur-steady 3s ease-in-out infinite;
+    }
+    @keyframes cur-steady {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 0.15; }
+    }
+
+    /* Card entry: slide-in from left edge like terminal output */
+    .card {
+      --cli-delay: 0s;
+      clip-path: inset(0 100% 0 0);
+      transform-style: preserve-3d;
+      will-change: transform;
+      transition:
+        border-color 280ms var(--ease),
+        background 280ms var(--ease),
+        clip-path 0s;
+    }
+
+    .card.in-view {
+      animation: card-reveal 0.45s var(--ease) var(--cli-delay) both;
+    }
+
+    @keyframes card-reveal {
+      from { clip-path: inset(0 100% 0 0); }
+      to   { clip-path: inset(0 0% 0 0); }
+    }
+
+    /* Glow on card accent line brightens on hover */
+    .card:hover::before,
+    .card:focus-visible::before { opacity: 1; }
+
+    /* ========================================================================
      Responsive
      ======================================================================== */
 
@@ -599,7 +853,40 @@
 
 <body>
 
+  <div id="login-screen">
+    <div class="login-box">
+      <div class="login-logo">ITASIA302_OS</div>
+      <div class="login-ver">v2026.05 &nbsp;·&nbsp; UTOKYO ITASIA PROGRAM</div>
+      <hr class="login-sep">
+      <div class="login-fields">
+        <div class="lf"><span class="lf-key">USER</span><span class="lf-val">TAKUMI OSHIYAMA</span></div>
+        <div class="lf"><span class="lf-key">PROGRAM</span><span class="lf-val">ITASIA / SPRING 2026</span></div>
+        <div class="lf"><span class="lf-key">STATUS</span><span class="lf-val ok">AUTHENTICATED ●</span></div>
+      </div>
+      <hr class="login-sep">
+      <button class="login-btn" id="login-btn">[ INITIALIZE SESSION ]</button>
+      <div class="login-hint">press enter or click to continue</div>
+    </div>
+  </div>
+
+  <div id="boot-overlay">
+    <div class="boot-inner">
+      <div class="boot-log">
+        <div class="bl" data-d="0"><span class="hi">ITASIA302_OS</span> v2026.05</div>
+        <div class="bl" data-d="130">────────────────────────────────────────</div>
+        <div class="bl" data-d="280">▸ mount /volumes/coursework <span class="ok">.............. OK</span></div>
+        <div class="bl" data-d="400">▸ init <span class="hi">about</span>.module <span class="ok">......................... OK</span></div>
+        <div class="bl" data-d="520">▸ init <span class="hi">class-assignments</span>.module <span class="ok">.......... OK</span></div>
+        <div class="bl" data-d="630">▸ init <span class="hi">personal-project</span>.module <span class="ok">........... OK</span></div>
+        <div class="bl" data-d="730">▸ init <span class="hi">ai-statement</span>.module <span class="ok">............... OK</span></div>
+        <div class="bl" data-d="850">────────────────────────────────────────</div>
+        <div class="bl ready" data-d="1000">SYSTEM READY · WELCOME, TAKUMI</div>
+      </div>
+      <div class="boot-progress-wrap"><div id="boot-progress"></div></div>
+    </div>
+  </div>
   <div class="grain"></div>
+  <div class="scanlines"></div>
   <div class="glow-tl"></div>
   <div class="glow-br"></div>
   <div class="edge-gradient"></div>
@@ -612,7 +899,7 @@
   <main>
 
     <section class="hero">
-      <div class="hero-eyebrow reveal"><span class="dot"></span>ITASIA302 &nbsp;&middot;&nbsp; Spring 2026</div>
+      <div class="hero-eyebrow reveal"><span class="dot"></span><span class="cmd-prompt">~/itasia302 $ </span><span id="hero-cmd"></span><span class="blink-cursor" id="hero-cursor"></span></div>
 
       <h1 class="hero-title reveal delay-1">
         Introduction to <em>Digital Technology</em> and Society
@@ -623,14 +910,32 @@
       </div>
 
       <p class="hero-dek reveal delay-3">
-        A directory for Takumi's Project Base consisting coursework, ongoing personal project, and an AI statement. Click onto each card to explore further.
+        A directory for Takumi's Project Base consisting of coursework, ongoing personal project, and an AI statement. Click onto each card to explore further.
       </p>
     </section>
 
     <section class="grid">
 
-      <a class="card card-amber reveal delay-3" href="class-assignments/">
+      <a class="card card-sky reveal delay-3" href="about/" style="--cli-delay:0.05s">
         <span class="card-num">01</span>
+        <div class="card-label">About Me / Research</div>
+        <div class="card-headline">Who I am, and what I'm <em>working on</em></div>
+        <p class="card-blurb">
+          Takumi Oshiyama, master's student in the ITASIA Program at UTokyo.
+          Currently researching TPACK development across Japan and Thailand.
+        </p>
+        <div class="card-subitems">
+          <span class="sub-dash"></span>
+          <span>Master's Thesis</span>
+        </div>
+        <div class="card-foot">
+          <span>1 subpage</span>
+          <span class="card-arrow" aria-hidden="true">&rarr;</span>
+        </div>
+      </a>
+
+      <a class="card card-amber reveal delay-3" href="class-assignments/" style="--cli-delay:0.15s">
+        <span class="card-num">02</span>
         <div class="card-label">Class Assignments</div>
         <div class="card-headline">The required <em>coursework</em></div>
         <p class="card-blurb">
@@ -643,8 +948,8 @@
         </div>
       </a>
 
-      <a class="card card-teal card-progress reveal delay-4" href="personal-project/">
-        <span class="card-num">02</span>
+      <a class="card card-teal card-progress reveal delay-4" href="personal-project/" style="--cli-delay:0.25s">
+        <span class="card-num">03</span>
         <div class="card-label">Personal Project</div>
         <div class="card-headline">An independent inquiry, <em>still drafting</em></div>
         <p class="card-blurb">
@@ -661,8 +966,8 @@
         </div>
       </a>
 
-      <a class="card card-coral reveal delay-5" href="ai-statement/">
-        <span class="card-num">03</span>
+      <a class="card card-coral reveal delay-5" href="ai-statement/" style="--cli-delay:0.35s">
+        <span class="card-num">04</span>
         <div class="card-label">AI Statement</div>
         <div class="card-headline">How these pages were <em>made</em></div>
         <p class="card-blurb">
@@ -680,7 +985,7 @@
 
     <footer class="footer reveal delay-5">
       <div>Assignments Directory &nbsp;&middot;&nbsp; Introduction to Digital Technology and Society</div>
-      <div><em>ITASIA302</em> &nbsp;&middot;&nbsp; April 2026</div>
+      <div><em>ITASIA302</em> &nbsp;&middot;&nbsp; May 2026</div>
     </footer>
 
   </main>
@@ -688,25 +993,99 @@
   <script>
     "use strict";
 
+    // ── Login screen → boot → page ──────────────────────────────────
     document.addEventListener("DOMContentLoaded", () => {
-      const observed = document.querySelectorAll(".reveal");
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach(e => {
-          if (e.isIntersecting) {
-            e.target.classList.add("in-view");
-            io.unobserve(e.target);
-          }
-        });
-      }, { threshold: 0.12, rootMargin: "0px 0px -4% 0px" });
-      observed.forEach(n => io.observe(n));
 
-      // Safety net for short viewports where the observer doesn't fire on load.
-      setTimeout(() => {
-        document.querySelectorAll(".reveal:not(.in-view)").forEach(n => {
-          const r = n.getBoundingClientRect();
-          if (r.top < window.innerHeight * 0.95) n.classList.add("in-view");
+      const loginScreen = document.getElementById("login-screen");
+      const loginBtn    = document.getElementById("login-btn");
+      const bootOverlay = document.getElementById("boot-overlay");
+      const bootLines   = bootOverlay.querySelectorAll(".bl");
+      const bootProg    = document.getElementById("boot-progress");
+
+      function runBoot() {
+        bootOverlay.style.display = "flex";
+        let maxD = 0;
+        bootLines.forEach(line => {
+          const d = parseInt(line.dataset.d) || 0;
+          if (d > maxD) maxD = d;
+          setTimeout(() => line.classList.add("show"), d);
         });
-      }, 120);
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          bootProg.style.width = "100%";
+        }));
+        setTimeout(() => {
+          bootOverlay.style.transition = "opacity 0.55s ease";
+          bootOverlay.style.opacity = "0";
+          bootOverlay.style.pointerEvents = "none";
+          setTimeout(() => { bootOverlay.remove(); startPage(); }, 600);
+        }, maxD + 420);
+      }
+
+      function startLogin() {
+        loginScreen.style.transition = "opacity 0.4s ease";
+        loginScreen.style.opacity = "0";
+        loginScreen.style.pointerEvents = "none";
+        setTimeout(() => { loginScreen.remove(); runBoot(); }, 420);
+      }
+
+      loginBtn.addEventListener("click", startLogin);
+      document.addEventListener("keydown", e => {
+        if (e.key === "Enter" && document.getElementById("login-screen")) startLogin();
+      });
+
+      // ── Page reveal animations ────────────────────────────────────
+      function startPage() {
+        const observed = document.querySelectorAll(".reveal");
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(e => {
+            if (e.isIntersecting) {
+              e.target.classList.add("in-view");
+              io.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.12, rootMargin: "0px 0px -4% 0px" });
+        observed.forEach(n => io.observe(n));
+        setTimeout(() => {
+          document.querySelectorAll(".reveal:not(.in-view)").forEach(n => {
+            const r = n.getBoundingClientRect();
+            if (r.top < window.innerHeight * 0.95) n.classList.add("in-view");
+          });
+        }, 80);
+
+        // Typewriter
+        const cmdEl = document.getElementById("hero-cmd");
+        const cursor = document.getElementById("hero-cursor");
+        const text = "ITASIA302 · Spring 2026";
+        let i = 0;
+        const tick = () => {
+          if (i < text.length) {
+            cmdEl.textContent += text[i++];
+            setTimeout(tick, 36 + Math.random() * 24);
+          } else {
+            cursor.classList.add("steady");
+          }
+        };
+        setTimeout(tick, 200);
+      }
+
+      // ── 3-D card tilt ─────────────────────────────────────────────
+      document.querySelectorAll(".card").forEach(card => {
+        card.addEventListener("mousemove", e => {
+          const r = card.getBoundingClientRect();
+          const x = (e.clientX - r.left) / r.width - 0.5;
+          const y = (e.clientY - r.top) / r.height - 0.5;
+          card.style.transition =
+            "border-color 280ms var(--ease), background 280ms var(--ease), box-shadow 280ms var(--ease)";
+          card.style.transform =
+            `perspective(700px) rotateY(${x * 16}deg) rotateX(${-y * 11}deg) translateZ(8px)`;
+        });
+        card.addEventListener("mouseleave", () => {
+          card.style.transition =
+            "border-color 280ms var(--ease), background 280ms var(--ease), box-shadow 280ms var(--ease), transform 450ms var(--ease)";
+          card.style.transform = "";
+        });
+      });
+
     });
   </script>
 

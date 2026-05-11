@@ -16,18 +16,18 @@
 
   <style>
     :root {
-      --bg: #080C14;
-      --bg-soft: #0E1824;
-      --ink: #EDE8E0;
-      --ink-dim: #9AA3B0;
-      --ink-faint: #3A4A62;
-      --rule: #132032;
-      --amber: #F0A060;
-      --teal: #5AC8B0;
-      --sky: #5090C0;
-      --coral: #D86878;
-      --lilac: #9E90D0;
-      --gold: #E6B860;
+      --bg: #05060e;
+      --bg-soft: #0b0d1a;
+      --ink: #e0e6f0;
+      --ink-dim: #8899b8;
+      --ink-faint: #2e3a55;
+      --rule: #182030;
+      --amber: #4db8cc;
+      --teal: #45a884;
+      --sky: #5299c8;
+      --coral: #7a60b8;
+      --lilac: #7272c0;
+      --gold: #4db8cc;
 
       --serif: "Fraunces", Georgia, "Times New Roman", serif;
       --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
@@ -49,12 +49,16 @@
 
     body {
       background: var(--bg);
+      background-image:
+        linear-gradient(rgba(77,184,204,.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(77,184,204,.022) 1px, transparent 1px);
+      background-size: 52px 52px;
       color: var(--ink);
       font-family: var(--serif);
       -webkit-font-smoothing: antialiased;
       text-rendering: optimizeLegibility;
       overflow-x: hidden;
-      line-height: 1.45;
+      line-height: 1.6;
       min-height: 100vh;
     }
 
@@ -116,7 +120,7 @@
       justify-content: space-between;
       align-items: baseline;
       padding: 14px 48px 12px;
-      background: linear-gradient(180deg, rgba(8, 12, 20, 0.88) 0%, rgba(8, 12, 20, 0.60) 70%, transparent 100%);
+      background: linear-gradient(180deg, rgba(5, 6, 14, 0.95) 0%, rgba(5, 6, 14, 0.70) 70%, transparent 100%);
       backdrop-filter: blur(4px);
       -webkit-backdrop-filter: blur(4px);
     }
@@ -859,7 +863,7 @@
     <div class="topbar-title"><a class="journal-link back-link" href="../">&larr; All</a> &nbsp;&middot;&nbsp; AI
       <em>Statement</em>
     </div>
-    <div class="topbar-meta">Disclosure &nbsp;&bull;&nbsp; Method &nbsp;&bull;&nbsp; April 2026</div>
+    <div class="topbar-meta">Disclosure &nbsp;&bull;&nbsp; Method &nbsp;&bull;&nbsp; May 2026</div>
   </header>
 
   <main>
@@ -1268,7 +1272,7 @@
 
     <footer class="footer reveal delay-5">
       <div>AI Statement &nbsp;&middot;&nbsp; <a class="journal-link" href="../">Return to directory</a></div>
-      <div><em>ITASIA302</em> &nbsp;&middot;&nbsp; April 2026</div>
+      <div><em>ITASIA302</em> &nbsp;&middot;&nbsp; May 2026</div>
     </footer>
 
   </main>

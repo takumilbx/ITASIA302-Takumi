@@ -16,16 +16,16 @@
 
   <style>
     :root {
-      --bg: #080C14;
-      --bg-soft: #0E1824;
-      --ink: #EDE8E0;
-      --ink-dim: #9AA3B0;
-      --ink-faint: #3A4A62;
-      --rule: #132032;
-      --amber: #F0A060;
-      --teal: #5AC8B0;
-      --sky: #5090C0;
-      --coral: #D86878;
+      --bg: #05060e;
+      --bg-soft: #0b0d1a;
+      --ink: #e0e6f0;
+      --ink-dim: #8899b8;
+      --ink-faint: #2e3a55;
+      --rule: #182030;
+      --amber: #4db8cc;
+      --teal: #45a884;
+      --sky: #5299c8;
+      --coral: #b85c7a;
 
       --serif: "Fraunces", Georgia, "Times New Roman", serif;
       --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
@@ -47,12 +47,16 @@
 
     body {
       background: var(--bg);
+      background-image:
+        linear-gradient(rgba(77,184,204,.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(77,184,204,.022) 1px, transparent 1px);
+      background-size: 52px 52px;
       color: var(--ink);
       font-family: var(--serif);
       -webkit-font-smoothing: antialiased;
       text-rendering: optimizeLegibility;
       overflow-x: hidden;
-      line-height: 1.45;
+      line-height: 1.6;
       min-height: 100vh;
     }
 
@@ -88,7 +92,7 @@
       right: 0;
       width: 50vw;
       height: 50vh;
-      background: radial-gradient(at 100% 100%, rgba(80, 144, 192, 0.08) 0%, transparent 65%);
+      background: radial-gradient(at 100% 100%, rgba(114, 114, 192, 0.07) 0%, transparent 65%);
     }
 
     .edge-gradient {
@@ -114,7 +118,7 @@
       justify-content: space-between;
       align-items: baseline;
       padding: 14px 48px 12px;
-      background: linear-gradient(180deg, rgba(8, 12, 20, 0.88) 0%, rgba(8, 12, 20, 0.60) 70%, transparent 100%);
+      background: linear-gradient(180deg, rgba(5, 6, 14, 0.95) 0%, rgba(5, 6, 14, 0.70) 70%, transparent 100%);
       backdrop-filter: blur(4px);
       -webkit-backdrop-filter: blur(4px);
     }
@@ -795,7 +799,7 @@
 
     <footer class="footer reveal delay-5">
       <div>Personal Project &nbsp;&middot;&nbsp; <a class="journal-link" href="../">Return to directory</a></div>
-      <div><em>ITASIA302</em> &nbsp;&middot;&nbsp; April 2026</div>
+      <div><em>ITASIA302</em> &nbsp;&middot;&nbsp; May 2026</div>
     </footer>
 
   </main>

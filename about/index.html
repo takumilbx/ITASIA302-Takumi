@@ -1,0 +1,2065 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Me / Research &mdash; Takumi Oshiyama</title>
+  <meta name="description"
+    content="Takumi Oshiyama, ITASIA Program at UTokyo. Master's thesis on TPACK development across Japan and Thailand.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500;1,9..144,600&family=Geist+Mono:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    /* ========================================================================
+       Design tokens — "Scientific Sublime"
+       ======================================================================== */
+    :root {
+      --bg: #05060e;
+      --bg-soft: #0b0d1a;
+      --ink: #e0e6f0;
+      --ink-dim: #8899b8;
+      --ink-faint: #2e3a55;
+      --rule: #182030;
+      --amber: #4db8cc;
+      --amber-lo: #4db8cc14;
+      --amber-hi: #7dd3e8;
+      --teal: #45a884;
+      --sky: #5299c8;
+      --coral: #b85c7a;
+      --lilac: #7272c0;
+      --gold: #4db8cc;
+
+      --serif: "Fraunces", Georgia, "Times New Roman", serif;
+      --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+      --ease: cubic-bezier(.22, .61, .36, 1);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      background-image:
+        linear-gradient(rgba(77,184,204,.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(77,184,204,.022) 1px, transparent 1px);
+      background-size: 52px 52px;
+      color: var(--ink);
+      font-family: var(--serif);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Atmospheric overlays */
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: .032;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/></filter><rect width='256' height='256' filter='url(%23n)'/></svg>");
+      background-size: 220px 220px;
+      mix-blend-mode: overlay;
+    }
+
+    .glow-tl,
+    .glow-br {
+      position: fixed;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .glow-tl {
+      top: 0;
+      left: 0;
+      width: 55vw;
+      height: 55vh;
+      background: radial-gradient(at 0% 0%, rgba(77, 184, 204, 0.07) 0%, transparent 60%);
+    }
+
+    .glow-br {
+      bottom: 0;
+      right: 0;
+      width: 50vw;
+      height: 50vh;
+      background: radial-gradient(at 100% 100%, rgba(114, 114, 192, 0.07) 0%, transparent 65%);
+    }
+
+    .edge-gradient {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      z-index: 10000;
+      background: linear-gradient(90deg, transparent 0%, var(--sky) 22%, var(--teal) 62%, transparent 100%);
+      opacity: .55;
+      pointer-events: none;
+    }
+
+    /* ========================================================================
+       Topbar
+       ======================================================================== */
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 14px 48px 12px;
+      background: linear-gradient(180deg, rgba(5, 6, 14, 0.95) 0%, rgba(5, 6, 14, 0.70) 70%, transparent 100%);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .topbar-title {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 17px;
+      letter-spacing: -0.015em;
+      color: var(--ink);
+    }
+
+    .topbar-title em {
+      color: var(--sky);
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .topbar-back {
+      color: var(--ink-faint);
+      text-decoration: none;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      transition: color 180ms ease;
+    }
+
+    .topbar-back:hover,
+    .topbar-back:focus-visible {
+      color: var(--sky);
+      outline: none;
+    }
+
+    /* ========================================================================
+       Reveal
+       ======================================================================== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity .9s var(--ease), transform .9s var(--ease);
+    }
+
+    .reveal.in-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal.delay-1 {
+      transition-delay: .10s;
+    }
+
+    .reveal.delay-2 {
+      transition-delay: .20s;
+    }
+
+    .reveal.delay-3 {
+      transition-delay: .32s;
+    }
+
+    .reveal.delay-4 {
+      transition-delay: .46s;
+    }
+
+    .reveal.delay-5 {
+      transition-delay: .60s;
+    }
+
+    .reveal.delay-6 {
+      transition-delay: .76s;
+    }
+
+    /* ========================================================================
+       Page shell
+       ======================================================================== */
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 110px 48px 36px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ========================================================================
+       Hero — always visible (name + program)
+       ======================================================================== */
+    .hero {
+      margin-bottom: 40px;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 18px;
+    }
+
+    .hero-eyebrow .dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--sky);
+      margin: 0 12px 2px 0;
+      box-shadow: 0 0 10px var(--sky);
+      vertical-align: middle;
+    }
+
+    .hero-name {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(42px, 5.6vw, 72px);
+      line-height: 0.98;
+      letter-spacing: -0.032em;
+      color: var(--ink);
+      margin-bottom: 18px;
+    }
+
+    .hero-name em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--sky);
+    }
+
+    .hero-program {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .hero-program em {
+      color: var(--sky);
+      font-style: normal;
+      letter-spacing: 0.14em;
+    }
+
+    /* ========================================================================
+       Tab bar
+       ======================================================================== */
+    .tab-bar {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--rule);
+      margin-bottom: 48px;
+    }
+
+    .tab-btn {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      background: none;
+      border: none;
+      padding: 14px 28px 14px 0;
+      margin-right: 8px;
+      cursor: pointer;
+      position: relative;
+      transition: color 250ms var(--ease);
+    }
+
+    .tab-btn::after {
+      content: "";
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 28px;
+      height: 2px;
+      background: var(--sky);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 300ms var(--ease);
+    }
+
+    .tab-btn:hover {
+      color: var(--ink-dim);
+    }
+
+    .tab-btn.active {
+      color: var(--ink);
+    }
+
+    .tab-btn.active::after {
+      transform: scaleX(1);
+    }
+
+    /* ========================================================================
+       Tab panels
+       ======================================================================== */
+    .tab-panel {
+      display: none;
+      animation: tab-fade-in 450ms var(--ease);
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    @keyframes tab-fade-in {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ========================================================================
+       About Me panel
+       ======================================================================== */
+    .about-bio {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(16px, 1.3vw, 19px);
+      line-height: 1.6;
+      color: var(--ink-dim);
+      max-width: 56ch;
+      margin-bottom: 40px;
+    }
+
+    .about-bio em {
+      color: var(--ink);
+      font-style: italic;
+    }
+
+    .about-bio p+p {
+      margin-top: 16px;
+    }
+
+    .about-section-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 20px;
+    }
+
+    .about-section-label::before {
+      content: "";
+      display: inline-block;
+      width: 24px;
+      height: 1px;
+      background: var(--sky);
+      vertical-align: middle;
+      margin-right: 12px;
+      transform: translateY(-2px);
+    }
+
+    .interest-list {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 48px;
+    }
+
+    .interest-list li {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 7px 14px;
+      border: 1px solid var(--rule);
+      border-radius: 999px;
+      color: var(--ink-dim);
+      background: transparent;
+      transition: border-color 200ms var(--ease), color 200ms var(--ease);
+    }
+
+    .interest-list li:hover {
+      border-color: var(--ink-faint);
+      color: var(--ink);
+    }
+
+    /* Profile quick facts */
+    .profile-facts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 24px 48px;
+      margin-bottom: 48px;
+      padding: 24px 0;
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .fact-item .fact-key {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .fact-item .fact-val {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 16px;
+      color: var(--ink);
+      line-height: 1.4;
+    }
+
+    .fact-item .fact-val em {
+      color: var(--sky);
+      font-style: italic;
+    }
+
+    /* Timeline entries (education & experience) */
+    .timeline {
+      list-style: none;
+      margin-bottom: 48px;
+    }
+
+    .timeline-entry {
+      position: relative;
+      padding: 0 0 32px 28px;
+      border-left: 1px solid var(--rule);
+    }
+
+    .timeline-entry:last-child {
+      padding-bottom: 0;
+      border-left-color: transparent;
+    }
+
+    .timeline-entry::before {
+      content: "";
+      position: absolute;
+      left: -4px;
+      top: 6px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 1.5px solid var(--sky);
+    }
+
+    .timeline-entry.current::before {
+      background: var(--sky);
+      box-shadow: 0 0 8px var(--sky);
+    }
+
+    .timeline-date {
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 4px;
+    }
+
+    .timeline-title {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: 17px;
+      color: var(--ink);
+      margin-bottom: 2px;
+      letter-spacing: -0.01em;
+    }
+
+    .timeline-title em {
+      font-style: italic;
+      color: var(--sky);
+    }
+
+    .timeline-org {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      color: var(--ink-dim);
+      margin-bottom: 8px;
+    }
+
+    .timeline-desc {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 14.5px;
+      line-height: 1.55;
+      color: var(--ink-dim);
+      max-width: 52ch;
+    }
+
+    .timeline-desc em {
+      color: var(--ink);
+      font-style: italic;
+    }
+
+    .timeline-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .badge {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border: 1px solid color-mix(in oklab, var(--sky) 30%, transparent);
+      border-radius: 999px;
+      color: var(--sky);
+      background: color-mix(in oklab, var(--sky) 6%, transparent);
+    }
+
+    /* Language bars */
+    .lang-list {
+      list-style: none;
+      margin-bottom: 48px;
+      max-width: 420px;
+    }
+
+    .lang-item {
+      margin-bottom: 16px;
+    }
+
+    .lang-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+
+    .lang-name {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+
+    .lang-level {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .lang-bar {
+      height: 3px;
+      background: var(--rule);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .lang-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--sky), var(--teal));
+      border-radius: 2px;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 1s var(--ease);
+    }
+
+    .in-view .lang-bar-fill {
+      transform: scaleX(1);
+    }
+
+    /* ========================================================================
+       Thesis panel
+       ======================================================================== */
+    .thesis-eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 24px;
+    }
+
+    .thesis-eyebrow::before {
+      content: "";
+      display: inline-block;
+      width: 32px;
+      height: 1px;
+      background: var(--sky);
+      vertical-align: middle;
+      margin-right: 14px;
+      transform: translateY(-2px);
+    }
+
+    .thesis-title {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(28px, 3.2vw, 42px);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 12px;
+      max-width: 24ch;
+    }
+
+    .thesis-title em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--sky);
+    }
+
+    .thesis-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 28px;
+    }
+
+    .thesis-status .pulse {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--teal);
+      box-shadow: 0 0 8px var(--teal);
+      animation: pulse-glow 2.4s infinite ease-in-out;
+    }
+
+    @keyframes pulse-glow {
+
+      0%,
+      100% {
+        opacity: .5;
+        box-shadow: 0 0 6px var(--teal);
+      }
+
+      50% {
+        opacity: 1;
+        box-shadow: 0 0 14px var(--teal);
+      }
+    }
+
+    .thesis-body {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(15.5px, 1.2vw, 18px);
+      line-height: 1.6;
+      color: var(--ink-dim);
+      max-width: 58ch;
+    }
+
+    .thesis-body p+p {
+      margin-top: 16px;
+    }
+
+    .thesis-body em {
+      color: var(--ink);
+      font-style: italic;
+    }
+
+    .thesis-keywords {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 32px;
+    }
+
+    .kw {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 7px 14px;
+      border: 1px solid var(--rule);
+      border-radius: 999px;
+      color: var(--ink-dim);
+      background: transparent;
+    }
+
+    /* ── Thesis: iframe canvas ──────────────────────────────────────── */
+    #panel-thesis {
+      margin: 0 -48px -36px;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    #panel-thesis iframe {
+      display: block;
+      width: 100%;
+      height: calc(100vh - 155px);
+      border: none;
+    }
+
+    @media (max-width: 860px) {
+      #panel-thesis {
+        margin: 0 -22px -28px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      #panel-thesis {
+        margin: 0 -18px -24px;
+      }
+    }
+
+    /* ========================================================================
+       Footer
+       ======================================================================== */
+    footer.footer {
+      margin-top: auto;
+      padding: 28px 0 4px;
+      border-top: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    footer.footer em {
+      color: var(--sky);
+      font-style: normal;
+      letter-spacing: 0.14em;
+    }
+
+    /* ========================================================================
+       Responsive
+       ======================================================================== */
+    @media (min-width: 1600px) {
+      main {
+        max-width: 1320px;
+        padding-top: 120px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .topbar {
+        padding: 12px 22px;
+      }
+
+      main {
+        padding: 88px 22px 28px;
+      }
+
+      .hero {
+        margin-bottom: 32px;
+      }
+
+      .tab-btn {
+        padding: 12px 20px 12px 0;
+        font-size: 10px;
+      }
+
+      .tab-bar {
+        margin-bottom: 36px;
+      }
+
+      .thesis-keywords {
+        gap: 8px;
+      }
+
+      .interest-list {
+        gap: 8px;
+      }
+
+      footer.footer {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+      }
+
+      .topbar-back {
+        font-size: 9px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .topbar {
+        padding: 10px 18px;
+        flex-wrap: wrap;
+        row-gap: 4px;
+      }
+
+      .topbar-title {
+        font-size: 15px;
+      }
+
+      main {
+        padding: 76px 18px 24px;
+      }
+
+      .hero-name {
+        font-size: clamp(32px, 9vw, 44px);
+      }
+
+      .about-bio {
+        font-size: 14.5px;
+      }
+
+      .kw {
+        font-size: 9px;
+        padding: 6px 11px;
+      }
+
+      .interest-list li {
+        font-size: 9px;
+        padding: 6px 11px;
+      }
+
+      footer.footer {
+        font-size: 9px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal {
+        transition: none !important;
+        opacity: 1;
+        transform: none;
+      }
+
+      .tab-panel {
+        animation: none !important;
+      }
+
+      html {
+        scroll-behavior: auto;
+      }
+
+      .thesis-status .pulse {
+        animation: none;
+        opacity: 1;
+      }
+    }
+
+    /* ========================================================================
+       Work tab — TikTok grid, Experience, Contact
+       ======================================================================== */
+    #panel-work .wt-section-eyebrow {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    #panel-work .wt-section-eyebrow::before {
+      content: '';
+      width: 28px;
+      height: 1px;
+      background: var(--lilac);
+    }
+
+    #panel-work .wt-section-title {
+      font-size: 28px;
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 48px;
+      line-height: 1.2;
+    }
+
+    #panel-work .wt-section-title em {
+      color: var(--amber);
+      font-style: italic;
+    }
+
+    /* TikTok grid */
+    #panel-work .tiktok-grid {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 80px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      align-items: center;
+      min-height: 780px;
+      scrollbar-width: none;
+    }
+
+    #panel-work .tiktok-grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    #panel-work .tiktok-card {
+      flex: 0 0 210px;
+      height: 373px;
+      background: #0f1520;
+      border: 1px solid #1a2535;
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: flex-basis 0.42s cubic-bezier(0.4, 0, 0.2, 1),
+        height 0.42s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.3s ease, border-color 0.35s ease;
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+      transform: scale(1);
+      will-change: transform;
+    }
+
+    #panel-work .tiktok-card:not(.expanded):not(.collapsed):hover {
+      border-color: #c8a06a66;
+      transform: scale(1.04) translateY(-4px);
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.45), 0 0 0 1px #c8a06a22;
+      z-index: 5;
+    }
+
+    #panel-work .tiktok-card.expanded {
+      flex-basis: 325px;
+      height: 750px;
+      border-color: #c8a06a55;
+      cursor: default;
+    }
+
+    #panel-work .tiktok-card.expanded .tiktok-desc {
+      display: none;
+    }
+
+    #panel-work .tiktok-card.collapsed {
+      flex-basis: 90px;
+      height: 160px;
+      opacity: 0.3;
+    }
+
+    #panel-work .tiktok-card.collapsed:hover {
+      opacity: 0.6;
+    }
+
+    #panel-work .tiktok-card.collapsed .tiktok-desc,
+    #panel-work .tiktok-card.collapsed .tiktok-views {
+      display: none;
+    }
+
+    #panel-work .tiktok-thumb {
+      flex: 1;
+      background: #0a1220;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #panel-work .tiktok-thumb-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.5s;
+      display: block;
+    }
+
+    #panel-work .tiktok-thumb-placeholder {
+      position: relative;
+      z-index: 1;
+      font-size: 52px;
+      opacity: 0.2;
+    }
+
+    #panel-work .tiktok-card.expanded .tiktok-thumb-placeholder,
+    #panel-work .tiktok-card.expanded .tiktok-thumb-img,
+    #panel-work .tiktok-card.expanded .tiktok-views {
+      display: none;
+    }
+
+    #panel-work .tiktok-embed {
+      display: none;
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #000;
+    }
+
+    #panel-work .tiktok-card.expanded .tiktok-embed {
+      display: block;
+    }
+
+    #panel-work .tiktok-views {
+      position: absolute;
+      bottom: 10px;
+      left: 12px;
+      z-index: 2;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: var(--ink-dim);
+      background: rgba(0, 0, 0, 0.65);
+      padding: 3px 8px;
+      border-radius: 3px;
+    }
+
+    #panel-work .tiktok-desc {
+      padding: 14px 14px 16px;
+      flex-shrink: 0;
+      font-family: var(--serif);
+      font-size: 11.5px;
+      color: #7a8898;
+      line-height: 1.55;
+    }
+
+    #panel-work .tiktok-tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #c8a06a88;
+      margin-bottom: 7px;
+    }
+
+    /* Experience grid */
+    #panel-work .exp-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-bottom: 80px;
+    }
+
+    #panel-work .exp-category {
+      background: #0a1020;
+      border: 1px solid #151f30;
+      border-radius: 14px;
+      padding: 28px 28px 24px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.25s;
+    }
+
+    #panel-work .exp-category::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--cat-color);
+      opacity: 0.6;
+    }
+
+    #panel-work .exp-category:hover {
+      border-color: var(--cat-color-dim);
+    }
+
+    #panel-work .cat-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    #panel-work .cat-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: var(--cat-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    #panel-work .cat-name {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--cat-color);
+      margin-bottom: 4px;
+    }
+
+    #panel-work .cat-desc {
+      font-family: var(--serif);
+      font-size: 11px;
+      color: #4a5a6a;
+      line-height: 1.4;
+    }
+
+    #panel-work .exp-entries {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    #panel-work .exp-entry {
+      padding-left: 14px;
+      border-left: 1px solid var(--cat-color-dim);
+    }
+
+    #panel-work .exp-role {
+      font-family: var(--serif);
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #d0c8be;
+      margin-bottom: 2px;
+      line-height: 1.3;
+    }
+
+    #panel-work .exp-org {
+      font-family: var(--serif);
+      font-size: 11px;
+      color: var(--cat-color);
+      margin-bottom: 3px;
+      opacity: 0.8;
+    }
+
+    #panel-work .exp-date {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      color: #2a3a52;
+      margin-bottom: 6px;
+    }
+
+    #panel-work .exp-body {
+      font-family: var(--serif);
+      font-size: 11px;
+      color: #5a6a78;
+      line-height: 1.55;
+    }
+
+    /* Contact strip */
+    #panel-work .wt-divider {
+      height: 1px;
+      background: #0f1824;
+      margin: 0 0 80px;
+    }
+
+    #panel-work .contact-strip {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 28px 32px;
+      background: #0a1020;
+      border: 1px solid #151f30;
+      border-radius: 14px;
+    }
+
+    #panel-work .contact-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      flex-shrink: 0;
+    }
+
+    #panel-work .contact-links {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    #panel-work .contact-link {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      color: var(--lilac);
+      text-decoration: none;
+      padding: 6px 14px;
+      border: 1px solid #2a2040;
+      border-radius: 5px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    #panel-work .contact-link:hover {
+      color: #c8b8f0;
+      border-color: #4a3a70;
+    }
+
+    #panel-work .contact-divider {
+      width: 1px;
+      height: 20px;
+      background: #1a2535;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="grain"></div>
+  <div class="glow-tl"></div>
+  <div class="glow-br"></div>
+  <div class="edge-gradient"></div>
+
+  <header class="topbar">
+    <div class="topbar-title">Takumi Oshiyama &mdash; <em>About / Research</em></div>
+    <a class="topbar-back" href="../">&larr; ITASIA302 Project Base</a>
+  </header>
+
+  <main>
+
+    <!-- ===============================================================
+         Hero — always visible
+         =============================================================== -->
+    <section class="hero">
+      <div class="hero-eyebrow reveal"><span class="dot"></span>About me / Research</div>
+
+      <h1 class="hero-name reveal delay-1">
+        Takumi <em>Oshiyama</em>
+      </h1>
+
+      <div class="hero-program reveal delay-2">
+        <em>ITASIA</em> Program &nbsp;&middot;&nbsp; The University of Tokyo &nbsp;&middot;&nbsp; Master's Student
+      </div>
+    </section>
+
+    <!-- ===============================================================
+         Tab bar
+         =============================================================== -->
+    <nav class="tab-bar reveal delay-3" role="tablist" aria-label="Page sections">
+      <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="panel-about" id="tab-about">About
+        Me</button>
+      <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-thesis" id="tab-thesis">Master's
+        Thesis</button>
+      <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-work" id="tab-work">Work</button>
+    </nav>
+
+    <!-- ===============================================================
+         Panel: About Me
+         =============================================================== -->
+    <section class="tab-panel active" id="panel-about" role="tabpanel" aria-labelledby="tab-about">
+
+      <!-- Bio -->
+      <div class="about-bio">
+        <p>
+          Visual content creator, translator, project manager, and master's
+          student in <em>Interdisciplinary Information Studies</em> at the
+          University of Tokyo. Working in Thailand's education sector for over
+          nine years has solidified my commitment to education and sustainable
+          development. I believe that by using my translation and storytelling
+          skills to connect people and create meaningful stories, it is possible
+          to contribute positive change to society.
+        </p>
+      </div>
+
+      <!-- Quick facts -->
+      <div class="profile-facts">
+        <div class="fact-item">
+          <span class="fact-key">From</span>
+          <span class="fact-val">Chiang Mai, <em>Thailand</em></span>
+        </div>
+        <div class="fact-item">
+          <span class="fact-key">Based in</span>
+          <span class="fact-val">Tokyo, <em>Japan</em></span>
+        </div>
+        <div class="fact-item">
+          <span class="fact-key">Degree</span>
+          <span class="fact-val">M.A.S., <em>ITASIA</em></span>
+        </div>
+        <div class="fact-item">
+          <span class="fact-key">Identity</span>
+          <span class="fact-val">Trilingual <em>Content Creator</em></span>
+        </div>
+      </div>
+
+      <!-- Education -->
+      <div class="about-section-label">Education</div>
+      <ul class="timeline">
+        <li class="timeline-entry current">
+          <div class="timeline-date">October 2025 &ndash; Present</div>
+          <div class="timeline-title">M.A.S., <em>Interdisciplinary Information Studies</em></div>
+          <div class="timeline-org">The University of Tokyo &middot; ITASIA Program</div>
+          <p class="timeline-desc">
+            Research focus on educational technology and designing learning
+            environments. Studying TPACK development across Japan and Thailand.
+          </p>
+        </li>
+        <li class="timeline-entry">
+          <div class="timeline-date">July 2020 &ndash; May 2024</div>
+          <div class="timeline-title">BA, <em>Global Studies &amp; Social Entrepreneurship</em></div>
+          <div class="timeline-org">Thammasat University</div>
+          <p class="timeline-desc">
+            First Class Honors, GPA 3.72. Dean's List four consecutive years,
+            GSSE Leader Award for outstanding leadership in community-based
+            activities, and Top Performer in the Summer Pre-Program.
+          </p>
+          <div class="timeline-badges">
+            <span class="badge">First Class Honors</span>
+            <span class="badge">Dean's List &times;4</span>
+            <span class="badge">GSSE Leader Award</span>
+          </div>
+        </li>
+        <li class="timeline-entry">
+          <div class="timeline-date">May 2019</div>
+          <div class="timeline-title"><em>SEAYLP</em> Cultural Exchange</div>
+          <div class="timeline-org">Northern Illinois University &middot; U.S. Department of State</div>
+          <p class="timeline-desc">
+            Country representative for the South East Asia Youth Leadership
+            Program, a 4-week exchange fostering cross-cultural understanding
+            and project management across ASEAN.
+          </p>
+        </li>
+        <li class="timeline-entry">
+          <div class="timeline-date">May 2014 &ndash; March 2020</div>
+          <div class="timeline-title">High School Diploma, <em>Art-Japanese</em></div>
+          <div class="timeline-org">Panyaprateep School</div>
+          <p class="timeline-desc">
+            GPAX 3.78, with 4.00 in Art and 3.95 in Language.
+          </p>
+        </li>
+      </ul>
+
+      <!-- Experience -->
+      <div class="about-section-label">Experience</div>
+      <ul class="timeline">
+        <li class="timeline-entry current">
+          <div class="timeline-date">Dec 2024 &ndash; Present</div>
+          <div class="timeline-title"><em>Business Development</em> Executive</div>
+          <div class="timeline-org">Education Easy Co., Ltd.</div>
+          <p class="timeline-desc">
+            Spearheading Edsy's market entry into Japan &mdash; conducting market
+            research, competitive analysis, securing pilot school partnerships,
+            and recruiting local teams. Expanded focus to international markets
+            in <em>South Korea, Turkey, and Saudi Arabia</em>.
+          </p>
+        </li>
+        <li class="timeline-entry current">
+          <div class="timeline-date">July 2022 &ndash; Present</div>
+          <div class="timeline-title"><em>Freelance</em> Translator</div>
+          <div class="timeline-org">Japanese-Thai-English &middot; Tokyo</div>
+          <p class="timeline-desc">
+            Specializing in education, Japanese pop-culture entertainment, and
+            ESG-related content. Also worked as a research assistant translating
+            Japanese academic papers to English.
+          </p>
+        </li>
+        <li class="timeline-entry current">
+          <div class="timeline-date">March 2021 &ndash; Present</div>
+          <div class="timeline-title"><em>TikTok</em> Content Creator</div>
+          <div class="timeline-org">@takumyi &middot; 85k+ followers &middot; 1.2M+ likes</div>
+          <p class="timeline-desc">
+            Creating content on learning Japanese language and culture through
+            video editing, videography, and visual storytelling.
+          </p>
+        </li>
+        <li class="timeline-entry">
+          <div class="timeline-date">Oct 2020 &ndash; April 2024</div>
+          <div class="timeline-title">Japanese Subtitle <em>Translator / Proofreader</em></div>
+          <div class="timeline-org">Bilibili Thailand</div>
+          <p class="timeline-desc">
+            Translated and proofread subtitles for <em>50+ anime series</em> on
+            Thailand's largest anime streaming platform, reaching over
+            500 million accumulated viewers.
+          </p>
+        </li>
+        <li class="timeline-entry">
+          <div class="timeline-date">May 2023 &ndash; Sep 2023</div>
+          <div class="timeline-title"><em>Data Visualization</em> Intern</div>
+          <div class="timeline-org">Bangkok Metropolitan Administration</div>
+          <p class="timeline-desc">
+            Tracked education development projects, data analysis, and visual
+            communications for press releases. Key projects: <em>UNESCO Global
+              Network of Learning Cities</em>, BMA Education Strategy Kick-off,
+            and the Thai Scholarship Database.
+          </p>
+        </li>
+        <li class="timeline-entry">
+          <div class="timeline-date">June &ndash; Oct 2022</div>
+          <div class="timeline-title"><em>Project Management</em> Intern &amp; Volunteer Teacher</div>
+          <div class="timeline-org">Saturday School Foundation</div>
+          <p class="timeline-desc">
+            Developed learning curriculum for piloting E-sports classrooms in
+            8 Bangkok schools with SEA (Garena) Thailand. Also volunteered as a
+            Japanese teacher for underserved children in the SS11 Project.
+          </p>
+        </li>
+        <li class="timeline-entry">
+          <div class="timeline-date">2019</div>
+          <div class="timeline-title"><em>Research</em> Intern</div>
+          <div class="timeline-org">Thailand Development Research Institute (TDRI)</div>
+          <p class="timeline-desc">
+            10-day educational research internship. Contributed to structuring
+            solutions for issues in the Thai education system.
+          </p>
+        </li>
+      </ul>
+
+      <!-- Awards -->
+      <div class="about-section-label">Awards &amp; Recognition</div>
+      <ul class="timeline">
+        <li class="timeline-entry">
+          <div class="timeline-date">2019</div>
+          <div class="timeline-title"><em>100 Cheewid</em> Impact Contributors</div>
+          <p class="timeline-desc">
+            Recognized as one of 100 impact contributors for social innovation
+            work at Samui Island (CMIC Project).
+          </p>
+        </li>
+        <li class="timeline-entry">
+          <div class="timeline-date">2018</div>
+          <div class="timeline-title"><em>2nd Place</em> &mdash; Kob Junior 10 Documentary</div>
+          <div class="timeline-org">TV Burabha</div>
+          <p class="timeline-desc">
+            Directed "Education Upload", a documentary about the Thai education
+            system's need for life skills and self-motivation.
+          </p>
+        </li>
+        <li class="timeline-entry">
+          <div class="timeline-date">2016</div>
+          <div class="timeline-title"><em>Finalist</em> &mdash; Kob Junior 8 Documentary</div>
+          <div class="timeline-org">TV Burabha</div>
+          <p class="timeline-desc">
+            Director of cinematography for "The Creator", exploring technology's
+            environmental burden on future generations.
+          </p>
+        </li>
+      </ul>
+
+      <!-- Languages -->
+      <div class="about-section-label">Languages</div>
+      <ul class="lang-list reveal">
+        <li class="lang-item">
+          <div class="lang-header">
+            <span class="lang-name">Thai</span>
+            <span class="lang-level">Native</span>
+          </div>
+          <div class="lang-bar">
+            <div class="lang-bar-fill" style="width:100%"></div>
+          </div>
+        </li>
+        <li class="lang-item">
+          <div class="lang-header">
+            <span class="lang-name">Japanese</span>
+            <span class="lang-level">JLPT N1</span>
+          </div>
+          <div class="lang-bar">
+            <div class="lang-bar-fill" style="width:92%"></div>
+          </div>
+        </li>
+        <li class="lang-item">
+          <div class="lang-header">
+            <span class="lang-name">English</span>
+            <span class="lang-level">IELTS 7.5</span>
+          </div>
+          <div class="lang-bar">
+            <div class="lang-bar-fill" style="width:85%"></div>
+          </div>
+        </li>
+      </ul>
+
+      <!-- Skills -->
+      <div class="about-section-label">Skills</div>
+      <ul class="interest-list">
+        <li>Visual Storytelling</li>
+        <li>Photography &amp; Cinematography</li>
+        <li>Data Visualization</li>
+        <li>Graphic Design</li>
+        <li>Trilingual Translation</li>
+        <li>Project Management</li>
+        <li>Curriculum Design</li>
+        <li>Design Thinking</li>
+        <li>Market Research</li>
+        <li>Media Literacy</li>
+        <li>Educational Technology</li>
+        <li>EdTech Policy</li>
+      </ul>
+
+      <!-- Extracurriculars -->
+      <div class="about-section-label">Extracurricular Activities</div>
+      <ul class="timeline">
+        <li class="timeline-entry">
+          <div class="timeline-date">2019</div>
+          <div class="timeline-title">Project Manager, <em>Change Maker Incubation Camp</em></div>
+          <div class="timeline-org">U.S. Embassy &middot; Samui, Surat Thani</div>
+          <p class="timeline-desc">
+            Led design thinking and social project initiation workshops for
+            young innovators, resulting in marine debris solutions for their community.
+          </p>
+        </li>
+        <li class="timeline-entry">
+          <div class="timeline-date">2019</div>
+          <div class="timeline-title">Core Team, <em>MIDL Youth Camp</em></div>
+          <div class="timeline-org">Saturday School Foundation</div>
+          <p class="timeline-desc">
+            Designed activities on Media Information and Digital Literacy, exploring
+            how media shapes society and ethical media consumption.
+          </p>
+        </li>
+        <li class="timeline-entry">
+          <div class="timeline-date">2018</div>
+          <div class="timeline-title">Photography Consultant, <em>Shutter Story</em></div>
+          <div class="timeline-org">EdWings Education</div>
+          <p class="timeline-desc">
+            Volunteered teaching photography and visual storytelling to students
+            in underprivileged schools around Bangkok.
+          </p>
+        </li>
+        <li class="timeline-entry">
+          <div class="timeline-date">2017</div>
+          <div class="timeline-title">Leadership Program, <em>Serene Strength</em></div>
+          <div class="timeline-org">APSI, India</div>
+          <p class="timeline-desc">
+            Cross-Asian leadership development program focused on inner strength
+            and community project initiation.
+          </p>
+        </li>
+      </ul>
+
+    </section>
+
+    <!-- ===============================================================
+         Panel: Master's Thesis
+         =============================================================== -->
+    <section class="tab-panel" id="panel-thesis" role="tabpanel" aria-labelledby="tab-thesis">
+      <iframe src="research-viz.html" title="Research Journey — Master's Thesis" allowfullscreen></iframe>
+    </section>
+
+    <!-- ===============================================================
+         Panel: Work
+         =============================================================== -->
+    <section class="tab-panel" id="panel-work" role="tabpanel" aria-labelledby="tab-work">
+
+      <!-- TikTok -->
+      <div class="wt-section-eyebrow">Content · @takumyi · 66.5K followers</div>
+      <h2 class="wt-section-title">Japan Content,<br><em>for Thai audiences</em></h2>
+
+      <div class="tiktok-grid" id="tiktokGrid">
+        <div class="tiktok-card" data-video-id="7136885477050731803">
+          <div class="tiktok-thumb">
+            <iframe class="tiktok-embed" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
+            <img class="tiktok-thumb-img" src="" alt="">
+            <div class="tiktok-thumb-placeholder">🎵</div>
+            <div class="tiktok-views">♥ 175.1K</div>
+          </div>
+          <div class="tiktok-desc">
+            <div class="tiktok-tag">J-Music · One Piece · Ado</div>Tot Musica ติดหูไม่หาย — why this One Piece Film Red
+            track broke Thai TikTok
+          </div>
+        </div>
+        <div class="tiktok-card" data-video-id="7029266715913620763">
+          <div class="tiktok-thumb">
+            <iframe class="tiktok-embed" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
+            <img class="tiktok-thumb-img" src="" alt="">
+            <div class="tiktok-thumb-placeholder">🇯🇵</div>
+            <div class="tiktok-views">♥ 114.9K</div>
+          </div>
+          <div class="tiktok-desc">
+            <div class="tiktok-tag">Japanese Language</div>เบียวคืออะไร!? — breaking down a word Thai people always get
+            wrong
+          </div>
+        </div>
+        <div class="tiktok-card" data-video-id="7208886544101346587">
+          <div class="tiktok-thumb">
+            <iframe class="tiktok-embed" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
+            <img class="tiktok-thumb-img" src="" alt="">
+            <div class="tiktok-thumb-placeholder">🎤</div>
+            <div class="tiktok-views">♥ 101.4K</div>
+          </div>
+          <div class="tiktok-desc">
+            <div class="tiktok-tag">J-Music · Artist</div>Who is Fujii Kaze? — introducing one of Japan's most important
+            artists to Thai fans
+          </div>
+        </div>
+        <div class="tiktok-card" data-video-id="7354309899322543367">
+          <div class="tiktok-thumb">
+            <iframe class="tiktok-embed" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
+            <img class="tiktok-thumb-img" src="" alt="">
+            <div class="tiktok-thumb-placeholder">🪚</div>
+            <div class="tiktok-views">♥ 98K</div>
+          </div>
+          <div class="tiktok-desc">
+            <div class="tiktok-tag">Anime · Zutomayo</div>วงนี้ต้องมาไทย — the band behind the Chainsaw Man opening and
+            why they matter
+          </div>
+        </div>
+        <div class="tiktok-card" data-video-id="7133219549029174533">
+          <div class="tiktok-thumb">
+            <iframe class="tiktok-embed" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
+            <img class="tiktok-thumb-img" src="" alt="">
+            <div class="tiktok-thumb-placeholder">💙</div>
+            <div class="tiktok-views">♥ 91.9K</div>
+          </div>
+          <div class="tiktok-desc">
+            <div class="tiktok-tag">J-Music · YOASOBI</div>YOASOBI 💙💗 — why this duo is one of the most important
+            J-Pop acts right now
+          </div>
+        </div>
+        <div class="tiktok-card" data-video-id="7080492592051359003">
+          <div class="tiktok-thumb">
+            <iframe class="tiktok-embed" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
+            <img class="tiktok-thumb-img" src="" alt="">
+            <div class="tiktok-thumb-placeholder">🍣</div>
+            <div class="tiktok-views">♥ 90.6K</div>
+          </div>
+          <div class="tiktok-desc">
+            <div class="tiktok-tag">Japanese Culture · Food</div>ใครกินแซลมอนมูมูมาม 🤩 — Japan's salmon obsession and
+            how it reshaped Thai food culture
+          </div>
+        </div>
+        <div class="tiktok-card" data-video-id="7022957664611175706">
+          <div class="tiktok-thumb">
+            <iframe class="tiktok-embed" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
+            <img class="tiktok-thumb-img" src="" alt="">
+            <div class="tiktok-thumb-placeholder">🎶</div>
+            <div class="tiktok-views">♥ 78.5K</div>
+          </div>
+          <div class="tiktok-desc">
+            <div class="tiktok-tag">J-Music · Vaundy</div>Life Hack เพลงนี้คือ — Vaundy's breakout track and what makes
+            his sound so addictive
+          </div>
+        </div>
+        <div class="tiktok-card" data-video-id="7331898467364670738">
+          <div class="tiktok-thumb">
+            <iframe class="tiktok-embed" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
+            <img class="tiktok-thumb-img" src="" alt="">
+            <div class="tiktok-thumb-placeholder">🎫</div>
+            <div class="tiktok-views">♥ 52.5K</div>
+          </div>
+          <div class="tiktok-desc">
+            <div class="tiktok-tag">J-Music · Live</div>Ado LIVE IN TH 🎤 — inside the historic first Ado concert in
+            Thailand
+          </div>
+        </div>
+        <div class="tiktok-card" data-video-id="7064530932656606491">
+          <div class="tiktok-thumb">
+            <iframe class="tiktok-embed" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
+            <img class="tiktok-thumb-img" src="" alt="">
+            <div class="tiktok-thumb-placeholder">🌙</div>
+            <div class="tiktok-views">♥ 51.3K</div>
+          </div>
+          <div class="tiktok-desc">
+            <div class="tiktok-tag">Japanese Culture · Phrase</div>พระจันทร์สวยจังเลยนะ 🌙💗 — the Japanese phrase
+            hidden in a Studio Ghibli line that melts hearts
+          </div>
+        </div>
+        <div class="tiktok-card" data-video-id="7508352533316799762">
+          <div class="tiktok-thumb">
+            <iframe class="tiktok-embed" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
+            <img class="tiktok-thumb-img" src="" alt="">
+            <div class="tiktok-thumb-placeholder">🎓</div>
+            <div class="tiktok-views">♥ 5.7K</div>
+          </div>
+          <div class="tiktok-desc">
+            <div class="tiktok-tag">Study in Japan · MEXT</div>ทุน MEXT คุ้มไหม? — an honest review of Japan's
+            government scholarship after living it
+          </div>
+        </div>
+      </div>
+
+      <div class="wt-divider"></div>
+
+      <!-- Experience -->
+      <div class="wt-section-eyebrow">Professional Experience</div>
+      <h2 class="wt-section-title">Work across<br><em>four domains</em></h2>
+
+      <div class="exp-grid">
+        <div class="exp-category" style="--cat-color:#5ac8b0; --cat-color-dim:#1a3a32; --cat-bg:rgba(90,200,176,0.08);">
+          <div class="cat-header">
+            <div class="cat-icon">📊</div>
+            <div>
+              <div class="cat-name">EdTech &amp; Business Development</div>
+              <div class="cat-desc">Market validation, partnerships, school outreach across Asia</div>
+            </div>
+          </div>
+          <div class="exp-entries">
+            <div class="exp-entry">
+              <div class="exp-role">Business Development Executive — International</div>
+              <div class="exp-org">Edsy</div>
+              <div class="exp-date">Feb 2025 – Aug 2025 · Korea, Turkey, Saudi Arabia</div>
+              <div class="exp-body">Scaled market validation beyond Japan to three new regions, managing partnerships
+                and competitive analysis across MENA and East Asia.</div>
+            </div>
+            <div class="exp-entry">
+              <div class="exp-role">Business Development Executive — Japan Market</div>
+              <div class="exp-org">Edsy</div>
+              <div class="exp-date">Dec 2024 – Feb 2025 · Remote</div>
+              <div class="exp-body">Validated Japan market entry for an AI English coaching platform — school mapping,
+                competitive landscape, pilot recruitment.</div>
+            </div>
+            <div class="exp-entry">
+              <div class="exp-role">Research Intern</div>
+              <div class="exp-org">Thailand Development Research Institute (TDRI)</div>
+              <div class="exp-date">2019 · 10-day internship · Bangkok</div>
+              <div class="exp-body">First exposure to policy-level thinking about EdTech and structural issues in Thai
+                education. Contributed to research on solutions for systemic education challenges.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="exp-category"
+          style="--cat-color:#9e90d0; --cat-color-dim:#2a2040; --cat-bg:rgba(158,144,208,0.08);">
+          <div class="cat-header">
+            <div class="cat-icon">🈯</div>
+            <div>
+              <div class="cat-name">Translation &amp; Language</div>
+              <div class="cat-desc">Japanese–Thai–English across entertainment, academia, and education</div>
+            </div>
+          </div>
+          <div class="exp-entries">
+            <div class="exp-entry">
+              <div class="exp-role">Proofreader &amp; Translator</div>
+              <div class="exp-org">bilibili Group</div>
+              <div class="exp-date">Dec 2020 – Apr 2024 · 3 yrs 5 mos · Remote</div>
+              <div class="exp-body">Japanese-Thai subtitle translation for 70+ anime series including Attack on Titan
+                and Naruto. Accuracy and cultural relevance for Thai streaming audiences.</div>
+            </div>
+            <div class="exp-entry">
+              <div class="exp-role">Freelance Japanese Translator</div>
+              <div class="exp-org">Self-employed</div>
+              <div class="exp-date">Jul 2022 – Present</div>
+              <div class="exp-body">Translation for education, entertainment, and Thai ethnic studies. Clients include
+                Kosei Girls High School and Waseda University study groups.</div>
+            </div>
+            <div class="exp-entry">
+              <div class="exp-role">Research Translation — UN ESCAP</div>
+              <div class="exp-org">UN ESCAP / Dr. Daniel McFarlane</div>
+              <div class="exp-date">2024 · Published Dec 2024</div>
+              <div class="exp-body">Assisted in preparing Japan, Korea, and China case studies on digital inclusion for
+                older persons. Published in official UN ESCAP report.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="exp-category" style="--cat-color:#5090c0; --cat-color-dim:#1a2840; --cat-bg:rgba(80,144,192,0.08);">
+          <div class="cat-header">
+            <div class="cat-icon">📢</div>
+            <div>
+              <div class="cat-name">Communications &amp; Community</div>
+              <div class="cat-desc">Brand, PR, and community-led development projects</div>
+            </div>
+          </div>
+          <div class="exp-entries">
+            <div class="exp-entry">
+              <div class="exp-role">PR &amp; Communications Committee</div>
+              <div class="exp-org">Thailand–United States Alumni Association (TUSAA)</div>
+              <div class="exp-date">Apr 2023 – May 2025 · 2 yrs 2 mos</div>
+              <div class="exp-body">Developed brand guidelines and CI for TUSAA. Led social media setup and
+                communications for alumni events, workshops, and community projects.</div>
+            </div>
+            <div class="exp-entry">
+              <div class="exp-role">Hin Lad Nai Outreach Camp</div>
+              <div class="exp-org">TUSAA Community Project</div>
+              <div class="exp-date">Sep – Nov 2024 · Chiang Rai</div>
+              <div class="exp-body">3-day youth camp for Karen village students affected by flooding. Designed
+                activities for psychosocial recovery and cultural exchange.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="exp-category" style="--cat-color:#4db8cc; --cat-color-dim:#0d2a2e; --cat-bg:rgba(77,184,204,0.08);">
+          <div class="cat-header">
+            <div class="cat-icon">🎬</div>
+            <div>
+              <div class="cat-name">Content &amp; Visual Media</div>
+              <div class="cat-desc">Photography, filmmaking, and digital content since 2016</div>
+            </div>
+          </div>
+          <div class="exp-entries">
+            <div class="exp-entry">
+              <div class="exp-role">Freelance Content Creator</div>
+              <div class="exp-org">Self-employed</div>
+              <div class="exp-date">May 2016 – Present · 10 yrs</div>
+              <div class="exp-body">Photography and videography for startups, NGOs, and government agencies in education
+                and social development. Documentary, event, and portrait work.</div>
+            </div>
+            <div class="exp-entry">
+              <div class="exp-role">KOB Junior Documentary — 2nd Place</div>
+              <div class="exp-org">TV Burabha · National Contest</div>
+              <div class="exp-date">2018</div>
+              <div class="exp-body">"Education Upload" — documentary on life skills gaps in Thai education. 2nd place
+                nationally out of all KOB Junior submissions.</div>
+            </div>
+            <div class="exp-entry">
+              <div class="exp-role">TikTok — Japanese Language &amp; EdTech</div>
+              <div class="exp-org">@takumiruedreal</div>
+              <div class="exp-date">2022 – Present</div>
+              <div class="exp-body">Building a Thai-language audience around Japanese learning and education commentary.
+                Story-driven short-form video as informal education.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="wt-divider"></div>
+
+      <!-- Volunteering -->
+      <div class="wt-section-eyebrow">Volunteering</div>
+      <h2 class="wt-section-title">Giving back through <em>education</em></h2>
+
+      <div class="exp-grid" style="margin-bottom: 80px;">
+        <div class="exp-category" style="--cat-color:#5ac8b0; --cat-color-dim:#1a3a32; --cat-bg:rgba(90,200,176,0.06);">
+          <div class="cat-header">
+            <div class="cat-icon">🏫</div>
+            <div>
+              <div class="cat-name">Teaching</div>
+              <div class="cat-desc">Classroom and curriculum volunteer work in Bangkok schools</div>
+            </div>
+          </div>
+          <div class="exp-entries">
+            <div class="exp-entry">
+              <div class="exp-role">Japanese Language Teacher</div>
+              <div class="exp-org">Saturday School Foundation · Season 11</div>
+              <div class="exp-date">May 2022 – Sep 2022 · Wat Ang Keaw School, Bangkok</div>
+              <div class="exp-body">Taught Japanese to underserved students for 10 weeks. Co-designed the class syllabus
+                using enjoyable learning principles.</div>
+            </div>
+            <div class="exp-entry">
+              <div class="exp-role">Shutter Story — Photography for Students</div>
+              <div class="exp-org">Volunteer Programme</div>
+              <div class="exp-date">2018 · Bangkok</div>
+              <div class="exp-body">Taught photography and visual storytelling to students in underprivileged Bangkok
+                schools — creativity as a gateway to learning.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="exp-category"
+          style="--cat-color:#9e90d0; --cat-color-dim:#2a2040; --cat-bg:rgba(158,144,208,0.06);">
+          <div class="cat-header">
+            <div class="cat-icon">🌱</div>
+            <div>
+              <div class="cat-name">Social Innovation</div>
+              <div class="cat-desc">Youth leadership, design thinking, and media literacy programs</div>
+            </div>
+          </div>
+          <div class="exp-entries">
+            <div class="exp-entry">
+              <div class="exp-role">Academic Organiser</div>
+              <div class="exp-org">Hult Prize @ Thammasat University</div>
+              <div class="exp-date">Aug – Nov 2020</div>
+              <div class="exp-body">Designed and facilitated design thinking, storytelling, and pitching workshops for
+                Hult Prize Thammasat 2021 participating teams.</div>
+            </div>
+            <div class="exp-entry">
+              <div class="exp-role">MIDL Youth Camp Facilitator</div>
+              <div class="exp-org">Media Information &amp; Digital Literacy Programme</div>
+              <div class="exp-date">2019</div>
+              <div class="exp-body">Designed and led activities on ethical digital consumption and how media shapes
+                society, for a youth camp audience.</div>
+            </div>
+            <div class="exp-entry">
+              <div class="exp-role">Samui CMIC Project</div>
+              <div class="exp-org">Social Innovation Initiative</div>
+              <div class="exp-date">2019 · Koh Samui</div>
+              <div class="exp-body">Led design thinking workshops for young social innovators. Recognised as one of 100
+                Cheewid impact contributors for social innovation in Thailand.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="wt-divider"></div>
+
+      <!-- Contact -->
+      <div class="wt-section-eyebrow">Get in touch</div>
+      <h2 class="wt-section-title" style="margin-bottom: 28px;">Open to <em>collaboration</em></h2>
+
+      <div class="contact-strip">
+        <div class="contact-label">Contact</div>
+        <div class="contact-divider"></div>
+        <div class="contact-links">
+          <a class="contact-link" href="mailto:takumilbx@gmail.com">✉ takumilbx@gmail.com</a>
+          <a class="contact-link" href="https://linkedin.com/in/takumiruedreal">in LinkedIn</a>
+          <a class="contact-link" href="https://tiktok.com/@takumiruedreal">▶ TikTok</a>
+        </div>
+      </div>
+
+    </section>
+
+    <footer class="footer">
+      <div>Takumi Oshiyama &nbsp;&middot;&nbsp; About / Research</div>
+      <div><em>ITASIA302</em> &nbsp;&middot;&nbsp; Spring 2026</div>
+    </footer>
+
+  </main>
+
+  <script>
+    "use strict";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      // Reveal observer
+      const observed = document.querySelectorAll(".reveal");
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add("in-view");
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: "0px 0px -4% 0px" });
+      observed.forEach(n => io.observe(n));
+
+      setTimeout(() => {
+        document.querySelectorAll(".reveal:not(.in-view)").forEach(n => {
+          const r = n.getBoundingClientRect();
+          if (r.top < window.innerHeight * 0.95) n.classList.add("in-view");
+        });
+      }, 120);
+
+      // Tab switching
+      const tabs = document.querySelectorAll(".tab-btn");
+      const panels = document.querySelectorAll(".tab-panel");
+
+      tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+          tabs.forEach(t => {
+            t.classList.remove("active");
+            t.setAttribute("aria-selected", "false");
+          });
+          panels.forEach(p => p.classList.remove("active"));
+
+          tab.classList.add("active");
+          tab.setAttribute("aria-selected", "true");
+
+          const target = document.getElementById(tab.getAttribute("aria-controls"));
+          if (target) target.classList.add("active");
+        });
+      });
+
+      // Support direct linking via hash (#about, #thesis, #work)
+      const hash = window.location.hash;
+      if (hash === "#thesis") {
+        document.getElementById("tab-thesis").click();
+      } else if (hash === "#work") {
+        document.getElementById("tab-work").click();
+      }
+
+      // ============================================================
+      // Work tab — TikTok grid: auto-scroll + click expand/collapse
+      // ============================================================
+      const grid = document.getElementById("tiktokGrid");
+      if (grid) {
+        const origCards = [...grid.querySelectorAll(".tiktok-card")];
+        origCards.forEach(c => {
+          const clone = c.cloneNode(true);
+          clone.dataset.clone = "1";
+          grid.appendChild(clone);
+        });
+
+        let autoScrollOn = true;
+        function tick() {
+          if (autoScrollOn && document.getElementById("panel-work").classList.contains("active")) {
+            grid.scrollLeft += 0.7;
+            const half = grid.scrollWidth / 2;
+            if (grid.scrollLeft >= half) grid.scrollLeft -= half;
+          }
+          requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+
+        grid.addEventListener("mouseenter", () => autoScrollOn = false);
+        grid.addEventListener("mouseleave", () => {
+          if (!grid.querySelector(".expanded")) autoScrollOn = true;
+        });
+
+        grid.addEventListener("click", function (e) {
+          const card = e.target.closest(".tiktok-card");
+          if (!card) { collapseAllTikTok(); return; }
+          if (card.classList.contains("expanded")) { collapseAllTikTok(); return; }
+          expandTikTokCard(card);
+        });
+
+        function expandTikTokCard(card) {
+          autoScrollOn = false;
+          const vid = card.dataset.videoId;
+          grid.querySelectorAll(".tiktok-card").forEach(c => {
+            if (c === card) {
+              c.classList.remove("collapsed");
+              c.classList.add("expanded");
+              const iframe = c.querySelector(".tiktok-embed");
+              if (iframe && vid && !iframe.src.includes(vid)) {
+                iframe.src = "https://www.tiktok.com/embed/v2/" + vid + "?autoplay=1";
+              }
+            } else {
+              c.classList.remove("expanded");
+              c.classList.add("collapsed");
+              const iframe = c.querySelector(".tiktok-embed");
+              if (iframe) iframe.src = "";
+            }
+          });
+          card.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+        }
+
+        function collapseAllTikTok() {
+          grid.querySelectorAll(".tiktok-card").forEach(c => {
+            c.classList.remove("expanded", "collapsed");
+            const iframe = c.querySelector(".tiktok-embed");
+            if (iframe) iframe.src = "";
+          });
+          autoScrollOn = true;
+        }
+
+        // Load thumbnails via TikTok oEmbed
+        origCards.forEach(card => {
+          const vid = card.dataset.videoId;
+          if (!vid) return;
+          fetch("https://www.tiktok.com/oembed?url=https://www.tiktok.com/@takumyi/video/" + vid)
+            .then(r => r.json())
+            .then(data => {
+              if (!data.thumbnail_url) return;
+              grid.querySelectorAll('.tiktok-card[data-video-id="' + vid + '"]').forEach(c => {
+                const img = c.querySelector(".tiktok-thumb-img");
+                if (!img) return;
+                img.src = data.thumbnail_url;
+                img.onload = () => {
+                  img.style.opacity = "1";
+                  const ph = c.querySelector(".tiktok-thumb-placeholder");
+                  if (ph) ph.style.display = "none";
+                };
+              });
+            })
+            .catch(() => { });
+        });
+      }
+    });
+  </script>
+
+</body>
+
+</html>
