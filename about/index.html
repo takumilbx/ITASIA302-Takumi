@@ -712,18 +712,10 @@
       background: transparent;
     }
 
-    /* ── Thesis: iframe canvas ──────────────────────────────────────── */
     #panel-thesis {
       margin: 0 -48px -36px;
       padding: 0;
       overflow: hidden;
-    }
-
-    #panel-thesis iframe {
-      display: block;
-      width: 100%;
-      height: calc(100vh - 155px);
-      border: none;
     }
 
     @media (max-width: 860px) {
@@ -737,6 +729,102 @@
         margin: 0 -18px -24px;
       }
     }
+
+    /* ========================================================================
+       Research Viz — inlined canvas visualization
+       ======================================================================== */
+    #viz-container {
+      position: relative;
+      height: calc(100vh - 155px);
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    #viz-canvas { display: block; }
+
+    #viz-back-btn {
+      position: absolute; top: 18px; left: 22px; z-index: 100;
+      font-family: var(--mono);
+      font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--ink-faint); background: none; border: none; cursor: pointer;
+      transition: color 200ms ease;
+      display: none;
+    }
+    #viz-back-btn:hover { color: var(--ink-dim); }
+    #viz-back-btn.visible { display: block; }
+
+    #viz-card {
+      position: absolute; z-index: 200;
+      width: 300px;
+      background: rgba(11,13,26,0.92);
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      padding: 20px 22px 18px;
+      pointer-events: none;
+      opacity: 0; transform: scale(0.94) translateY(6px);
+      transition: opacity 280ms var(--ease), transform 280ms var(--ease);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    #viz-card.visible { opacity: 1; transform: scale(1) translateY(0); pointer-events: auto; }
+
+    #viz-card .card-label {
+      font-family: var(--mono);
+      font-size: 8.5px; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--card-accent, #F0A060); margin-bottom: 8px;
+    }
+    #viz-card .card-title {
+      font-family: var(--serif); font-weight: 400; font-size: 15px;
+      color: var(--ink); line-height: 1.3; margin-bottom: 10px;
+      letter-spacing: -0.01em;
+    }
+    #viz-card .card-desc {
+      font-family: var(--serif); font-weight: 300; font-size: 12.5px;
+      color: var(--ink-dim); line-height: 1.6;
+    }
+    #viz-card .card-close {
+      position: absolute; top: 10px; right: 14px;
+      font-family: var(--mono); font-size: 10px;
+      color: var(--ink-faint); cursor: pointer; pointer-events: auto;
+      transition: color 180ms ease;
+    }
+    #viz-card .card-close:hover { color: var(--ink-dim); }
+
+    #viz-scrubber {
+      position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
+      display: flex; z-index: 100;
+      background: rgba(5,6,14,0.80);
+      border: 1px solid var(--rule); border-radius: 3px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .viz-scrub-btn {
+      font-family: var(--mono);
+      font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--ink-faint); background: none; border: none;
+      padding: 10px 22px; cursor: pointer;
+      position: relative; transition: color 200ms ease;
+      border-right: 1px solid var(--rule);
+    }
+    .viz-scrub-btn:last-child { border-right: none; }
+    .viz-scrub-btn::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: var(--btn-color); transform: scaleX(0);
+      transform-origin: left; transition: transform 300ms var(--ease);
+    }
+    .viz-scrub-btn:hover { color: var(--ink-dim); }
+    .viz-scrub-btn.active { color: var(--ink); }
+    .viz-scrub-btn.active::before { transform: scaleX(1); }
+
+    #viz-hint {
+      position: absolute; bottom: 70px; left: 50%; transform: translateX(-50%);
+      font-family: var(--mono); font-size: 9px;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--ink-faint); pointer-events: none;
+      transition: opacity 600ms ease;
+      white-space: nowrap;
+    }
+    #viz-hint.hidden { opacity: 0; }
 
     /* ========================================================================
        Footer
@@ -1553,7 +1641,23 @@
          Panel: Master's Thesis
          =============================================================== -->
     <section class="tab-panel" id="panel-thesis" role="tabpanel" aria-labelledby="tab-thesis">
-      <iframe src="research-viz.html" title="Research Journey — Master's Thesis" allowfullscreen></iframe>
+      <div id="viz-container">
+        <canvas id="viz-canvas"></canvas>
+        <button id="viz-back-btn">← Overview</button>
+        <div id="viz-card">
+          <span class="card-close" id="viz-card-close">✕</span>
+          <div class="card-label" id="viz-card-label">Chapter</div>
+          <div class="card-title" id="viz-card-title">Node title</div>
+          <div class="card-desc" id="viz-card-desc">Description</div>
+        </div>
+        <div id="viz-scrubber">
+          <button class="viz-scrub-btn active" data-ch="0" style="--btn-color:#F0A060">Inspirations</button>
+          <button class="viz-scrub-btn" data-ch="1" style="--btn-color:#5090C0">Past Research</button>
+          <button class="viz-scrub-btn" data-ch="2" style="--btn-color:#5AC8B0">Iterations</button>
+          <button class="viz-scrub-btn" data-ch="3" style="--btn-color:#9E90D0">Now</button>
+        </div>
+        <div id="viz-hint">Click a cluster to explore</div>
+      </div>
     </section>
 
     <!-- ===============================================================
@@ -2054,6 +2158,316 @@
         });
       }
     });
+  </script>
+
+  <!-- Research Visualization — inlined canvas -->
+  <script>
+  (function () {
+    "use strict";
+
+    const VIZ_CHAPTERS = [
+      {
+        id: 0, label: "Inspirations", color: "#F0A060", dim: "#3a2010",
+        nodes: [
+          { title: "Thai Education System", desc: "9 years embedded in Thailand's education sector — observing gaps in digital readiness, teacher confidence, and infrastructure at every level." },
+          { title: "SEAYLP 2019", desc: "South East Asia Youth Leadership Program at Northern Illinois University. Saw how US teachers used technology naturally; contrast with Thai classrooms stuck me." },
+          { title: "Education Upload (2018)", desc: "Grade 11. My school had an innovative curriculum — real skills, real opportunities. Most Thai schools didn't. I wanted to ask why, and make it visible. So I directed a documentary with my juniors: brainstorming, data collection, interviews, scripting, filming, editing, all of it. 2nd place nationally. First time I understood that education was something you could investigate — and maybe change." },
+          { title: "Panyaprateep HS — Art & Japanese", desc: "Small class, so I could negotiate my own learning goals. Thai schools teach Japanese at a pace that was too slow for me — I wanted real challenge. So I studied at a middle-school level, then went beyond the textbook: Japanese history, politics, media culture, drama, songs, cooking. That flexibility — shaping your curriculum around what actually drives you — stayed with me as a model for what school could be." },
+          { title: "Shutter Story 2018", desc: "Grade 10. Volunteered with EdWings Social Enterprise at a public school in Bangna, Bangkok. No extracurriculars, just academics — students had no space for discovery. We taught photography: DSLRs, phone cameras, visual storytelling. One student I mentored got so hooked she went into an arts-and-technology high school track, then built a career in technical work alongside photography. Seeing that made me realize education reform isn't just about classrooms — it's about what happens outside them too." },
+          { title: "MIDL Youth Camp 2019", desc: "I first joined as a participant in 2018 — our group documented the multicultural layering of Talad Noi, Bangkok's oldest street, through a short travel-style music video. In 2019 I came back as a facilitator and content designer for 30 participants: designing workshops on how information is weaponized, how media shapes what people believe, and how to create content that drives social change. Moving from participant to designer in one year was the moment I understood the difference between consuming media literacy and actually teaching it." },
+          { title: "CMIC / Samui 2019", desc: "CMIC — Changemaker Incubation Camp — was what we built after returning from SEAYLP in the US. Me and five other Thai alumni, funded by the US Embassy, took what we learned about leadership and social change back to Koh Samui. We ran workshops on design thinking, empathy mapping via community walks, problem framing, and project design. The Samui youth tackled the island's trash problem and built campaigns involving foreign tourists. 100+ people showed up. Covered by local media. For this, I was selected as one of Thailand's 100 Cheewid Impact Creators in 2019 — a national recognition of youth-led social contributions." },
+          { title: "Saturday School — Japanese Teacher", desc: "Middle schoolers, grades 7–9, zero Japanese background but curious about anime and J-culture. We didn't teach textbook Japanese — we taught them to learn from what they already loved: their favorite anime, Japanese songs, the cultural history behind them. On 'Big Day,' our class performed a Japanese show at Samyan Mitrtown in front of 1,000+ visitors. Bangkok Governor Chadchart visited and cited our class as a best practice in the Saturday School program. That moment confirmed something: intrinsic motivation makes language learning actually work." },
+          { title: "Bilibili Thailand 2020–2024", desc: "Applied for the translator/proofreader role in 2020 — JLPT N1 required. The hard parts: localizing Japanese cultural jokes into Thai equivalents without losing the original nuance; delivering translations within 3 hours of Japan airing; maintaining consistent terminology across 100+ episode series while coordinating with other translators. Over four years: 70+ titles including Naruto, Death Note, Attack on Titan, My Hero Academia, Blue Lock, Black Clover, Tokyo Revengers — accumulated over 1 billion views. That taught me something academic literature rarely captures: how framing and word choice shape what an audience actually takes in." },
+          { title: "Thammasat BA — Global Studies", desc: "One of the few Thai programs that combined globalization, social innovation, and social entrepreneurship in one track. First two years: understanding how globalization creates systemic problems. Last two years: studying the social enterprises and innovations responding to them. Annual internships were built in — I spent Year 2 at Saturday School Foundation and Year 3 at the Bangkok Metropolitan Administration, in the office of the deputy governor overseeing education policy. Graduated First Class Honors, GPA 3.72. The program gave me a framework for seeing education not as an isolated sector but as a site where global forces and local realities collide — and showed me how many different actors it takes to actually move a system. That's what pushed me toward graduate study: I wanted to go deeper into innovation from a multidisciplinary lens." },
+          { title: "BMA Internship 2023", desc: "Interned in the secretariat of Bangkok's deputy governor for education. Three projects stand out: I built the UNESCO Learning Cities deck that the deputy governor presented to UNESCO — it highlighted Saturday School, a program I'd personally taught in. I designed the slides and narrative for the BMA Strategy Kickoff, communicating the governor's education policies to all 437 Bangkok schools. Most impactful: the Thai Scholarship Database. I mapped all available scholarships against actual student need and found two gaps — most scholarships sit at higher education level, but the real need is primary and secondary; and GPA minimums of 2.5/4.0 mean the most underprivileged students, who had worse schooling, can't qualify. Those findings went to policymakers. That's when I started thinking seriously about how policy design either closes or widens inequality." },
+          { title: "TDRI Internship 2019", desc: "10 days embedded with the education research team at Thailand Development Research Institute. I read their past studies and observed how they packaged findings for policymakers — how raw research becomes actionable policy. The 'aha' was simple but real: research can change what decisions get made. I also got fieldwork time — interviewing actual research subjects, practicing observation and note-taking. Those skills came back years later when I designed my own study. First taste of what it means to be a researcher, not just a student." },
+          { title: "E-sports Curriculum — Saturday School 2022", desc: "Part of my Saturday School Foundation internship, working in Saturday V — the department that runs CSR and corporate partnership projects. This one was with Garena Thailand, the company behind most major mobile and online games in Southeast Asia. My job: design a curriculum that showed underprivileged students that e-sports is an industry, not just a hobby. Shoutcasting, graphic design, broadcasting, event organizing — real career paths. I also facilitated sessions and coordinated between industry speakers to keep everything aligned with the curriculum I'd built. First time I owned an education project end-to-end." },
+          { title: "Hult Prize @ Thammasat 2020", desc: "On the organizing team for the Hult Prize campus competition at Thammasat — a global social entrepreneurship case competition. My role was designing the participant bootcamp learning sessions, specifically design thinking workshops, together with my team from the School of Global Studies. Watching participants work through design thinking in a structured session showed me how much the pedagogy shapes what people think is possible — give someone a framework for empathy and ideation, and their solution space expands visibly." },
+          { title: "TikTok @takumyi — Japanese Learning", desc: "Started late 2020 as a joke — just imitating Japanese-related trends as a half-Japanese Thai creator. But the content blew up. I leaned in: Japanese subculture, music, anime, film, everyday culture. My edge was making 1–2 minute videos when most TikTok content was far shorter. That, plus combining videography, editing, and actual Japanese fluency, built something distinct. 85k+ followers. What it taught me: intrinsic motivation — people watching because they genuinely want to learn — makes informal education remarkably sticky." },
+          { title: "Edsy — Japan Market 2024", desc: "Edsy (Education Easy) is an EdTech startup building an AI English coaching platform. I joined as Japan market validator — mapping leads, interviewing teachers, gathering feedback to pass to the dev team. Got deep access to how Japanese schools actually operate and how they decide to adopt new learning innovations. Also coordinated with Gakken, one of Japan's largest education companies, as a local partner for market entry. That work expanded into international validation roles in Korea and Saudi Arabia. The Japan school visits planted the seed for my research question — I could see post-GIGA devices sitting unused and teachers navigating a transition no one had prepared them for." },
+          { title: "UTokyo ITASIA Program 2025", desc: "Entering the program as a practitioner-researcher. ITASIA's interdisciplinary lens gave me vocabulary to frame what I had been observing for years." },
+        ]
+      },
+      {
+        id: 1, label: "Past Research", color: "#5090C0", dim: "#0e1e30",
+        nodes: [
+          { title: "Mishra & Koehler — TPACK (2006)", desc: "The foundational framework: Technological Pedagogical Content Knowledge. Teachers need all three intersecting knowledge types to teach effectively with technology." },
+          { title: "GIGA School Program — Japan", desc: "Japan's 2020–2021 1:1 device rollout for all K-12 students. Largest forced adoption of EdTech in Japanese history. Created natural research conditions." },
+          { title: "Thailand 4.0 — EdTech Policy", desc: "National digital economy strategy shaping Thai education's technology investment. Top-down policy vs. ground-level classroom reality." },
+          { title: "1:1 Device Classroom Studies", desc: "Literature on what happens when every student has a device: engagement patterns, teacher workflow disruption, equity effects." },
+          { title: "Teacher Professional Development in Thailand", desc: "Research on CPD systems, in-service training gaps, and how Thai teachers conceptualize their own growth." },
+          { title: "Comparative Education — Japan & Thailand", desc: "Cross-national studies examining how cultural context shapes educational practice, teacher identity, and institutional change." },
+          { title: "Technology Integration Models", desc: "SAMR, RAT, TPACK — comparing frameworks for describing how teachers move from substitution to transformation in tech use." },
+          { title: "Teacher Beliefs & Technology", desc: "Research showing that beliefs about learning, teaching, and technology predict adoption behavior more than training alone." },
+          { title: "Digital Divide in Asian Classrooms", desc: "Infrastructure inequality is documented; less studied is the pedagogical divide — access without pedagogical shift." },
+          { title: "Constructivist Learning Theory", desc: "Vygotsky, Piaget, and 1:1 learning: how does individual device access align with (or undermine) social constructivism?" },
+          { title: "TPACK Assessment Frameworks", desc: "Survey instruments and observation rubrics developed to measure teacher TPACK levels — methodological toolbox for this study." },
+          { title: "Cross-Cultural EdTech Studies", desc: "Research bridging Asia-Pacific educational contexts: similar infrastructure challenges, different cultural pedagogical defaults." },
+          { title: "Qualitative Research in Education", desc: "Case study methodology, interview design, and classroom observation protocols — methodological grounding for the study design." },
+          { title: "Elementary Teacher Identity", desc: "How primary school teachers construct professional identity and how technology adoption threatens or extends that identity." },
+          { title: "UN ESCAP — Digital Inclusion 2024", desc: "Research translation work on digital inclusion for older persons in Japan, Korea, China. Connected policy framing to classroom-level digital transition." }
+        ]
+      },
+      {
+        id: 2, label: "Iterations", color: "#5AC8B0", dim: "#0a2820",
+        nodes: [
+          { title: "Starting Point: Technology in Thai Classrooms", desc: "Initial, broad framing — 'how is technology used in Thai schools?' Too wide, no theoretical anchor." },
+          { title: "Discovering TPACK", desc: "First read of Mishra & Koehler. Realized I needed a framework that captured the intersection of content, pedagogy, and technology — not just one dimension." },
+          { title: "Adding Comparative Lens", desc: "Expanded beyond Thailand after Edsy fieldwork in Japan. GIGA School created a natural comparative case that matched Thailand's device-push." },
+          { title: "Focusing on Elementary Level", desc: "Narrowed from K-12 to elementary. Primary school teachers have the least subject-specialist content support but the most pressure to integrate devices." },
+          { title: "The 1:1 Constraint", desc: "Specified '1:1 device classrooms' as the environment. This is the policy outcome both governments are funding — the real-world context of the research." },
+          { title: "Framing the Transition", desc: "The word 'transition' became central. Not 'adoption' (passive) or 'mastery' (endpoint), but ongoing professional becoming." },
+          { title: "Research Question Draft v1", desc: "First written RQ: too long, three parts, unresolvable. Feedback: simplify to one thing you can actually answer with data." },
+          { title: "Methodology Choice: Qualitative", desc: "Rejected survey-based TPACK measurement. Chose qualitative comparative case study — richer, messier, truer to the complexity." },
+          { title: "Interview Protocol Design", desc: "Drafted semi-structured interview guide. Piloted with two Japanese teachers. Revised to reduce leading questions, add scenario prompts." },
+          { title: "Observation Framework", desc: "Built classroom observation rubric adapting TPACK indicators to 1:1 settings. Identifying what TPACK looks like in practice, not on paper." },
+          { title: "Ethics & Fieldwork Planning", desc: "IRB/ethics process, school partner recruitment, scheduling across two countries. Complexity of cross-national qualitative research." },
+          { title: "Literature Gap Identification", desc: "TPACK is well-studied in secondary and higher education. Elementary comparative studies in Japan-Thailand: nearly absent. That's the gap." },
+          { title: "Cultural Context as Variable", desc: "Realized teacher identity in Japan (specialist, hierarchical) and Thailand (generalist, relational) would shape TPACK development differently — this became theoretically important." },
+          { title: "Title Crystallization", desc: "\"Two Countries, One Question\" — the transition from working title to a phrase that holds the comparative logic and the research focus together." },
+          { title: "Chapter Outline Draft", desc: "Five chapters: Introduction, Literature Review, Methodology, Findings, Discussion. Mapped how TPACK framework threads through all of them." },
+          { title: "Advisor Alignment", desc: "Supervisor meetings refined scope: feasible within program timeline, sufficient methodological rigor, clear contribution to comparative EdTech literature." },
+          { title: "Connecting to Coursework", desc: "ITASIA302 and other courses feeding directly into theoretical grounding — digitally-mediated society as the context for why teacher TPACK matters now." },
+          { title: "Writing Chapter 1 — Introduction", desc: "Began the actual thesis text. From research question to situated problem statement, from abstract claim to concrete classroom observation." },
+          { title: "Recognizing My Positionality", desc: "Practitioner-researcher, bilingual, cross-cultural background — this isn't incidental. It's what makes this comparative study possible and credible." },
+          { title: "Current Version", desc: "TPACK transition in elementary teachers in Japan–Thailand 1:1 classrooms. Qualitative comparative case study. Data collection: 2026." }
+        ]
+      },
+      {
+        id: 3, label: "Now", color: "#9E90D0", dim: "#1a1530",
+        nodes: [
+          { title: "Research Question (Working)", desc: "How do elementary school teachers transition into TPACK-based teaching in 1:1 device classrooms across Japan and Thailand?" },
+          { title: "Qualitative Comparative Case Study", desc: "Two-country, multi-site design. Elementary schools in Japan (post-GIGA) and Thailand (device rollout ongoing) as parallel cases." },
+          { title: "Participants: Elementary Teachers", desc: "Target: 6–10 elementary classroom teachers per country. Purposive sampling for range of tech experience, years teaching, school context." },
+          { title: "Methods: Interviews + Observation", desc: "Semi-structured interviews plus classroom observations. Each teacher: 2 interviews (before/after observation) and 2 observed lessons." },
+          { title: "Literature Review — In Progress", desc: "Synthesizing TPACK literature, 1:1 device studies, Japan-Thailand educational context, and teacher professional development frameworks." },
+          { title: "Fieldwork Planning — 2026", desc: "Japan sites: Tokyo and surrounding prefectures. Thailand sites: Bangkok and Chiang Mai. Fieldwork window: mid-to-late 2026." },
+          { title: "Chapter 1 — Introduction Writing", desc: "Drafting the research problem, context, significance, and chapter overview. Making the case for why this study matters now." },
+          { title: "Advisor Consultations", desc: "Regular meetings shaping the study design, theoretical framing, and fieldwork approach. Ongoing collaborative development." },
+          { title: "ITASIA Coursework Integration", desc: "Using ITASIA302 and other courses as live thinking spaces — assignments as early exploratory writing toward the thesis." },
+          { title: "Positionality Statement", desc: "Trilingual Thai-Japanese researcher, 9 years in Thai education, 1 year in Japan. This position is an asset — named and theorized explicitly." },
+          { title: "Language as Research Asset", desc: "Thai + Japanese + English fluency means no translation intermediary. Direct access to participants' own words in their own languages." },
+          { title: "Connecting Practice to Theory", desc: "Everything from Bilibili translation to Edsy fieldwork to Saturday School teaching threads into the researcher's practical knowledge base." },
+          { title: "Digital Storytelling Approach", desc: "The thesis won't just be written — it will be communicated. This portfolio is part of that public research narrative." },
+          { title: "Publication Goals", desc: "Targeting a conference paper (2026) and a journal submission based on the comparative findings. Building toward academic contribution." },
+          { title: "Expected Completion: 2027", desc: "On track for UTokyo ITASIA master's program timeline. Research, writing, and defense within the 2-year program window." }
+        ]
+      }
+    ];
+
+    const vizCanvas = document.getElementById("viz-canvas");
+    if (!vizCanvas) return;
+    const vizCtx = vizCanvas.getContext("2d");
+    const vizContainer = document.getElementById("viz-container");
+
+    let VW, VH;
+    function vizResize() {
+      VW = vizCanvas.width = vizContainer.offsetWidth;
+      VH = vizCanvas.height = vizContainer.offsetHeight;
+    }
+    vizResize();
+    window.addEventListener("resize", () => { vizResize(); vizComputeLayout(); });
+
+    const vizCam = { x: 0, y: 0, z: 1, tx: 0, ty: 0, tz: 1 };
+    const VIZ_EASE = 0.07;
+    let vizFocused = null;
+    let vizTime = 0;
+    const vizClusters = [];
+
+    function vizComputeLayout() {
+      vizClusters.length = 0;
+      const cx = VW / 2, cy = VH / 2;
+      const radius = Math.min(VW, VH) * 0.28;
+      const angles = [-Math.PI * 0.6, -Math.PI * 0.1, Math.PI * 0.4, Math.PI * 0.9];
+      VIZ_CHAPTERS.forEach((ch, i) => {
+        const hx = cx + Math.cos(angles[i]) * radius;
+        const hy = cy + Math.sin(angles[i]) * radius * 0.72;
+        const subRadius = Math.min(VW, VH) * 0.095;
+        const subnodes = ch.nodes.map((n, j) => {
+          const a = (j / ch.nodes.length) * Math.PI * 2;
+          const r = subRadius * (0.7 + 0.3 * ((j * 7 + 3) % 5) / 4);
+          return { ...n, bx: hx + Math.cos(a) * r, by: hy + Math.sin(a) * r,
+            ox: 0, oy: 0, phase: j * 0.74 + i * 1.3,
+            speed: 0.21 + (j % 5) * 0.014, amp: 1.5 + (j % 3) * 0.5 };
+        });
+        vizClusters.push({ ...ch, hx, hy, ox: 0, oy: 0,
+          phase: i * 2.1, speed: 0.22 + i * 0.018, amp: 2.5 + i * 0.3, subnodes });
+      });
+    }
+    vizComputeLayout();
+
+    function vizScreenToWorld(sx, sy) {
+      return { x: (sx - VW / 2) / vizCam.z + vizCam.x,
+               y: (sy - VH / 2) / vizCam.z + vizCam.y };
+    }
+    function vizDist(ax, ay, bx, by) { return Math.hypot(ax - bx, ay - by); }
+
+    function vizTickNodes() {
+      vizClusters.forEach(cl => {
+        cl.ox = Math.sin(vizTime * cl.speed + cl.phase) * cl.amp;
+        cl.oy = Math.cos(vizTime * cl.speed * 0.7 + cl.phase + 1) * cl.amp;
+        cl.subnodes.forEach(sn => {
+          sn.ox = Math.sin(vizTime * sn.speed + sn.phase) * sn.amp;
+          sn.oy = Math.cos(vizTime * sn.speed * 0.8 + sn.phase + 2) * sn.amp;
+        });
+      });
+    }
+
+    function vizDraw() {
+      vizCtx.clearRect(0, 0, VW, VH);
+      const bg = vizCtx.createRadialGradient(VW/2, VH/2, 0, VW/2, VH/2, Math.max(VW, VH) * 0.7);
+      bg.addColorStop(0, "#0b0d1a");
+      bg.addColorStop(1, "#05060e");
+      vizCtx.fillStyle = bg;
+      vizCtx.fillRect(0, 0, VW, VH);
+
+      vizCtx.save();
+      vizCtx.translate(VW / 2, VH / 2);
+      vizCtx.scale(vizCam.z, vizCam.z);
+      vizCtx.translate(-vizCam.x, -vizCam.y);
+
+      vizClusters.forEach((cl, ci) => {
+        const dimmed = vizFocused !== null && vizFocused !== ci;
+        const focused = vizFocused === ci;
+        const alpha = dimmed ? 0.15 : 1;
+        const hx = cl.hx + cl.ox, hy = cl.hy + cl.oy;
+
+        if (!dimmed) {
+          cl.subnodes.forEach(sn => {
+            const sx = sn.bx + sn.ox, sy = sn.by + sn.oy;
+            vizCtx.beginPath(); vizCtx.moveTo(hx, hy); vizCtx.lineTo(sx, sy);
+            vizCtx.strokeStyle = cl.color + "28"; vizCtx.lineWidth = 0.8 / vizCam.z; vizCtx.stroke();
+            const r = focused ? 5 : 3.5;
+            vizCtx.beginPath(); vizCtx.arc(sx, sy, r, 0, Math.PI * 2);
+            vizCtx.fillStyle = cl.color + (focused ? "cc" : "66"); vizCtx.fill();
+            if (focused) {
+              vizCtx.font = `300 10px "Geist Mono", "SF Mono", monospace`;
+              vizCtx.fillStyle = "#8899b8"; vizCtx.textAlign = "center";
+              vizCtx.fillText(sn.title, sx, sy - 10);
+            }
+          });
+        }
+
+        const grd = vizCtx.createRadialGradient(hx, hy, 0, hx, hy, 55);
+        grd.addColorStop(0, cl.color + "22"); grd.addColorStop(1, "transparent");
+        vizCtx.globalAlpha = alpha; vizCtx.fillStyle = grd;
+        vizCtx.beginPath(); vizCtx.arc(hx, hy, 55, 0, Math.PI * 2); vizCtx.fill();
+        vizCtx.globalAlpha = 1;
+
+        const hubR = focused ? 16 : 12;
+        vizCtx.beginPath(); vizCtx.arc(hx, hy, hubR, 0, Math.PI * 2);
+        vizCtx.fillStyle = dimmed ? cl.dim : cl.color + "33"; vizCtx.fill();
+        vizCtx.strokeStyle = dimmed ? cl.color + "22" : cl.color;
+        vizCtx.lineWidth = (focused ? 2 : 1.5) / vizCam.z; vizCtx.stroke();
+
+        if (!dimmed) {
+          vizCtx.font = `500 ${focused ? 11 : 10}px "Geist Mono", "SF Mono", monospace`;
+          vizCtx.fillStyle = cl.color; vizCtx.textAlign = "center";
+          vizCtx.fillText(cl.label.toUpperCase(), hx, hy + hubR + 16);
+          vizCtx.font = `300 9px "Geist Mono", "SF Mono", monospace`;
+          vizCtx.fillStyle = "#2e3a55";
+          vizCtx.fillText(cl.nodes.length + " nodes", hx, hy + hubR + 28);
+        }
+      });
+
+      vizCtx.restore();
+    }
+
+    function vizUpdateCamera() {
+      vizCam.x += (vizCam.tx - vizCam.x) * VIZ_EASE;
+      vizCam.y += (vizCam.ty - vizCam.y) * VIZ_EASE;
+      vizCam.z += (vizCam.tz - vizCam.z) * VIZ_EASE;
+    }
+
+    function vizLoop() {
+      vizTime += 0.012;
+      vizTickNodes(); vizUpdateCamera(); vizDraw();
+      requestAnimationFrame(vizLoop);
+    }
+    vizLoop();
+
+    function vizFocusChapter(ci) {
+      vizFocused = ci;
+      const cl = vizClusters[ci];
+      vizCam.tx = cl.hx; vizCam.ty = cl.hy;
+      vizCam.tz = Math.min(VW, VH) > 600 ? 2.4 : 1.8;
+      document.getElementById("viz-back-btn").classList.add("visible");
+      document.getElementById("viz-hint").classList.add("hidden");
+      vizSetScrubActive(ci);
+    }
+
+    function vizResetView() {
+      vizFocused = null;
+      vizCam.tx = 0; vizCam.ty = 0; vizCam.tz = 1;
+      document.getElementById("viz-back-btn").classList.remove("visible");
+      vizHideCard();
+      document.getElementById("viz-hint").classList.remove("hidden");
+    }
+
+    function vizSetScrubActive(ci) {
+      document.querySelectorAll(".viz-scrub-btn").forEach((b, i) => {
+        b.classList.toggle("active", i === ci);
+      });
+    }
+
+    function vizShowCard(node, chapterLabel, color, localX, localY) {
+      const card = document.getElementById("viz-card");
+      document.getElementById("viz-card-label").textContent = chapterLabel;
+      document.getElementById("viz-card-label").style.setProperty("--card-accent", color);
+      document.getElementById("viz-card-title").textContent = node.title;
+      document.getElementById("viz-card-desc").textContent = node.desc;
+      let cx = localX + 20, cy = localY - 20;
+      if (cx + 320 > VW) cx = localX - 320;
+      if (cy + 220 > VH) cy = VH - 230;
+      if (cy < 10) cy = 10;
+      card.style.left = cx + "px"; card.style.top = cy + "px";
+      card.classList.add("visible");
+    }
+
+    function vizHideCard() {
+      document.getElementById("viz-card").classList.remove("visible");
+    }
+
+    vizCanvas.addEventListener("click", (e) => {
+      const rect = vizCanvas.getBoundingClientRect();
+      const localX = e.clientX - rect.left;
+      const localY = e.clientY - rect.top;
+      const wp = vizScreenToWorld(localX, localY);
+
+      if (vizFocused === null) {
+        for (let ci = 0; ci < vizClusters.length; ci++) {
+          const cl = vizClusters[ci];
+          const hx = cl.hx + cl.ox, hy = cl.hy + cl.oy;
+          if (vizDist(wp.x, wp.y, hx, hy) < 28) { vizFocusChapter(ci); return; }
+        }
+        return;
+      }
+      const cl = vizClusters[vizFocused];
+      for (const sn of cl.subnodes) {
+        const sx = sn.bx + sn.ox, sy = sn.by + sn.oy;
+        if (vizDist(wp.x, wp.y, sx, sy) < 14) {
+          vizShowCard(sn, cl.label, cl.color, localX, localY); return;
+        }
+      }
+      vizHideCard();
+    });
+
+    document.getElementById("viz-back-btn").addEventListener("click", vizResetView);
+    document.getElementById("viz-card-close").addEventListener("click", vizHideCard);
+
+    document.querySelectorAll(".viz-scrub-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        vizFocusChapter(parseInt(btn.dataset.ch));
+        vizHideCard();
+      });
+    });
+
+    vizCanvas.addEventListener("touchend", (e) => {
+      const t = e.changedTouches[0];
+      vizCanvas.dispatchEvent(new MouseEvent("click", { clientX: t.clientX, clientY: t.clientY }));
+    });
+
+  })();
   </script>
 
 </body>
