@@ -20,15 +20,6 @@
   #back-btn:hover { color: #9AA3B0; }
   #back-btn.visible { display: block; }
 
-  #home-link {
-    position: fixed; top: 18px; right: 22px; z-index: 100;
-    font-family: "SF Mono", ui-monospace, monospace;
-    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
-    color: #3A4A62; text-decoration: none;
-    transition: color 200ms ease;
-  }
-  #home-link:hover { color: #9AA3B0; }
-
   #title-overlay {
     position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
     text-align: center; pointer-events: none; z-index: 100;
@@ -123,7 +114,6 @@
 <canvas id="c"></canvas>
 
 <button id="back-btn">← Back to overview</button>
-<a id="home-link" href="../">← About</a>
 
 <div id="title-overlay">
   <div class="eyebrow">Master's Thesis · Research Journey</div>
@@ -155,7 +145,7 @@ const CHAPTERS = [
     nodes: [
       { title: "Thai Education System", desc: "9 years embedded in Thailand's education sector — observing gaps in digital readiness, teacher confidence, and infrastructure at every level." },
       { title: "SEAYLP 2019", desc: "South East Asia Youth Leadership Program at Northern Illinois University. Saw how US teachers used technology naturally; contrast with Thai classrooms stuck me." },
-      { title: "Education Upload (2018)", desc: "Directed a documentary on life skills gaps in Thai education for KOB Junior. Won 2nd place nationally. First formal inquiry into how schools fail students." },
+      { title: "Education Upload (2018)", desc: "Grade 11. My school had an innovative curriculum — real skills, real opportunities. Most Thai schools didn't. I wanted to ask why, and make it visible. So I directed a documentary with my juniors: brainstorming, data collection, interviews, scripting, filming, editing, all of it. 2nd place nationally. First time I understood that education was something you could investigate — and maybe change." },
       { title: "Panyaprateep HS — Art & Japanese", desc: "Studied in an arts-Japanese stream. Experienced a learning environment where the medium shaped the message — aesthetic education as a different form of knowing." },
       { title: "Shutter Story 2018", desc: "Taught photography and visual storytelling to underserved Bangkok students. Saw how access to creative tools transformed confidence and self-expression." },
       { title: "MIDL Youth Camp 2019", desc: "Designed and led Media Information & Digital Literacy activities. Began thinking seriously about how media shapes cognition, not just content." },
