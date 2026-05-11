@@ -20,6 +20,15 @@
   #back-btn:hover { color: #9AA3B0; }
   #back-btn.visible { display: block; }
 
+  #home-link {
+    position: fixed; top: 18px; right: 22px; z-index: 100;
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: #3A4A62; text-decoration: none;
+    transition: color 200ms ease;
+  }
+  #home-link:hover { color: #9AA3B0; }
+
   #title-overlay {
     position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
     text-align: center; pointer-events: none; z-index: 100;
@@ -114,6 +123,7 @@
 <canvas id="c"></canvas>
 
 <button id="back-btn">← Back to overview</button>
+<a id="home-link" href="../">← About</a>
 
 <div id="title-overlay">
   <div class="eyebrow">Master's Thesis · Research Journey</div>
