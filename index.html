@@ -521,11 +521,38 @@
       align-items: center;
       justify-content: center;
     }
+    #login-rain {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    .login-sweep {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      z-index: 100001;
+      overflow: hidden;
+    }
+    .login-sweep::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent 0%, var(--sky) 40%, var(--amber-hi) 50%, var(--lilac) 60%, transparent 100%);
+      animation: login-sweep 2.4s linear infinite;
+      box-shadow: 0 0 8px var(--sky);
+    }
+    @keyframes login-sweep {
+      0%  { transform: translateX(-100%); }
+      100%{ transform: translateX(100%); }
+    }
     .login-box {
       width: min(420px, 88vw);
       border: 1px solid var(--rule);
       padding: 36px 40px 32px;
       position: relative;
+      z-index: 1;
+      background: rgba(5,6,14,.88);
+      backdrop-filter: blur(4px);
     }
     .login-box::before {
       content: '';
@@ -534,7 +561,7 @@
       width: 22px; height: 22px;
       border-top: 2px solid var(--sky);
       border-left: 2px solid var(--sky);
-      box-shadow: -2px -2px 12px rgba(122,162,247,.3);
+      box-shadow: -2px -2px 12px rgba(82,153,200,.5);
     }
     .login-box::after {
       content: '';
@@ -543,22 +570,24 @@
       width: 22px; height: 22px;
       border-bottom: 2px solid var(--lilac);
       border-right: 2px solid var(--lilac);
-      box-shadow: 2px 2px 12px rgba(187,154,247,.3);
+      box-shadow: 2px 2px 12px rgba(114,114,192,.5);
     }
-    .login-logo {
+    .login-ascii {
       font-family: var(--mono);
-      font-size: 18px;
-      letter-spacing: 0.18em;
+      font-size: 9px;
+      line-height: 1.5;
+      letter-spacing: 0.06em;
       color: var(--sky);
-      text-shadow: 0 0 16px rgba(77,184,204,.28);
-      margin-bottom: 4px;
+      text-shadow: 0 0 14px rgba(82,153,200,.5);
+      text-align: center;
+      margin-bottom: 18px;
     }
     .login-ver {
       font-family: var(--mono);
       font-size: 9px;
       letter-spacing: 0.2em;
       color: var(--ink-faint);
-      margin-bottom: 26px;
+      margin-bottom: 22px;
     }
     .login-sep {
       border: none;
@@ -854,8 +883,10 @@
 <body>
 
   <div id="login-screen">
+    <canvas id="login-rain"></canvas>
+    <div class="login-sweep"></div>
     <div class="login-box">
-      <div class="login-logo">ITASIA302_OS</div>
+      <div class="login-ascii">&#x2554;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2557;<br>&#x2551;&nbsp;&nbsp;I T A S I A 3 0 2 _ O S&nbsp;&nbsp;&#x2551;<br>&#x255a;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x255d;</div>
       <div class="login-ver">v2026.05 &nbsp;·&nbsp; UTOKYO ITASIA PROGRAM</div>
       <hr class="login-sep">
       <div class="login-fields">
@@ -995,6 +1026,39 @@
 
     // ── Login screen → boot → page ──────────────────────────────────
     document.addEventListener("DOMContentLoaded", () => {
+
+      // Binary rain on login screen
+      (function() {
+        const canvas = document.getElementById("login-rain");
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        const chars = "01アイウエオカキクケコサシスセソタチツテトナニヌネノ";
+        const fs = 13;
+        let drops = [];
+        function resize() {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+          drops = Array(Math.floor(canvas.width / fs)).fill(0).map(() => Math.random() * -60);
+        }
+        resize();
+        window.addEventListener("resize", resize);
+        function draw() {
+          ctx.fillStyle = "rgba(5,6,14,0.05)";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          const cols = Math.floor(canvas.width / fs);
+          for (let i = 0; i < Math.min(drops.length, cols); i++) {
+            const ch = chars[Math.floor(Math.random() * chars.length)];
+            ctx.fillStyle = Math.random() > 0.9 ? "rgba(77,184,204,0.55)" : "rgba(46,58,85,0.4)";
+            ctx.font = fs + "px 'Courier New', monospace";
+            ctx.fillText(ch, i * fs, drops[i] * fs);
+            if (drops[i] * fs > canvas.height && Math.random() > 0.975) drops[i] = 0;
+            drops[i] += 0.45;
+          }
+        }
+        const rainTimer = setInterval(draw, 40);
+        // Stop rain when login dismissed
+        document.getElementById("login-btn").addEventListener("click", () => clearInterval(rainTimer), { once: true });
+      })();
 
       const loginScreen = document.getElementById("login-screen");
       const loginBtn    = document.getElementById("login-btn");
