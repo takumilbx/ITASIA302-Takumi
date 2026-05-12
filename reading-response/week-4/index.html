@@ -55,8 +55,8 @@
     body {
       background: var(--bg);
       background-image:
-        linear-gradient(rgba(77,184,204,.022) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(77,184,204,.022) 1px, transparent 1px);
+        linear-gradient(rgba(77, 184, 204, .022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(77, 184, 204, .022) 1px, transparent 1px);
       background-size: 52px 52px;
       color: var(--ink);
       font-family: var(--serif);
@@ -336,12 +336,29 @@
       transform: translateY(0);
     }
 
-    .reveal.delay-1 { transition-delay: .12s; }
-    .reveal.delay-2 { transition-delay: .24s; }
-    .reveal.delay-3 { transition-delay: .36s; }
-    .reveal.delay-4 { transition-delay: .50s; }
-    .reveal.delay-5 { transition-delay: .64s; }
-    .reveal.delay-6 { transition-delay: .80s; }
+    .reveal.delay-1 {
+      transition-delay: .12s;
+    }
+
+    .reveal.delay-2 {
+      transition-delay: .24s;
+    }
+
+    .reveal.delay-3 {
+      transition-delay: .36s;
+    }
+
+    .reveal.delay-4 {
+      transition-delay: .50s;
+    }
+
+    .reveal.delay-5 {
+      transition-delay: .64s;
+    }
+
+    .reveal.delay-6 {
+      transition-delay: .80s;
+    }
 
     /* ========================================================================
      Hero (Scene 0)
@@ -363,6 +380,7 @@
       font-style: normal;
       user-select: none;
     }
+
     .blink-cursor {
       display: inline-block;
       width: 7px;
@@ -373,16 +391,33 @@
       animation: cur-blink 1s step-end infinite;
       border-radius: 1px;
     }
+
     @keyframes cur-blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0; }
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
     }
+
     .blink-cursor.steady {
       animation: cur-steady 3s ease-in-out infinite;
     }
+
     @keyframes cur-steady {
-      0%, 100% { opacity: 0.5; }
-      50% { opacity: 0.15; }
+
+      0%,
+      100% {
+        opacity: 0.5;
+      }
+
+      50% {
+        opacity: 0.15;
+      }
     }
 
     .hero-kicker {
@@ -463,8 +498,17 @@
     }
 
     @keyframes nudge {
-      0%, 100% { transform: translateY(0); opacity: .6; }
-      50% { transform: translateY(6px); opacity: 1; }
+
+      0%,
+      100% {
+        transform: translateY(0);
+        opacity: .6;
+      }
+
+      50% {
+        transform: translateY(6px);
+        opacity: 1;
+      }
     }
 
     /* ========================================================================
@@ -708,33 +752,98 @@
      Responsive
      ======================================================================== */
     @media (min-width: 1600px) {
-      .scene, .hero-scene { max-width: 1440px; }
+
+      .scene,
+      .hero-scene {
+        max-width: 1440px;
+      }
     }
 
     @media (max-width: 900px) {
-      .topbar { padding: 12px 24px; }
-      .scene, .hero-scene { padding-left: 24px; padding-right: 24px; }
-      .theme-grid { grid-template-columns: 1fr; }
-      .closing-grid { grid-template-columns: 1fr; gap: 40px; }
-      .pull-quote { padding-left: 18px; }
+      .topbar {
+        padding: 12px 24px;
+      }
+
+      .scene,
+      .hero-scene {
+        padding-left: 24px;
+        padding-right: 24px;
+      }
+
+      .theme-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .closing-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .pull-quote {
+        padding-left: 18px;
+      }
     }
 
     @media (max-width: 480px) {
-      .topbar { padding: 10px 18px; flex-wrap: wrap; row-gap: 4px; }
-      .topbar-title { font-size: 15px; letter-spacing: -0.01em; }
-      .topbar-meta { font-size: 8px; }
-      .scene { padding: 96px 20px 64px; }
-      .hero-scene { padding: 110px 20px 64px; }
-      .theme-grid { margin-top: 32px; gap: 14px; }
-      .theme-tile { padding: 22px 20px 24px; }
-      .pull-quote { margin: 40px 0 8px; padding-left: 16px; }
-      .citation-block { padding-left: 18px; font-size: 16px; }
-      footer.footer { flex-direction: column; gap: 8px; align-items: flex-start; }
+      .topbar {
+        padding: 10px 18px;
+        flex-wrap: wrap;
+        row-gap: 4px;
+      }
+
+      .topbar-title {
+        font-size: 15px;
+        letter-spacing: -0.01em;
+      }
+
+      .topbar-meta {
+        font-size: 8px;
+      }
+
+      .scene {
+        padding: 96px 20px 64px;
+      }
+
+      .hero-scene {
+        padding: 110px 20px 64px;
+      }
+
+      .theme-grid {
+        margin-top: 32px;
+        gap: 14px;
+      }
+
+      .theme-tile {
+        padding: 22px 20px 24px;
+      }
+
+      .pull-quote {
+        margin: 40px 0 8px;
+        padding-left: 16px;
+      }
+
+      .citation-block {
+        padding-left: 18px;
+        font-size: 16px;
+      }
+
+      footer.footer {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .reveal { transition: none !important; opacity: 1; transform: none; }
-      html { scroll-behavior: auto; }
+      .reveal {
+        transition: none !important;
+        opacity: 1;
+        transform: none;
+      }
+
+      html {
+        scroll-behavior: auto;
+      }
     }
   </style>
 </head>
@@ -760,7 +869,8 @@
        Scene 0 Hero
        =============================================================== -->
     <section class="hero-scene" id="scene-0">
-      <div class="hero-kicker reveal"><span class="dot"></span><span class="cmd-prompt">~/itasia302 $ </span><span id="hero-cmd"></span><span class="blink-cursor" id="hero-cursor"></span></div>
+      <div class="hero-kicker reveal"><span class="dot"></span><span class="cmd-prompt">~/itasia302 $ </span><span
+          id="hero-cmd"></span><span class="blink-cursor" id="hero-cursor"></span></div>
 
       <h1 class="hero-title reveal delay-1">
         Who gets to write the <em>history</em> of AI?
@@ -768,9 +878,10 @@
 
       <p class="hero-dek reveal delay-2">
         Six historians argue that every origin story AI tells about itself is a
-        <strong>deliberate choice</strong>. Dartmouth 1956. Turing 1950. Clean,
-        Western, academic. This paper asks what got left out &mdash; and why that
-        matters more than <em>the story itself</em>.
+        <strong>deliberate choice</strong>. Main narratives such as Dartmouth (1956) and Turing (1950) are
+        clean, Western, and positioned as academic. This paper asks what got left out from the main narratives and why
+        that
+        matters more than <em>the main narratives itself</em>.
       </p>
 
       <div class="scroll-cue reveal delay-4">
@@ -795,50 +906,55 @@
       </h2>
 
       <p class="dek reveal delay-2">
-        The paper introduces a special issue of <em>BJHS Themes</em> collecting
-        18 articles from historians around the world. Four threads tie them together.
+        The paper introduces a special issue of <em>BJHS (British Journal for the History of Science) Themes</em>
+        collecting
+        18 articles from historians around the world. Four themes emerge from the collection of articles.
       </p>
 
       <div class="theme-grid reveal delay-3">
-        <div class="theme-tile" style="--tile-color: var(--teal); --tile-bg: url('https://images.unsplash.com/photo-1636487410194-7830594388bc?w=900&q=80');">
+        <div class="theme-tile"
+          style="--tile-color: var(--teal); --tile-bg: url('https://images.unsplash.com/photo-1636487410194-7830594388bc?w=900&q=80');">
           <div class="tile-num">Theme 01</div>
           <div class="tile-name">Hidden Labour</div>
           <div class="tile-body">
-            The model runs. Somewhere in Nairobi, someone is reviewing images of
-            violence for $1.50 an hour to make that possible. AI does not remove
-            human work. <em>It buries it.</em>
+            The AI model were being built somewhere in the world, where someone is reviewing images of
+            violence for $1.50 an hour to make that possible. This theme argues that AI does not remove
+            human work, instead it <em>buries it.</em>
           </div>
         </div>
 
-        <div class="theme-tile" style="--tile-color: var(--amber-hi); --tile-bg: url('https://images.unsplash.com/photo-1561812938-f6e60cbf95e3?w=900&q=80');">
+        <div class="theme-tile"
+          style="--tile-color: var(--amber-hi); --tile-bg: url('https://images.unsplash.com/photo-1561812938-f6e60cbf95e3?w=900&q=80');">
           <div class="tile-num">Theme 02</div>
           <div class="tile-name">Encoded Behaviour</div>
           <div class="tile-body">
             The logic AI uses to sort and classify people did not appear in 1956.
             It was already there in eugenics, colonial census-taking, carceral
-            record-keeping. <em>The technology is new. The project is not.</em>
+            record-keeping. <em>The technology is new, while the logic behind it is not.</em>
           </div>
         </div>
 
-        <div class="theme-tile" style="--tile-color: var(--lilac); --tile-bg: url('https://images.unsplash.com/photo-1762968274962-20c12e6e8ecd?w=900&q=80');">
+        <div class="theme-tile"
+          style="--tile-color: var(--lilac); --tile-bg: url('https://images.unsplash.com/photo-1762968274962-20c12e6e8ecd?w=900&q=80');">
           <div class="tile-num">Theme 03</div>
           <div class="tile-name">Disingenuous Rhetoric</div>
           <div class="tile-body">
             When a tech CEO says &ldquo;AI will democratize knowledge,&rdquo; that is
             not a description of a fact. It is the construction of one. The story
             of AI&rsquo;s origins is not neutral &mdash; it <em>shapes what AI is
-            allowed to become</em>.
+              allowed to become</em>.
           </div>
         </div>
 
-        <div class="theme-tile" style="--tile-color: var(--sky); --tile-bg: url('https://images.unsplash.com/photo-1758599670001-1253d37908ba?w=900&q=80');">
+        <div class="theme-tile"
+          style="--tile-color: var(--sky); --tile-bg: url('https://images.unsplash.com/photo-1758599670001-1253d37908ba?w=900&q=80');">
           <div class="tile-num">Theme 04</div>
           <div class="tile-name">Cognitive Injustice</div>
           <div class="tile-body">
             If the system decides what counts as &ldquo;intelligent,&rdquo; and the
-            system was built by a very narrow group of people &mdash; then everyone
+            system was built by a very narrow group of people, then everyone
             else&rsquo;s ways of knowing get quietly erased.
-            <em>Not banned. Just made invisible.</em>
+            <em>Not banned or explicitly excluded, just made invisible.</em>
           </div>
         </div>
       </div>
@@ -862,7 +978,7 @@
 
       <div class="body-copy reveal delay-2">
         <p>
-          The thread that landed hardest was cognitive injustice &mdash; the idea
+          The thread that landed hardest was cognitive injustice, the idea
           that AI&rsquo;s definitions of intelligence do not just miss some people,
           they actively crowd out other ways of knowing.
         </p>
@@ -870,15 +986,16 @@
           I kept coming back to TPACK, which is the framework I am using in my
           thesis to study how teachers develop knowledge about technology. It was
           built at Michigan State. When Japanese researchers tried to apply it,
-          the original categories did not quite fit &mdash; so they built a separate
+          the original categories did not quite fit. So they built a separate
           Japanese-language version, restructured it, merged two of the original
           components because they did not map cleanly onto Japanese classroom
           reality. That is years of extra work just to use a framework that was
           supposed to be universal.
         </p>
         <p>
-          I never really had good language for why that happens.
-          Reading Ali et al. gave me some.
+          Reading Ali et al. gave me some language to understand why this happens
+          and how it connects to the larger structures of power that shape AI and
+          its applications.
         </p>
       </div>
     </section>
@@ -915,7 +1032,7 @@
           enough picture of what a framework <em>is</em> to decide where it should
           not be applied at all. That is a more uncomfortable place to land for a
           thesis that still uses TPACK as its central lens (I am still sitting with
-          that one, honestly).
+          that one).
         </p>
       </div>
     </section>
@@ -973,7 +1090,7 @@
           <span class="cite-label">Full citation</span>
           Ali, S. M., Dick, S., Dillon, S., Jones, M. L., Penn, J., &amp; Staley, R.
           (2023). <em>Histories of artificial intelligence: A genealogy of
-          power.</em> BJHS Themes, 8, 1&ndash;18.
+            power.</em> BJHS Themes, 8, 1&ndash;18.
           <br><br>
           <a href="https://doi.org/10.1017/bjt.2023.15" target="_blank"
             rel="noopener noreferrer">https://doi.org/10.1017/bjt.2023.15</a>
@@ -1116,4 +1233,5 @@
   </script>
 
 </body>
+
 </html>
