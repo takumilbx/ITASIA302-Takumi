@@ -14,26 +14,35 @@
   const fs    = 13;
   let drops   = [];
 
+  let colPositions = [];
+
   function resize() {
     canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;
-    drops = Array(Math.floor(canvas.width / fs)).fill(0).map(() => Math.random() * -80);
+    const totalCols = Math.floor(canvas.width / fs);
+    const activeCols = Math.max(4, Math.floor(totalCols * 0.18));
+    // pick random column x-positions spread across width
+    const step = Math.floor(totalCols / activeCols);
+    colPositions = Array.from({ length: activeCols }, (_, i) => {
+      const base = i * step;
+      return base + Math.floor(Math.random() * Math.max(1, step));
+    });
+    drops = colPositions.map(() => Math.random() * -80);
   }
   resize();
   window.addEventListener('resize', resize);
 
   function draw() {
-    ctx.fillStyle = 'rgba(5,6,14,0.055)';
+    ctx.fillStyle = 'rgba(5,6,14,0.08)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    const cols = Math.floor(canvas.width / fs);
     ctx.font = fs + "px 'Geist Mono','Courier New',monospace";
-    for (let i = 0; i < Math.min(drops.length, cols); i++) {
+    for (let i = 0; i < drops.length; i++) {
       const ch = chars[Math.floor(Math.random() * chars.length)];
       const bright = Math.random() > 0.88;
       ctx.fillStyle = bright
-        ? `rgba(${r},${g},${b},0.42)`
-        : `rgba(${r},${g},${b},0.13)`;
-      ctx.fillText(ch, i * fs, drops[i] * fs);
+        ? `rgba(${r},${g},${b},0.28)`
+        : `rgba(${r},${g},${b},0.08)`;
+      ctx.fillText(ch, colPositions[i] * fs, drops[i] * fs);
       if (drops[i] * fs > canvas.height && Math.random() > 0.975) drops[i] = 0;
       drops[i] += 0.42;
     }
