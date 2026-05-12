@@ -16,17 +16,15 @@
 
   let colPositions = [];
 
+  function randCol() {
+    return Math.floor(Math.random() * Math.floor(canvas.width / fs));
+  }
+
   function resize() {
     canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;
-    const totalCols = Math.floor(canvas.width / fs);
-    const activeCols = Math.max(4, Math.floor(totalCols * 0.18));
-    // pick random column x-positions spread across width
-    const step = Math.floor(totalCols / activeCols);
-    colPositions = Array.from({ length: activeCols }, (_, i) => {
-      const base = i * step;
-      return base + Math.floor(Math.random() * Math.max(1, step));
-    });
+    const activeCols = Math.max(4, Math.floor((canvas.width / fs) * 0.18));
+    colPositions = Array.from({ length: activeCols }, randCol);
     drops = colPositions.map(() => Math.random() * -80);
   }
   resize();
@@ -43,7 +41,10 @@
         ? `rgba(${r},${g},${b},0.28)`
         : `rgba(${r},${g},${b},0.08)`;
       ctx.fillText(ch, colPositions[i] * fs, drops[i] * fs);
-      if (drops[i] * fs > canvas.height && Math.random() > 0.975) drops[i] = 0;
+      if (drops[i] * fs > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
+        colPositions[i] = randCol();
+      }
       drops[i] += 0.42;
     }
   }
