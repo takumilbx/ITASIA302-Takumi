@@ -17,14 +17,14 @@
   --muted:     #9AA3B0;
   --faint:     #3A4A62;
   --divider:   #132032;
-  --amber: #4db8cc;
-  --amber-hi: #7dd3e8;
+  --amber: #e8634a;
+  --amber-hi: #f09178;
   --amber-tint:#F0A06022;
   --teal: #45a884;
   --sky: #5299c8;
   --coral: #b85c7a;
   --lilac: #7272c0;
-  --gold: #4db8cc;
+  --gold: #e8634a;
   --serif: 'Fraunces', Georgia, serif;
   --mono:  'Geist Mono', 'Courier New', monospace;
   --ease:  cubic-bezier(.22,.61,.36,1);
@@ -35,8 +35,8 @@ html { scroll-behavior: smooth; }
 body {
   background: var(--bg);
       background-image:
-        linear-gradient(rgba(77,184,204,.022) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(77,184,204,.022) 1px, transparent 1px);
+        linear-gradient(rgba(232,99,74,.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(232,99,74,.022) 1px, transparent 1px);
       background-size: 52px 52px;
   color: var(--body);
   font-family: var(--serif);
@@ -2405,7 +2405,7 @@ function drawHeatmap() {
     ctx.drawImage(offscreen, 0, 0);
 
     // 2. Subtle amber glow behind the active row label strip
-    ctx.fillStyle = 'rgba(77,184,204,0.08)';
+    ctx.fillStyle = 'rgba(232,99,74,0.08)';
     ctx.fillRect(0, lW + row*cell, lW, cell - 1);
     // 3. Subtle amber glow behind the active col label strip
     ctx.fillRect(lW + col*cell, 0, cell - 1, lW);
