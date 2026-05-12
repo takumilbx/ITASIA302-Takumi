@@ -1081,7 +1081,7 @@
           bootOverlay.style.transition = "opacity 0.55s ease";
           bootOverlay.style.opacity = "0";
           bootOverlay.style.pointerEvents = "none";
-          setTimeout(() => { bootOverlay.remove(); localStorage.setItem("itasia302_visited", "1"); startPage(); }, 600);
+          setTimeout(() => { bootOverlay.remove(); startPage(); }, 600);
         }, maxD + 420);
       }
 
@@ -1092,16 +1092,10 @@
         setTimeout(() => { loginScreen.remove(); runBoot(); }, 420);
       }
 
-      if (localStorage.getItem("itasia302_visited")) {
-        loginScreen.remove();
-        bootOverlay.remove();
-        startPage();
-      } else {
-        loginBtn.addEventListener("click", startLogin);
-        document.addEventListener("keydown", e => {
-          if (e.key === "Enter" && document.getElementById("login-screen")) startLogin();
-        });
-      }
+      loginBtn.addEventListener("click", startLogin);
+      document.addEventListener("keydown", e => {
+        if (e.key === "Enter" && document.getElementById("login-screen")) startLogin();
+      });
 
       // ── Page reveal animations ────────────────────────────────────
       function startPage() {
