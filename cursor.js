@@ -15,14 +15,14 @@
       box-shadow:
         0px   0px 0 0 #0a0a14,
         0px   2px 0 0 #0a0a14,  2px   2px 0 0 #0a0a14,
-        0px   4px 0 0 #0a0a14,  2px   4px 0 0 #4db8cc,  4px   4px 0 0 #0a0a14,
-        0px   6px 0 0 #0a0a14,  2px   6px 0 0 #4db8cc,  4px   6px 0 0 #4db8cc,  6px   6px 0 0 #0a0a14,
-        0px   8px 0 0 #0a0a14,  2px   8px 0 0 #4db8cc,  4px   8px 0 0 #4db8cc,  6px   8px 0 0 #4db8cc,  8px   8px 0 0 #0a0a14,
-        0px  10px 0 0 #0a0a14,  2px  10px 0 0 #4db8cc,  4px  10px 0 0 #4db8cc,  6px  10px 0 0 #4db8cc,  8px  10px 0 0 #4db8cc,  10px 10px 0 0 #0a0a14,
-        0px  12px 0 0 #0a0a14,  2px  12px 0 0 #4db8cc,  4px  12px 0 0 #4db8cc,  6px  12px 0 0 #4db8cc,  8px  12px 0 0 #4db8cc,  10px 12px 0 0 #4db8cc,  12px 12px 0 0 #0a0a14,
-        0px  14px 0 0 #0a0a14,  2px  14px 0 0 #4db8cc,  4px  14px 0 0 #4db8cc,  6px  14px 0 0 #4db8cc,  8px  14px 0 0 #4db8cc,  10px 14px 0 0 #4db8cc,  12px 14px 0 0 #4db8cc,  14px 14px 0 0 #0a0a14,
-        0px  16px 0 0 #0a0a14,  2px  16px 0 0 #4db8cc,  4px  16px 0 0 #4db8cc,  6px  16px 0 0 #4db8cc,  8px  16px 0 0 #0a0a14,  10px 16px 0 0 #0a0a14,
-        0px  18px 0 0 #0a0a14,  2px  18px 0 0 #4db8cc,  4px  18px 0 0 #0a0a14,
+        0px   4px 0 0 #0a0a14,  2px   4px 0 0 var(--coral),  4px   4px 0 0 #0a0a14,
+        0px   6px 0 0 #0a0a14,  2px   6px 0 0 var(--coral),  4px   6px 0 0 var(--coral),  6px   6px 0 0 #0a0a14,
+        0px   8px 0 0 #0a0a14,  2px   8px 0 0 var(--coral),  4px   8px 0 0 var(--coral),  6px   8px 0 0 var(--coral),  8px   8px 0 0 #0a0a14,
+        0px  10px 0 0 #0a0a14,  2px  10px 0 0 var(--coral),  4px  10px 0 0 var(--coral),  6px  10px 0 0 var(--coral),  8px  10px 0 0 var(--coral),  10px 10px 0 0 #0a0a14,
+        0px  12px 0 0 #0a0a14,  2px  12px 0 0 var(--coral),  4px  12px 0 0 var(--coral),  6px  12px 0 0 var(--coral),  8px  12px 0 0 var(--coral),  10px 12px 0 0 var(--coral),  12px 12px 0 0 #0a0a14,
+        0px  14px 0 0 #0a0a14,  2px  14px 0 0 var(--coral),  4px  14px 0 0 var(--coral),  6px  14px 0 0 var(--coral),  8px  14px 0 0 var(--coral),  10px 14px 0 0 var(--coral),  12px 14px 0 0 var(--coral),  14px 14px 0 0 #0a0a14,
+        0px  16px 0 0 #0a0a14,  2px  16px 0 0 var(--coral),  4px  16px 0 0 var(--coral),  6px  16px 0 0 var(--coral),  8px  16px 0 0 #0a0a14,  10px 16px 0 0 #0a0a14,
+        0px  18px 0 0 #0a0a14,  2px  18px 0 0 var(--coral),  4px  18px 0 0 #0a0a14,
         0px  20px 0 0 #0a0a14,  2px  20px 0 0 #0a0a14;
     }
 
@@ -63,12 +63,13 @@
   const trailDots = [];
   const history = [];
   const HISTORY_LEN = TRAIL_SIZE * 3;
+  const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--coral').trim() || '#4db8cc';
 
   for (let i = 0; i < TRAIL_SIZE; i++) {
     const d = document.createElement('div');
     d.className = '__cursor-trail';
     const size = 2 + (1 - i / TRAIL_SIZE) * 2;
-    d.style.cssText = `width:${size}px;height:${size}px;background:#4db8cc;opacity:0;`;
+    d.style.cssText = `width:${size}px;height:${size}px;background:${accentColor};opacity:0;`;
     document.body.appendChild(d);
     trailDots.push(d);
   }
@@ -95,7 +96,7 @@
     s.textContent = CHARS[Math.floor(Math.random() * CHARS.length)];
     s.style.left  = (x + offX) + 'px';
     s.style.top   = y + 'px';
-    s.style.color = Math.random() > 0.6 ? '#7dd3e8' : '#4db8cc';
+    s.style.color = accentColor;
     document.body.appendChild(s);
     setTimeout(() => s.remove(), 750);
   }
