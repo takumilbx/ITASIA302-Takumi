@@ -922,105 +922,6 @@
   <div class="glow-br"></div>
   <div class="edge-gradient"></div>
 
-  <header class="topbar">
-    <div class="topbar-title">ITASIA302 <em>Takumi's Project Base</em></div>
-    <div class="topbar-meta">UTokyo &nbsp;&middot;&nbsp; Spring 2026</div>
-  </header>
-
-  <main>
-
-    <section class="hero">
-      <div class="hero-eyebrow reveal"><span class="dot"></span><span class="cmd-prompt">~/itasia302 $ </span><span id="hero-cmd"></span><span class="blink-cursor" id="hero-cursor"></span></div>
-
-      <h1 class="hero-title reveal delay-1">
-        Introduction to <em>Digital Technology</em> and Society
-      </h1>
-
-      <div class="hero-byline reveal delay-2">
-        Takumi &nbsp;&middot;&nbsp; UTokyo &nbsp;&middot;&nbsp; <em>Spring 2026</em>
-      </div>
-
-      <p class="hero-dek reveal delay-3">
-        A directory for Takumi's Project Base consisting of coursework, ongoing personal project, and an AI statement. Click onto each card to explore further.
-      </p>
-    </section>
-
-    <section class="grid">
-
-      <a class="card card-sky reveal delay-3" href="about/" style="--cli-delay:0.05s">
-        <span class="card-num">01</span>
-        <div class="card-label">About Me / Research</div>
-        <div class="card-headline">Who I am, and what I'm <em>working on</em></div>
-        <p class="card-blurb">
-          Takumi Oshiyama, master's student in the ITASIA Program at UTokyo.
-          Currently researching TPACK development across Japan and Thailand.
-        </p>
-        <div class="card-subitems">
-          <span class="sub-dash"></span>
-          <span>Master's Thesis</span>
-        </div>
-        <div class="card-foot">
-          <span>1 subpage</span>
-          <span class="card-arrow" aria-hidden="true">&rarr;</span>
-        </div>
-      </a>
-
-      <a class="card card-amber reveal delay-3" href="class-assignments/" style="--cli-delay:0.15s">
-        <span class="card-num">02</span>
-        <div class="card-label">Class Assignments</div>
-        <div class="card-headline">The required <em>coursework</em></div>
-        <p class="card-blurb">
-          Core assignments for ITASIA302, including the 5-year trend for AI and Society Journal and weekly reading
-          responses.
-        </p>
-        <div class="card-foot">
-          <span>2 pieces</span>
-          <span class="card-arrow" aria-hidden="true">&rarr;</span>
-        </div>
-      </a>
-
-      <a class="card card-teal card-progress reveal delay-4" href="personal-project/" style="--cli-delay:0.25s">
-        <span class="card-num">03</span>
-        <div class="card-label">Personal Project</div>
-        <div class="card-headline">An independent inquiry, <em>still drafting</em></div>
-        <p class="card-blurb">
-          A self-directed project I am developing alongside the course. The
-          abstract is the first thing to land here once it stops moving.
-        </p>
-        <div class="card-subitems">
-          <span class="sub-dash"></span>
-          <span>02.1 &nbsp;Abstract</span>
-        </div>
-        <div class="card-foot">
-          <span>In progress</span>
-          <span class="card-arrow" aria-hidden="true">&rarr;</span>
-        </div>
-      </a>
-
-      <a class="card card-coral reveal delay-5" href="ai-statement/" style="--cli-delay:0.35s">
-        <span class="card-num">04</span>
-        <div class="card-label">AI Statement</div>
-        <div class="card-headline">How these pages were <em>made</em></div>
-        <p class="card-blurb">
-          A statement on the AI tools used to produce the work on this
-          site what they did, what I did, and where the line sits. I wouldn't say it's a disclosure but rather a
-          walkthrough of my AI-powered workflow, filling wherever my skill isn't there yet lol.
-        </p>
-        <div class="card-foot">
-          <span>Disclosure</span>
-          <span class="card-arrow" aria-hidden="true">&rarr;</span>
-        </div>
-      </a>
-
-    </section>
-
-    <footer class="footer reveal delay-5">
-      <div>Assignments Directory &nbsp;&middot;&nbsp; Introduction to Digital Technology and Society</div>
-      <div><em>ITASIA302</em> &nbsp;&middot;&nbsp; May 2026</div>
-    </footer>
-
-  </main>
-
   <script>
     "use strict";
 
@@ -1081,7 +982,7 @@
           bootOverlay.style.transition = "opacity 0.55s ease";
           bootOverlay.style.opacity = "0";
           bootOverlay.style.pointerEvents = "none";
-          setTimeout(() => { bootOverlay.remove(); startPage(); }, 600);
+          setTimeout(() => { window.location.href = 'home.html'; }, 600);
         }, maxD + 420);
       }
 
@@ -1095,59 +996,6 @@
       loginBtn.addEventListener("click", startLogin);
       document.addEventListener("keydown", e => {
         if (e.key === "Enter" && document.getElementById("login-screen")) startLogin();
-      });
-
-      // ── Page reveal animations ────────────────────────────────────
-      function startPage() {
-        const observed = document.querySelectorAll(".reveal");
-        const io = new IntersectionObserver((entries) => {
-          entries.forEach(e => {
-            if (e.isIntersecting) {
-              e.target.classList.add("in-view");
-              io.unobserve(e.target);
-            }
-          });
-        }, { threshold: 0.12, rootMargin: "0px 0px -4% 0px" });
-        observed.forEach(n => io.observe(n));
-        setTimeout(() => {
-          document.querySelectorAll(".reveal:not(.in-view)").forEach(n => {
-            const r = n.getBoundingClientRect();
-            if (r.top < window.innerHeight * 0.95) n.classList.add("in-view");
-          });
-        }, 80);
-
-        // Typewriter
-        const cmdEl = document.getElementById("hero-cmd");
-        const cursor = document.getElementById("hero-cursor");
-        const text = "ITASIA302 · Spring 2026";
-        let i = 0;
-        const tick = () => {
-          if (i < text.length) {
-            cmdEl.textContent += text[i++];
-            setTimeout(tick, 36 + Math.random() * 24);
-          } else {
-            cursor.classList.add("steady");
-          }
-        };
-        setTimeout(tick, 200);
-      }
-
-      // ── 3-D card tilt ─────────────────────────────────────────────
-      document.querySelectorAll(".card").forEach(card => {
-        card.addEventListener("mousemove", e => {
-          const r = card.getBoundingClientRect();
-          const x = (e.clientX - r.left) / r.width - 0.5;
-          const y = (e.clientY - r.top) / r.height - 0.5;
-          card.style.transition =
-            "border-color 280ms var(--ease), background 280ms var(--ease), box-shadow 280ms var(--ease)";
-          card.style.transform =
-            `perspective(700px) rotateY(${x * 16}deg) rotateX(${-y * 11}deg) translateZ(8px)`;
-        });
-        card.addEventListener("mouseleave", () => {
-          card.style.transition =
-            "border-color 280ms var(--ease), background 280ms var(--ease), box-shadow 280ms var(--ease), transform 450ms var(--ease)";
-          card.style.transform = "";
-        });
       });
 
     });
