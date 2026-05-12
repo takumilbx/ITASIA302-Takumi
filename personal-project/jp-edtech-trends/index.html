@@ -576,7 +576,7 @@ body {
   margin: 1px;
   font-weight: 600;
 }
-.badge.rise { background: rgba(90,200,176,.12); color: var(--teal); border: 1px solid rgba(90,200,176,.25); }
+.badge.rise { background: rgba(90,200,176,.12); color: var(--amber); border: 1px solid rgba(90,200,176,.25); }
 .badge.fall { background: rgba(216,104,120,.12); color: var(--coral); border: 1px solid rgba(216,104,120,.25); }
 .badge.peak { background: var(--amber-tint); color: var(--amber); border: 1px solid rgba(240,160,96,.25); }
 /* ─── OVERLAP PAIRS ─────────────────────────────────────────────── */
@@ -947,7 +947,7 @@ body {
             <div style="font-family:var(--serif);font-size:11.5px;color:var(--muted);line-height:1.6;">Japanese Journal of Educational Media and Technology</div>
           </div>
           <div style="flex:1;background:var(--bg);border:1px solid var(--divider);border-radius:3px;padding:12px 14px;">
-            <div style="font-family:var(--mono);font-size:10px;font-weight:600;color:var(--teal);letter-spacing:.06em;margin-bottom:4px;">JJET</div>
+            <div style="font-family:var(--mono);font-size:10px;font-weight:600;color:var(--amber);letter-spacing:.06em;margin-bottom:4px;">JJET</div>
             <div style="font-family:var(--serif);font-size:11.5px;color:var(--muted);line-height:1.6;">Japanese Journal of Educational Technology</div>
           </div>
         </div>
@@ -986,7 +986,7 @@ body {
             <div style="color:var(--faint);line-height:1.6;">ICT · e-Learning · Tablets · Mobile · SNS · VR · Games · AI · GenAI · Analytics</div>
           </div>
           <div style="background:var(--bg);border:1px solid var(--divider);border-radius:2px;padding:8px 10px;">
-            <div style="color:var(--teal);margin-bottom:3px;letter-spacing:.1em;">ASSESSMENT</div>
+            <div style="color:var(--amber);margin-bottom:3px;letter-spacing:.1em;">ASSESSMENT</div>
             <div style="color:var(--faint);line-height:1.6;">ITS · Psychometrics · Formative eval · Portfolio · Question gen</div>
           </div>
           <div style="background:var(--bg);border:1px solid var(--divider);border-radius:2px;padding:8px 10px;">
@@ -3005,7 +3005,7 @@ function buildPolicyChart() {
         const peakIdx = t.vals.indexOf(t.max);
         const peakYear = dispYears[peakIdx];
         const dir = t.growth > 0.5 ? 'rose' : t.growth < -0.5 ? 'fell' : 'held steady';
-        const dirCol = t.growth > 0.5 ? 'var(--teal)' : t.growth < -0.5 ? 'var(--coral)' : 'var(--faint)';
+        const dirCol = t.growth > 0.5 ? 'var(--amber)' : t.growth < -0.5 ? 'var(--coral)' : 'var(--faint)';
 
         // Research lags policy. Trigger must be STRICTLY before the peak (1-5 yrs prior)
         // AND thematically relevant — an unrelated event in the lag window is not a real driver.
@@ -3056,7 +3056,7 @@ function buildPolicyChart() {
       <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-bottom:1px solid var(--divider);background:${(colourOf[t.th]||'#9AA3B0')}11;">
         <span style="width:10px;height:10px;border-radius:50%;background:${colourOf[t.th]||'#9AA3B0'};flex-shrink:0;"></span>
         <div style="flex:1;min-width:0;font-family:var(--mono);font-size:9px;color:var(--body);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${t.th}${CORE_THEMES.has(t.th)?' ★':''}</div>
-        <span style="font-family:var(--mono);font-size:9px;font-weight:600;color:${t.growth>=0?'var(--teal)':'var(--coral)'};">${t.growth>=0?'+':''}${t.growth.toFixed(1)}%</span>
+        <span style="font-family:var(--mono);font-size:9px;font-weight:600;color:${t.growth>=0?'var(--amber)':'var(--coral)'};">${t.growth>=0?'+':''}${t.growth.toFixed(1)}%</span>
       </div>`).join('');
 
     rows.innerHTML =
