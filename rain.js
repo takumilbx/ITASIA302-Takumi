@@ -13,39 +13,45 @@
   const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノ∑∆';
   const fs    = 13;
   let drops   = [];
-
+  let speeds  = [];
   let colPositions = [];
 
   function randCol() {
     return Math.floor(Math.random() * Math.floor(canvas.width / fs));
   }
 
+  function randSpeed() {
+    return 0.2 + Math.random() * 0.7;
+  }
+
   function resize() {
     canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;
-    const activeCols = Math.max(4, Math.floor((canvas.width / fs) * 0.18));
+    const activeCols = Math.max(8, Math.floor((canvas.width / fs) * 0.35));
     colPositions = Array.from({ length: activeCols }, randCol);
-    drops = colPositions.map(() => Math.random() * -80);
+    drops  = colPositions.map(() => Math.random() * -(canvas.height / fs));
+    speeds = colPositions.map(randSpeed);
   }
   resize();
   window.addEventListener('resize', resize);
 
   function draw() {
-    ctx.fillStyle = 'rgba(5,6,14,0.08)';
+    ctx.fillStyle = 'rgba(5,6,14,0.07)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.font = fs + "px 'Geist Mono','Courier New',monospace";
     for (let i = 0; i < drops.length; i++) {
       const ch = chars[Math.floor(Math.random() * chars.length)];
-      const bright = Math.random() > 0.88;
+      const bright = Math.random() > 0.82;
       ctx.fillStyle = bright
-        ? `rgba(${r},${g},${b},0.28)`
-        : `rgba(${r},${g},${b},0.08)`;
+        ? `rgba(${r},${g},${b},0.55)`
+        : `rgba(${r},${g},${b},0.22)`;
       ctx.fillText(ch, colPositions[i] * fs, drops[i] * fs);
       if (drops[i] * fs > canvas.height && Math.random() > 0.975) {
         drops[i] = 0;
         colPositions[i] = randCol();
+        speeds[i] = randSpeed();
       }
-      drops[i] += 0.42;
+      drops[i] += speeds[i];
     }
   }
 
