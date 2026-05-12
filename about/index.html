@@ -1083,7 +1083,8 @@
     }
 
     #panel-work .tiktok-card.expanded .tiktok-desc {
-      display: none;
+      line-height: 1.65;
+      padding: 16px 16px 20px;
     }
 
     #panel-work .tiktok-card.collapsed {
@@ -1164,12 +1165,14 @@
     }
 
     #panel-work .tiktok-desc {
-      padding: 14px 14px 16px;
+      padding: 10px 14px 12px;
       flex-shrink: 0;
       font-family: var(--serif);
       font-size: 11.5px;
       color: #7a8898;
-      line-height: 1.55;
+      line-height: 1.1;
+      transition: line-height 0.42s cubic-bezier(0.4, 0, 0.2, 1),
+        padding 0.42s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     #panel-work .tiktok-tag {
