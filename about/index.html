@@ -1039,7 +1039,6 @@
       overflow-x: auto;
       padding-bottom: 12px;
       align-items: center;
-      min-height: 780px;
       scrollbar-width: none;
     }
 
@@ -1087,19 +1086,12 @@
       padding: 16px 16px 20px;
     }
 
-    #panel-work .tiktok-card.collapsed {
-      flex-basis: 90px;
-      height: 160px;
+    #panel-work .tiktok-card.dimmed {
       opacity: 0.3;
     }
 
-    #panel-work .tiktok-card.collapsed:hover {
+    #panel-work .tiktok-card.dimmed:hover {
       opacity: 0.6;
-    }
-
-    #panel-work .tiktok-card.collapsed .tiktok-desc,
-    #panel-work .tiktok-card.collapsed .tiktok-views {
-      display: none;
     }
 
     #panel-work .tiktok-thumb {
@@ -1165,12 +1157,12 @@
     }
 
     #panel-work .tiktok-desc {
-      padding: 10px 14px 12px;
+      padding: 6px 12px 8px;
       flex-shrink: 0;
       font-family: var(--serif);
-      font-size: 11.5px;
+      font-size: 16px;
       color: #7a8898;
-      line-height: 1.1;
+      line-height: 1.0;
       transition: line-height 0.42s cubic-bezier(0.4, 0, 0.2, 1),
         padding 0.42s cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -1182,7 +1174,7 @@
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: #c8a06a88;
-      margin-bottom: 7px;
+      margin-bottom: 2px;
     }
 
     /* Experience grid */
@@ -1583,8 +1575,7 @@
             into the sessions, which changed the energy in the room in a way
             no classroom lecture could. Also volunteered as a Japanese teacher
             through the SS11 Project. Being inside an organization like Saturday
-            School made visible how many different actors actually shape Thai
-            education: businesses, NGOs, government, and individuals, each
+            School made visible how many different actors actually shape Thai education. Businesses, NGOs, government, and individuals, each
             filling gaps the others could not cover.
           </p>
         </li>
@@ -1593,11 +1584,11 @@
           <div class="timeline-title"><em>Research</em> Intern</div>
           <div class="timeline-org">Thailand Development Research Institute (TDRI)</div>
           <p class="timeline-desc">
-            10 days embedded with TDRI's education research team. Observed
-            how they packaged findings for policymakers — how raw research
-            becomes actionable policy. Got fieldwork time: interviewing
-            research subjects, practicing observation and note-taking. First
-            taste of what it means to be a researcher, not just a student.
+            10 days embedded with the education research team at TDRI. Most
+            of the time was spent reading past studies and watching how
+            researchers turned findings into something policymakers could
+            actually act on. There was some fieldwork too, going out to
+            interview research subjects and practicing note-taking. It was brief, but it sparked a genuine interest in pursuing research further.
           </p>
         </li>
       </ul>
@@ -2303,7 +2294,7 @@
           const vid = card.dataset.videoId;
           grid.querySelectorAll(".tiktok-card").forEach(c => {
             if (c === card) {
-              c.classList.remove("collapsed");
+              c.classList.remove("dimmed");
               c.classList.add("expanded");
               const iframe = c.querySelector(".tiktok-embed");
               if (iframe && vid && !iframe.src.includes(vid)) {
@@ -2311,7 +2302,7 @@
               }
             } else {
               c.classList.remove("expanded");
-              c.classList.add("collapsed");
+              c.classList.add("dimmed");
               const iframe = c.querySelector(".tiktok-embed");
               if (iframe) iframe.src = "";
             }
@@ -2321,7 +2312,7 @@
 
         function collapseAllTikTok() {
           grid.querySelectorAll(".tiktok-card").forEach(c => {
-            c.classList.remove("expanded", "collapsed");
+            c.classList.remove("expanded", "dimmed");
             const iframe = c.querySelector(".tiktok-embed");
             if (iframe) iframe.src = "";
           });
