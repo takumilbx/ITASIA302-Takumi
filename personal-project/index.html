@@ -313,6 +313,11 @@
       html { scroll-behavior: auto; }
       .hero-eyebrow .dot, .skeleton-label .spin, .blink-cursor { animation: none; }
     }
+
+    /* ============ PIPELINE SECTION ============ */
+    .pl-section { margin-bottom: 88px; }
+    .pl-track { margin: 40px 0; }
+    .pl-outro { margin-top: 40px; max-width: 64ch; }
   </style>
 </head>
 <body>
@@ -329,6 +334,7 @@
   <nav aria-label="Section navigation">
     <ul class="topbar-nav">
       <li><a href="#intro">Intro</a></li>
+      <li><a href="#pipeline">Pipeline</a></li>
       <li><a href="#viz">Visualizations</a></li>
       <li><a href="#pkm">Framework</a></li>
       <li><a href="#synthesis">Synthesis</a></li>
@@ -389,13 +395,33 @@
 
   <div class="section-rule reveal"></div>
 
-  <!-- ─── SECTION 1: VISUALIZATIONS ─── -->
-  <section id="viz" class="essay-section">
-    <div class="section-tag reveal"><em>01</em> &nbsp;&middot;&nbsp; The material</div>
-    <h2 class="section-heading reveal d1">The four datasets</h2>
+  <!-- ─── SECTION 1: PIPELINE ─── -->
+  <section id="pipeline" class="essay-section pl-section">
+    <div class="section-tag reveal"><em>01</em> &nbsp;&middot;&nbsp; The workflow</div>
+    <h2 class="section-heading reveal d1">How the system <em>actually works</em></h2>
 
     <p class="body-text reveal d2">
-      Data doesn't go into a PKM system raw. It needs to be understood first. These four visualizations are how I did that. Each one compressed a dataset into navigable patterns so I could actually see what was in it before anything moved into the vault. Think of them as the Distill step in Forte's CODE workflow: intermediate artifacts that did cognitive work upstream of synthesis. Each one gets a description, a link, and an honest account of what it taught me.
+      The system is a pipeline. A paper enters through Zotero. It becomes a structured literature note in Obsidian. Claude Code runs a NotebookLM MCP integration to extract candidate atoms from the PDF. Verified atoms land in the vault, cluster into molecules, and synthesize into alloys that get tracked in Notion as actionable work. Each step below is animated. Each animation uses a real artifact from the vault.
+    </p>
+
+    <div class="pl-track">
+      <!-- Steps 01-07 will be added in subsequent tasks -->
+    </div>
+
+    <p class="body-text reveal pl-outro">
+      That is the system, end to end. What follows on this page is what came out of it.
+    </p>
+  </section>
+
+  <div class="section-rule reveal"></div>
+
+  <!-- ─── SECTION 2: VISUALIZATIONS ─── -->
+  <section id="viz" class="essay-section">
+    <div class="section-tag reveal"><em>02</em> &nbsp;&middot;&nbsp; The material</div>
+    <h2 class="section-heading reveal d1">What the system <em>produced</em></h2>
+
+    <p class="body-text reveal d2">
+      Four concrete outputs from the workflow above. Each one started as a dataset, got compressed into navigable patterns through visualization, and then moved into the vault as atoms. They are the Distill step in Forte's CODE workflow made visible. Each gets a description, a link, and an honest account of what it taught me.
     </p>
 
     <div class="viz-grid">
@@ -487,7 +513,7 @@
 
   <!-- ─── SECTION 2: PKM FRAMEWORK ─── -->
   <section id="pkm" class="essay-section">
-    <div class="section-tag reveal"><em>02</em> &nbsp;&middot;&nbsp; The framework</div>
+    <div class="section-tag reveal"><em>03</em> &nbsp;&middot;&nbsp; The framework</div>
     <h2 class="section-heading reveal d1">The framework, and <em>its failure modes</em></h2>
 
     <p class="body-text reveal d2">
@@ -568,7 +594,7 @@
 
   <!-- ─── SECTION 3: SYNTHESIS ─── -->
   <section id="synthesis" class="essay-section">
-    <div class="section-tag reveal"><em>03</em> &nbsp;&middot;&nbsp; Synthesis</div>
+    <div class="section-tag reveal"><em>04</em> &nbsp;&middot;&nbsp; Synthesis</div>
     <h2 class="section-heading reveal d1">Cross-visualization <em>synthesis</em></h2>
 
     <p class="body-text reveal d2">What the four datasets say when they're in the same room together.</p>
@@ -591,7 +617,7 @@
 
   <!-- ─── SECTION 4: THESIS ─── -->
   <section id="thesis" class="essay-section">
-    <div class="section-tag reveal"><em>04</em> &nbsp;&middot;&nbsp; Thesis direction</div>
+    <div class="section-tag reveal"><em>05</em> &nbsp;&middot;&nbsp; Thesis direction</div>
     <h2 class="section-heading reveal d1">Where <em>this is pointing</em></h2>
 
     <p class="body-text reveal d2">
@@ -618,7 +644,7 @@
 
   <!-- ─── SECTION 5: PERSONAL SYSTEM ─── -->
   <section id="system" class="essay-section">
-    <div class="section-tag reveal"><em>05</em> &nbsp;&middot;&nbsp; Personal system design</div>
+    <div class="section-tag reveal"><em>06</em> &nbsp;&middot;&nbsp; Personal system design</div>
     <h2 class="section-heading reveal d1">What I'm <em>actually going to do</em></h2>
 
     <p class="body-text reveal d2">
@@ -686,7 +712,7 @@
 
   <!-- ─── SECTION 6: REFERENCES ─── -->
   <section id="refs" class="essay-section">
-    <div class="section-tag reveal"><em>06</em> &nbsp;&middot;&nbsp; References</div>
+    <div class="section-tag reveal"><em>07</em> &nbsp;&middot;&nbsp; References</div>
     <h2 class="section-heading reveal d1">References</h2>
 
     <ul class="ref-list reveal d2">
