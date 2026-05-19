@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Building a Second Brain (For Real This Time) · ITASIA302</title>
-  <meta name="description" content="Four datasets, one PKM framework, and an honest attempt to figure out where my thesis is.">
+  <meta name="description" content="Building a second brain with Obsidian, Zotero, Notion, and AI agents, and an honest account of what it actually takes to get there.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500;1,9..144,600&family=Geist+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -351,7 +351,7 @@
       Building a Second Brain <em>(For Real This Time)</em>
     </h1>
     <p class="hero-subtitle reveal d2">
-      Four datasets, one PKM framework, and an <em>honest attempt</em> to figure out where my thesis is.
+      Obsidian, Zotero, Notion, MCP connections, AI agents, and an <em>honest attempt</em> to build a system that actually makes me think better.
     </p>
     <div class="hero-byline reveal d3">
       Takumi &nbsp;&middot;&nbsp; ITASIA302, University of Tokyo &nbsp;&middot;&nbsp; <em>May 2026</em>
@@ -364,15 +364,15 @@
     <h2 class="section-heading reveal d1">What this is</h2>
 
     <p class="body-text reveal d2">
-      This website is a test. The question it's testing: does building a personal knowledge management system actually help you understand things you couldn't understand before, or does it just give you a more sophisticated way to avoid doing the work?
+      The "second brain" is everywhere right now. Tiago Forte's <em>Building a Second Brain</em> became a productivity bestseller. Andrej Karpathy tweeted about his personal knowledge systems. An entire genre of tech influencers promises that agentic AI will finally let you capture and retrieve everything you've ever thought, your notes, your papers, your half-finished ideas, surfaced at exactly the right moment, forever. The market is enormous. The discourse is relentless. Whether any of it actually works is a separate question.
     </p>
 
     <p class="body-text reveal d3">
-      I built four data visualizations over the past year, across different datasets and domains. Each one involved different data, a different method, and a different kind of question. But I hadn't put them in conversation with each other until now. This site is that conversation, structured by a PKM framework from three academic sources, and ending with two things: a thesis direction I couldn't have named before I started, and a concrete personal system I'm actually going to use going forward.
+      I was genuinely curious. Not because I'm already productive and want a fancier filing cabinet, but because I wasn't sure whether a PKM system would help me understand things I couldn't understand before, or just give me a more sophisticated way to avoid doing the work. The starting point was Zettelkasten, the slip-box method Niklas Luhmann used to write over 70 books. The idea that knowledge compounds when atomic notes link to each other rather than pile up in folders felt like the right structure to build on. So I built a system around it: Obsidian as the core vault with a Zettelkasten-style Atoms-Molecules-Alloys hierarchy, Zotero for reference management, Notion for project tracking, MCP connections to wire tools together, and AI agents to handle retrieval and synthesis. The four data visualizations documented elsewhere on this site are one part of that workflow: how I processed raw datasets into something navigable before the insights moved into the vault. This site is the Express step, turning accumulated knowledge into an argument about what the system is, how it was built, and what it actually produced.
     </p>
 
     <p class="body-text reveal d4">
-      There are also a few jokes. This is a coping mechanism.
+      Before getting into the framework, though, it's worth naming what the hype tends to obscure. Because the second brain industry sells individual productivity solutions to what is often a structural and relational problem. Someone on the internet said it better than any academic paper I read.
     </p>
 
     <div class="pull-quote reveal d5">
@@ -383,7 +383,7 @@
     </div>
 
     <p class="body-text reveal">
-      The joke lands in two directions. One: PKM hype is often just rebranded executive dysfunction with a Notion subscription. Two, and more seriously: cognitive labor is already being offloaded and distributed all the time, just onto people rather than tools, and without credit or compensation. The "second brain" industry sells individual productivity solutions to what is often a structural and relational problem. The wife was doing RAG before RAG was cool.
+      The joke lands in two directions. One: PKM hype is often rebranded executive dysfunction with a Notion subscription. Two, and more seriously: cognitive labor is already being offloaded and distributed all the time, just onto people rather than tools, and without credit or compensation. The wife was doing RAG before RAG was cool. With that on the table, here is what the three sources actually contribute, and here is what I did with them.
     </p>
   </section>
 
@@ -395,7 +395,7 @@
     <h2 class="section-heading reveal d1">The four datasets</h2>
 
     <p class="body-text reveal d2">
-      Each visualization below gets a short description, a link to the live version, and an honest account of what building it actually taught me. These aren't just portfolio pieces. They're the raw material this whole project is working with.
+      Data doesn't go into a PKM system raw. It needs to be understood first. These four visualizations are how I did that. Each one compressed a dataset into navigable patterns so I could actually see what was in it before anything moved into the vault. Think of them as the Distill step in Forte's CODE workflow: intermediate artifacts that did cognitive work upstream of synthesis. Each one gets a description, a link, and an honest account of what it taught me.
     </p>
 
     <div class="viz-grid">
@@ -518,54 +518,43 @@
       <!-- Source 1: Forte 2022 -->
       <div class="source-card reveal">
         <div class="source-citekey">@FORTE2022</div>
-        <div class="source-title">Building a Second Brain (2022) — <em>Tiago Forte</em></div>
+        <div class="source-title">Building a Second Brain (2022), <em>Tiago Forte</em></div>
         <div class="source-sub">Core contribution</div>
         <p class="source-body">
           CODE workflow (Capture, Organize, Distill, Express) and PARA system (Projects, Areas, Resources, Archives). A second brain externalizes thinking so attention can focus on synthesis, not storage. The promise is that you stop re-reading the same paper for the fourth time because you actually wrote down what it said.
         </p>
         <div class="source-sub">Applied here</div>
         <p class="source-body">
-          Each visualization in this project is a Distill artifact: it compresses a dataset into navigable patterns. This website is the Express step: turning four distillations into an argument. The chord diagram, heatmap, and genealogy network are intermediate packets that did cognitive work before this synthesis was possible.
+          The vault is the Organize layer. PARA folders structure everything by actionability, not subject. Zotero handles the Capture pipeline: papers arrive via automatic import and land in the inbox before processing. The visualization work sits in Distill: each dataset compressed into atoms before the insights moved into the vault. This website is the Express step, turning accumulated atoms, molecules, and alloys into a coherent argument about how the system was built and what it actually produced.
         </p>
       </div>
 
       <!-- Source 2: Ji 2011 -->
       <div class="source-card reveal">
         <div class="source-citekey">@JI2011</div>
-        <div class="source-title">Ji et al. (2011)</div>
+        <div class="source-title">Knowledge Base Population: Successful Approaches and Challenges (2011), <em>Ji &amp; Grishman</em></div>
         <div class="source-sub">Core contribution</div>
-        <div class="skeleton-block" style="padding: 16px 20px;">
-          <div class="skeleton-label"><span class="spin"></span> Obsidian vault resolving</div>
-          <div class="skeleton skeleton-line w-full"></div>
-          <div class="skeleton skeleton-line w-90"></div>
-          <div class="skeleton skeleton-line w-75" style="margin-bottom:0"></div>
-        </div>
+        <p class="source-body">
+          Ji and Grishman analyzed 23 competing systems in the 2010 Knowledge Base Population shared task: the computational problem of building a structured knowledge base from raw text at scale. Their central finding is that the hard problem is not storage but cross-document entity resolution and retrieval. A naive web-popularity baseline outperformed 24 of 46 system runs at 71% accuracy, meaning intuitive salience filters can beat elaborate analytical ones. Combining multiple independent extraction pipelines through ML re-ranking yielded up to 4.7% absolute improvement over any single system.
+        </p>
         <div class="source-sub">Applied here</div>
-        <div class="skeleton-block" style="padding: 16px 20px; margin-top: 8px;">
-          <div class="skeleton-label"><span class="spin"></span> Obsidian vault resolving</div>
-          <div class="skeleton skeleton-line w-full"></div>
-          <div class="skeleton skeleton-line w-60" style="margin-bottom:0"></div>
-        </div>
+        <p class="source-body">
+          The computational framing makes explicit what PKM systems are actually trying to solve technically. The entity linking problem, resolving which notes refer to the same concept across thousands of documents, is exactly what Obsidian's wikilink graph addresses. The salience finding maps onto Forte's resonance filter: trusting felt relevance over exhaustive checklists is not sloppy, it reflects how effective knowledge retrieval actually works. The system-combination finding is why this project uses multiple tools rather than one: Obsidian, Zotero, Notion, and MCP connections each handle a different part of the pipeline.
+        </p>
       </div>
 
       <!-- Source 3: Ferreira 2026 -->
       <div class="source-card reveal">
         <div class="source-citekey">@FERREIRA2026</div>
-        <div class="source-title">Ferreira (2026)</div>
+        <div class="source-title">How People Manage Knowledge in Their "Second Brains" (2026), <em>Ferreira et al.</em></div>
         <div class="source-sub">Core contribution</div>
-        <div class="skeleton-block" style="padding: 16px 20px;">
-          <div class="skeleton-label"><span class="spin"></span> Obsidian vault resolving</div>
-          <div class="skeleton skeleton-line w-full"></div>
-          <div class="skeleton skeleton-line w-90"></div>
-          <div class="skeleton skeleton-line w-75" style="margin-bottom:0"></div>
-        </div>
+        <p class="source-body">
+          The only empirical study of how knowledge workers actually use Obsidian in practice. Seven Computer Science researchers at a Brazilian industry lab, studied through semi-structured interviews and live observation of their workflows. Key finding: planned retrieval strategies fundamentally determine how people organize their vaults from the outset. Organization encodes anticipated search intent. Three temporal phases observed: capture on the fly, structural formatting, then future retrieval. Pain point identified: starting from a blank structure is overwhelming, and scaffolded templates significantly reduce onboarding friction.
+        </p>
         <div class="source-sub">Applied here</div>
-        <div class="skeleton-block" style="padding: 16px 20px; margin-top: 8px;">
-          <div class="skeleton-label"><span class="spin"></span> Obsidian vault resolving</div>
-          <div class="skeleton skeleton-line w-full"></div>
-          <div class="skeleton skeleton-line w-75"></div>
-          <div class="skeleton skeleton-line w-45" style="margin-bottom:0"></div>
-        </div>
+        <p class="source-body">
+          The vault in this project was built retrieval-first. Atom filenames are full declarative sentences, findable without surrounding context. The template system exists precisely because the blank-page pain point Ferreira et al. identified is real: hitting it on day one is what made a structured folder hierarchy and CLAUDE.md feel necessary rather than over-engineered. Their proposed AI features, linking organizational templates to anticipated retrieval strategies, describe what the MCP connections and AI agents in this project attempt to do in practice.
+        </p>
       </div>
 
     </div>
@@ -703,24 +692,15 @@
     <ul class="ref-list reveal d2">
       <li>
         <div class="ref-key">@FORTE2022</div>
-        <div class="skeleton-block" style="padding: 14px 18px; border-left-width: 1px; border-left-color: var(--ink-faint);">
-          <div class="skeleton-label"><span class="spin"></span> Obsidian vault resolving full citation</div>
-          <div class="skeleton skeleton-line w-90" style="height: 12px; margin-bottom: 0;"></div>
-        </div>
+        Forte, Tiago. <em>Building a Second Brain: A Proven Method to Organise Your Digital Life and Unlock Your Creative Potential.</em> Profile Books Ltd, 2022.
       </li>
       <li>
         <div class="ref-key">@JI2011</div>
-        <div class="skeleton-block" style="padding: 14px 18px; border-left-width: 1px; border-left-color: var(--ink-faint);">
-          <div class="skeleton-label"><span class="spin"></span> Obsidian vault resolving full citation</div>
-          <div class="skeleton skeleton-line w-75" style="height: 12px; margin-bottom: 0;"></div>
-        </div>
+        Ji, Heng, and Ralph Grishman. "Knowledge Base Population: Successful Approaches and Challenges." In <em>Proceedings of the 49th Annual Meeting of the Association for Computational Linguistics: Human Language Technologies.</em> Association for Computational Linguistics, 2011, pp. 1148&ndash;1158.
       </li>
       <li>
         <div class="ref-key">@FERREIRA2026</div>
-        <div class="skeleton-block" style="padding: 14px 18px; border-left-width: 1px; border-left-color: var(--ink-faint);">
-          <div class="skeleton-label"><span class="spin"></span> Obsidian vault resolving full citation</div>
-          <div class="skeleton skeleton-line w-90" style="height: 12px; margin-bottom: 0;"></div>
-        </div>
+        Ferreira, Juliana Jansen, Vin&iacute;cius Segura, Joana Gabriela Souza, and Joao Henrique Gallas Brasil. "How People Manage Knowledge in Their 'Second Brains': A Case Study with Industry Researchers Using Obsidian." In <em>Human-Computer Interaction &ndash; INTERACT 2025,</em> edited by Carmelo Ardito et al. Springer Nature Switzerland, 2026, pp. 72&ndash;76.
       </li>
     </ul>
   </section>
