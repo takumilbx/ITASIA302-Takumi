@@ -1,0 +1,308 @@
+<style>
+  body { background: #05060e; color: #e0e6f0; font-family: "SF Mono", ui-monospace, monospace; }
+  h2 { font-family: Georgia, serif; font-weight: 300; letter-spacing: .12em; color: #e0e6f0; margin-bottom: .3em; }
+  .subtitle { color: #8899b8; font-size: .85em; margin-top: 0; margin-bottom: 2em; }
+
+  .approach { margin-bottom: 2.5em; }
+  .approach-label { font-size: .7em; letter-spacing: .2em; text-transform: uppercase; color: #8899b8; margin-bottom: .8em; }
+
+  .page-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-bottom: .5em;
+  }
+
+  .page-chip {
+    border-radius: 6px;
+    padding: 10px 6px;
+    text-align: center;
+    font-size: .62em;
+    letter-spacing: .05em;
+    border: 1px solid rgba(255,255,255,.06);
+    background: #0b0d1a;
+    cursor: default;
+  }
+
+  .page-chip .swatch {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    margin: 0 auto 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1em;
+    box-shadow: 0 0 12px currentColor;
+  }
+
+  .page-chip .hex {
+    color: #8899b8;
+    font-size: .85em;
+    margin-top: 4px;
+  }
+
+  .page-chip .name {
+    color: #e0e6f0;
+    font-weight: 600;
+  }
+
+  .preview-bar {
+    height: 3px;
+    border-radius: 2px;
+    margin-bottom: .4em;
+    background: linear-gradient(90deg, transparent, var(--accent, #4db8cc), transparent);
+  }
+
+  .divider { border: none; border-top: 1px solid #182030; margin: 2em 0; }
+
+  /* Mock page preview */
+  .mock-page {
+    background: #0b0d1a;
+    border: 1px solid #182030;
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: .78em;
+    position: relative;
+    overflow: hidden;
+  }
+  .mock-page::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+  .mock-title { font-family: Georgia, serif; font-size: 1.3em; color: var(--accent); margin: 0 0 4px; }
+  .mock-sub { color: #8899b8; margin: 0 0 10px; font-size: .85em; }
+  .mock-body { color: #e0e6f0; line-height: 1.6; }
+  .mock-link { color: var(--accent); border-bottom: 1px dotted; text-decoration: none; }
+  .mock-tag { display: inline-block; padding: 2px 8px; border-radius: 3px; background: var(--accent-lo, rgba(77,184,204,.1)); color: var(--accent); font-size: .8em; margin-right: 4px; }
+
+  .pages-preview {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 1em;
+  }
+  .pages-preview .mock-page:nth-child(4) { grid-column: 1 / span 3; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+
+  .section-label { font-size: .65em; text-transform: uppercase; letter-spacing: .2em; color: #8899b8; margin-bottom: 1.2em; }
+</style>
+
+<h2>Color Identity — Per-Page Accent System</h2>
+<p class="subtitle">Dark base (#05060e) stays. Accent color changes per page. 3 direction options.</p>
+
+<!-- OPTION A -->
+<div class="approach option" data-choice="a" onclick="toggleSelect(this)">
+  <div class="letter">A</div>
+  <div class="content">
+    <h3>Thematic Chromatics</h3>
+    <p>Each color matches the page's intellectual character — warm for personal, cool for technical, violet for AI.</p>
+    <div class="page-row" style="margin-top:1em">
+      <div class="page-chip">
+        <div class="swatch" style="background:#4db8cc22;color:#4db8cc">◆</div>
+        <div class="name">Home</div>
+        <div class="hex">#4db8cc</div>
+        <div style="font-size:.75em;color:#8899b8;margin-top:3px">Cyan</div>
+      </div>
+      <div class="page-chip">
+        <div class="swatch" style="background:#e6b84a22;color:#e6b84a">◆</div>
+        <div class="name">About</div>
+        <div class="hex">#e6b84a</div>
+        <div style="font-size:.75em;color:#8899b8;margin-top:3px">Gold</div>
+      </div>
+      <div class="page-chip">
+        <div class="swatch" style="background:#9b6dff22;color:#9b6dff">◆</div>
+        <div class="name">AI Stmt</div>
+        <div class="hex">#9b6dff</div>
+        <div style="font-size:.75em;color:#8899b8;margin-top:3px">Violet</div>
+      </div>
+      <div class="page-chip">
+        <div class="swatch" style="background:#e0607e22;color:#e0607e">◆</div>
+        <div class="name">Classes</div>
+        <div class="hex">#e0607e</div>
+        <div style="font-size:.75em;color:#8899b8;margin-top:3px">Rose</div>
+      </div>
+      <div class="page-chip">
+        <div class="swatch" style="background:#4aaa7d22;color:#4aaa7d">◆</div>
+        <div class="name">Project</div>
+        <div class="hex">#4aaa7d</div>
+        <div style="font-size:.75em;color:#8899b8;margin-top:3px">Emerald</div>
+      </div>
+      <div class="page-chip">
+        <div class="swatch" style="background:#e89c4a22;color:#e89c4a">◆</div>
+        <div class="name">Reading</div>
+        <div class="hex">#e89c4a</div>
+        <div style="font-size:.75em;color:#8899b8;margin-top:3px">Amber</div>
+      </div>
+      <div class="page-chip">
+        <div class="swatch" style="background:#5299c822;color:#5299c8">◆</div>
+        <div class="name">Research</div>
+        <div class="hex">#5299c8</div>
+        <div style="font-size:.75em;color:#8899b8;margin-top:3px">Steel</div>
+      </div>
+    </div>
+    <div class="pages-preview">
+      <div class="mock-page" style="--accent:#e6b84a;--accent-lo:#e6b84a18">
+        <div class="mock-title">About</div>
+        <div class="mock-sub">Takumi Kiyohara</div>
+        <div class="mock-body">Research interests in <a class="mock-link">digital futures</a> and EdTech.</div>
+      </div>
+      <div class="mock-page" style="--accent:#9b6dff;--accent-lo:#9b6dff18">
+        <div class="mock-title">AI Statement</div>
+        <div class="mock-sub">On artificial intelligence</div>
+        <div class="mock-body">A <a class="mock-link">critical lens</a> on AI in education.</div>
+      </div>
+      <div class="mock-page" style="--accent:#e89c4a;--accent-lo:#e89c4a18">
+        <div class="mock-title">Reading Response</div>
+        <div class="mock-sub">Week 4 — Ali et al.</div>
+        <div class="mock-body">Examining <a class="mock-link">cognitive injustice</a> through TPACK.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- OPTION B -->
+<div class="approach option" data-choice="b" onclick="toggleSelect(this)">
+  <div class="letter">B</div>
+  <div class="content">
+    <h3>Spectrum Flow</h3>
+    <p>Colors move through the visible spectrum as you navigate the site — creates a coherent rainbow system.</p>
+    <div class="page-row" style="margin-top:1em">
+      <div class="page-chip">
+        <div class="swatch" style="background:#4db8cc22;color:#4db8cc">◆</div>
+        <div class="name">Home</div>
+        <div class="hex">#4db8cc</div>
+        <div style="font-size:.75em;color:#8899b8;margin-top:3px">Cyan</div>
+      </div>
+      <div class="page-chip">
+        <div class="swatch" style="background:#48c97a22;color:#48c97a">◆</div>
+        <div class="name">About</div>
+        <div class="hex">#48c97a</div>
+        <div style="font-size:.75em;color:#8899b8;margin-top:3px">Mint</div>
+      </div>
+      <div class="page-chip">
+        <div class="swatch" style="background:#c9cc4822;color:#c9cc48">◆</div>
+        <div class="name">AI Stmt</div>
+        <div class="hex">#c9cc48</div>
+        <div style="font-size:.75em;color:#8899b8;margin-top:3px">Lime</div>
+      </div>
+      <div class="page-chip">
+        <div class="swatch" style="background:#e89c4a22;color:#e89c4a">◆</div>
+        <div class="name">Classes</div>
+        <div class="hex">#e89c4a</div>
+        <div style="font-size:.75em;color:#8899b8;margin-top:3px">Amber</div>
+      </div>
+      <div class="page-chip">
+        <div class="swatch" style="background:#e8634a22;color:#e8634a">◆</div>
+        <div class="name">Project</div>
+        <div class="hex">#e8634a</div>
+        <div style="font-size:.75em;color:#8899b8;margin-top:3px">Orange</div>
+      </div>
+      <div class="page-chip">
+        <div class="swatch" style="background:#e0607e22;color:#e0607e">◆</div>
+        <div class="name">Reading</div>
+        <div class="hex">#e0607e</div>
+        <div style="font-size:.75em;color:#8899b8;margin-top:3px">Rose</div>
+      </div>
+      <div class="page-chip">
+        <div class="swatch" style="background:#9b6dff22;color:#9b6dff">◆</div>
+        <div class="name">Research</div>
+        <div class="hex">#9b6dff</div>
+        <div style="font-size:.75em;color:#8899b8;margin-top:3px">Violet</div>
+      </div>
+    </div>
+    <div class="pages-preview">
+      <div class="mock-page" style="--accent:#48c97a;--accent-lo:#48c97a18">
+        <div class="mock-title">About</div>
+        <div class="mock-sub">Takumi Kiyohara</div>
+        <div class="mock-body">Research interests in <a class="mock-link">digital futures</a>.</div>
+      </div>
+      <div class="mock-page" style="--accent:#c9cc48;--accent-lo:#c9cc4818">
+        <div class="mock-title">AI Statement</div>
+        <div class="mock-sub">On artificial intelligence</div>
+        <div class="mock-body">A <a class="mock-link">critical lens</a> on AI in education.</div>
+      </div>
+      <div class="mock-page" style="--accent:#e0607e;--accent-lo:#e0607e18">
+        <div class="mock-title">Reading Response</div>
+        <div class="mock-sub">Week 4 — Ali et al.</div>
+        <div class="mock-body">Examining <a class="mock-link">cognitive injustice</a>.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- OPTION C -->
+<div class="approach option" data-choice="c" onclick="toggleSelect(this)">
+  <div class="letter">C</div>
+  <div class="content">
+    <h3>Warm / Cool Split</h3>
+    <p>Two temperature zones: cool tones for technical/research pages, warm tones for personal/creative pages.</p>
+    <div class="page-row" style="margin-top:1em">
+      <div class="page-chip">
+        <div class="swatch" style="background:#4db8cc22;color:#4db8cc">◆</div>
+        <div class="name">Home</div>
+        <div class="hex">#4db8cc</div>
+        <div style="font-size:.75em;color:#8899b8;margin-top:3px">Cool</div>
+      </div>
+      <div class="page-chip">
+        <div class="swatch" style="background:#e6b84a22;color:#e6b84a">◆</div>
+        <div class="name">About</div>
+        <div class="hex">#e6b84a</div>
+        <div style="font-size:.75em;color:#8899b8;margin-top:3px">Warm</div>
+      </div>
+      <div class="page-chip">
+        <div class="swatch" style="background:#8b9eff22;color:#8b9eff">◆</div>
+        <div class="name">AI Stmt</div>
+        <div class="hex">#8b9eff</div>
+        <div style="font-size:.75em;color:#8899b8;margin-top:3px">Cool</div>
+      </div>
+      <div class="page-chip">
+        <div class="swatch" style="background:#e89c4a22;color:#e89c4a">◆</div>
+        <div class="name">Classes</div>
+        <div class="hex">#e89c4a</div>
+        <div style="font-size:.75em;color:#8899b8;margin-top:3px">Warm</div>
+      </div>
+      <div class="page-chip">
+        <div class="swatch" style="background:#60c89022;color:#60c890">◆</div>
+        <div class="name">Project</div>
+        <div class="hex">#60c890</div>
+        <div style="font-size:.75em;color:#8899b8;margin-top:3px">Cool</div>
+      </div>
+      <div class="page-chip">
+        <div class="swatch" style="background:#e8825022;color:#e88250">◆</div>
+        <div class="name">Reading</div>
+        <div class="hex">#e88250</div>
+        <div style="font-size:.75em;color:#8899b8;margin-top:3px">Warm</div>
+      </div>
+      <div class="page-chip">
+        <div class="swatch" style="background:#5299c822;color:#5299c8">◆</div>
+        <div class="name">Research</div>
+        <div class="hex">#5299c8</div>
+        <div style="font-size:.75em;color:#8899b8;margin-top:3px">Cool</div>
+      </div>
+    </div>
+    <div class="pages-preview">
+      <div class="mock-page" style="--accent:#e6b84a;--accent-lo:#e6b84a18">
+        <div class="mock-title">About</div>
+        <div class="mock-sub">Takumi Kiyohara</div>
+        <div class="mock-body">Research interests in <a class="mock-link">digital futures</a>.</div>
+      </div>
+      <div class="mock-page" style="--accent:#8b9eff;--accent-lo:#8b9eff18">
+        <div class="mock-title">AI Statement</div>
+        <div class="mock-sub">On artificial intelligence</div>
+        <div class="mock-body">A <a class="mock-link">critical lens</a> on AI in education.</div>
+      </div>
+      <div class="mock-page" style="--accent:#e88250;--accent-lo:#e8825018">
+        <div class="mock-title">Reading Response</div>
+        <div class="mock-sub">Week 4 — Ali et al.</div>
+        <div class="mock-body">Examining <a class="mock-link">cognitive injustice</a>.</div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,93 @@
+<h2>Work tab — layout options for TikTok videos</h2>
+<p class="subtitle">How should your 4–5 featured videos be displayed?</p>
+
+<div class="options">
+
+  <div class="option" data-choice="grid" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>2-column card grid</h3>
+      <p style="margin-bottom:14px;">Thumbnail + title + short description. Clean, scannable. Familiar from portfolio sites.</p>
+      <div style="background:#0e1824;border-radius:8px;padding:16px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="background:#132032;border-radius:6px;overflow:hidden;">
+            <div style="background:#1a3050;height:80px;display:flex;align-items:center;justify-content:center;font-size:22px;">▶</div>
+            <div style="padding:10px;">
+              <div style="color:#5090c0;font-size:10px;letter-spacing:0.1em;margin-bottom:4px;">JAPANESE LEARNING</div>
+              <div style="color:#ede8e0;font-size:12px;font-weight:500;margin-bottom:4px;">How I learned N1 in 3 years</div>
+              <div style="color:#9aa3b0;font-size:11px;line-height:1.5;">My study routine, resources, and the mistakes I made along the way.</div>
+            </div>
+          </div>
+          <div style="background:#132032;border-radius:6px;overflow:hidden;">
+            <div style="background:#1a3050;height:80px;display:flex;align-items:center;justify-content:center;font-size:22px;">▶</div>
+            <div style="padding:10px;">
+              <div style="color:#5090c0;font-size:10px;letter-spacing:0.1em;margin-bottom:4px;">CULTURE</div>
+              <div style="color:#ede8e0;font-size:12px;font-weight:500;margin-bottom:4px;">Thai vs Japanese school life</div>
+              <div style="color:#9aa3b0;font-size:11px;line-height:1.5;">A side-by-side comparison that went unexpectedly viral.</div>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center;margin-top:10px;color:#5090c0;font-size:11px;">→ TikTok @takumyi &nbsp;·&nbsp; 85k followers</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="featured" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>1 featured + 3 small ⭐ Recommended</h3>
+      <p style="margin-bottom:14px;">Hero video up top (large), three secondary picks below in a row. Highlights your best video while showing variety.</p>
+      <div style="background:#0e1824;border-radius:8px;padding:16px;">
+        <div style="background:#132032;border-radius:6px;overflow:hidden;margin-bottom:10px;">
+          <div style="background:#1a3050;height:100px;display:flex;align-items:center;justify-content:center;font-size:28px;">▶</div>
+          <div style="padding:12px;">
+            <div style="color:#f0a060;font-size:10px;letter-spacing:0.1em;margin-bottom:4px;">FEATURED</div>
+            <div style="color:#ede8e0;font-size:13px;font-weight:500;">Best-performing video · full description here</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+          <div style="background:#132032;border-radius:4px;padding:8px;text-align:center;">
+            <div style="color:#9aa3b0;font-size:20px;margin-bottom:4px;">▶</div>
+            <div style="color:#ede8e0;font-size:10px;">Video 2</div>
+          </div>
+          <div style="background:#132032;border-radius:4px;padding:8px;text-align:center;">
+            <div style="color:#9aa3b0;font-size:20px;margin-bottom:4px;">▶</div>
+            <div style="color:#ede8e0;font-size:10px;">Video 3</div>
+          </div>
+          <div style="background:#132032;border-radius:4px;padding:8px;text-align:center;">
+            <div style="color:#9aa3b0;font-size:20px;margin-bottom:4px;">▶</div>
+            <div style="color:#ede8e0;font-size:10px;">Video 4</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="list" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Horizontal list with embed</h3>
+      <p style="margin-bottom:14px;">Titles listed on the left; clicking one loads the TikTok embed on the right. Keeps the page tidy, no external thumbnails needed.</p>
+      <div style="background:#0e1824;border-radius:8px;padding:16px;display:flex;gap:12px;">
+        <div style="width:45%;border-right:1px solid #132032;padding-right:12px;">
+          <div style="padding:8px;border-left:2px solid #5090c0;margin-bottom:8px;background:#132032;border-radius:0 4px 4px 0;">
+            <div style="color:#ede8e0;font-size:12px;">How I learned N1</div>
+            <div style="color:#9aa3b0;font-size:10px;">2.1M views</div>
+          </div>
+          <div style="padding:8px;margin-bottom:8px;">
+            <div style="color:#9aa3b0;font-size:12px;">Thai vs Japanese school</div>
+          </div>
+          <div style="padding:8px;margin-bottom:8px;">
+            <div style="color:#9aa3b0;font-size:12px;">Life in Tokyo as a Thai student</div>
+          </div>
+        </div>
+        <div style="flex:1;background:#132032;border-radius:6px;display:flex;align-items:center;justify-content:center;height:120px;">
+          <div style="text-align:center;color:#9aa3b0;font-size:12px;">TikTok embed<br>loads here</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top:18px;">I recommend <strong>B</strong> — the featured hero format signals editorial judgment (you picked this one as your best) and scales cleanly to 4–5 videos. Click your pick and reply in chat.</p>

@@ -1,0 +1,6 @@
+{"type":"server-started","port":60049,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:60049","screen_dir":"/Users/takumyii/Documents/GitHub/ITASIA302-Takumi/.superpowers/brainstorm/19569-1778566754/content","state_dir":"/Users/takumyii/Documents/GitHub/ITASIA302-Takumi/.superpowers/brainstorm/19569-1778566754/state"}
+{"type":"screen-added","file":"/Users/takumyii/Documents/GitHub/ITASIA302-Takumi/.superpowers/brainstorm/19569-1778566754/content/cursor-styles.html"}
+{"type":"screen-added","file":"/Users/takumyii/Documents/GitHub/ITASIA302-Takumi/.superpowers/brainstorm/19569-1778566754/content/cursor-combo.html"}
+{"type":"screen-added","file":"/Users/takumyii/Documents/GitHub/ITASIA302-Takumi/.superpowers/brainstorm/19569-1778566754/content/cursor-combo-v2.html"}
+{"type":"screen-added","file":"/Users/takumyii/Documents/GitHub/ITASIA302-Takumi/.superpowers/brainstorm/19569-1778566754/content/cursor-combo-v3.html"}
+{"type":"server-stopped","reason":"owner process exited"}

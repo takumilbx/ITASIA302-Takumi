@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Font Directions</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;0,9..40,900;1,9..40,300&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #03050A; color: #EDE8E0; min-height: 100vh; }
+
+  .top {
+    padding: 14px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-family: -apple-system, system-ui, sans-serif;
+    font-size: 11px;
+    color: rgba(255,255,255,0.25);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .top span { color: #F0A060; font-weight: 500; }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); }
+
+  .opt {
+    border-right: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    cursor: pointer;
+    position: relative;
+    transition: background 150ms;
+  }
+  .opt:nth-child(3n) { border-right: none; }
+  .opt:hover { background: rgba(255,255,255,0.015); }
+  .opt.sel { background: rgba(240,160,96,0.04); }
+  .opt.sel .pill { background: rgba(240,160,96,0.15); color: #F0A060; border-color: rgba(240,160,96,0.25); }
+
+  .pill {
+    position: absolute;
+    top: 10px; right: 12px;
+    font-size: 9px; letter-spacing: 1px;
+    padding: 2px 8px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    color: rgba(255,255,255,0.15);
+    transition: all 150ms;
+  }
+  .opt:hover .pill { color: rgba(255,255,255,0.3); }
+
+  .preview {
+    padding: 26px 22px 20px;
+    background: #020408;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .meta { padding: 12px 16px 16px; }
+  .ltr { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #F0A060; margin-bottom: 3px; font-family: monospace; }
+  .nm { font-size: 13px; font-weight: 600; color: #EDE8E0; margin-bottom: 3px; }
+  .ds { font-size: 11px; color: rgba(154,163,176,0.6); line-height: 1.55; margin-bottom: 7px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .tag { font-size: 9px; padding: 1px 6px; border: 1px solid rgba(255,255,255,0.07); border-radius: 20px; color: rgba(154,163,176,0.45); }
+
+  /* shared pill label */
+  .label-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 9px;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    margin-bottom: 14px;
+  }
+  .label-dot { width: 5px; height: 5px; border-radius: 50%; }
+
+  /* ── A: System UI native ── */
+  .p-a { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif; }
+  .p-a .badge {
+    font-size: 9px; font-weight: 500; letter-spacing: 0.5px;
+    color: rgba(240,160,96,0.7);
+    border-color: rgba(240,160,96,0.2);
+  }
+  .p-a .badge .label-dot { background: #F0A060; }
+  .p-a .h {
+    font-size: clamp(26px, 3.5vw, 36px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+    color: #EDE8E0;
+    margin-bottom: 10px;
+  }
+  .p-a .h em { color: #F0A060; font-style: normal; }
+  .p-a .sub {
+    font-size: 11px; font-weight: 400;
+    color: rgba(154,163,176,0.5);
+    letter-spacing: 0.1px;
+  }
+
+  /* ── B: Inter ── */
+  .p-b { font-family: 'Inter', sans-serif; }
+  .p-b .badge {
+    font-size: 9px; font-weight: 600; letter-spacing: 0.3px;
+    color: rgba(90,200,176,0.7);
+    border-color: rgba(90,200,176,0.2);
+  }
+  .p-b .badge .label-dot { background: #5AC8B0; }
+  .p-b .h {
+    font-size: clamp(24px, 3.2vw, 34px);
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -1.2px;
+    color: #EDE8E0;
+    margin-bottom: 10px;
+  }
+  .p-b .h em { color: #F0A060; font-style: normal; font-weight: 300; }
+  .p-b .sub {
+    font-size: 11px; font-weight: 300;
+    color: rgba(154,163,176,0.5);
+    letter-spacing: 0.2px;
+  }
+  .p-b .rule { height: 1px; background: rgba(255,255,255,0.06); margin: 10px 0; }
+  .p-b .row {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 10px; font-weight: 500; color: rgba(154,163,176,0.45);
+  }
+  .p-b .row span:last-child { color: #F0A060; font-size: 11px; }
+
+  /* ── C: IBM Plex Sans + Mono ── */
+  .p-c .badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px; font-weight: 400; letter-spacing: 2px;
+    color: rgba(80,144,192,0.6);
+    border-color: rgba(80,144,192,0.15);
+    text-transform: uppercase;
+  }
+  .p-c .badge .label-dot { background: #5090C0; }
+  .p-c .h {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+    color: #EDE8E0;
+    margin-bottom: 10px;
+  }
+  .p-c .h em { color: #F0A060; font-style: italic; font-weight: 300; }
+  .p-c .sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px; font-weight: 300; letter-spacing: 2px;
+    color: rgba(154,163,176,0.4);
+  }
+
+  /* ── D: DM Sans + DM Mono ── */
+  .p-d .badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px; letter-spacing: 2px;
+    color: rgba(216,104,120,0.6);
+    border-color: rgba(216,104,120,0.15);
+    text-transform: uppercase;
+  }
+  .p-d .badge .label-dot { background: #D86878; }
+  .p-d .h {
+    font-family: 'DM Sans', sans-serif;
+    font-size: clamp(23px, 3.2vw, 32px);
+    font-weight: 900;
+    line-height: 1.06;
+    letter-spacing: -1px;
+    color: #EDE8E0;
+    margin-bottom: 10px;
+  }
+  .p-d .h em { color: #F0A060; font-style: italic; font-weight: 300; }
+  .p-d .sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px; letter-spacing: 1px;
+    color: rgba(154,163,176,0.4);
+  }
+
+  /* ── E: Plus Jakarta Sans ── */
+  .p-e { font-family: 'Plus Jakarta Sans', sans-serif; }
+  .p-e .badge {
+    font-size: 9px; font-weight: 600; letter-spacing: 0.3px;
+    color: rgba(158,144,208,0.7);
+    border-color: rgba(158,144,208,0.2);
+  }
+  .p-e .badge .label-dot { background: #9E90D0; }
+  .p-e .h {
+    font-size: clamp(24px, 3.3vw, 33px);
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -1px;
+    color: #EDE8E0;
+    margin-bottom: 10px;
+  }
+  .p-e .h em { color: #F0A060; font-style: italic; font-weight: 300; }
+  .p-e .sub {
+    font-size: 11px; font-weight: 300;
+    color: rgba(154,163,176,0.45);
+  }
+  /* app-like card chips */
+  .p-e .chips { display: flex; gap: 5px; margin-top: 12px; flex-wrap: wrap; }
+  .p-e .chip {
+    font-size: 9px; font-weight: 500;
+    padding: 3px 8px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 4px;
+    color: rgba(154,163,176,0.6);
+  }
+
+  /* ── F: Linear / Raycast style — Inter super condensed ── */
+  .p-f { font-family: 'Inter', sans-serif; }
+  .p-f .toprow {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 16px;
+  }
+  .p-f .logo-mark {
+    width: 22px; height: 22px; border-radius: 5px;
+    background: linear-gradient(135deg, #F0A060, #D86878);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 800; color: #03050A; flex-shrink: 0;
+  }
+  .p-f .toprow-text { font-size: 11px; font-weight: 500; color: rgba(237,232,224,0.6); }
+  .p-f .h {
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.8px;
+    color: #EDE8E0;
+    margin-bottom: 8px;
+  }
+  .p-f .h em { color: #F0A060; font-style: normal; }
+  .p-f .items { display: flex; flex-direction: column; gap: 4px; margin-top: 10px; }
+  .p-f .item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 5px 8px; border-radius: 5px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    font-size: 10px; font-weight: 400; color: rgba(154,163,176,0.6);
+  }
+  .p-f .item-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+  .p-f .item kbd {
+    margin-left: auto; font-size: 8px; padding: 1px 5px;
+    background: rgba(255,255,255,0.06); border-radius: 3px;
+    border: 1px solid rgba(255,255,255,0.1); color: rgba(154,163,176,0.5);
+    font-family: inherit;
+  }
+
+  .bottom {
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding: 14px 24px;
+    text-align: center;
+    font-family: -apple-system, system-ui, sans-serif;
+    font-size: 11px;
+    color: rgba(255,255,255,0.2);
+  }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <span>System Font Directions</span>
+  <span style="color:rgba(255,255,255,0.2)">think: Linear · Vercel · Raycast · GitHub</span>
+</div>
+
+<div class="grid">
+
+  <!-- A: System UI -->
+  <div class="opt" onclick="this.classList.toggle('sel')">
+    <span class="pill">pick</span>
+    <div class="preview p-a">
+      <div class="label-pill badge"><span class="label-dot"></span>ITASIA302</div>
+      <div class="h">Introduction to<br><em>Digital Technology</em><br>and Society</div>
+      <div class="sub">Takumi Oshiyama · UTokyo · Spring 2026</div>
+    </div>
+    <div class="meta">
+      <div class="ltr">A</div>
+      <div class="nm">System UI (native OS font)</div>
+      <div class="ds">Uses the device's actual font — SF Pro on Mac, Segoe UI on Windows. Feels like a native app. Zero loading time, perfectly screen-optimised.</div>
+      <div class="tags"><span class="tag">native</span><span class="tag">SF Pro / Segoe</span><span class="tag">zero load</span><span class="tag">app-like</span></div>
+    </div>
+  </div>
+
+  <!-- B: Inter -->
+  <div class="opt" onclick="this.classList.toggle('sel')">
+    <span class="pill">pick</span>
+    <div class="preview p-b">
+      <div class="label-pill badge"><span class="label-dot"></span>ITASIA302 · SP2026</div>
+      <div class="h">Introduction to<br><em>Digital</em> Technology<br>and Society</div>
+      <div class="sub">Takumi Oshiyama · UTokyo</div>
+      <div class="rule"></div>
+      <div class="row"><span>4 sections</span><span>→</span></div>
+    </div>
+    <div class="meta">
+      <div class="ltr">B</div>
+      <div class="nm">Inter</div>
+      <div class="ds">The font of Figma, Linear, Notion, Vercel. Ultra-legible at all weights. 800 weight title + 300 weight accent = striking contrast without a serif.</div>
+      <div class="tags"><span class="tag">Figma/Linear</span><span class="tag">800 + 300 mix</span><span class="tag">clean</span><span class="tag">everywhere</span></div>
+    </div>
+  </div>
+
+  <!-- C: IBM Plex -->
+  <div class="opt" onclick="this.classList.toggle('sel')">
+    <span class="pill">pick</span>
+    <div class="preview p-c">
+      <div class="label-pill badge"><span class="label-dot"></span>ITASIA302</div>
+      <div class="h">Introduction to<br><em>Digital Technology</em><br>and Society</div>
+      <div class="sub">TAKUMI · UTOKYO · SP2026</div>
+    </div>
+    <div class="meta">
+      <div class="ltr">C</div>
+      <div class="nm">IBM Plex Sans + Plex Mono</div>
+      <div class="ds">IBM's open-source type system. Sans for headings, mono for labels. Feels like a serious technical product — research institute, not startup.</div>
+      <div class="tags"><span class="tag">IBM</span><span class="tag">sans + mono</span><span class="tag">technical</span><span class="tag">serious</span></div>
+    </div>
+  </div>
+
+  <!-- D: DM Sans -->
+  <div class="opt" onclick="this.classList.toggle('sel')">
+    <span class="pill">pick</span>
+    <div class="preview p-d">
+      <div class="label-pill badge"><span class="label-dot"></span>ITASIA302</div>
+      <div class="h">Introduction<br>to <em>Digital</em><br>Technology</div>
+      <div class="sub">takumi · utokyo · spring 2026</div>
+    </div>
+    <div class="meta">
+      <div class="ltr">D</div>
+      <div class="nm">DM Sans + DM Mono</div>
+      <div class="ds">Google's DM family. 900 weight sans for impact, paired with the DM Mono for code-adjacent labels. Optical size variants make it genuinely beautiful.</div>
+      <div class="tags"><span class="tag">900 weight</span><span class="tag">optical size</span><span class="tag">Google DM</span><span class="tag">paired</span></div>
+    </div>
+  </div>
+
+  <!-- E: Plus Jakarta -->
+  <div class="opt" onclick="this.classList.toggle('sel')">
+    <span class="pill">pick</span>
+    <div class="preview p-e">
+      <div class="label-pill badge"><span class="label-dot"></span>ITASIA302 · Spring 2026</div>
+      <div class="h">Introduction to<br><em>Digital</em> Technology<br>and Society</div>
+      <div class="sub">Takumi Oshiyama · UTokyo</div>
+      <div class="chips">
+        <span class="chip">About Me</span>
+        <span class="chip">Assignments</span>
+        <span class="chip">Project</span>
+        <span class="chip">AI</span>
+      </div>
+    </div>
+    <div class="meta">
+      <div class="ltr">E</div>
+      <div class="nm">Plus Jakarta Sans</div>
+      <div class="ds">Rounder than Inter, more humanist. Feels like a consumer app (Framer, Craft, Superlist). Works great with chip/pill UI elements.</div>
+      <div class="tags"><span class="tag">humanist</span><span class="tag">rounded</span><span class="tag">consumer app</span><span class="tag">Framer-like</span></div>
+    </div>
+  </div>
+
+  <!-- F: Linear / Raycast style -->
+  <div class="opt" onclick="this.classList.toggle('sel')">
+    <span class="pill">pick</span>
+    <div class="preview p-f">
+      <div class="toprow">
+        <div class="logo-mark">T</div>
+        <div class="toprow-text">Takumi's Portfolio</div>
+      </div>
+      <div class="h">Introduction to <em>Digital</em><br>Technology &amp; Society</div>
+      <div class="items">
+        <div class="item"><span class="item-dot" style="background:#5090C0"></span>About Me / Research<kbd>↵</kbd></div>
+        <div class="item"><span class="item-dot" style="background:#F0A060"></span>Class Assignments<kbd>↵</kbd></div>
+        <div class="item"><span class="item-dot" style="background:#5AC8B0"></span>Personal Project<kbd>↵</kbd></div>
+      </div>
+    </div>
+    <div class="meta">
+      <div class="ltr">F</div>
+      <div class="nm">Inter — Command Palette Style</div>
+      <div class="ds">Make the homepage look like a Raycast/Linear command palette. Logo mark, navigation as keyboard-shortcut rows. Feels like a tool, not a website.</div>
+      <div class="tags"><span class="tag">Raycast</span><span class="tag">Linear</span><span class="tag">command palette</span><span class="tag">keyboard UI</span></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="bottom">These pair with the A+B animations (decode + 3D tilt) from earlier — pick a font direction then I'll combine everything</div>
+
+</body>
+</html>

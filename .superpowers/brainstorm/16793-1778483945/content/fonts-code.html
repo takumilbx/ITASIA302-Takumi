@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Code Fonts</title>
+<link href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@300;400;500;600;700;800&family=Major+Mono+Display&family=Fira+Code:wght@300;400;500;600;700&family=VT323&family=Fragment+Mono:ital@0;1&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #03050A; color: #EDE8E0; font-family: monospace; min-height: 100vh; }
+
+  .top {
+    text-align: center;
+    padding: 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-family: 'Fira Code', monospace;
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 1px;
+  }
+  .top span { color: #5AC8B0; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .opt {
+    border-right: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    cursor: pointer;
+    transition: background 150ms;
+    position: relative;
+  }
+  .opt:nth-child(even) { border-right: none; }
+  .opt:hover { background: rgba(255,255,255,0.015); }
+  .opt.sel { background: rgba(240,160,96,0.05); outline: 1px inset rgba(240,160,96,0.2); }
+  .opt.sel .pick { color: #F0A060; }
+
+  .preview {
+    padding: 30px 28px 24px;
+    background: #020408;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  /* subtle grid bg */
+  .preview::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 28px 28px;
+    pointer-events: none;
+  }
+
+  .meta { padding: 14px 20px 18px; }
+  .letter { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: #F0A060; margin-bottom: 4px; }
+  .fname { font-size: 14px; font-weight: 600; color: #EDE8E0; margin-bottom: 4px; }
+  .fdesc { font-size: 11.5px; color: rgba(154,163,176,0.65); line-height: 1.55; margin-bottom: 8px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .tag { font-size: 9px; padding: 2px 7px; border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; color: rgba(154,163,176,0.5); }
+
+  .pick {
+    position: absolute;
+    top: 12px; right: 14px;
+    font-size: 9px; letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.15);
+    transition: color 150ms;
+  }
+
+  /* ── A: Martian Mono — wide, spacious mono everywhere ── */
+  .prev-a .prompt {
+    font-family: 'Martian Mono', monospace;
+    font-size: 8px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    color: #5AC8B0;
+    margin-bottom: 14px;
+  }
+  .prev-a .title {
+    font-family: 'Martian Mono', monospace;
+    font-weight: 800;
+    font-size: clamp(20px, 3vw, 28px);
+    line-height: 1.15;
+    letter-spacing: -1px;
+    color: #EDE8E0;
+    margin-bottom: 12px;
+  }
+  .prev-a .title .hl { color: #F0A060; }
+  .prev-a .sub {
+    font-family: 'Martian Mono', monospace;
+    font-size: 8px;
+    font-weight: 300;
+    letter-spacing: 1px;
+    color: rgba(154,163,176,0.45);
+  }
+
+  /* ── B: Major Mono Display — artistic mono display ── */
+  .prev-b .prompt {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: rgba(208,96,120,0.7);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+  .prev-b .title {
+    font-family: 'Major Mono Display', monospace;
+    font-size: clamp(22px, 3.5vw, 32px);
+    line-height: 1.2;
+    letter-spacing: -1px;
+    color: #EDE8E0;
+    margin-bottom: 10px;
+    text-transform: lowercase;
+  }
+  .prev-b .title .hl { color: #F0A060; }
+  .prev-b .sub {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: rgba(154,163,176,0.4);
+    text-transform: uppercase;
+  }
+
+  /* ── C: Fira Code — ligature IDE font ── */
+  .prev-c .prompt {
+    font-family: 'Fira Code', monospace;
+    font-size: 10px;
+    font-weight: 300;
+    color: rgba(90,200,176,0.6);
+    margin-bottom: 14px;
+  }
+  .prev-c .title {
+    font-family: 'Fira Code', monospace;
+    font-weight: 700;
+    font-size: clamp(20px, 2.8vw, 30px);
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+    color: #EDE8E0;
+    margin-bottom: 10px;
+  }
+  .prev-c .title .hl { color: #F0A060; }
+  .prev-c .sub {
+    font-family: 'Fira Code', monospace;
+    font-size: 9px;
+    font-weight: 300;
+    letter-spacing: 1px;
+    color: rgba(154,163,176,0.45);
+  }
+  /* simulate ligatures */
+  .lig { font-family: 'Fira Code', monospace; color: rgba(90,200,176,0.5); }
+
+  /* ── D: VT323 — full retro terminal ── */
+  .prev-d .prompt {
+    font-family: 'VT323', monospace;
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: #5AC8B0;
+    margin-bottom: 10px;
+  }
+  .prev-d .title {
+    font-family: 'VT323', monospace;
+    font-size: clamp(38px, 6vw, 58px);
+    line-height: 1.0;
+    letter-spacing: 1px;
+    color: #EDE8E0;
+    margin-bottom: 10px;
+    text-shadow: 0 0 20px rgba(237,232,224,0.15);
+  }
+  .prev-d .title .hl { color: #F0A060; text-shadow: 0 0 14px rgba(240,160,96,0.5); }
+  .prev-d .sub {
+    font-family: 'VT323', monospace;
+    font-size: 14px;
+    letter-spacing: 3px;
+    color: rgba(154,163,176,0.5);
+  }
+  .prev-d .cursor { display: inline-block; width: 10px; height: 2px; background: #5AC8B0; animation: blink 1s step-end infinite; vertical-align: middle; margin-left: 4px; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+  /* scanlines for vt323 */
+  .prev-d::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 4px);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .prev-d > * { position: relative; z-index: 2; }
+
+  .bottom {
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding: 16px 24px;
+    text-align: center;
+    font-family: 'Fira Code', monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.25);
+  }
+  .bottom em { color: rgba(240,160,96,0.5); font-style: normal; }
+</style>
+</head>
+<body>
+
+<div class="top">// font directions — <span>coding aesthetic</span> · click to select</div>
+
+<div class="grid">
+
+  <!-- A: Martian Mono -->
+  <div class="opt" onclick="this.classList.toggle('sel')">
+    <span class="pick">pick</span>
+    <div class="preview prev-a">
+      <div class="prompt">$ cat project-index.txt</div>
+      <div class="title">
+        INTRODUCTION<br>
+        TO <span class="hl">DIGITAL</span><br>
+        TECHNOLOGY
+      </div>
+      <div class="sub">takumi.oshiyama // utokyo // sp2026</div>
+    </div>
+    <div class="meta">
+      <div class="letter">A</div>
+      <div class="fname">Martian Mono</div>
+      <div class="fdesc">Wide, spacious monospace built for legibility. Used everywhere — heading AND body. Feels like a premium developer tool or research terminal.</div>
+      <div class="tags">
+        <span class="tag">full mono</span>
+        <span class="tag">wide letterforms</span>
+        <span class="tag">modern terminal</span>
+        <span class="tag">clean</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- B: Major Mono Display -->
+  <div class="opt" onclick="this.classList.toggle('sel')">
+    <span class="pick">pick</span>
+    <div class="preview prev-b">
+      <div class="prompt">// PROJECT INDEX</div>
+      <div class="title">
+        introduction<br>to <span class="hl">digital</span><br>technology
+      </div>
+      <div class="sub">TAKUMI · UTOKYO · SP2026</div>
+    </div>
+    <div class="meta">
+      <div class="letter">B</div>
+      <div class="fname">Major Mono Display</div>
+      <div class="fdesc">Geometric artistic mono — lowercase creates a striking, unusual look. Unique enough that no other portfolio uses it. Art-meets-code.</div>
+      <div class="tags">
+        <span class="tag">geometric</span>
+        <span class="tag">artistic mono</span>
+        <span class="tag">very unique</span>
+        <span class="tag">lowercase display</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- C: Fira Code -->
+  <div class="opt" onclick="this.classList.toggle('sel')">
+    <span class="pick">pick</span>
+    <div class="preview prev-c">
+      <div class="prompt"><span class="lig">const</span> portfolio <span class="lig">=</span> {</div>
+      <div class="title">
+        Introduction to<br>
+        <span class="hl">Digital</span> Technology<br>
+        & Society
+      </div>
+      <div class="sub">// takumi · utokyo · spring 2026</div>
+    </div>
+    <div class="meta">
+      <div class="letter">C</div>
+      <div class="fname">Fira Code</div>
+      <div class="fdesc">The developer font. Recognisable to anyone who codes. Ligatures make → and == beautiful. Labels feel like actual code comments.</div>
+      <div class="tags">
+        <span class="tag">ligatures</span>
+        <span class="tag">recognisable</span>
+        <span class="tag">IDE native</span>
+        <span class="tag">developer signal</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- D: VT323 retro terminal -->
+  <div class="opt" onclick="this.classList.toggle('sel')">
+    <span class="pick">pick</span>
+    <div class="preview prev-d">
+      <div class="prompt">C:\ITASIA302> dir</div>
+      <div class="title">
+        DIGITAL<br>
+        <span class="hl">TECHNOLOGY</span><br>
+        & SOCIETY<span class="cursor"></span>
+      </div>
+      <div class="sub">TAKUMI_OSHIYAMA@UTOKYO</div>
+    </div>
+    <div class="meta">
+      <div class="letter">D</div>
+      <div class="fname">VT323 — Retro Terminal</div>
+      <div class="fdesc">Old-school CRT terminal pixel font. Max nostalgia, max hacker energy. Pairs with scanlines. Very bold statement — either you love it or you don't.</div>
+      <div class="tags">
+        <span class="tag">retro CRT</span>
+        <span class="tag">hacker energy</span>
+        <span class="tag">pixel mono</span>
+        <span class="tag">bold statement</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="bottom">
+  <em>tip:</em> can mix — e.g. VT323 for the big hero title + Fira Code for everything else
+</div>
+
+</body>
+</html>

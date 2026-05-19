@@ -1,0 +1,7 @@
+{"type":"server-started","port":58643,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:58643","screen_dir":"/Users/takumyii/Documents/GitHub/ITASIA302-Takumi/.superpowers/brainstorm/11053-1778563566/content","state_dir":"/Users/takumyii/Documents/GitHub/ITASIA302-Takumi/.superpowers/brainstorm/11053-1778563566/state"}
+{"type":"screen-added","file":"/Users/takumyii/Documents/GitHub/ITASIA302-Takumi/.superpowers/brainstorm/11053-1778563566/content/entry-style.html"}
+{"type":"screen-added","file":"/Users/takumyii/Documents/GitHub/ITASIA302-Takumi/.superpowers/brainstorm/11053-1778563566/content/entry-combined.html"}
+{"type":"screen-added","file":"/Users/takumyii/Documents/GitHub/ITASIA302-Takumi/.superpowers/brainstorm/11053-1778563566/content/entry-combined-v2.html"}
+{"type":"screen-added","file":"/Users/takumyii/Documents/GitHub/ITASIA302-Takumi/.superpowers/brainstorm/11053-1778563566/content/entry-combined-v3.html"}
+{"type":"screen-added","file":"/Users/takumyii/Documents/GitHub/ITASIA302-Takumi/.superpowers/brainstorm/11053-1778563566/content/entry-title-options.html"}
+{"type":"server-stopped","reason":"owner process exited"}

@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Direction A+B — Live Combo</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #04060C;
+    color: #EDE8E0;
+    font-family: 'Courier New', Courier, monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── Custom cursor ───────────────────────────────────── */
+  #cursor-dot {
+    position: fixed;
+    width: 6px; height: 6px;
+    background: #F0A060;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 10px #F0A060, 0 0 22px rgba(240,160,96,0.5);
+    transition: transform 0.06s, width 0.15s, height 0.15s;
+    mix-blend-mode: screen;
+  }
+  #cursor-ring {
+    position: fixed;
+    width: 28px; height: 28px;
+    border: 1px solid rgba(240,160,96,0.35);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.12s, width 0.2s, height 0.2s, border-color 0.2s;
+  }
+
+  /* ── Scanlines ───────────────────────────────────────── */
+  .scanlines {
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(0,0,0,0.08) 3px,
+      rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* ── Top edge glow ───────────────────────────────────── */
+  .edge {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #F0A060 30%, #5AC8B0 70%, transparent);
+    opacity: 0.5;
+    z-index: 200;
+  }
+
+  /* ── Topbar ──────────────────────────────────────────── */
+  .topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 50;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 48px;
+    background: linear-gradient(180deg, rgba(4,6,12,0.95) 0%, transparent 100%);
+  }
+  .topbar-brand {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(237,232,224,0.7);
+  }
+  .topbar-brand em { color: #F0A060; font-style: normal; }
+  .topbar-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: rgba(90,200,176,0.7);
+    text-transform: uppercase;
+  }
+  .status-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #5AC8B0;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(90,200,176,0.4)}
+    50%{opacity:0.6;box-shadow:0 0 0 5px rgba(90,200,176,0)}
+  }
+
+  /* ── Main layout ─────────────────────────────────────── */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 100px 48px 48px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Hero ────────────────────────────────────────────── */
+  .hero {
+    margin-bottom: 52px;
+  }
+  .hero-prompt {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: #5AC8B0;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: fadeIn 0.3s 0.1s ease forwards;
+  }
+  .hero-prompt::before { content: '> '; opacity: 0.6; }
+
+  /* decoded title — spans get filled by JS */
+  .hero-title {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    font-size: clamp(32px, 5vw, 58px);
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    color: #EDE8E0;
+    margin-bottom: 18px;
+  }
+  .hero-title .accent { color: #F0A060; font-style: normal; }
+  .hero-title .decode-span { display: inline-block; }
+
+  .hero-byline {
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: rgba(154,163,176,0.6);
+    text-transform: uppercase;
+    margin-bottom: 22px;
+    opacity: 0;
+  }
+
+  .hero-dek {
+    font-family: Georgia, serif;
+    font-style: normal;
+    font-size: 14px;
+    line-height: 1.7;
+    color: rgba(154,163,176,0.8);
+    max-width: 52ch;
+    opacity: 0;
+  }
+  .hero-dek .decode-span { display: inline-block; }
+
+  /* ── Divider ─────────────────────────────────────────── */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 32px;
+    opacity: 0;
+  }
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(240,160,96,0.3), transparent);
+  }
+  .divider-label {
+    font-size: 8px;
+    letter-spacing: 4px;
+    color: rgba(240,160,96,0.5);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* ── Cards ───────────────────────────────────────────── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    perspective: 900px;
+  }
+
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 22px 22px 18px;
+    background: linear-gradient(160deg, rgba(12,20,34,0.9), rgba(6,10,18,0.95));
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 3px;
+    text-decoration: none;
+    color: inherit;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    transition: box-shadow 150ms ease-out;
+    cursor: none;
+    opacity: 0;
+    min-height: 180px;
+  }
+
+  /* top accent bar */
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+  }
+  .card.sky { --accent: #5090C0; }
+  .card.amber { --accent: #F0A060; }
+  .card.teal { --accent: #5AC8B0; }
+  .card.coral { --accent: #D86878; }
+  .card::before { background: linear-gradient(90deg, var(--accent), transparent 60%); opacity: 0.7; }
+
+  /* radial glow follows cursor */
+  .card-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at var(--mx,50%) var(--my,50%),
+      color-mix(in oklab, var(--accent) 10%, transparent),
+      transparent 65%);
+    opacity: 0;
+    transition: opacity 200ms;
+    pointer-events: none;
+  }
+  .card:hover .card-glow { opacity: 1; }
+
+  .card-num {
+    font-size: 8px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    opacity: 0.55;
+    margin-bottom: 10px;
+  }
+  .card-label {
+    font-size: 8.5px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .card-headline {
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: clamp(16px, 1.8vw, 20px);
+    font-weight: 300;
+    line-height: 1.2;
+    letter-spacing: -0.4px;
+    color: #EDE8E0;
+    flex-grow: 1;
+    margin-bottom: 14px;
+  }
+  .card-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: rgba(154,163,176,0.4);
+    text-transform: uppercase;
+    border-top: 1px solid rgba(255,255,255,0.04);
+    padding-top: 10px;
+  }
+  .card-arrow {
+    font-size: 14px;
+    color: var(--accent);
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: opacity 200ms, transform 200ms;
+    font-family: serif;
+  }
+  .card:hover .card-arrow { opacity: 1; transform: translateX(0); }
+
+  /* ── Glitch text ─────────────────────────────────────── */
+  .glitch {
+    position: relative;
+    display: inline-block;
+  }
+  .glitch::before, .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+  }
+  .glitch.go::before {
+    color: #5AC8B0;
+    animation: g1 0.18s steps(2) forwards;
+    clip-path: polygon(0 15%, 100% 15%, 100% 40%, 0 40%);
+  }
+  .glitch.go::after {
+    color: #D86878;
+    animation: g2 0.18s steps(2) forwards;
+    clip-path: polygon(0 60%, 100% 60%, 100% 85%, 0 85%);
+  }
+  @keyframes g1 { 0%{opacity:1;transform:translate(-3px)} 60%{transform:translate(2px)} 100%{opacity:0} }
+  @keyframes g2 { 0%{opacity:1;transform:translate(3px)} 60%{transform:translate(-2px)} 100%{opacity:0} }
+
+  /* ── Footer ──────────────────────────────────────────── */
+  footer {
+    margin-top: auto;
+    padding: 24px 0 4px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: rgba(154,163,176,0.3);
+    text-transform: uppercase;
+    opacity: 0;
+  }
+  footer em { color: #F0A060; font-style: normal; }
+
+  @keyframes fadeIn { to { opacity: 1; } }
+
+  /* ── Watermark banner ────────────────────────────────── */
+  .wm {
+    position: fixed;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(240,160,96,0.1);
+    border: 1px solid rgba(240,160,96,0.25);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: rgba(240,160,96,0.7);
+    text-transform: uppercase;
+    z-index: 300;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="scanlines"></div>
+<div class="edge"></div>
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+<div class="wm">Mockup Preview · A+B Combo</div>
+
+<header class="topbar">
+  <div class="topbar-brand">ITASIA302 &nbsp;<em>Takumi</em></div>
+  <div class="topbar-status">
+    <span class="status-dot"></span>
+    <span id="status-text">Initialising…</span>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-prompt" id="hero-prompt">Loading project index</div>
+    <h1 class="hero-title">
+      <span id="title-line1" class="glitch" data-text=""></span><br>
+      <span id="title-line2"></span> <span class="accent" id="title-accent"></span>
+    </h1>
+    <div class="hero-byline" id="hero-byline">Takumi Oshiyama &nbsp;·&nbsp; UTokyo &nbsp;·&nbsp; Spring 2026</div>
+    <p class="hero-dek" id="hero-dek">
+      A directory for Takumi's project base consisting of coursework,
+      an ongoing personal project, and an AI statement.
+    </p>
+  </section>
+
+  <div class="divider" id="divider">
+    <div class="divider-line"></div>
+    <span class="divider-label">Project Index</span>
+    <div class="divider-line" style="background:linear-gradient(270deg,rgba(80,144,192,0.3),transparent)"></div>
+  </div>
+
+  <section class="grid" id="grid">
+    <a class="card sky" href="#">
+      <div class="card-glow"></div>
+      <div class="card-num">01 /</div>
+      <div class="card-label">About Me / Research</div>
+      <div class="card-headline">Who I am, and what I'm working on</div>
+      <div class="card-foot"><span>1 subpage</span><span class="card-arrow">→</span></div>
+    </a>
+    <a class="card amber" href="#">
+      <div class="card-glow"></div>
+      <div class="card-num">02 /</div>
+      <div class="card-label">Class Assignments</div>
+      <div class="card-headline">The required coursework</div>
+      <div class="card-foot"><span>2 pieces</span><span class="card-arrow">→</span></div>
+    </a>
+    <a class="card teal" href="#">
+      <div class="card-glow"></div>
+      <div class="card-num">03 /</div>
+      <div class="card-label">Personal Project</div>
+      <div class="card-headline">An independent inquiry, still drafting</div>
+      <div class="card-foot"><span>In progress</span><span class="card-arrow">→</span></div>
+    </a>
+    <a class="card coral" href="#">
+      <div class="card-glow"></div>
+      <div class="card-num">04 /</div>
+      <div class="card-label">AI Statement</div>
+      <div class="card-headline">How these pages were made</div>
+      <div class="card-foot"><span>Disclosure</span><span class="card-arrow">→</span></div>
+    </a>
+  </section>
+
+  <footer id="footer">
+    <span>ITASIA302 · Spring 2026</span>
+    <span><em>Takumi</em> · UTokyo</span>
+  </footer>
+</main>
+
+<script>
+// ─────────────────────────────────────────────────────────────
+// Cursor
+// ─────────────────────────────────────────────────────────────
+const dot = document.getElementById('cursor-dot');
+const ring = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  dot.style.left = mx + 'px';
+  dot.style.top = my + 'px';
+});
+
+function lerpCursor() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  ring.style.left = rx + 'px';
+  ring.style.top = ry + 'px';
+  requestAnimationFrame(lerpCursor);
+}
+lerpCursor();
+
+// enlarge ring on card hover
+document.querySelectorAll('.card').forEach(c => {
+  c.addEventListener('mouseenter', () => {
+    ring.style.width = '48px'; ring.style.height = '48px';
+    ring.style.borderColor = 'rgba(240,160,96,0.5)';
+  });
+  c.addEventListener('mouseleave', () => {
+    ring.style.width = '28px'; ring.style.height = '28px';
+    ring.style.borderColor = 'rgba(240,160,96,0.35)';
+  });
+});
+
+// ─────────────────────────────────────────────────────────────
+// 3D Tilt on cards
+// ─────────────────────────────────────────────────────────────
+document.querySelectorAll('.card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height / 2;
+    const dx = (e.clientX - cx) / (r.width / 2);
+    const dy = (e.clientY - cy) / (r.height / 2);
+    card.style.transform = `perspective(700px) rotateX(${dy * -10}deg) rotateY(${dx * 10}deg) translateZ(10px)`;
+    card.style.boxShadow = `0 ${16 + Math.abs(dy*8)}px 50px rgba(0,0,0,0.5)`;
+    const glow = card.querySelector('.card-glow');
+    glow.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
+    glow.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = '';
+    card.style.boxShadow = '';
+  });
+});
+
+// ─────────────────────────────────────────────────────────────
+// Decode animation
+// ─────────────────────────────────────────────────────────────
+const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#@$%';
+function rndChar() { return CHARS[Math.floor(Math.random() * CHARS.length)]; }
+
+function decodeText(el, finalText, duration, delay = 0) {
+  return new Promise(res => {
+    setTimeout(() => {
+      el.style.opacity = '1';
+      const len = finalText.length;
+      let start = null;
+      function frame(ts) {
+        if (!start) start = ts;
+        const p = Math.min((ts - start) / duration, 1);
+        const revealed = Math.floor(p * len);
+        let out = '';
+        for (let i = 0; i < len; i++) {
+          if (finalText[i] === ' ') out += ' ';
+          else if (i < revealed) out += finalText[i];
+          else out += rndChar();
+        }
+        el.textContent = out;
+        if (p < 1) requestAnimationFrame(frame);
+        else { el.textContent = finalText; res(); }
+      }
+      requestAnimationFrame(frame);
+    }, delay);
+  });
+}
+
+function glitchEl(el) {
+  el.dataset.text = el.textContent;
+  el.classList.add('go');
+  setTimeout(() => el.classList.remove('go'), 300);
+}
+
+// ─────────────────────────────────────────────────────────────
+// Boot sequence
+// ─────────────────────────────────────────────────────────────
+const STATUS = ['Initialising…', 'Loading index…', 'Decrypting…', 'Ready'];
+let si = 0;
+const statusEl = document.getElementById('status-text');
+function nextStatus() {
+  if (si < STATUS.length) {
+    statusEl.textContent = STATUS[si++];
+    if (si < STATUS.length) setTimeout(nextStatus, 600);
+  }
+}
+nextStatus();
+
+async function boot() {
+  // 1. Hero prompt fades in (already via CSS)
+  await new Promise(r => setTimeout(r, 400));
+
+  // 2. Decode title line 1
+  const t1 = document.getElementById('title-line1');
+  t1.style.opacity = '0';
+  await decodeText(t1, 'Introduction to', 600, 0);
+  t1.dataset.text = t1.textContent;
+
+  // 3. Decode line 2 & accent
+  const t2 = document.getElementById('title-line2');
+  const ta = document.getElementById('title-accent');
+  t2.style.opacity = '0';
+  ta.style.opacity = '0';
+  await Promise.all([
+    decodeText(t2, 'Digital Technology', 700, 100),
+    decodeText(ta, '& Society', 500, 500),
+  ]);
+
+  // 4. glitch flash
+  setTimeout(() => glitchEl(t1), 200);
+
+  // 5. Reveal byline
+  const byline = document.getElementById('hero-byline');
+  await decodeText(byline, 'Takumi Oshiyama · UTokyo · Spring 2026', 500, 100);
+
+  // 6. Reveal dek
+  const dek = document.getElementById('hero-dek');
+  dek.style.opacity = '0';
+  await decodeText(dek,
+    'A directory for Takumi\'s project base — coursework, ongoing personal project, and an AI statement.',
+    800, 100);
+
+  // 7. Show divider
+  const div = document.getElementById('divider');
+  div.style.transition = 'opacity 0.5s';
+  div.style.opacity = '1';
+
+  await new Promise(r => setTimeout(r, 200));
+
+  // 8. Stagger cards in
+  const cards = document.querySelectorAll('.card');
+  cards.forEach((c, i) => {
+    setTimeout(() => {
+      c.style.transition = 'opacity 0.4s, transform 0.4s';
+      c.style.opacity = '1';
+    }, i * 120);
+  });
+
+  await new Promise(r => setTimeout(r, 700));
+
+  // 9. Footer
+  const footer = document.getElementById('footer');
+  footer.style.transition = 'opacity 0.5s';
+  footer.style.opacity = '1';
+}
+
+// small delay so page renders first
+setTimeout(boot, 300);
+</script>
+</body>
+</html>

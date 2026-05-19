@@ -1,0 +1,437 @@
+<h2>3 Design Directions — "Cool, Not AI-Generated"</h2>
+<p class="subtitle">Each option is a different personality. Pick the one that feels most like <em>you</em>.</p>
+
+<style>
+  .dir-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin: 28px 0;
+  }
+  .dir-card {
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 200ms, transform 200ms;
+    background: rgba(255,255,255,0.02);
+  }
+  .dir-card:hover { border-color: rgba(255,255,255,0.35); transform: translateY(-2px); }
+  .dir-card.selected { border-color: #F0A060; background: rgba(240,160,96,0.06); }
+
+  /* Mockup previews */
+  .preview {
+    height: 240px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Direction A — Brutalist Editorial */
+  .preview-a {
+    background: #080C14;
+    padding: 16px;
+    font-family: monospace;
+  }
+  .preview-a .big-num {
+    font-size: 64px;
+    font-weight: 700;
+    color: #F0A060;
+    line-height: 1;
+    letter-spacing: -3px;
+    opacity: 0.18;
+    position: absolute;
+    top: 8px; right: 12px;
+  }
+  .preview-a .tag {
+    display: inline-block;
+    border: 1px solid #F0A060;
+    color: #F0A060;
+    font-size: 8px;
+    letter-spacing: 3px;
+    padding: 2px 7px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  .preview-a .headline {
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: 22px;
+    font-weight: 400;
+    color: #EDE8E0;
+    line-height: 1.15;
+    margin-bottom: 10px;
+    letter-spacing: -0.5px;
+  }
+  .preview-a .rule { height: 1px; background: rgba(240,160,96,0.3); margin: 10px 0; }
+  .preview-a .row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 6px;
+    align-items: baseline;
+  }
+  .preview-a .row-num {
+    font-size: 9px;
+    color: #F0A060;
+    opacity: 0.7;
+    min-width: 22px;
+  }
+  .preview-a .row-title {
+    font-size: 11px;
+    color: #EDE8E0;
+    letter-spacing: 0.04em;
+  }
+  .preview-a .row-arrow {
+    margin-left: auto;
+    font-size: 10px;
+    color: #F0A060;
+    opacity: 0.5;
+  }
+
+  /* Direction B — Left-Rail Spatial */
+  .preview-b {
+    background: #06080F;
+    display: flex;
+    height: 100%;
+  }
+  .preview-b .rail {
+    width: 48px;
+    border-right: 1px solid #1A2A40;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 14px 0;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .preview-b .rail-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #F0A060;
+    opacity: 0.7;
+  }
+  .preview-b .rail-line {
+    width: 1px;
+    flex: 1;
+    background: linear-gradient(180deg, #1A2A40 0%, transparent 100%);
+  }
+  .preview-b .rail-label {
+    font-family: monospace;
+    font-size: 7px;
+    letter-spacing: 2px;
+    color: #3A4A62;
+    writing-mode: vertical-rl;
+    text-transform: uppercase;
+  }
+  .preview-b .main {
+    flex: 1;
+    padding: 14px 14px 14px 14px;
+    overflow: hidden;
+  }
+  .preview-b .b-eyebrow {
+    font-family: monospace;
+    font-size: 7px;
+    letter-spacing: 3px;
+    color: #3A4A62;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .preview-b .b-title {
+    font-family: Georgia, serif;
+    font-size: 18px;
+    font-weight: 300;
+    color: #EDE8E0;
+    line-height: 1.2;
+    letter-spacing: -0.4px;
+    margin-bottom: 12px;
+  }
+  .preview-b .b-title em { font-style: italic; color: #F0A060; }
+  .preview-b .b-card {
+    border: 1px solid #132032;
+    border-radius: 2px;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .preview-b .b-card-accent {
+    width: 3px;
+    border-radius: 2px;
+    align-self: stretch;
+    flex-shrink: 0;
+  }
+  .preview-b .b-card-title {
+    font-family: monospace;
+    font-size: 9px;
+    color: #9AA3B0;
+    letter-spacing: 0.04em;
+  }
+  .preview-b .b-card-num {
+    margin-left: auto;
+    font-family: monospace;
+    font-size: 8px;
+    color: #3A4A62;
+  }
+
+  /* Direction C — High-Contrast Expressive */
+  .preview-c {
+    background: #030508;
+    padding: 16px;
+    overflow: hidden;
+  }
+  .preview-c .c-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .preview-c .c-logo {
+    width: 26px; height: 26px;
+    border: 1.5px solid #F0A060;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: 13px;
+    color: #F0A060;
+    flex-shrink: 0;
+  }
+  .preview-c .c-title-sm {
+    font-family: monospace;
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: #9AA3B0;
+    text-transform: uppercase;
+  }
+  .preview-c .c-big {
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 34px;
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+    color: #EDE8E0;
+    margin-bottom: 4px;
+  }
+  .preview-c .c-big em { color: #F0A060; font-style: normal; }
+  .preview-c .c-sub {
+    font-family: monospace;
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: #3A4A62;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .preview-c .c-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .preview-c .c-card {
+    border: 1px solid #132032;
+    border-radius: 3px;
+    padding: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  .preview-c .c-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1.5px;
+  }
+  .preview-c .c-card.sky::before { background: #5090C0; }
+  .preview-c .c-card.amber::before { background: #F0A060; }
+  .preview-c .c-card.teal::before { background: #5AC8B0; }
+  .preview-c .c-card.coral::before { background: #D86878; }
+  .preview-c .c-card-label {
+    font-family: monospace;
+    font-size: 7px;
+    letter-spacing: 2px;
+    color: #3A4A62;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .preview-c .c-card-text {
+    font-family: Georgia, serif;
+    font-size: 10px;
+    color: #9AA3B0;
+  }
+  .preview-c .c-glow {
+    position: absolute;
+    top: -20px; right: -20px;
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(240,160,96,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .dir-meta {
+    padding: 14px 16px;
+  }
+  .dir-letter {
+    display: inline-block;
+    font-family: monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #F0A060;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .dir-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #EDE8E0;
+    margin-bottom: 5px;
+  }
+  .dir-desc {
+    font-size: 12px;
+    color: #9AA3B0;
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+  .dir-vibes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .vibe {
+    font-size: 10px;
+    padding: 2px 8px;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    color: #9AA3B0;
+  }
+</style>
+
+<div class="dir-grid">
+
+  <!-- Direction A: Brutalist Editorial -->
+  <div class="dir-card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="preview preview-a">
+      <div class="big-num">302</div>
+      <div class="tag">ITASIA302</div>
+      <div class="headline">Introduction to<br>Digital Technology<br>&amp; Society</div>
+      <div class="rule"></div>
+      <div class="row">
+        <span class="row-num">01 /</span>
+        <span class="row-title">ABOUT ME / RESEARCH</span>
+        <span class="row-arrow">→</span>
+      </div>
+      <div class="row">
+        <span class="row-num">02 /</span>
+        <span class="row-title">CLASS ASSIGNMENTS</span>
+        <span class="row-arrow">→</span>
+      </div>
+      <div class="row">
+        <span class="row-num">03 /</span>
+        <span class="row-title">PERSONAL PROJECT</span>
+        <span class="row-arrow">→</span>
+      </div>
+      <div class="row">
+        <span class="row-num">04 /</span>
+        <span class="row-title">AI STATEMENT</span>
+        <span class="row-arrow">→</span>
+      </div>
+    </div>
+    <div class="dir-meta">
+      <div class="dir-letter">A</div>
+      <div class="dir-name">Brutalist Editorial</div>
+      <div class="dir-desc">Dump the card grid. Replace with a numbered list layout — like a magazine table of contents or an academic journal index. Very raw, very intentional.</div>
+      <div class="dir-vibes">
+        <span class="vibe">no card boxes</span>
+        <span class="vibe">list-based nav</span>
+        <span class="vibe">giant serif hero</span>
+        <span class="vibe">monospace labels</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Direction B: Left-Rail Spatial -->
+  <div class="dir-card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="preview preview-b">
+      <div class="rail">
+        <div class="rail-dot"></div>
+        <div class="rail-line"></div>
+        <div class="rail-label">ITASIA302</div>
+      </div>
+      <div class="main">
+        <div class="b-eyebrow">TAKUMI · UTOKYO · SP2026</div>
+        <div class="b-title">Digital Technology<br>and <em>Society</em></div>
+        <div class="b-card">
+          <div class="b-card-accent" style="background:#5090C0"></div>
+          <div class="b-card-title">About Me / Research</div>
+          <div class="b-card-num">01</div>
+        </div>
+        <div class="b-card">
+          <div class="b-card-accent" style="background:#F0A060"></div>
+          <div class="b-card-title">Class Assignments</div>
+          <div class="b-card-num">02</div>
+        </div>
+        <div class="b-card">
+          <div class="b-card-accent" style="background:#5AC8B0"></div>
+          <div class="b-card-title">Personal Project</div>
+          <div class="b-card-num">03</div>
+        </div>
+      </div>
+    </div>
+    <div class="dir-meta">
+      <div class="dir-letter">B</div>
+      <div class="dir-name">Left-Rail Spatial</div>
+      <div class="dir-desc">Add a fixed left rail with a vertical timeline/index. Cards become compact rows with colored accent bars. Feels like a research dashboard or a curated notebook.</div>
+      <div class="dir-vibes">
+        <span class="vibe">left sidebar rail</span>
+        <span class="vibe">compact rows</span>
+        <span class="vibe">color accent bars</span>
+        <span class="vibe">notebook feel</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Direction C: High-Contrast Expressive -->
+  <div class="dir-card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="preview preview-c">
+      <div class="c-glow"></div>
+      <div class="c-top">
+        <div class="c-logo">T</div>
+        <div class="c-title-sm">Takumi Oshiyama</div>
+      </div>
+      <div class="c-big">Digital <em>&amp;</em><br>Society</div>
+      <div class="c-sub">ITASIA302 · UTOKYO · SP26</div>
+      <div class="c-cards">
+        <div class="c-card sky">
+          <div class="c-card-label">01 / About</div>
+          <div class="c-card-text">Who I am, what I'm working on</div>
+        </div>
+        <div class="c-card amber">
+          <div class="c-card-label">02 / Class</div>
+          <div class="c-card-text">Required coursework</div>
+        </div>
+        <div class="c-card teal">
+          <div class="c-card-label">03 / Project</div>
+          <div class="c-card-text">Independent inquiry</div>
+        </div>
+        <div class="c-card coral">
+          <div class="c-card-label">04 / AI</div>
+          <div class="c-card-text">How this was made</div>
+        </div>
+      </div>
+    </div>
+    <div class="dir-meta">
+      <div class="dir-letter">C</div>
+      <div class="dir-name">High-Contrast Expressive</div>
+      <div class="dir-desc">Keep the card grid but add a personal monogram mark, much bigger hero type, deeper black background, and more aggressive color contrast. Same structure, radically more personality.</div>
+      <div class="dir-vibes">
+        <span class="vibe">monogram mark</span>
+        <span class="vibe">bigger type</span>
+        <span class="vibe">deeper black</span>
+        <span class="vibe">keeps card grid</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="text-align:center; margin-top: 8px;">Click a card to select your direction — or pick more than one to mix ideas.</p>

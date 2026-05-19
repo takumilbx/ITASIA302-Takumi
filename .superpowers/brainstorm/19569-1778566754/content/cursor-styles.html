@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cursor Animation Options</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #05060e;
+    color: #e0e6f0;
+    font-family: "Geist Mono", ui-monospace, monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  h1 {
+    text-align: center;
+    padding: 2rem 1rem 0.5rem;
+    font-size: 1rem;
+    letter-spacing: 0.15em;
+    color: #4db8cc;
+    text-transform: uppercase;
+  }
+  .subtitle {
+    text-align: center;
+    color: #8899b8;
+    font-size: 0.78rem;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.05em;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 1.5rem 2rem;
+  }
+
+  .card {
+    background: #0b0d1a;
+    border: 1px solid #182030;
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: none;
+    transition: border-color 0.2s;
+    position: relative;
+  }
+  .card.selected {
+    border-color: #4db8cc;
+    box-shadow: 0 0 0 1px #4db8cc40;
+  }
+  .card-label {
+    padding: 0.75rem 1rem 0.5rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: #4db8cc;
+    text-transform: uppercase;
+    border-bottom: 1px solid #182030;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-label .badge {
+    font-size: 0.65rem;
+    background: #4db8cc22;
+    color: #4db8cc;
+    padding: 0.1rem 0.5rem;
+    border-radius: 3px;
+  }
+  .demo-area {
+    height: 160px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .demo-hint {
+    font-size: 0.7rem;
+    color: #2e3a55;
+    letter-spacing: 0.08em;
+    pointer-events: none;
+    user-select: none;
+    position: absolute;
+  }
+  .card-desc {
+    padding: 0.6rem 1rem 0.8rem;
+    font-size: 0.72rem;
+    color: #8899b8;
+    line-height: 1.6;
+    border-top: 1px solid #182030;
+  }
+
+  /* Selection overlay */
+  .select-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #4db8cc18;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+  .card.selected .select-overlay { opacity: 1; }
+  .check {
+    width: 28px; height: 28px;
+    background: #4db8cc;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    color: #05060e;
+    font-weight: bold;
+  }
+
+  /* === CURSOR A: Glitch Crosshair === */
+  #cursor-a {
+    width: 24px; height: 24px;
+    position: absolute;
+    pointer-events: none;
+    display: none;
+  }
+  #cursor-a::before, #cursor-a::after {
+    content: '';
+    position: absolute;
+    background: #4db8cc;
+  }
+  #cursor-a::before { width: 1px; height: 100%; left: 50%; top: 0; }
+  #cursor-a::after  { width: 100%; height: 1px; top: 50%; left: 0; }
+  .demo-a #cursor-a { display: block; }
+  .cursor-a-ring {
+    position: absolute;
+    width: 24px; height: 24px;
+    border: 1px solid #4db8cc88;
+    border-radius: 50%;
+    pointer-events: none;
+    display: none;
+    transform: translate(-50%, -50%);
+  }
+
+  /* === CURSOR B: Trailing Dots === */
+  .trail-dot {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+  }
+
+  /* === CURSOR C: Glowing Blob === */
+  #cursor-c {
+    position: absolute;
+    width: 12px; height: 12px;
+    background: #4db8cc;
+    border-radius: 50%;
+    pointer-events: none;
+    display: none;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 12px 4px #4db8cc88, 0 0 24px 8px #4db8cc33;
+    transition: width 0.1s, height 0.1s;
+  }
+  .demo-c #cursor-c { display: block; }
+  #cursor-c-glow {
+    position: absolute;
+    width: 60px; height: 60px;
+    background: radial-gradient(circle, #4db8cc22 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    display: none;
+    transform: translate(-50%, -50%);
+    transition: all 0.08s;
+  }
+  .demo-c #cursor-c-glow { display: block; }
+
+  /* === CURSOR D: Data Stream === */
+  #cursor-d {
+    position: absolute;
+    pointer-events: none;
+    display: none;
+    transform: translate(-50%, -50%);
+    font-size: 10px;
+    color: #4db8cc;
+    letter-spacing: 0.05em;
+    line-height: 1;
+    width: 20px;
+    text-align: center;
+  }
+  .demo-d #cursor-d { display: block; }
+  .data-char {
+    position: absolute;
+    font-size: 10px;
+    color: #4db8cc;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    animation: fadeChar 0.6s forwards;
+  }
+  @keyframes fadeChar {
+    0%   { opacity: 0.9; transform: translate(-50%, -50%) scale(1.2); }
+    100% { opacity: 0; transform: translate(-50%, -80%) scale(0.6); }
+  }
+
+  /* Selected state bar at bottom */
+  .selection-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    padding: 0.75rem 2rem;
+    background: #0b0d1a;
+    border-top: 1px solid #182030;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.75rem;
+    color: #8899b8;
+    letter-spacing: 0.06em;
+    z-index: 100;
+    min-height: 44px;
+  }
+  .selection-bar span { color: #4db8cc; }
+  .selection-bar.has-choice { color: #e0e6f0; }
+</style>
+</head>
+<body>
+
+<h1>Cursor Animation — Pick a Style</h1>
+<p class="subtitle">Move your mouse over each preview to see it live · Click to select</p>
+
+<div class="grid">
+
+  <!-- OPTION A: Targeting Crosshair -->
+  <div class="card demo-a" id="card-a" onclick="selectCard('a')">
+    <div class="card-label">
+      A — Targeting Crosshair
+      <span class="badge">Terminal</span>
+    </div>
+    <div class="demo-area" id="demo-a">
+      <div class="demo-hint">MOVE CURSOR HERE</div>
+      <div id="cursor-a"></div>
+      <div class="cursor-a-ring" id="cursor-a-ring"></div>
+    </div>
+    <div class="card-desc">
+      Cross-hair reticle follows cursor. Outer ring pulses on click.
+      Fits the site's scientific/targeting aesthetic.
+    </div>
+    <div class="select-overlay"><div class="check">✓</div></div>
+  </div>
+
+  <!-- OPTION B: Trailing Dots -->
+  <div class="card" id="card-b" onclick="selectCard('b')">
+    <div class="card-label">
+      B — Particle Trail
+      <span class="badge">Kinetic</span>
+    </div>
+    <div class="demo-area" id="demo-b">
+      <div class="demo-hint">MOVE CURSOR HERE</div>
+    </div>
+    <div class="card-desc">
+      Small dots trail behind cursor, fading out. Subtle motion trace
+      that reinforces the cyberpunk atmosphere.
+    </div>
+    <div class="select-overlay"><div class="check">✓</div></div>
+  </div>
+
+  <!-- OPTION C: Neon Glow -->
+  <div class="card" id="card-c" onclick="selectCard('c')">
+    <div class="card-label">
+      C — Neon Glow
+      <span class="badge">Ambient</span>
+    </div>
+    <div class="demo-area" id="demo-c">
+      <div class="demo-hint">MOVE CURSOR HERE</div>
+      <div id="cursor-c"></div>
+      <div id="cursor-c-glow"></div>
+    </div>
+    <div class="card-desc">
+      Soft glowing dot with radial ambient light. Clean, modern,
+      minimal — like a light source moving across the dark page.
+    </div>
+    <div class="select-overlay"><div class="check">✓</div></div>
+  </div>
+
+  <!-- OPTION D: Data Characters -->
+  <div class="card" id="card-d" onclick="selectCard('d')">
+    <div class="card-label">
+      D — Data Stream
+      <span class="badge">Matrix</span>
+    </div>
+    <div class="demo-area" id="demo-d">
+      <div class="demo-hint">MOVE CURSOR HERE</div>
+      <div id="cursor-d">█</div>
+    </div>
+    <div class="card-desc">
+      Random hex/binary chars float up from cursor as it moves.
+      Evokes the binary rain from the login screen.
+    </div>
+    <div class="select-overlay"><div class="check">✓</div></div>
+  </div>
+
+</div>
+
+<div class="selection-bar" id="selection-bar">
+  Selected: <span id="selected-label">none — click a card above</span>
+</div>
+
+<script>
+  let selected = null;
+
+  function selectCard(id) {
+    if (selected) document.getElementById('card-' + selected).classList.remove('selected');
+    selected = id;
+    document.getElementById('card-' + id).classList.add('selected');
+    const labels = { a: 'A — Targeting Crosshair', b: 'B — Particle Trail', c: 'C — Neon Glow', d: 'D — Data Stream' };
+    document.getElementById('selected-label').textContent = labels[id];
+    document.getElementById('selection-bar').classList.add('has-choice');
+    // Record for state
+    if (window._recordChoice) window._recordChoice(id, labels[id]);
+  }
+
+  // ── Cursor A: Crosshair ──
+  const demoA = document.getElementById('demo-a');
+  const curA  = document.getElementById('cursor-a');
+  const ringA = document.getElementById('cursor-a-ring');
+  demoA.addEventListener('mousemove', e => {
+    const r = demoA.getBoundingClientRect();
+    const x = e.clientX - r.left, y = e.clientY - r.top;
+    curA.style.left  = (x - 12) + 'px';
+    curA.style.top   = (y - 12) + 'px';
+    ringA.style.left = x + 'px';
+    ringA.style.top  = y + 'px';
+    ringA.style.display = 'block';
+    demoA.querySelector('.demo-hint').style.opacity = '0';
+  });
+  demoA.addEventListener('mouseleave', () => {
+    ringA.style.display = 'none';
+    demoA.querySelector('.demo-hint').style.opacity = '1';
+  });
+  demoA.addEventListener('click', e => {
+    e.stopPropagation();
+    ringA.style.width  = '40px';
+    ringA.style.height = '40px';
+    ringA.style.marginLeft  = '-8px';
+    ringA.style.marginTop   = '-8px';
+    ringA.style.borderColor = '#4db8cc';
+    setTimeout(() => {
+      ringA.style.width = '24px'; ringA.style.height = '24px';
+      ringA.style.marginLeft = '0'; ringA.style.marginTop = '0';
+      ringA.style.borderColor = '#4db8cc88';
+    }, 220);
+    selectCard('a');
+  });
+
+  // ── Cursor B: Trailing Dots ──
+  const demoB = document.getElementById('demo-b');
+  const dots = [];
+  const MAX_DOTS = 12;
+  let lastX = 0, lastY = 0;
+
+  function spawnDot(x, y) {
+    const d = document.createElement('div');
+    d.className = 'trail-dot';
+    const size = 3 + Math.random() * 4;
+    const alpha = 0.6 + Math.random() * 0.4;
+    d.style.cssText = `width:${size}px;height:${size}px;background:#4db8cc;opacity:${alpha};left:${x}px;top:${y}px;`;
+    demoB.appendChild(d);
+    dots.push({ el: d, life: 1 });
+    if (dots.length > MAX_DOTS) {
+      const old = dots.shift();
+      old.el.remove();
+    }
+  }
+
+  function fadeDots() {
+    dots.forEach((d, i) => {
+      d.life -= 0.04;
+      d.el.style.opacity = Math.max(0, d.life * 0.8);
+    });
+    requestAnimationFrame(fadeDots);
+  }
+  fadeDots();
+
+  demoB.addEventListener('mousemove', e => {
+    const r = demoB.getBoundingClientRect();
+    const x = e.clientX - r.left, y = e.clientY - r.top;
+    const dist = Math.hypot(x - lastX, y - lastY);
+    if (dist > 4) { spawnDot(x, y); lastX = x; lastY = y; }
+    demoB.querySelector('.demo-hint').style.opacity = '0';
+  });
+  demoB.addEventListener('mouseleave', () => {
+    demoB.querySelector('.demo-hint').style.opacity = '1';
+  });
+
+  // ── Cursor C: Neon Glow ──
+  const demoC  = document.getElementById('demo-c');
+  const curC   = document.getElementById('cursor-c');
+  const glowC  = document.getElementById('cursor-c-glow');
+  demoC.addEventListener('mousemove', e => {
+    const r = demoC.getBoundingClientRect();
+    const x = e.clientX - r.left, y = e.clientY - r.top;
+    curC.style.left  = x + 'px'; curC.style.top  = y + 'px';
+    glowC.style.left = x + 'px'; glowC.style.top = y + 'px';
+    demoC.querySelector('.demo-hint').style.opacity = '0';
+  });
+  demoC.addEventListener('mouseleave', () => {
+    demoC.querySelector('.demo-hint').style.opacity = '1';
+  });
+
+  // ── Cursor D: Data Chars ──
+  const demoD = document.getElementById('demo-d');
+  const curD  = document.getElementById('cursor-d');
+  const chars = '01アABCDEF∑∆Ψ▓░';
+  let lastSpawn = 0;
+  demoD.addEventListener('mousemove', e => {
+    const r = demoD.getBoundingClientRect();
+    const x = e.clientX - r.left, y = e.clientY - r.top;
+    curD.style.left = x + 'px'; curD.style.top = y + 'px';
+    demoD.querySelector('.demo-hint').style.opacity = '0';
+    const now = Date.now();
+    if (now - lastSpawn > 80) {
+      lastSpawn = now;
+      const span = document.createElement('div');
+      span.className = 'data-char';
+      span.textContent = chars[Math.floor(Math.random() * chars.length)];
+      span.style.left = (x + (Math.random() - 0.5) * 20) + 'px';
+      span.style.top  = y + 'px';
+      span.style.color = Math.random() > 0.7 ? '#7dd3e8' : '#4db8cc';
+      demoD.appendChild(span);
+      setTimeout(() => span.remove(), 650);
+    }
+  });
+  demoD.addEventListener('mouseleave', () => {
+    demoD.querySelector('.demo-hint').style.opacity = '1';
+  });
+
+  // Bridge to visual companion events if helper loaded
+  window._recordChoice = function(id, label) {
+    if (window.__vcRecord) window.__vcRecord({ choice: id, text: label });
+  };
+</script>
+</body>
+</html>

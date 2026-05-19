@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #080c14; color: #ede8e0; font-family: 'Segoe UI', sans-serif; padding: 40px 48px; min-height: 100vh; }
+
+  .eyebrow { font-family: monospace; font-size: 9px; letter-spacing: 0.26em; text-transform: uppercase; color: #3a4a62; display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .eyebrow::before { content: ''; display: inline-block; width: 32px; height: 1px; background: #9e90d0; }
+
+  .thesis-title { font-family: Georgia, serif; font-size: 28px; font-weight: 300; letter-spacing: -0.02em; color: #ede8e0; margin-bottom: 8px; }
+  .thesis-title em { color: #9e90d0; font-style: italic; }
+
+  .status { display: inline-flex; align-items: center; gap: 8px; font-family: monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #5ac8b0; margin-bottom: 52px; }
+  .pulse { width: 7px; height: 7px; border-radius: 50%; background: #5ac8b0; box-shadow: 0 0 8px #5ac8b0; display: inline-block; animation: glow 2.4s infinite ease-in-out; }
+  @keyframes glow { 0%,100%{opacity:.5;box-shadow:0 0 6px #5ac8b0}50%{opacity:1;box-shadow:0 0 14px #5ac8b0} }
+
+  /* ── Timeline track ── */
+  .timeline-wrap { position: relative; margin-bottom: 0; padding: 0 5%; }
+
+  .track { position: absolute; top: 20px; left: 5%; right: 5%; height: 1px; background: #132032; }
+  .track-fill {
+    position: absolute; top: 20px; left: 5%; width: 0%;
+    height: 1px; z-index: 1;
+    background: linear-gradient(90deg, #f0a060, #5090c0, #5ac8b0, #9e90d0);
+    transition: width 0.5s cubic-bezier(.22,.61,.36,1);
+  }
+
+  /* sliding glow indicator */
+  .track-glow {
+    position: absolute; top: 12px; width: 18px; height: 18px;
+    border-radius: 50%; z-index: 2;
+    background: var(--glow-color, #f0a060);
+    box-shadow: 0 0 18px 4px var(--glow-color, #f0a060);
+    opacity: 0.35;
+    transition: left 0.5s cubic-bezier(.22,.61,.36,1), background 0.4s ease, box-shadow 0.4s ease;
+    pointer-events: none;
+    transform: translateX(-50%);
+  }
+
+  .nodes { display: flex; justify-content: space-between; position: relative; z-index: 3; }
+
+  .node {
+    display: flex; flex-direction: column; align-items: center;
+    cursor: pointer; width: 22%;
+    transition: transform 0.4s cubic-bezier(.22,.61,.36,1);
+  }
+  .node:hover { transform: translateY(-6px); }
+  .node.active { transform: translateY(-14px); }
+
+  .dot {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: #080c14;
+    border: 2px solid #1e2e42;
+    display: flex; align-items: center; justify-content: center;
+    font-family: monospace; font-size: 13px; font-weight: 700; color: #3a4a62;
+    transition: all 0.4s cubic-bezier(.22,.61,.36,1);
+    margin-bottom: 12px;
+  }
+  .node:hover .dot { border-color: #9aa3b0; color: #9aa3b0; transform: scale(1.1); }
+  .node.active .dot {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #080c14;
+    box-shadow: 0 0 20px var(--accent);
+    transform: scale(1.28);
+  }
+
+  .node-ch { font-family: monospace; font-size: 8.5px; letter-spacing: 0.2em; text-transform: uppercase; color: #3a4a62; margin-bottom: 4px; text-align: center; transition: color 0.3s; }
+  .node-name { font-family: Georgia, serif; font-size: 13px; color: #9aa3b0; text-align: center; line-height: 1.35; transition: color 0.3s; }
+  .node.active .node-ch { color: var(--accent); }
+  .node.active .node-name { color: #ede8e0; }
+  .node:hover .node-ch { color: #9aa3b0; }
+
+  .node:nth-child(1) { --accent: #f0a060; }
+  .node:nth-child(2) { --accent: #5090c0; }
+  .node:nth-child(3) { --accent: #5ac8b0; }
+  .node:nth-child(4) { --accent: #9e90d0; }
+
+  /* ── Content panel ── */
+  .panel-wrap { margin-top: 40px; border-top: 1px solid #132032; padding-top: 28px; min-height: 220px; position: relative; overflow: hidden; }
+
+  .panel { position: absolute; width: 100%; top: 28px; opacity: 0; transform: translateY(14px); pointer-events: none; transition: opacity 0.4s ease, transform 0.4s cubic-bezier(.22,.61,.36,1); }
+  .panel.active { opacity: 1; transform: translateY(0); pointer-events: auto; position: relative; }
+
+  .panel-heading { font-family: Georgia, serif; font-size: 20px; font-weight: 400; color: #ede8e0; margin-bottom: 18px; }
+  .panel-heading em { font-style: italic; color: var(--accent, #9e90d0); }
+
+  .entry { background: #0e1824; border: 1px solid #132032; border-left: 2px solid var(--accent, #9e90d0); border-radius: 0 6px 6px 0; padding: 12px 16px; margin-bottom: 10px; }
+  .entry-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+  .entry-title { color: #ede8e0; font-size: 13px; font-weight: 600; }
+  .entry-tag { font-family: monospace; font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; color: #3a4a62; }
+  .entry-body { color: #9aa3b0; font-size: 12px; line-height: 1.6; }
+
+  .current-box { background: linear-gradient(135deg, rgba(158,144,208,0.08), rgba(80,144,192,0.05)); border: 1px solid rgba(158,144,208,0.3); border-radius: 8px; padding: 20px 24px; }
+  .current-quote { font-family: Georgia, serif; font-size: 14px; line-height: 1.7; color: #ede8e0; font-style: italic; margin-bottom: 14px; }
+  .kw-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .kw { font-family: monospace; font-size: 8px; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; color: #9e90d0; border: 1px solid rgba(158,144,208,0.3); }
+  .kw.dim { color: #9aa3b0; border-color: #132032; }
+</style>
+</head>
+<body>
+
+  <div class="eyebrow">Master's Thesis · Research Journey</div>
+  <div class="thesis-title">Two Countries, <em>One Question</em></div>
+  <div class="status"><span class="pulse"></span>Actively developing</div>
+
+  <div class="timeline-wrap">
+    <div class="track"></div>
+    <div class="track-fill" id="track-fill"></div>
+    <div class="track-glow" id="track-glow"></div>
+
+    <div class="nodes" id="nodes">
+      <div class="node active" data-index="0" onclick="activate(this)">
+        <div class="dot">1</div>
+        <div class="node-ch">Chapter 1</div>
+        <div class="node-name">Inspirations</div>
+      </div>
+      <div class="node" data-index="1" onclick="activate(this)">
+        <div class="dot">2</div>
+        <div class="node-ch">Chapter 2</div>
+        <div class="node-name">Past Research</div>
+      </div>
+      <div class="node" data-index="2" onclick="activate(this)">
+        <div class="dot">3</div>
+        <div class="node-ch">Chapter 3</div>
+        <div class="node-name">Past Iterations</div>
+      </div>
+      <div class="node" data-index="3" onclick="activate(this)">
+        <div class="dot">4</div>
+        <div class="node-ch">Chapter 4</div>
+        <div class="node-name">Now</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-wrap">
+
+    <div class="panel active" id="panel-0" style="--accent:#f0a060">
+      <div class="panel-heading">What made me <em>care</em> about this</div>
+      <div class="entry" style="--accent:#f0a060">
+        <div class="entry-title">9 years in Thai education</div>
+        <div class="entry-body">Watching teachers struggle with technology not because they lacked will, but because the system gave them no scaffolding. That gap stayed with me.</div>
+      </div>
+      <div class="entry" style="--accent:#f0a060">
+        <div class="entry-title">SEAYLP 2019 · Northern Illinois University</div>
+        <div class="entry-body">Cross-cultural youth leadership across ASEAN. First time I saw how different "technology in school" looked country-to-country, even within Southeast Asia.</div>
+      </div>
+      <div class="entry" style="--accent:#f0a060">
+        <div class="entry-title">Bangkok Metropolitan Administration · 2023</div>
+        <div class="entry-body">Tracking BMA's education strategy and visualizing the Thai Scholarship Database. Made me realize data exposes what systems prioritize — and what they miss.</div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-1" style="--accent:#5090c0">
+      <div class="panel-heading">Work that <em>shaped</em> my thinking</div>
+      <div class="entry" style="--accent:#5090c0">
+        <div class="entry-title">TDRI Internship · 2019</div>
+        <div class="entry-body">My first exposure to policy-level thinking about EdTech and structural issues in the Thai education system.</div>
+      </div>
+      <div class="entry" style="--accent:#5090c0">
+        <div class="entry-title">Saturday School Foundation · E-sports pilot · 2022</div>
+        <div class="entry-body">Developed curriculum for piloting E-sports classrooms in 8 Bangkok schools. First time I designed for teacher adoption, not just student engagement.</div>
+      </div>
+      <div class="entry" style="--accent:#5090c0">
+        <div class="entry-title">BA Thesis · Thammasat · 2024</div>
+        <div class="entry-body">[ Add your BA thesis topic — this is where readers see how your thinking evolved from undergraduate to graduate research ]</div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-2" style="--accent:#5ac8b0">
+      <div class="panel-heading">How this thesis has <em>evolved</em></div>
+      <div class="entry" style="--accent:#5ac8b0">
+        <div class="entry-top"><div class="entry-title">Version 1 · Initial concept</div><div class="entry-tag">Dropped</div></div>
+        <div class="entry-body">[ What did you originally think you were studying? What changed? ]</div>
+      </div>
+      <div class="entry" style="--accent:#5ac8b0">
+        <div class="entry-top"><div class="entry-title">Version 2 · Narrowing to TPACK</div><div class="entry-tag">Refined</div></div>
+        <div class="entry-body">[ How did you arrive at TPACK as the framework? What did you read, who did you talk to? ]</div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-3" style="--accent:#9e90d0">
+      <div class="panel-heading">Where I am <em>today</em></div>
+      <div class="current-box">
+        <div class="current-quote">"A comparative study of TPACK development between Japan and Thailand — examining how teachers acquire the integrated knowledge needed to teach effectively with technology, and how institutional contexts shape that process differently across the two countries."</div>
+        <div class="kw-row">
+          <span class="kw">TPACK</span>
+          <span class="kw dim">GIGA School</span>
+          <span class="kw dim">Digital Divide</span>
+          <span class="kw dim">Comparative EdTech</span>
+          <span class="kw dim">Teacher Development</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+  const glowColors = ['#f0a060','#5090c0','#5ac8b0','#9e90d0'];
+  const fillStops  = [0, 33, 66, 100]; // % of track-fill width
+
+  function activate(node) {
+    const idx = parseInt(node.dataset.index);
+    document.querySelectorAll('.node').forEach(n => n.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    node.classList.add('active');
+    document.getElementById('panel-' + idx).classList.add('active');
+
+    // Move track fill
+    document.getElementById('track-fill').style.width = fillStops[idx] + '%';
+
+    // Move glow dot
+    const glow = document.getElementById('track-glow');
+    const nodeEl = node;
+    const wrapEl = document.querySelector('.timeline-wrap');
+    const nodeRect = nodeEl.getBoundingClientRect();
+    const wrapRect = wrapEl.getBoundingClientRect();
+    const dotCenterX = nodeRect.left + nodeRect.width / 2 - wrapRect.left;
+    glow.style.left = dotCenterX + 'px';
+    glow.style.setProperty('--glow-color', glowColors[idx]);
+    glow.style.background = glowColors[idx];
+    glow.style.boxShadow = `0 0 18px 4px ${glowColors[idx]}`;
+  }
+
+  // Init glow position on load
+  window.addEventListener('load', () => {
+    const firstNode = document.querySelector('.node.active');
+    if (firstNode) activate(firstNode);
+  });
+</script>
+</body>
+</html>

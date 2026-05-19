@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entry Page Preview v3</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #05060e;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Courier New', monospace;
+    color: #e0e6f0;
+    overflow: hidden;
+  }
+
+  #rain-canvas { position: fixed; inset: 0; z-index: 0; }
+
+  .scanlines {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,.035) 3px, rgba(0,0,0,.035) 4px);
+  }
+
+  /* ── Sweep bar pinned to top of viewport ── */
+  .sweep-bar {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 2px; z-index: 1000; overflow: hidden;
+  }
+  .sweep-bar::after {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 100%;
+    background: linear-gradient(90deg, transparent 0%, #5299c8 40%, #7dd3e8 50%, #7272c0 60%, transparent 100%);
+    animation: sweep 2.4s linear infinite;
+    box-shadow: 0 0 8px #5299c8;
+  }
+  @keyframes sweep {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  /* ── Login box ── */
+  .login-box {
+    width: min(420px, 88vw);
+    border: 1px solid #182030;
+    padding: 36px 40px 32px;
+    position: relative; z-index: 10;
+    background: rgba(5, 6, 14, 0.85);
+    backdrop-filter: blur(4px);
+  }
+  .login-box::before {
+    content: ''; position: absolute; top: -1px; left: -1px;
+    width: 22px; height: 22px;
+    border-top: 2px solid #5299c8; border-left: 2px solid #5299c8;
+    box-shadow: -2px -2px 12px rgba(82,153,200,.5);
+  }
+  .login-box::after {
+    content: ''; position: absolute; bottom: -1px; right: -1px;
+    width: 22px; height: 22px;
+    border-bottom: 2px solid #7272c0; border-right: 2px solid #7272c0;
+    box-shadow: 2px 2px 12px rgba(114,114,192,.5);
+  }
+
+  .login-ascii {
+    font-size: 8px; line-height: 1.4; color: #2e3a55; text-align: center;
+    margin-bottom: 14px; letter-spacing: .04em;
+  }
+  .login-logo { font-size: 18px; letter-spacing: 0.18em; color: #5299c8; text-shadow: 0 0 16px rgba(82,153,200,.4); margin-bottom: 4px; }
+  .login-ver { font-size: 9px; letter-spacing: 0.2em; color: #2e3a55; margin-bottom: 22px; }
+  .login-sep { border: none; border-top: 1px solid #182030; margin: 0 0 18px; }
+  .login-fields { display: flex; flex-direction: column; gap: 9px; margin-bottom: 22px; }
+  .lf { display: flex; font-size: 11px; gap: 8px; }
+  .lf-key { color: #2e3a55; letter-spacing: 0.1em; min-width: 96px; }
+  .lf-val { color: #8899b8; }
+  .lf-val.ok { color: #45a884; text-shadow: 0 0 8px rgba(69,168,132,.3); }
+  .login-btn {
+    display: block; width: 100%; padding: 13px 20px;
+    background: transparent; border: 1px solid #5299c8; color: #5299c8;
+    font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.28em;
+    text-transform: uppercase; cursor: pointer;
+    transition: background .2s, box-shadow .2s;
+    box-shadow: 0 0 10px rgba(82,153,200,.12), inset 0 0 10px rgba(82,153,200,.04);
+  }
+  .login-btn:hover { background: rgba(82,153,200,.08); box-shadow: 0 0 20px rgba(82,153,200,.25); }
+  .login-hint { font-size: 9px; color: #2e3a55; text-align: center; margin-top: 10px; letter-spacing: 0.12em; }
+  .cursor {
+    display: inline-block; width: 1px; height: 1em;
+    background: #5299c8; margin-left: 2px; vertical-align: middle;
+    animation: blink 1s step-end infinite; box-shadow: 0 0 6px #5299c8;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+</style>
+</head>
+<body>
+
+<canvas id="rain-canvas"></canvas>
+<div class="scanlines"></div>
+<div class="sweep-bar"></div>
+
+<div class="login-box">
+  <div class="login-ascii">
+╔══════════════════════════╗<br>
+║ &nbsp;&nbsp;I T A S I A 3 0 2 _ O S &nbsp;&nbsp;║<br>
+╚══════════════════════════╝
+  </div>
+  <div class="login-logo">ITASIA302_OS</div>
+  <div class="login-ver">v2026.05 &nbsp;·&nbsp; UTOKYO ITASIA PROGRAM</div>
+  <hr class="login-sep">
+  <div class="login-fields">
+    <div class="lf"><span class="lf-key">USER</span><span class="lf-val">TAKUMI OSHIYAMA</span></div>
+    <div class="lf"><span class="lf-key">PROGRAM</span><span class="lf-val">ITASIA / SPRING 2026</span></div>
+    <div class="lf"><span class="lf-key">STATUS</span><span class="lf-val ok">AUTHENTICATED ●</span></div>
+  </div>
+  <hr class="login-sep">
+  <button class="login-btn">[ INITIALIZE SESSION ]<span class="cursor"></span></button>
+  <div class="login-hint">press enter or click to continue</div>
+</div>
+
+<script>
+  const canvas = document.getElementById('rain-canvas');
+  const ctx = canvas.getContext('2d');
+  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+  const fontSize = 13;
+  const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノ';
+  let drops = [];
+  function init() { drops = Array(Math.floor(canvas.width/fontSize)).fill(1).map(()=>Math.random()*-50); }
+  init();
+  window.addEventListener('resize', init);
+  function draw() {
+    ctx.fillStyle = 'rgba(5,6,14,0.05)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    const cols = Math.floor(canvas.width/fontSize);
+    for (let i=0;i<Math.min(drops.length,cols);i++) {
+      const char = chars[Math.floor(Math.random()*chars.length)];
+      ctx.fillStyle = Math.random()>.9 ? 'rgba(77,184,204,0.55)' : 'rgba(46,58,85,0.45)';
+      ctx.font = fontSize+'px Courier New';
+      ctx.fillText(char, i*fontSize, drops[i]*fontSize);
+      if (drops[i]*fontSize>canvas.height && Math.random()>.975) drops[i]=0;
+      drops[i]+=0.45;
+    }
+  }
+  setInterval(draw,40);
+</script>
+</body>
+</html>

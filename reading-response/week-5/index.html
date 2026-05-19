@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>On Promptism — Week 5 Reading Response</title>
+  <meta name="description"
+    content="ITASIA302 reading response to Selsbæk-Reitz (2026), Promptism: fluency, forgotten questions, and the fight for meaning.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500;1,9..144,600&family=Geist+Mono:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    /* ========================================================================
+     Design tokens "Scientific Sublime"
+     ======================================================================== */
+    :root {
+      --bg: #05060e;
+      --bg-soft: #0b0d1a;
+      --ink: #e0e6f0;
+      --ink-dim: #8899b8;
+      --ink-faint: #2e3a55;
+      --rule: #182030;
+      --amber: #e0607e;
+      --amber-lo: #e0607e14;
+      --amber-hi: #f09aaa;
+      --teal: #45a884;
+      --sky: #5299c8;
+      --coral: #b85c7a;
+      --lilac: #7272c0;
+      --gold: #e0607e;
+
+      --serif: "Fraunces", Georgia, "Times New Roman", serif;
+      --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+      --ease: cubic-bezier(.22, .61, .36, 1);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      background-image:
+        linear-gradient(rgba(224, 96, 126, .022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(224, 96, 126, .022) 1px, transparent 1px);
+      background-size: 52px 52px;
+      color: var(--ink);
+      font-family: var(--serif);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* Atmospheric overlays */
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: .032;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/></filter><rect width='256' height='256' filter='url(%23n)'/></svg>");
+      background-size: 220px 220px;
+      mix-blend-mode: overlay;
+    }
+
+    .glow-tl,
+    .glow-br {
+      position: fixed;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .glow-tl {
+      top: 0;
+      left: 0;
+      width: 55vw;
+      height: 55vh;
+      background: radial-gradient(at 0% 0%, rgba(224, 96, 126, 0.07) 0%, transparent 60%);
+    }
+
+    .glow-br {
+      bottom: 0;
+      right: 0;
+      width: 50vw;
+      height: 50vh;
+      background: radial-gradient(at 100% 100%, rgba(114, 114, 192, 0.07) 0%, transparent 65%);
+    }
+
+    .edge-gradient {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      z-index: 10000;
+      background: linear-gradient(90deg, transparent 0%, var(--sky) 22%, var(--lilac) 62%, transparent 100%);
+      opacity: .55;
+      pointer-events: none;
+    }
+
+    /* ========================================================================
+     Topbar
+     ======================================================================== */
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 14px 48px 12px;
+      background: linear-gradient(180deg, rgba(5, 6, 14, 0.95) 0%, rgba(5, 6, 14, 0.70) 70%, transparent 100%);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .topbar-title {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 17px;
+      letter-spacing: -0.015em;
+      color: var(--ink);
+    }
+
+    .topbar-title em {
+      color: var(--amber);
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .topbar-meta {
+      font-family: var(--mono);
+      font-weight: 400;
+      font-size: 8.5px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .journal-link {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px dotted var(--ink-faint);
+      transition: color 180ms ease, border-color 180ms ease;
+    }
+
+    .journal-link:hover,
+    .journal-link:focus-visible {
+      color: var(--amber);
+      border-bottom-color: var(--amber);
+      outline: none;
+    }
+
+    /* ========================================================================
+     Scroll progress bar
+     ======================================================================== */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      z-index: 60;
+      background: linear-gradient(90deg, var(--amber), var(--coral));
+      width: 0%;
+      transition: width .08s linear;
+    }
+
+    /* ========================================================================
+     Scene containers
+     ======================================================================== */
+    main {
+      position: relative;
+      z-index: 1;
+    }
+
+    .scene {
+      min-height: 100vh;
+      padding: 120px 48px 80px;
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+
+    .scene-tall {
+      min-height: 110vh;
+    }
+
+    .scene-number {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 24px;
+    }
+
+    .scene-number::before {
+      content: "";
+      display: inline-block;
+      width: 32px;
+      height: 1px;
+      background: var(--amber);
+      vertical-align: middle;
+      margin-right: 14px;
+      transform: translateY(-3px);
+    }
+
+    /* ========================================================================
+     Typography scale
+     ======================================================================== */
+    .eyebrow {
+      font-family: var(--mono);
+      font-weight: 400;
+      font-size: 10px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 18px;
+    }
+
+    .headline {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(38px, 5.2vw, 68px);
+      line-height: 1.02;
+      letter-spacing: -0.028em;
+      color: var(--ink);
+      margin-bottom: 28px;
+      max-width: 20ch;
+    }
+
+    .headline em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--amber);
+    }
+
+    .headline-sm {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(28px, 3.2vw, 42px);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 20px;
+      max-width: 24ch;
+    }
+
+    .headline-sm em {
+      color: var(--amber);
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .dek {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(17px, 1.4vw, 21px);
+      line-height: 1.55;
+      letter-spacing: -0.005em;
+      color: var(--ink-dim);
+      max-width: 62ch;
+      margin-bottom: 36px;
+    }
+
+    .dek em {
+      font-style: italic;
+      color: var(--ink);
+    }
+
+    .body-copy {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(17px, 1.35vw, 20px);
+      line-height: 1.62;
+      color: var(--ink-dim);
+      max-width: 66ch;
+    }
+
+    .body-copy em {
+      font-style: italic;
+      color: var(--ink);
+    }
+
+    .body-copy strong {
+      color: var(--ink);
+      font-weight: 400;
+    }
+
+    .body-copy p+p {
+      margin-top: 22px;
+    }
+
+    .label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .cmd-prompt {
+      color: var(--teal);
+      font-style: normal;
+      user-select: none;
+    }
+
+    .blink-cursor {
+      display: inline-block;
+      width: 7px;
+      height: 10px;
+      background: var(--sky);
+      vertical-align: middle;
+      margin-left: 2px;
+      animation: cur-blink 1s step-end infinite;
+      border-radius: 1px;
+    }
+
+    @keyframes cur-blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
+    }
+
+    .blink-cursor.steady {
+      animation: cur-steady 3s ease-in-out infinite;
+    }
+
+    @keyframes cur-steady {
+
+      0%,
+      100% {
+        opacity: 0.5;
+      }
+
+      50% {
+        opacity: 0.15;
+      }
+    }
+
+    /* ========================================================================
+     Reveal state (IntersectionObserver adds .in-view)
+     ======================================================================== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity .9s var(--ease), transform .9s var(--ease);
+    }
+
+    .reveal.in-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal.delay-1 {
+      transition-delay: .12s;
+    }
+
+    .reveal.delay-2 {
+      transition-delay: .24s;
+    }
+
+    .reveal.delay-3 {
+      transition-delay: .36s;
+    }
+
+    .reveal.delay-4 {
+      transition-delay: .50s;
+    }
+
+    .reveal.delay-5 {
+      transition-delay: .64s;
+    }
+
+    .reveal.delay-6 {
+      transition-delay: .80s;
+    }
+
+    /* ========================================================================
+     Hero (Scene 0)
+     ======================================================================== */
+    .hero-scene {
+      min-height: 100vh;
+      padding: 140px 48px 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      position: relative;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .hero-kicker {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 32px;
+    }
+
+    .hero-kicker .dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--amber);
+      margin: 0 12px 2px 0;
+      box-shadow: 0 0 10px var(--amber);
+      vertical-align: middle;
+    }
+
+    .hero-title {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(56px, 8.4vw, 128px);
+      line-height: 0.96;
+      letter-spacing: -0.038em;
+      color: var(--ink);
+      margin-bottom: 36px;
+      max-width: 16ch;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--amber);
+    }
+
+    .hero-dek {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(18px, 1.55vw, 24px);
+      line-height: 1.5;
+      color: var(--ink-dim);
+      max-width: 58ch;
+      margin-bottom: 56px;
+    }
+
+    .hero-dek strong {
+      color: var(--ink);
+      font-weight: 400;
+    }
+
+    .hero-dek em {
+      color: var(--ink);
+      font-style: italic;
+    }
+
+    .scroll-cue {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .scroll-cue .arrow {
+      width: 24px;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      animation: nudge 2.2s infinite var(--ease);
+    }
+
+    @keyframes nudge {
+
+      0%,
+      100% {
+        transform: translateY(0);
+        opacity: .6;
+      }
+
+      50% {
+        transform: translateY(6px);
+        opacity: 1;
+      }
+    }
+
+    /* ========================================================================
+     Insight card
+     ======================================================================== */
+    .insight {
+      border-left: 2px solid var(--amber);
+      padding: 14px 0 14px 22px;
+      margin-top: 40px;
+      max-width: 54ch;
+    }
+
+    .insight .insight-num {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 28px;
+      color: var(--amber);
+      letter-spacing: -0.02em;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .insight .insight-copy {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 16px;
+      line-height: 1.55;
+      color: var(--ink);
+    }
+
+    .insight .insight-copy em {
+      font-style: italic;
+      color: var(--ink-dim);
+    }
+
+    /* ========================================================================
+     Pull quote
+     ======================================================================== */
+    .pull-quote {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(24px, 2.4vw, 34px);
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      font-style: italic;
+      color: var(--ink);
+      max-width: 36ch;
+      border-left: 2px solid var(--amber);
+      padding-left: 28px;
+      margin: 56px 0 8px;
+    }
+
+    .pull-quote .attr {
+      display: block;
+      font-family: var(--mono);
+      font-style: normal;
+      font-size: 10px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-top: 18px;
+    }
+
+    /* ========================================================================
+     Closing / citation
+     ======================================================================== */
+    .closing-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 64px;
+      margin-top: 40px;
+    }
+
+    .citation-block {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 18px;
+      line-height: 1.7;
+      color: var(--ink);
+      max-width: 52ch;
+      border-left: 2px solid var(--amber);
+      padding: 6px 0 6px 26px;
+    }
+
+    .citation-block .cite-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 14px;
+    }
+
+    .citation-block em {
+      font-style: italic;
+      color: var(--ink);
+    }
+
+    .citation-block a {
+      color: var(--ink-dim);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--ink-faint);
+      transition: color 180ms ease, border-color 180ms ease;
+      word-break: break-word;
+    }
+
+    .citation-block a:hover,
+    .citation-block a:focus-visible {
+      color: var(--amber);
+      border-bottom-color: var(--amber);
+      outline: none;
+    }
+
+    .meta-block {
+      font-family: var(--mono);
+      font-size: 11px;
+      line-height: 1.75;
+      color: var(--ink-faint);
+      letter-spacing: 0.04em;
+    }
+
+    .meta-block .meta-key {
+      color: var(--ink-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      font-size: 9.5px;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .meta-block .meta-val {
+      color: var(--ink);
+      display: block;
+      margin-bottom: 18px;
+    }
+
+    .meta-block .meta-val em {
+      color: var(--amber);
+      font-style: italic;
+    }
+
+    /* AI Statement block */
+    .ai-statement {
+      margin-top: 56px;
+      padding: 22px 26px;
+      border: 1px solid var(--rule);
+      border-left: 2px solid var(--lilac);
+      background: linear-gradient(180deg, rgba(114, 114, 192, 0.04) 0%, transparent 100%);
+      max-width: 66ch;
+    }
+
+    .ai-statement .ai-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--lilac);
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .ai-statement p {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 15px;
+      line-height: 1.62;
+      color: var(--ink-dim);
+    }
+
+    .ai-statement p+p {
+      margin-top: 14px;
+    }
+
+    footer.footer {
+      margin-top: 72px;
+      padding: 40px 0 60px;
+      border-top: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    footer.footer em {
+      color: var(--amber);
+      font-style: normal;
+      letter-spacing: 0.14em;
+    }
+
+    /* ========================================================================
+     Responsive
+     ======================================================================== */
+    @media (min-width: 1600px) {
+
+      .scene,
+      .hero-scene {
+        max-width: 1440px;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .topbar {
+        padding: 12px 24px;
+      }
+
+      .scene,
+      .hero-scene {
+        padding-left: 24px;
+        padding-right: 24px;
+      }
+
+      .closing-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .pull-quote {
+        padding-left: 18px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .topbar {
+        padding: 10px 18px;
+        flex-wrap: wrap;
+        row-gap: 4px;
+      }
+
+      .topbar-title {
+        font-size: 15px;
+        letter-spacing: -0.01em;
+      }
+
+      .topbar-meta {
+        font-size: 8px;
+      }
+
+      .scene {
+        padding: 96px 20px 64px;
+      }
+
+      .hero-scene {
+        padding: 110px 20px 64px;
+      }
+
+      .pull-quote {
+        margin: 40px 0 8px;
+        padding-left: 16px;
+      }
+
+      .citation-block {
+        padding-left: 18px;
+        font-size: 16px;
+      }
+
+      footer.footer {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal {
+        transition: none !important;
+        opacity: 1;
+        transform: none;
+      }
+
+      html {
+        scroll-behavior: auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="grain"></div>
+  <div class="glow-tl"></div>
+  <div class="glow-br"></div>
+  <div class="edge-gradient"></div>
+
+  <div class="scroll-progress" id="scroll-progress"></div>
+
+  <header class="topbar">
+    <div class="topbar-title"><a class="journal-link back-link" href="../../home.html">&larr; All assignments</a>
+      &nbsp;&middot;&nbsp; Reading Response <em>On Promptism</em></div>
+    <div class="topbar-meta">ITASIA302 &nbsp;&bull;&nbsp; Week 5 &nbsp;&bull;&nbsp; May 2026</div>
+  </header>
+
+  <main>
+
+    <!-- ===============================================================
+       Scene 0 Hero
+       =============================================================== -->
+    <section class="hero-scene" id="scene-0">
+      <div class="hero-kicker reveal"><span class="dot"></span><span class="cmd-prompt">~/itasia302 $ </span><span
+          id="hero-cmd"></span><span class="blink-cursor" id="hero-cursor"></span></div>
+
+      <h1 class="hero-title reveal delay-1">
+        Fluent systems, <em>buried</em> questions.
+      </h1>
+
+      <p class="hero-dek reveal delay-2">
+        Selsbæk-Reitz introduces the concept of <em>promptism</em>,the uncritical belief that a
+        well-phrased question (prompts) to an LLM will yield a reliable, objective answer. This is
+        a response about why <strong>fluency can be the trap</strong>, not the feature.
+      </p>
+
+      <div class="scroll-cue reveal delay-4">
+        Scroll to begin
+        <span class="arrow" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M9 3V15M9 15L4.5 10.5M9 15L13.5 10.5" stroke="currentColor" stroke-width="1.2"
+              stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </span>
+      </div>
+    </section>
+
+    <!-- ===============================================================
+       Scene 1 The familiar slogan
+       =============================================================== -->
+    <section class="scene scene-tall" id="scene-1">
+      <div class="scene-number reveal">01 &nbsp;&middot;&nbsp; The familiar slogan</div>
+
+      <h2 class="headline reveal delay-1">
+        No bad outputs, only <em>bad prompts</em>?
+      </h2>
+
+      <div class="body-copy reveal delay-2">
+        <p>
+          When I first read Selsbæk-Reitz&rsquo;s definition of <em>promptism</em>, which is the uncritical belief that
+          a well-phrased question (prompts) to an AI will yield a reliable, objective answer, my mind went immediately
+          to a slogan I have heard repeated
+          online for years: <strong>"there are no bad AI outputs, only bad prompts"</strong>.
+        </p>
+        <p>
+          In my opinion, there is a partial truth in it. Better prompting does extract more capability from the
+          model. However, the slogan quietly mixes up three different things, which are capability, reliability,
+          and objectivity. A perfectly engineered prompt can return a fluent, confident answer that
+          is wrong or worse, an answer that is &ldquo;true&rdquo; only from one perspective
+          baked deep into the training data, while quietly silencing others.
+        </p>
+        <p>
+          Reading this sharpened something I had been circling since the introduction of LLMs. Even when I
+          know to ask <em>truth according to whom?</em>, I often cannot follow the question all the
+          way through. The AI does not show me where its answer came from. The reasoning chain is
+          gone. There is no source to interrogate, no author to question. I am left to verify
+          against something, I do not know what it is.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===============================================================
+       Scene 2 Why fluency is the trap
+       =============================================================== -->
+    <section class="scene" id="scene-2">
+      <div class="scene-number reveal">02 &nbsp;&middot;&nbsp; Why fluency is the trap</div>
+
+      <h2 class="headline reveal delay-1">
+        The <em>Smoothness</em> Problem.
+      </h2>
+
+      <div class="body-copy reveal delay-2">
+        <p>
+          Selsbæk-Reitz names it <em>the Smoothness Problem</em>. Fluency bypasses critical
+          instinct before content is even evaluated. We are wired to trust ease. When a sentence
+          arrives polished, structured, and confidently delivered, we relax. I think the trap is not that AI lies to us.
+          The trap is that AI <em>sounds like it cannot be
+            lying</em>.
+        </p>
+      </div>
+
+      <blockquote class="pull-quote reveal delay-3">
+        The quiet collapse of interpretation into convenience.
+        <span class="attr">Selsbæk-Reitz 2026</span>
+      </blockquote>
+
+      <div class="body-copy reveal delay-4" style="margin-top: 40px;">
+        <p>
+          The word that stays with me from his definition is <em>convenience</em>, not efficiency.
+          Efficiency implies you are still optimizing toward a goal. Convenience implies you have
+          stopped caring enough to optimize. The danger of generative AI is not that it makes us
+          faster. It is that it makes us <strong>comfortable not thinking</strong>. And it does so
+          without ever announcing itself as a problem, the surface is too smooth for that.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===============================================================
+       Scene 3 The turn toward literacy
+       =============================================================== -->
+    <section class="scene scene-tall" id="scene-3">
+      <div class="scene-number reveal">03 &nbsp;&middot;&nbsp; The turn toward literacy</div>
+
+      <h2 class="headline reveal delay-1">
+        Not better tools, <em>better readers</em>.
+      </h2>
+
+      <div class="body-copy reveal delay-2">
+        <p>
+          Part III is where the book stops diagnosing and starts proposing. Two chapters stand out:
+          <em>Chapter 8 &mdash; Teaching People to Read Machines</em>, and <em>Chapter 12 &mdash;
+            You Are Not a Prompt</em>. Together, they frame the central response that what we need is not better tools,
+          not better prompts, but better readers.
+        </p>
+        <p>
+          Chapter 8 argues that what we currently call digital literacy is outdated. It was built
+          for static objects such as articles, videos, posts, etc. These are things that have authors and
+          traceable lineages. Generative AI does not produce those. It produces <em>outputs</em>:
+          language assembled in real time by a system optimized for responsiveness, not truth. Some LLMs
+          now can show their sources, but there are still cases when the sources are wrong or misleading. So being able
+          to check the sources does not mean that the outputs are reliable.
+          The literacy required now is not about spotting fake URLs. It is about reading the system
+          itself and recognizing when a model is predicting rather than reasoning, noticing the
+          absence of the things that used to anchor a claim.
+        </p>
+        <p>
+          Chapter 12 names what is at stake. The danger is not that AI will deceive us. The danger
+          is that AI will quietly persuade us that <em>no further thinking is required</em>. It is
+          the surrender of interpretive agency.
+        </p>
+      </div>
+
+      <div class="insight reveal delay-3">
+        <span class="insight-num">The principle</span>
+        <span class="insight-copy">
+          AI should be a starting point, never an endpoint. The answer we receive is not a
+          conclusion. It is a <em>proposal</em> for us to verify, compare, and interpret.
+        </span>
+      </div>
+    </section>
+
+    <!-- ===============================================================
+       Scene 4 Where this lands hardest: education
+       =============================================================== -->
+    <section class="scene scene-tall" id="scene-4">
+      <div class="scene-number reveal">04 &nbsp;&middot;&nbsp; Where this lands hardest</div>
+
+      <h2 class="headline reveal delay-1">
+        Students first, <em>educators</em> unprepared.
+      </h2>
+
+      <div class="body-copy reveal delay-2">
+        <p>
+          If promptism is a structural problem rooted in cognition and design, then the people most
+          vulnerable to it are not experts but <strong>students</strong> (people encountering
+          topics for the first time, without the prior knowledge needed to detect when an output is
+          plausible but wrong). And the people who should be helping them build that resistance, like
+          educators, are not often literate in these tools yet. Not because they
+          are not capable, but because the literacy required is genuinely new and genuinely hard (even for experts!).
+          It is not just technical but <em>philosophical</em>, what does it mean to &ldquo;know,&rdquo;
+          and what does it mean when a system that does not know speaks as if it does?
+        </p>
+        <p>
+          The problem is, as seen in Week 3 and the school (even universities) curriculum, we have spent decades failing
+          to meaningfully integrate media and information literacy into
+          curricula. Now we are being asked to integrate something philosophically and technically
+          harder, and we are being asked to do it urgently. If we do not, the consequences
+          are serious. Dominant knowledge gets encoded into the model. It is then reproduced fluently
+          and convincingly to the next generation of learners. The cycle of structural bias becomes
+          harder to interrupt rather than easier.
+        </p>
+        <p>
+          The antidote author proposes is to cultivate <em>curiosity</em> about how the
+          tool works, what it cannot do, where its data comes from, and <em>critical thinking</em>,
+          the discipline of refusing easy answers, of treating an answer as a proposal rather than a
+          conclusion. These are not building new habits for AI literacy. But they have to be deliberately taught now,
+          because the environment no longer rewards them by default (even AI systems nudge us to be lazy!).
+        </p>
+      </div>
+    </section>
+
+    <!-- ===============================================================
+       Scene 5 What this leaves me with
+       =============================================================== -->
+    <section class="scene" id="scene-5">
+      <div class="scene-number reveal">05 &nbsp;&middot;&nbsp; What this leaves me with</div>
+
+      <h2 class="headline reveal delay-1">
+        TPACK meets its <em>interlocutor</em>.
+      </h2>
+
+      <div class="body-copy reveal delay-2">
+        <p>
+          My own thesis examines how teachers develop <em>TPACK</em> (Technological
+          Pedagogical Content Knowledge) in one-to-one device environments. TPACK as a
+          framework was theorized around tools: teachers learning what a tablet can do, how a
+          digital resource integrates with a curriculum. Selsbæk-Reitz&rsquo;s argument suggests
+          something the original framework may not fully capture. Generative AI does not behave like
+          a tool. It behaves like an <strong>interlocutor</strong>. And the knowledge teachers need
+          in order to integrate it pedagogically may be different from the technological
+          knowledge TPACK was originally designed to describe.
+        </p>
+        <p>
+          I do not yet know what to do with that observation. But reading this part of a book have made me
+          think about how urgent it is for us to equip ourselves with AI literacy, let alone students.
+          This is because the danger of promptism, the comfortable not thinking, is everywhere nowadays, and it is
+          something
+          that need to be addressed before the most vulnerable among us, the students, are being harmed more
+          than they already are in their daily life's exporse to Generative AI tools.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===============================================================
+       Scene 6 Citation + AI Statement
+       =============================================================== -->
+    <section class="scene" id="scene-6">
+      <div class="scene-number reveal">06 &nbsp;&middot;&nbsp; Source</div>
+
+      <h2 class="headline reveal delay-1">
+        The <em>source</em>.
+      </h2>
+
+      <div class="closing-grid">
+        <div class="citation-block reveal delay-2">
+          <span class="cite-label">Full citation</span>
+          Selsbæk-Reitz, S. (2026). <em>Promptism: Fluent Machines, Forgotten Questions, and
+            the Fight for Meaning in the Age of AI.</em> Technics Publications.
+        </div>
+
+        <div class="meta-block reveal delay-3">
+          <span class="meta-key">Course</span>
+          <span class="meta-val"><em>ITASIA302</em> Introduction to Digital Technology and Society</span>
+
+          <span class="meta-key">Response</span>
+          <span class="meta-val">Week 5 reading response</span>
+
+          <span class="meta-key">Author</span>
+          <span class="meta-val">Takumi</span>
+
+          <span class="meta-key">Date</span>
+          <span class="meta-val">May 2026</span>
+        </div>
+      </div>
+
+      <div class="ai-statement reveal delay-4">
+        <span class="ai-label">AI Statement</span>
+        <p>
+          I used Claude (Anthropic) as a Socratic interlocutor (literally, you can try it in learning mode) while
+          working through this book.
+          The conversation pushed me to articulate my own reactions to <em>Promptism</em>, fluency,
+          and AI literacy before reading deeper into the text, and helped me identify the structural
+          connection between Selsbæk-Reitz&rsquo;s argument and my own research on TPACK.
+        </p>
+        <p>
+          The interpretations and conclusions in this reflection are my own. Claude served as a
+          thinking partner during the reading process, not as a co-author. Chapter 1 was read closely
+          on my own; Part III (Chapters 8 and 12 in particular) was worked through dialogically.
+        </p>
+      </div>
+
+      <footer class="footer">
+        <div>Reading Response &nbsp;&middot;&nbsp; Selsbæk-Reitz (2026)</div>
+        <div><em>ITASIA302</em> &nbsp;&middot;&nbsp; Week 5 &nbsp;&middot;&nbsp; Takumi</div>
+      </footer>
+    </section>
+
+  </main>
+
+  <script>
+    "use strict";
+
+    function updateScrollProgress() {
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+      document.getElementById("scroll-progress").style.width = pct + "%";
+    }
+
+    const _tq = [];
+    let _ta = false;
+    function _nextType() {
+      if (!_tq.length) { _ta = false; return; }
+      _ta = true;
+      const { el, tokens } = _tq.shift();
+      let built = '', idx = 0;
+      const tick = () => {
+        while (idx < tokens.length && tokens[idx].tag) built += tokens[idx++].tag;
+        if (idx >= tokens.length) { el.innerHTML = built; setTimeout(_nextType, 80); return; }
+        built += tokens[idx++];
+        el.innerHTML = built;
+        setTimeout(tick, 7 + Math.random() * 5);
+      };
+      tick();
+    }
+    function typeElement(el) {
+      const html = (el.dataset.html || '').trim();
+      if (!html) return;
+      const tokens = [];
+      let i = 0;
+      while (i < html.length) {
+        if (html[i] === '<') {
+          const end = html.indexOf('>', i);
+          if (end < 0) { tokens.push(html[i++]); continue; }
+          tokens.push({ tag: html.slice(i, end + 1) }); i = end + 1;
+        } else if (html[i] === '&') {
+          const end = html.indexOf(';', i);
+          if (end < 0) { tokens.push(html[i++]); continue; }
+          tokens.push(html.slice(i, end + 1)); i = end + 1;
+        } else { tokens.push(html[i++]); }
+      }
+      _tq.push({ el, tokens });
+      if (!_ta) _nextType();
+    }
+
+    function setupObservers() {
+      document.querySelectorAll("main section, main .block").forEach(el => {
+        if (el.classList.contains("reveal") && !el.classList.contains("hero") && !el.classList.contains("hero-scene")) {
+          el.classList.remove("reveal");
+        }
+      });
+
+      document.querySelectorAll("main h1, main h2, main h3, main h4, main h5").forEach(el => {
+        if (!el.dataset.html && el.innerHTML.trim() && !el.querySelector('.cmd-prompt,.blink-cursor')) {
+          el.dataset.html = el.innerHTML;
+          el.innerHTML = '';
+          if (!el.classList.contains("reveal")) el.classList.add("reveal");
+        }
+      });
+
+      document.querySelectorAll("main p, main li, main blockquote, main figcaption, main dt, main dd").forEach(el => {
+        if (!el.classList.contains("reveal") && el.textContent.trim()) el.classList.add("reveal");
+      });
+
+      const observed = document.querySelectorAll(".reveal");
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add("in-view");
+            if (/^H[1-5]$/.test(e.target.tagName)) typeElement(e.target);
+          }
+        });
+      }, { threshold: 0.18, rootMargin: "0px 0px -8% 0px" });
+      observed.forEach(n => io.observe(n));
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      setupObservers();
+      updateScrollProgress();
+      window.addEventListener("scroll", updateScrollProgress, { passive: true });
+
+      const cmdEl = document.getElementById("hero-cmd");
+      const cursor = document.getElementById("hero-cursor");
+      if (cmdEl && cursor) {
+        const text = "ITASIA302 · Reading Response · Week 5";
+        let i = 0;
+        const tick = () => {
+          if (i < text.length) {
+            cmdEl.textContent += text[i++];
+            setTimeout(tick, 36 + Math.random() * 24);
+          } else {
+            cursor.classList.add("steady");
+          }
+        };
+        setTimeout(tick, 200);
+      }
+    });
+  </script>
+
+  <script src="../../rain.js" data-color="#e0607e"></script>
+  <script src="../../cursor.js"></script>
+</body>
+
+</html>

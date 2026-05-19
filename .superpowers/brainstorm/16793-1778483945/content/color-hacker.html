@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hacker Color Schemes</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0A0A0A; color: #DDD; font-family: 'Geist Mono', monospace; }
+
+  .page-top {
+    padding: 12px 20px;
+    border-bottom: 1px solid #1A1A1A;
+    font-size: 10px; color: #444;
+    display: flex; justify-content: space-between;
+  }
+  .page-top span { color: #5AC8B0; }
+
+  /* 3-col grid of palette previews */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .swatch {
+    border-right: 1px solid #1A1A1A;
+    border-bottom: 1px solid #1A1A1A;
+    display: flex; flex-direction: column;
+    cursor: pointer;
+    transition: filter 150ms;
+  }
+  .swatch:nth-child(3n) { border-right: none; }
+  .swatch:hover { filter: brightness(1.05); }
+  .swatch.sel .pick { color: #F0A060 !important; border-color: rgba(240,160,96,.3) !important; }
+
+  /* mini homepage mockup */
+  .mini {
+    padding: 18px 16px;
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    min-height: 210px;
+  }
+  .mini::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,.06) 3px, rgba(0,0,0,.06) 4px);
+    pointer-events: none;
+  }
+
+  /* shared mini elements */
+  .m-topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 14px;
+  }
+  .m-brand { font-size: 9px; letter-spacing: 2px; }
+  .m-status { font-size: 7px; letter-spacing: 2px; display: flex; align-items: center; gap: 4px; }
+  .m-dot { width: 4px; height: 4px; border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  .m-eyebrow { font-size: 7px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px; }
+  .m-title {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 300;
+    font-size: 19px; line-height: 1.1; letter-spacing: -.5px;
+    margin-bottom: 8px;
+  }
+  .m-sub { font-size: 7px; letter-spacing: 2px; margin-bottom: 12px; }
+
+  .m-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+  .m-card {
+    border-radius: 2px; padding: 7px 8px;
+    border: 1px solid transparent;
+    position: relative; overflow: hidden;
+  }
+  .m-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  }
+  .m-card-label { font-size: 6px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 3px; }
+  .m-card-label::before { content: '> '; opacity: .5; }
+  .m-card-title { font-family: 'Fraunces', serif; font-style: italic; font-size: 9px; line-height: 1.3; }
+
+  /* palette strip */
+  .palette {
+    display: flex; height: 4px;
+    border-top: 1px solid rgba(0,0,0,.3);
+  }
+  .palette span { flex: 1; }
+
+  /* label row */
+  .label-row {
+    padding: 10px 14px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px solid #1A1A1A;
+  }
+  .p-name { font-size: 11px; font-weight: 600; color: #CCC; }
+  .p-desc { font-size: 9px; color: #555; margin-top: 2px; }
+  .pick {
+    font-size: 8px; letter-spacing: 2px; text-transform: uppercase;
+    padding: 3px 10px; border: 1px solid #2A2A2A; border-radius: 20px;
+    color: #444; transition: all 150ms; cursor: pointer;
+  }
+  .swatch:hover .pick { color: #888; border-color: #444; }
+
+  /* ════════ PALETTE DEFINITIONS ════════ */
+
+  /* 1. Matrix Green */
+  .p1 .mini { background: #000; }
+  .p1 .m-brand { color: #00FF41; }
+  .p1 .m-status { color: #00CC33; }
+  .p1 .m-dot { background: #00FF41; }
+  .p1 .m-eyebrow { color: #005514; }
+  .p1 .m-title { color: #E8FFE8; }
+  .p1 .m-title em { color: #00FF41; }
+  .p1 .m-sub { color: #004A10; }
+  .p1 .m-card { background: rgba(0,255,65,.04); border-color: #003310; }
+  .p1 .m-card::before { background: #00FF41; opacity: .4; }
+  .p1 .m-card-label { color: #00FF41; }
+  .p1 .m-card-title { color: #A0E8A0; }
+  .p1 .palette span:nth-child(1) { background: #00FF41; }
+  .p1 .palette span:nth-child(2) { background: #00CC33; }
+  .p1 .palette span:nth-child(3) { background: #008820; }
+  .p1 .palette span:nth-child(4) { background: #004410; }
+  .p1 .palette span:nth-child(5) { background: #000; }
+
+  /* 2. Dracula */
+  .p2 .mini { background: #282a36; }
+  .p2 .m-brand { color: #f8f8f2; }
+  .p2 .m-status { color: #50fa7b; }
+  .p2 .m-dot { background: #50fa7b; }
+  .p2 .m-eyebrow { color: #6272a4; }
+  .p2 .m-title { color: #f8f8f2; }
+  .p2 .m-title em { color: #bd93f9; }
+  .p2 .m-sub { color: #6272a4; }
+  .p2 .m-card { background: rgba(68,71,90,.5); border-color: #44475a; }
+  .p2 .m-card.c1::before { background: #8be9fd; }
+  .p2 .m-card.c2::before { background: #bd93f9; }
+  .p2 .m-card.c3::before { background: #50fa7b; }
+  .p2 .m-card.c4::before { background: #ffb86c; }
+  .p2 .m-card.c1 .m-card-label { color: #8be9fd; }
+  .p2 .m-card.c2 .m-card-label { color: #bd93f9; }
+  .p2 .m-card.c3 .m-card-label { color: #50fa7b; }
+  .p2 .m-card.c4 .m-card-label { color: #ffb86c; }
+  .p2 .m-card-title { color: #f8f8f2; }
+  .p2 .palette span:nth-child(1) { background: #bd93f9; }
+  .p2 .palette span:nth-child(2) { background: #8be9fd; }
+  .p2 .palette span:nth-child(3) { background: #50fa7b; }
+  .p2 .palette span:nth-child(4) { background: #ffb86c; }
+  .p2 .palette span:nth-child(5) { background: #ff5555; }
+
+  /* 3. Tokyo Night */
+  .p3 .mini { background: #1a1b2e; }
+  .p3 .m-brand { color: #a9b1d6; }
+  .p3 .m-status { color: #9ece6a; }
+  .p3 .m-dot { background: #9ece6a; }
+  .p3 .m-eyebrow { color: #3b4261; }
+  .p3 .m-title { color: #c0caf5; }
+  .p3 .m-title em { color: #7aa2f7; }
+  .p3 .m-sub { color: #3b4261; }
+  .p3 .m-card { background: rgba(36,40,59,.8); border-color: #292e42; }
+  .p3 .m-card.c1::before { background: #7aa2f7; }
+  .p3 .m-card.c2::before { background: #bb9af7; }
+  .p3 .m-card.c3::before { background: #9ece6a; }
+  .p3 .m-card.c4::before { background: #e0af68; }
+  .p3 .m-card.c1 .m-card-label { color: #7aa2f7; }
+  .p3 .m-card.c2 .m-card-label { color: #bb9af7; }
+  .p3 .m-card.c3 .m-card-label { color: #9ece6a; }
+  .p3 .m-card.c4 .m-card-label { color: #e0af68; }
+  .p3 .m-card-title { color: #a9b1d6; }
+  .p3 .palette span:nth-child(1) { background: #7aa2f7; }
+  .p3 .palette span:nth-child(2) { background: #bb9af7; }
+  .p3 .palette span:nth-child(3) { background: #9ece6a; }
+  .p3 .palette span:nth-child(4) { background: #e0af68; }
+  .p3 .palette span:nth-child(5) { background: #f7768e; }
+
+  /* 4. Monokai Pro */
+  .p4 .mini { background: #2d2a2e; }
+  .p4 .m-brand { color: #fcfcfa; }
+  .p4 .m-status { color: #a9dc76; }
+  .p4 .m-dot { background: #a9dc76; }
+  .p4 .m-eyebrow { color: #5b595c; }
+  .p4 .m-title { color: #fcfcfa; }
+  .p4 .m-title em { color: #ffd866; }
+  .p4 .m-sub { color: #5b595c; }
+  .p4 .m-card { background: rgba(57,53,60,.6); border-color: #403e41; }
+  .p4 .m-card.c1::before { background: #78dce8; }
+  .p4 .m-card.c2::before { background: #ffd866; }
+  .p4 .m-card.c3::before { background: #a9dc76; }
+  .p4 .m-card.c4::before { background: #ff6188; }
+  .p4 .m-card.c1 .m-card-label { color: #78dce8; }
+  .p4 .m-card.c2 .m-card-label { color: #ffd866; }
+  .p4 .m-card.c3 .m-card-label { color: #a9dc76; }
+  .p4 .m-card.c4 .m-card-label { color: #ff6188; }
+  .p4 .m-card-title { color: #c1bfc4; }
+  .p4 .palette span:nth-child(1) { background: #ff6188; }
+  .p4 .palette span:nth-child(2) { background: #fc9867; }
+  .p4 .palette span:nth-child(3) { background: #ffd866; }
+  .p4 .palette span:nth-child(4) { background: #a9dc76; }
+  .p4 .palette span:nth-child(5) { background: #78dce8; }
+
+  /* 5. Catppuccin Mocha */
+  .p5 .mini { background: #1e1e2e; }
+  .p5 .m-brand { color: #cdd6f4; }
+  .p5 .m-status { color: #a6e3a1; }
+  .p5 .m-dot { background: #a6e3a1; }
+  .p5 .m-eyebrow { color: #45475a; }
+  .p5 .m-title { color: #cdd6f4; }
+  .p5 .m-title em { color: #cba6f7; }
+  .p5 .m-sub { color: #45475a; }
+  .p5 .m-card { background: rgba(30,30,46,.9); border-color: #313244; }
+  .p5 .m-card.c1::before { background: #89b4fa; }
+  .p5 .m-card.c2::before { background: #cba6f7; }
+  .p5 .m-card.c3::before { background: #a6e3a1; }
+  .p5 .m-card.c4::before { background: #fab387; }
+  .p5 .m-card.c1 .m-card-label { color: #89b4fa; }
+  .p5 .m-card.c2 .m-card-label { color: #cba6f7; }
+  .p5 .m-card.c3 .m-card-label { color: #a6e3a1; }
+  .p5 .m-card.c4 .m-card-label { color: #fab387; }
+  .p5 .m-card-title { color: #bac2de; }
+  .p5 .palette span:nth-child(1) { background: #cba6f7; }
+  .p5 .palette span:nth-child(2) { background: #89b4fa; }
+  .p5 .palette span:nth-child(3) { background: #a6e3a1; }
+  .p5 .palette span:nth-child(4) { background: #fab387; }
+  .p5 .palette span:nth-child(5) { background: #f38ba8; }
+
+  /* 6. Cyberpunk Neon */
+  .p6 .mini { background: #050510; }
+  .p6 .m-brand { color: #E0E0FF; }
+  .p6 .m-status { color: #00FFFF; }
+  .p6 .m-dot { background: #00FFFF; box-shadow: 0 0 6px #00FFFF; }
+  .p6 .m-eyebrow { color: #1A1A3A; }
+  .p6 .m-title { color: #E0E0FF; text-shadow: 0 0 20px rgba(224,224,255,.1); }
+  .p6 .m-title em { color: #FF00FF; text-shadow: 0 0 10px rgba(255,0,255,.4); }
+  .p6 .m-sub { color: #1A1A3A; }
+  .p6 .m-card { background: rgba(0,255,255,.03); border-color: rgba(0,255,255,.1); }
+  .p6 .m-card.c1::before { background: #00FFFF; box-shadow: 0 0 4px #00FFFF; }
+  .p6 .m-card.c2::before { background: #FF00FF; }
+  .p6 .m-card.c3::before { background: #00FF88; }
+  .p6 .m-card.c4::before { background: #FFFF00; }
+  .p6 .m-card.c1 .m-card-label { color: #00FFFF; }
+  .p6 .m-card.c2 .m-card-label { color: #FF00FF; }
+  .p6 .m-card.c3 .m-card-label { color: #00FF88; }
+  .p6 .m-card.c4 .m-card-label { color: #FFFF00; }
+  .p6 .m-card-title { color: #9090CC; }
+  .p6 .palette span:nth-child(1) { background: #FF00FF; }
+  .p6 .palette span:nth-child(2) { background: #00FFFF; }
+  .p6 .palette span:nth-child(3) { background: #00FF88; }
+  .p6 .palette span:nth-child(4) { background: #FFFF00; }
+  .p6 .palette span:nth-child(5) { background: #FF3366; }
+
+  .bottom {
+    border-top: 1px solid #1A1A1A;
+    padding: 12px 20px;
+    font-size: 9px; color: #444; text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-top">
+  <span>// hacker color schemes</span>
+  <span style="color:#444">same layout + animations · different palette</span>
+</div>
+
+<div class="grid">
+
+  <!-- 1. Matrix Green -->
+  <div class="swatch p1" onclick="this.classList.toggle('sel')">
+    <div class="mini">
+      <div class="m-topbar">
+        <span class="m-brand">ITASIA302 <em style="font-style:normal;color:#00FF41">Takumi</em></span>
+        <span class="m-status"><span class="m-dot"></span>online</span>
+      </div>
+      <div class="m-eyebrow">$ cat index.txt</div>
+      <div class="m-title">Introduction to <em>Digital Technology</em></div>
+      <div class="m-sub">TAKUMI · UTOKYO · SP2026</div>
+      <div class="m-cards">
+        <div class="m-card c1"><div class="m-card-label">About</div><div class="m-card-title">Who I am</div></div>
+        <div class="m-card c1"><div class="m-card-label">Class</div><div class="m-card-title">Coursework</div></div>
+        <div class="m-card c1"><div class="m-card-label">Project</div><div class="m-card-title">Inquiry</div></div>
+        <div class="m-card c1"><div class="m-card-label">AI</div><div class="m-card-title">How made</div></div>
+      </div>
+    </div>
+    <div class="palette"><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="label-row">
+      <div><div class="p-name">Matrix Green</div><div class="p-desc">Pure black + phosphor green. Classic hacker.</div></div>
+      <div class="pick">pick</div>
+    </div>
+  </div>
+
+  <!-- 2. Dracula -->
+  <div class="swatch p2" onclick="this.classList.toggle('sel')">
+    <div class="mini">
+      <div class="m-topbar">
+        <span class="m-brand">ITASIA302 <em style="font-style:normal;color:#bd93f9">Takumi</em></span>
+        <span class="m-status"><span class="m-dot"></span>online</span>
+      </div>
+      <div class="m-eyebrow">$ cat index.txt</div>
+      <div class="m-title">Introduction to <em>Digital Technology</em></div>
+      <div class="m-sub">TAKUMI · UTOKYO · SP2026</div>
+      <div class="m-cards">
+        <div class="m-card c1"><div class="m-card-label">About</div><div class="m-card-title">Who I am</div></div>
+        <div class="m-card c2"><div class="m-card-label">Class</div><div class="m-card-title">Coursework</div></div>
+        <div class="m-card c3"><div class="m-card-label">Project</div><div class="m-card-title">Inquiry</div></div>
+        <div class="m-card c4"><div class="m-card-label">AI</div><div class="m-card-title">How made</div></div>
+      </div>
+    </div>
+    <div class="palette"><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="label-row">
+      <div><div class="p-name">Dracula</div><div class="p-desc">Purple/cyan/green on dark gray. Dev favourite.</div></div>
+      <div class="pick">pick</div>
+    </div>
+  </div>
+
+  <!-- 3. Tokyo Night -->
+  <div class="swatch p3" onclick="this.classList.toggle('sel')">
+    <div class="mini">
+      <div class="m-topbar">
+        <span class="m-brand">ITASIA302 <em style="font-style:normal;color:#7aa2f7">Takumi</em></span>
+        <span class="m-status"><span class="m-dot"></span>online</span>
+      </div>
+      <div class="m-eyebrow">$ cat index.txt</div>
+      <div class="m-title">Introduction to <em>Digital Technology</em></div>
+      <div class="m-sub">TAKUMI · UTOKYO · SP2026</div>
+      <div class="m-cards">
+        <div class="m-card c1"><div class="m-card-label">About</div><div class="m-card-title">Who I am</div></div>
+        <div class="m-card c2"><div class="m-card-label">Class</div><div class="m-card-title">Coursework</div></div>
+        <div class="m-card c3"><div class="m-card-label">Project</div><div class="m-card-title">Inquiry</div></div>
+        <div class="m-card c4"><div class="m-card-label">AI</div><div class="m-card-title">How made</div></div>
+      </div>
+    </div>
+    <div class="palette"><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="label-row">
+      <div><div class="p-name">Tokyo Night</div><div class="p-desc">Blue/purple on deep navy. VS Code theme.</div></div>
+      <div class="pick">pick</div>
+    </div>
+  </div>
+
+  <!-- 4. Monokai Pro -->
+  <div class="swatch p4" onclick="this.classList.toggle('sel')">
+    <div class="mini">
+      <div class="m-topbar">
+        <span class="m-brand">ITASIA302 <em style="font-style:normal;color:#ffd866">Takumi</em></span>
+        <span class="m-status"><span class="m-dot"></span>online</span>
+      </div>
+      <div class="m-eyebrow">$ cat index.txt</div>
+      <div class="m-title">Introduction to <em>Digital Technology</em></div>
+      <div class="m-sub">TAKUMI · UTOKYO · SP2026</div>
+      <div class="m-cards">
+        <div class="m-card c1"><div class="m-card-label">About</div><div class="m-card-title">Who I am</div></div>
+        <div class="m-card c2"><div class="m-card-label">Class</div><div class="m-card-title">Coursework</div></div>
+        <div class="m-card c3"><div class="m-card-label">Project</div><div class="m-card-title">Inquiry</div></div>
+        <div class="m-card c4"><div class="m-card-label">AI</div><div class="m-card-title">How made</div></div>
+      </div>
+    </div>
+    <div class="palette"><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="label-row">
+      <div><div class="p-name">Monokai Pro</div><div class="p-desc">Gold/pink/green/cyan. Sublime Text classic.</div></div>
+      <div class="pick">pick</div>
+    </div>
+  </div>
+
+  <!-- 5. Catppuccin -->
+  <div class="swatch p5" onclick="this.classList.toggle('sel')">
+    <div class="mini">
+      <div class="m-topbar">
+        <span class="m-brand">ITASIA302 <em style="font-style:normal;color:#cba6f7">Takumi</em></span>
+        <span class="m-status"><span class="m-dot"></span>online</span>
+      </div>
+      <div class="m-eyebrow">$ cat index.txt</div>
+      <div class="m-title">Introduction to <em>Digital Technology</em></div>
+      <div class="m-sub">TAKUMI · UTOKYO · SP2026</div>
+      <div class="m-cards">
+        <div class="m-card c1"><div class="m-card-label">About</div><div class="m-card-title">Who I am</div></div>
+        <div class="m-card c2"><div class="m-card-label">Class</div><div class="m-card-title">Coursework</div></div>
+        <div class="m-card c3"><div class="m-card-label">Project</div><div class="m-card-title">Inquiry</div></div>
+        <div class="m-card c4"><div class="m-card-label">AI</div><div class="m-card-title">How made</div></div>
+      </div>
+    </div>
+    <div class="palette"><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="label-row">
+      <div><div class="p-name">Catppuccin Mocha</div><div class="p-desc">Soft pastels on dark. Gentlest hacker palette.</div></div>
+      <div class="pick">pick</div>
+    </div>
+  </div>
+
+  <!-- 6. Cyberpunk -->
+  <div class="swatch p6" onclick="this.classList.toggle('sel')">
+    <div class="mini">
+      <div class="m-topbar">
+        <span class="m-brand">ITASIA302 <em style="font-style:normal;color:#FF00FF;text-shadow:0 0 8px rgba(255,0,255,.5)">Takumi</em></span>
+        <span class="m-status"><span class="m-dot"></span>online</span>
+      </div>
+      <div class="m-eyebrow">$ cat index.txt</div>
+      <div class="m-title">Introduction to <em>Digital Technology</em></div>
+      <div class="m-sub">TAKUMI · UTOKYO · SP2026</div>
+      <div class="m-cards">
+        <div class="m-card c1"><div class="m-card-label">About</div><div class="m-card-title">Who I am</div></div>
+        <div class="m-card c2"><div class="m-card-label">Class</div><div class="m-card-title">Coursework</div></div>
+        <div class="m-card c3"><div class="m-card-label">Project</div><div class="m-card-title">Inquiry</div></div>
+        <div class="m-card c4"><div class="m-card-label">AI</div><div class="m-card-title">How made</div></div>
+      </div>
+    </div>
+    <div class="palette"><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="label-row">
+      <div><div class="p-name">Cyberpunk Neon</div><div class="p-desc">Cyan/magenta/yellow on pure black. Max neon.</div></div>
+      <div class="pick">pick</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="bottom">pick one · or say "mix X and Y" · then I build the full live mockup with that palette</div>
+
+</body>
+</html>

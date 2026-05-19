@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #06090f; }
+  canvas { display: block; position: fixed; inset: 0; cursor: pointer; }
+
+  .hdr {
+    position: fixed; top: 0; left: 0; right: 0;
+    padding: 22px 40px 0; z-index: 10; pointer-events: none;
+  }
+  .eyebrow {
+    font-family: monospace; font-size: 8.5px; letter-spacing: 0.26em;
+    text-transform: uppercase; color: #2a3a52;
+    display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+  }
+  .eyebrow::before { content:''; width:24px; height:1px; background:#9e90d0; display:inline-block; }
+  .hdr-title {
+    font-family: Georgia, serif; font-size: 22px; font-weight: 300;
+    letter-spacing: -0.02em; color: #ede8e0;
+  }
+  .hdr-title em { color: #9e90d0; font-style: italic; }
+  .hint {
+    font-family: monospace; font-size: 8px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: #1e2e42; margin-top: 5px;
+    transition: opacity 0.4s;
+  }
+
+  /* Back button — shown when zoomed in */
+  .back-btn {
+    position: fixed; top: 24px; right: 40px; z-index: 20;
+    font-family: monospace; font-size: 9px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: #3a4a62;
+    background: none; border: 1px solid #1e2e42; border-radius: 4px;
+    padding: 6px 14px; cursor: pointer;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.4s, color 0.2s, border-color 0.2s;
+  }
+  .back-btn.visible { opacity: 1; pointer-events: auto; }
+  .back-btn:hover { color: #9aa3b0; border-color: #3a4a62; }
+
+  /* Floating card */
+  .card {
+    position: fixed; background: rgba(8,14,24,0.97);
+    border: 1px solid rgba(255,255,255,0.07); border-radius: 10px;
+    padding: 18px 20px; width: 280px;
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+    opacity: 0; pointer-events: none;
+    transform: translateY(8px) scale(0.97);
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(.22,.61,.36,1);
+    z-index: 100;
+  }
+  .card.visible { opacity: 1; pointer-events: auto; transform: none; }
+  .card-ch { font-family: monospace; font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 8px; }
+  .card-title { font-family: Georgia, serif; font-size: 15px; font-weight: 400; line-height: 1.25; margin-bottom: 12px; }
+  .card-title em { font-style: italic; }
+  .card-body { font-family: sans-serif; font-size: 11.5px; color: #7a8898; line-height: 1.6; }
+  .card-close {
+    position: absolute; top: 10px; right: 14px;
+    font-family: monospace; font-size: 14px; color: #2a3a52;
+    cursor: pointer; transition: color 0.2s; background: none; border: none;
+  }
+  .card-close:hover { color: #9aa3b0; }
+
+  /* Scrubber */
+  .scrubber {
+    position: fixed; bottom: 0; left: 0; right: 0; height: 64px;
+    background: linear-gradient(0deg, rgba(6,9,15,0.98), transparent);
+    display: flex; align-items: flex-end; justify-content: center;
+    padding-bottom: 18px; z-index: 10;
+  }
+  .scrub-chapters { display: flex; border-top: 1px solid #0f1824; }
+  .scrub-ch {
+    padding: 8px 26px 0; font-family: monospace; font-size: 8px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: #1e2e42;
+    cursor: pointer; position: relative; transition: color 0.3s;
+  }
+  .scrub-ch::before {
+    content: ''; position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
+    width: 5px; height: 5px; border-radius: 50%; background: var(--c);
+    opacity: 0.35; transition: opacity 0.3s, transform 0.3s;
+  }
+  .scrub-ch:hover { color: #9aa3b0; }
+  .scrub-ch:hover::before { opacity: 1; transform: translateX(-50%) scale(1.4); }
+  .scrub-ch.active { color: var(--c); }
+  .scrub-ch.active::before { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="eyebrow">Master's Thesis · Research Journey</div>
+  <div class="hdr-title">Two Countries, <em>One Question</em></div>
+  <div class="hint" id="hint">Click a cluster to zoom in and explore</div>
+</div>
+
+<button class="back-btn" id="backBtn" onclick="zoomOut()">← All chapters</button>
+
+<canvas id="c"></canvas>
+
+<div class="card" id="card">
+  <button class="card-close" onclick="closeCard()">×</button>
+  <div class="card-ch" id="card-ch"></div>
+  <div class="card-title" id="card-title"></div>
+  <div class="card-body" id="card-body"></div>
+</div>
+
+<div class="scrubber">
+  <div class="scrub-chapters" id="scrubber">
+    <div class="scrub-ch" style="--c:#f0a060" onclick="activateChapter(0)">Inspirations</div>
+    <div class="scrub-ch" style="--c:#5090c0" onclick="activateChapter(1)">Past Research</div>
+    <div class="scrub-ch" style="--c:#5ac8b0" onclick="activateChapter(2)">Iterations</div>
+    <div class="scrub-ch" style="--c:#9e90d0" onclick="activateChapter(3)">Now</div>
+  </div>
+</div>
+
+<script>
+const CHAPTERS = [
+  {
+    color: '#f0a060', label: 'Ch. 01', name: 'Inspirations',
+    blurb: 'What made me care about this',
+    subnodes: [
+      { label: '9 yrs Thai Education', body: 'Watching teachers struggle with technology not because they lacked will, but because the system gave them no scaffolding.', angle: 40,  dist: 72 },
+      { label: 'SEAYLP 2019',          body: 'Cross-cultural youth leadership across ASEAN. First time I saw how different "tech in school" looked country-to-country.', angle: 140, dist: 80 },
+      { label: 'BMA Internship 2023',  body: 'Visualizing BMA\'s education strategy. Data exposes what systems prioritize — and what they miss.', angle: 240, dist: 68 },
+      { label: 'Chiang Mai roots',     body: '[ Add a personal note about growing up and seeing education inequity firsthand ]', angle: 320, dist: 60 },
+    ]
+  },
+  {
+    color: '#5090c0', label: 'Ch. 02', name: 'Past Research',
+    blurb: 'Work that shaped my thinking',
+    subnodes: [
+      { label: 'TDRI Internship 2019',     body: 'First exposure to policy-level EdTech thinking and structural issues in Thai education.', angle: 60,  dist: 75 },
+      { label: 'Sat. School E-sports 2022', body: 'Developed curriculum for E-sports classrooms in 8 Bangkok schools. Designing for teacher adoption, not just students.', angle: 170, dist: 82 },
+      { label: 'BA Thesis 2024',           body: '[ Add your Thammasat BA thesis topic here ]', angle: 280, dist: 70 },
+    ]
+  },
+  {
+    color: '#5ac8b0', label: 'Ch. 03', name: 'Iterations',
+    blurb: 'How this thesis has evolved',
+    subnodes: [
+      { label: 'Version 1 — dropped',   body: '[ What did you originally think you were studying? What changed? ]', angle: 80,  dist: 68 },
+      { label: 'Version 2 — TPACK',     body: '[ How did you arrive at TPACK as the framework? What did you read, who did you talk to? ]', angle: 200, dist: 76 },
+      { label: 'Version 3 — current',   body: 'Comparative study, Japan vs Thailand. Two institutional contexts, one theoretical lens.', angle: 310, dist: 72 },
+    ]
+  },
+  {
+    color: '#9e90d0', label: 'Ch. 04', name: 'Now',
+    blurb: 'Where I am today',
+    subnodes: [
+      { label: 'Research question',  body: 'How do institutional contexts shape TPACK development — and what can Japan\'s GIGA School and Thailand\'s digital divide tell us about each other?', angle: 50,  dist: 80 },
+      { label: 'Japan side',         body: 'GIGA School Program: 1 device per student deployed nationally. Focus: how teachers adapted pedagogy under a top-down mandate.', angle: 160, dist: 74 },
+      { label: 'Thailand side',      body: 'Digital divide and sociodemographic factors — how school location, teacher age, and resource access shape competency development.', angle: 260, dist: 78 },
+      { label: 'Status',             body: 'Data collection on the Japan side in progress. Thailand side upcoming.', angle: 340, dist: 62 },
+    ]
+  },
+];
+
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+let W, H, t = 0;
+let activeChapter = null;
+let activeSubnode = null;
+
+// Camera state — animated
+const cam    = { x: 0, y: 0, scale: 1 };
+const target = { x: 0, y: 0, scale: 1 };
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  cam.x = target.x = W / 2;
+  cam.y = target.y = H / 2;
+}
+window.addEventListener('resize', resize);
+resize();
+
+// World positions for each chapter hub
+function hubX(i) { return W * (0.18 + i * 0.21); }
+function hubY(i) { return H * (0.40 + [0, 0.12, -0.06, 0.10][i]); }
+
+// ── Render ──
+function draw(ts) {
+  t = ts * 0.001;
+  ctx.clearRect(0, 0, W, H);
+
+  // Smooth camera
+  const ease = 0.07;
+  cam.x     += (target.x     - cam.x)     * ease;
+  cam.y     += (target.y     - cam.y)     * ease;
+  cam.scale += (target.scale - cam.scale) * ease;
+
+  ctx.save();
+  // Apply camera transform (zoom toward center of screen)
+  ctx.translate(W / 2, H / 2);
+  ctx.scale(cam.scale, cam.scale);
+  ctx.translate(-cam.x, -cam.y);
+
+  // Dashed connector lines between hubs
+  ctx.save();
+  ctx.setLineDash([2, 8]);
+  ctx.strokeStyle = '#0f1824';
+  ctx.lineWidth = 1;
+  for (let i = 0; i < CHAPTERS.length - 1; i++) {
+    ctx.beginPath();
+    ctx.moveTo(hubX(i), hubY(i));
+    ctx.lineTo(hubX(i+1), hubY(i+1));
+    ctx.stroke();
+  }
+  ctx.setLineDash([]);
+  ctx.restore();
+
+  CHAPTERS.forEach((ch, ci) => {
+    const hx = hubX(ci), hy = hubY(ci);
+    const isActive  = activeChapter === ci;
+    const isDimmed  = activeChapter !== null && !isActive;
+    const globalAlpha = isDimmed ? 0.08 : 1;
+
+    ctx.globalAlpha = globalAlpha;
+
+    // Chapter ambient glow
+    const glowR = isActive ? 130 : 80;
+    const g = ctx.createRadialGradient(hx, hy, 0, hx, hy, glowR);
+    g.addColorStop(0, ch.color + (isActive ? '22' : '12'));
+    g.addColorStop(1, 'transparent');
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(hx, hy, glowR, 0, Math.PI*2); ctx.fill();
+
+    // Subnodes
+    ch.subnodes.forEach((sn, si) => {
+      const drift = Math.sin(t * 0.35 + si * 1.3 + ci * 2.1) * 5; // SLOW drift
+      const rad   = (sn.angle + drift * 0.4) * Math.PI / 180;
+      const sx    = hx + Math.cos(rad) * sn.dist;
+      const sy    = hy + Math.sin(rad) * sn.dist;
+      sn._x = sx; sn._y = sy; // cache for hit test
+
+      const isActiveSub = isActive && activeSubnode === si;
+
+      // Thin line from hub to subnode
+      ctx.save();
+      ctx.globalAlpha = (isDimmed ? 0.05 : (isActive ? 0.25 : 0.12));
+      ctx.strokeStyle = ch.color;
+      ctx.lineWidth = 0.5;
+      ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(sx, sy); ctx.stroke();
+      ctx.restore();
+
+      // Subnode dot
+      const snR = isActiveSub ? 8 : 4.5;
+      ctx.save();
+      ctx.globalAlpha = isDimmed ? 0.06 : (isActive ? 0.9 : 0.45);
+
+      if (isActiveSub) {
+        const sg = ctx.createRadialGradient(sx, sy, 0, sx, sy, 22);
+        sg.addColorStop(0, ch.color + '55'); sg.addColorStop(1, 'transparent');
+        ctx.fillStyle = sg;
+        ctx.beginPath(); ctx.arc(sx, sy, 22, 0, Math.PI*2); ctx.fill();
+      }
+
+      ctx.fillStyle = ch.color;
+      ctx.beginPath(); ctx.arc(sx, sy, snR, 0, Math.PI*2); ctx.fill();
+
+      // Subnode label — only when zoomed in
+      if (isActive && cam.scale > 1.6) {
+        ctx.globalAlpha = Math.min(1, (cam.scale - 1.6) * 3);
+        ctx.fillStyle = isActiveSub ? '#ede8e0' : '#6a7a8a';
+        ctx.font = `${isActiveSub ? '600 ' : ''}10px monospace`;
+        ctx.textAlign = 'center';
+        // Position label away from hub
+        const lx = sx + Math.cos(rad) * 18;
+        const ly = sy + Math.sin(rad) * 18 + (Math.sin(rad) > 0 ? 12 : -4);
+        ctx.fillText(sn.label, lx, ly);
+      }
+      ctx.restore();
+    });
+
+    // Hub dot slow drift
+    const hdrift = Math.sin(t * 0.3 + ci * 1.7) * 4;
+    const hdy    = Math.cos(t * 0.22 + ci * 2.3) * 3;
+    const rhx = hx + hdrift * 0.3;
+    const rhy = hy + hdy;
+
+    // Hub glow ring when active
+    if (isActive) {
+      const pulse = 0.5 + 0.5 * Math.sin(t * 1.8);
+      ctx.save();
+      ctx.globalAlpha = 0.15 + pulse * 0.1;
+      ctx.strokeStyle = ch.color;
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(rhx, rhy, 22 + pulse * 4, 0, Math.PI*2); ctx.stroke();
+      ctx.restore();
+    }
+
+    // Hub dot
+    const hubR = isActive ? 11 : 8;
+    ctx.save();
+    ctx.globalAlpha = isDimmed ? 0.1 : 1;
+    // Hub glow
+    const hg = ctx.createRadialGradient(rhx, rhy, 0, rhx, rhy, hubR * 3.5);
+    hg.addColorStop(0, ch.color + (isActive ? 'aa' : '55'));
+    hg.addColorStop(1, 'transparent');
+    ctx.fillStyle = hg;
+    ctx.beginPath(); ctx.arc(rhx, rhy, hubR * 3.5, 0, Math.PI*2); ctx.fill();
+
+    ctx.fillStyle = ch.color;
+    ctx.beginPath(); ctx.arc(rhx, rhy, hubR, 0, Math.PI*2); ctx.fill();
+
+    // Hub label
+    ctx.fillStyle = isDimmed ? '#1e2e42' : (isActive ? ch.color : '#4a5a72');
+    ctx.font = `9px monospace`;
+    ctx.textAlign = 'center';
+    ctx.fillText(ch.label, rhx, rhy - hubR - 10);
+    ctx.fillStyle = isDimmed ? '#1e2e42' : (isActive ? '#ede8e0' : '#5a6a7a');
+    ctx.font = isActive ? '400 13px Georgia' : '11px Georgia';
+    ctx.fillText(ch.name, rhx, rhy - hubR - 22);
+
+    ctx.restore();
+    ctx.globalAlpha = 1;
+  });
+
+  ctx.restore(); // end camera transform
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+
+// ── Hit testing ──
+canvas.addEventListener('click', e => {
+  const mx = e.clientX, my = e.clientY;
+
+  // Convert screen coords to world coords
+  const wx = (mx - W/2) / cam.scale + cam.x;
+  const wy = (my - H/2) / cam.scale + cam.y;
+
+  // If zoomed in, check subnodes first
+  if (activeChapter !== null) {
+    const ch = CHAPTERS[activeChapter];
+    const hit = ch.subnodes.findIndex(sn => Math.hypot((sn._x||0) - wx, (sn._y||0) - wy) < 16);
+    if (hit !== -1) { showSubCard(activeChapter, hit); return; }
+  }
+
+  // Check hub dots
+  for (let ci = 0; ci < CHAPTERS.length; ci++) {
+    if (Math.hypot(hubX(ci) - wx, hubY(ci) - wy) < 20) {
+      if (activeChapter === ci) { zoomOut(); } else { activateChapter(ci); }
+      return;
+    }
+  }
+
+  // Click background → zoom out
+  if (activeChapter !== null) { closeCard(); }
+});
+
+function activateChapter(ci) {
+  activeChapter = ci;
+  activeSubnode = null;
+
+  // Zoom camera to this chapter
+  target.x = hubX(ci);
+  target.y = hubY(ci);
+  target.scale = 2.6;
+
+  // UI
+  document.getElementById('backBtn').classList.add('visible');
+  document.getElementById('hint').style.opacity = '0';
+  document.querySelectorAll('.scrub-ch').forEach((el, i) => el.classList.toggle('active', i === ci));
+  closeCard();
+}
+
+function zoomOut() {
+  activeChapter = null;
+  activeSubnode = null;
+  target.x = W / 2;
+  target.y = H / 2;
+  target.scale = 1;
+  document.getElementById('backBtn').classList.remove('visible');
+  document.getElementById('hint').style.opacity = '1';
+  document.querySelectorAll('.scrub-ch').forEach(el => el.classList.remove('active'));
+  closeCard();
+}
+
+function showSubCard(ci, si) {
+  const ch = CHAPTERS[ci];
+  const sn = ch.subnodes[si];
+  activeSubnode = si;
+
+  document.getElementById('card-ch').textContent = ch.label + ' · ' + ch.name;
+  document.getElementById('card-ch').style.color = ch.color;
+  document.getElementById('card-title').textContent = sn.label;
+  document.getElementById('card-body').textContent  = sn.body;
+
+  // Position card in screen space (near the subnode's screen position)
+  const card = document.getElementById('card');
+  const sx = (sn._x - cam.x) * cam.scale + W/2;
+  const sy = (sn._y - cam.y) * cam.scale + H/2;
+  let left = sx + 24, top = sy - 60;
+  if (left + 300 > W) left = sx - 310;
+  if (top < 80) top = 80;
+  if (top + 200 > H - 80) top = H - 240;
+  card.style.left = left + 'px';
+  card.style.top  = top  + 'px';
+  card.classList.add('visible');
+}
+
+function closeCard() {
+  activeSubnode = null;
+  document.getElementById('card').classList.remove('visible');
+}
+</script>
+</body>
+</html>

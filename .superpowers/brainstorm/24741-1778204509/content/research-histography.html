@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #080c14;
+    color: #ede8e0;
+    font-family: 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Header ── */
+  .header {
+    padding: 36px 52px 0;
+  }
+  .eyebrow {
+    font-family: monospace; font-size: 9px; letter-spacing: 0.26em;
+    text-transform: uppercase; color: #3a4a62;
+    display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
+  }
+  .eyebrow::before { content:''; width:32px; height:1px; background:#9e90d0; display:inline-block; }
+  .title { font-family: Georgia, serif; font-size: 26px; font-weight: 300; letter-spacing: -0.02em; margin-bottom: 6px; }
+  .title em { color: #9e90d0; font-style: italic; }
+  .status {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: monospace; font-size: 9px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: #5ac8b0;
+  }
+  .pulse {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #5ac8b0; box-shadow: 0 0 8px #5ac8b0;
+    animation: glow 2.4s infinite ease-in-out;
+  }
+  @keyframes glow { 0%,100%{opacity:.4;box-shadow:0 0 5px #5ac8b0}50%{opacity:1;box-shadow:0 0 14px #5ac8b0} }
+
+  /* ── Timeline stage ── */
+  .stage {
+    position: relative;
+    height: 320px;
+    margin: 32px 0 0;
+  }
+
+  /* Horizontal axis */
+  .axis {
+    position: absolute;
+    top: 50%; left: 5%; right: 5%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #1e2e42 15%, #1e2e42 85%, transparent);
+    transform: translateY(-50%);
+  }
+  .axis-glow {
+    position: absolute;
+    top: 50%; left: 5%; right: 5%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #9e90d040 15%, #5090c040 85%, transparent);
+    transform: translateY(-50%);
+    filter: blur(2px);
+  }
+
+  /* Chapter dots */
+  .dot-wrap {
+    position: absolute;
+    display: flex; flex-direction: column; align-items: center;
+    cursor: pointer;
+    transition: none;
+  }
+
+  .dot-wrap .ring {
+    position: absolute;
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    border: 1px solid transparent;
+    transform: scale(0);
+    opacity: 0;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+  }
+
+  .dot-wrap .dot {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--c);
+    box-shadow: 0 0 10px var(--c), 0 0 24px color-mix(in oklab, var(--c) 40%, transparent);
+    transition: transform 0.5s cubic-bezier(.22,.61,.36,1), box-shadow 0.4s ease;
+    animation: float var(--float-dur, 4s) var(--float-delay, 0s) infinite ease-in-out alternate;
+    position: relative; z-index: 2;
+  }
+
+  @keyframes float {
+    from { transform: translateY(0px); }
+    to   { transform: translateY(-10px); }
+  }
+
+  .dot-wrap:hover .dot {
+    transform: scale(1.5);
+    box-shadow: 0 0 20px var(--c), 0 0 50px color-mix(in oklab, var(--c) 50%, transparent);
+  }
+
+  .dot-wrap.active .dot {
+    transform: scale(2.6) !important;
+    box-shadow: 0 0 32px var(--c), 0 0 80px color-mix(in oklab, var(--c) 60%, transparent);
+    animation: none;
+  }
+
+  .dot-wrap.active .ring {
+    border-color: color-mix(in oklab, var(--c) 30%, transparent);
+    transform: scale(1);
+    opacity: 1;
+    animation: ring-pulse 2s infinite ease-in-out;
+  }
+
+  @keyframes ring-pulse {
+    0%,100% { transform: scale(1); opacity: 0.4; }
+    50% { transform: scale(1.2); opacity: 0.15; }
+  }
+
+  /* Connector line from active dot to content panel */
+  .connector-line {
+    position: absolute;
+    left: 50%; width: 1px;
+    background: linear-gradient(180deg, var(--c, #9e90d0), transparent);
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 0.4s ease 0.2s, background 0.4s ease;
+    z-index: 1;
+  }
+  .dot-wrap.active .connector-line {
+    transform: scaleY(1);
+  }
+
+  /* Label above/below dot */
+  .dot-label {
+    font-family: monospace;
+    font-size: 8.5px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--c);
+    opacity: 0;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    transform: translateY(4px);
+    white-space: nowrap;
+    text-align: center;
+  }
+  .dot-label-name {
+    font-family: Georgia, serif;
+    font-size: 12px;
+    color: #9aa3b0;
+    opacity: 0;
+    transition: opacity 0.25s ease 0.05s;
+    white-space: nowrap;
+    text-align: center;
+    margin-top: 2px;
+  }
+  .dot-wrap:hover .dot-label,
+  .dot-wrap.active .dot-label { opacity: 1; transform: translateY(0); }
+  .dot-wrap:hover .dot-label-name,
+  .dot-wrap.active .dot-label-name { opacity: 1; color: #ede8e0; }
+
+  /* ── Content panel ── */
+  .content-area {
+    padding: 0 52px 48px;
+    min-height: 220px;
+    position: relative;
+  }
+
+  .panel {
+    display: none;
+    animation: panel-in 0.45s cubic-bezier(.22,.61,.36,1);
+  }
+  .panel.active { display: block; }
+  @keyframes panel-in {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .panel-head {
+    font-family: Georgia, serif; font-size: 20px; font-weight: 400;
+    color: #ede8e0; margin-bottom: 20px;
+    border-bottom: 1px solid #132032; padding-bottom: 14px;
+  }
+  .panel-head em { font-style: italic; color: var(--c, #9e90d0); }
+
+  .entry {
+    display: flex; gap: 14px;
+    background: #0e1824; border: 1px solid #132032;
+    border-left: 2px solid var(--c, #9e90d0);
+    border-radius: 0 6px 6px 0;
+    padding: 12px 16px; margin-bottom: 10px;
+  }
+  .entry-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .entry-title { color: #ede8e0; font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .entry-tag { font-family: monospace; font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; color: #3a4a62; float: right; }
+  .entry-body { color: #9aa3b0; font-size: 12px; line-height: 1.6; }
+
+  .current-box {
+    background: linear-gradient(135deg, rgba(158,144,208,0.08), rgba(80,144,192,0.05));
+    border: 1px solid rgba(158,144,208,0.3); border-radius: 8px; padding: 20px 24px;
+  }
+  .current-quote { font-family: Georgia, serif; font-size: 14px; line-height: 1.7; color: #ede8e0; font-style: italic; margin-bottom: 14px; }
+  .kw-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .kw { font-family: monospace; font-size: 8px; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; }
+  .kw.hi { color: #9e90d0; border: 1px solid rgba(158,144,208,0.35); }
+  .kw.lo { color: #9aa3b0; border: 1px solid #132032; }
+
+  /* hint text when nothing selected */
+  .hint {
+    font-family: monospace; font-size: 10px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: #1e2e42;
+    text-align: center; padding-top: 40px;
+    transition: opacity 0.3s;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="eyebrow">Master's Thesis · Research Journey</div>
+  <div class="title">Two Countries, <em>One Question</em></div>
+  <div class="status" style="margin-top:8px;"><span class="pulse"></span>&nbsp;Actively developing</div>
+</div>
+
+<!-- ── Timeline stage ── -->
+<div class="stage" id="stage">
+  <div class="axis"></div>
+  <div class="axis-glow"></div>
+
+  <!-- Dot 1: Inspirations — above axis, left -->
+  <div class="dot-wrap" id="d0" data-index="0"
+       style="--c:#f0a060; --float-dur:3.8s; --float-delay:0s; left:12%; top:28%;"
+       onclick="activate(0)">
+    <div class="dot-label">Ch. 01</div>
+    <div class="dot-label-name">Inspirations</div>
+    <div style="height:10px"></div>
+    <div class="dot"></div>
+    <div class="ring"></div>
+    <div class="connector-line" style="height:80px; top:100%;"></div>
+  </div>
+
+  <!-- Dot 2: Past Research — below axis, left-center -->
+  <div class="dot-wrap" id="d1" data-index="1"
+       style="--c:#5090c0; --float-dur:4.6s; --float-delay:0.7s; left:33%; top:52%;"
+       onclick="activate(1)">
+    <div class="connector-line" style="height:60px; top:-60px; background:linear-gradient(0deg,var(--c,#5090c0),transparent);"></div>
+    <div class="dot"></div>
+    <div class="ring"></div>
+    <div style="height:10px"></div>
+    <div class="dot-label">Ch. 02</div>
+    <div class="dot-label-name">Past Research</div>
+  </div>
+
+  <!-- Dot 3: Iterations — above axis, right-center -->
+  <div class="dot-wrap" id="d2" data-index="2"
+       style="--c:#5ac8b0; --float-dur:5.2s; --float-delay:1.4s; left:58%; top:24%;"
+       onclick="activate(2)">
+    <div class="dot-label">Ch. 03</div>
+    <div class="dot-label-name">Iterations</div>
+    <div style="height:10px"></div>
+    <div class="dot"></div>
+    <div class="ring"></div>
+    <div class="connector-line" style="height:96px; top:100%;"></div>
+  </div>
+
+  <!-- Dot 4: Now — below axis, right — bigger, glowing -->
+  <div class="dot-wrap" id="d3" data-index="3"
+       style="--c:#9e90d0; --float-dur:4.2s; --float-delay:2s; left:80%; top:55%;"
+       onclick="activate(3)">
+    <div class="connector-line" style="height:55px; top:-55px; background:linear-gradient(0deg,var(--c,#9e90d0),transparent);"></div>
+    <div class="dot" style="width:24px;height:24px;"></div>
+    <div class="ring"></div>
+    <div style="height:10px"></div>
+    <div class="dot-label">Ch. 04</div>
+    <div class="dot-label-name">Now</div>
+  </div>
+
+</div>
+
+<!-- ── Content panels ── -->
+<div class="content-area">
+  <div class="hint" id="hint">↑ Click a node to explore</div>
+
+  <div class="panel" id="panel-0" style="--c:#f0a060">
+    <div class="panel-head">What made me <em>care</em> about this</div>
+    <div class="entry" style="--c:#f0a060">
+      <div class="entry-icon">🇹🇭</div>
+      <div>
+        <div class="entry-title">9 years in Thai education</div>
+        <div class="entry-body">Watching teachers struggle with technology not because they lacked will, but because the system gave them no scaffolding. That gap stayed with me.</div>
+      </div>
+    </div>
+    <div class="entry" style="--c:#f0a060">
+      <div class="entry-icon">✈️</div>
+      <div>
+        <div class="entry-title">SEAYLP 2019 · Northern Illinois University</div>
+        <div class="entry-body">Cross-cultural youth leadership across ASEAN. First time I saw how different "technology in school" looked country-to-country, even within Southeast Asia.</div>
+      </div>
+    </div>
+    <div class="entry" style="--c:#f0a060">
+      <div class="entry-icon">📊</div>
+      <div>
+        <div class="entry-title">Bangkok Metropolitan Administration · 2023</div>
+        <div class="entry-body">Tracking BMA's education strategy and visualizing the Thai Scholarship Database. Made me realize data exposes what systems prioritize — and what they miss.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-1" style="--c:#5090c0">
+    <div class="panel-head">Work that <em>shaped</em> my thinking</div>
+    <div class="entry" style="--c:#5090c0">
+      <div class="entry-icon">🔬</div>
+      <div>
+        <div class="entry-title">TDRI Internship · 2019</div>
+        <div class="entry-body">My first exposure to policy-level thinking about EdTech and structural issues in the Thai education system.</div>
+      </div>
+    </div>
+    <div class="entry" style="--c:#5090c0">
+      <div class="entry-icon">🎮</div>
+      <div>
+        <div class="entry-title">Saturday School Foundation · E-sports pilot · 2022</div>
+        <div class="entry-body">Developed curriculum for piloting E-sports classrooms in 8 Bangkok schools. First time I designed for teacher adoption, not just student engagement.</div>
+      </div>
+    </div>
+    <div class="entry" style="--c:#5090c0">
+      <div class="entry-icon">📄</div>
+      <div>
+        <div class="entry-title">BA Thesis · Thammasat · 2024</div>
+        <div class="entry-body">[ Add your BA thesis topic — this is where readers see how your thinking evolved from undergraduate to graduate research ]</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-2" style="--c:#5ac8b0">
+    <div class="panel-head">How this thesis has <em>evolved</em></div>
+    <div class="entry" style="--c:#5ac8b0">
+      <div>
+        <div class="entry-title">Version 1 · Initial concept <span class="entry-tag">Dropped</span></div>
+        <div class="entry-body">[ What did you originally think you were studying? What changed? ]</div>
+      </div>
+    </div>
+    <div class="entry" style="--c:#5ac8b0">
+      <div>
+        <div class="entry-title">Version 2 · Narrowing to TPACK <span class="entry-tag">Refined</span></div>
+        <div class="entry-body">[ How did you arrive at TPACK as the framework? What did you read, who did you talk to? ]</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-3" style="--c:#9e90d0">
+    <div class="panel-head">Where I am <em>today</em></div>
+    <div class="current-box">
+      <div class="current-quote">"A comparative study of TPACK development between Japan and Thailand — examining how teachers acquire the integrated knowledge needed to teach effectively with technology, and how institutional contexts shape that process differently across the two countries."</div>
+      <div class="kw-row">
+        <span class="kw hi">TPACK</span>
+        <span class="kw lo">GIGA School</span>
+        <span class="kw lo">Digital Divide</span>
+        <span class="kw lo">Comparative EdTech</span>
+        <span class="kw lo">Teacher Development</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let current = null;
+
+  function activate(idx) {
+    // deactivate old
+    document.querySelectorAll('.dot-wrap').forEach(d => d.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+
+    if (current === idx) { current = null; document.getElementById('hint').style.opacity = '1'; return; }
+    current = idx;
+
+    document.getElementById('d' + idx).classList.add('active');
+    document.getElementById('panel-' + idx).classList.add('active');
+    document.getElementById('hint').style.opacity = '0';
+
+    // scroll to content smoothly
+    setTimeout(() => {
+      document.querySelector('.content-area').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 150);
+  }
+</script>
+</body>
+</html>

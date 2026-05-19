@@ -28,24 +28,26 @@
 - **Completed**: 2026-05-11 (absorbed into TASK-006)
 
 ### TASK-003: TikTok Thumbnail Images
-- **Status**: ⬜ Not Started
+- **Status**: ✅ Done
 - **Priority**: Medium
 - **Page**: `about/index.html`
 - **Description**: 10 TikTok cards have empty `<img src="" alt="">`. Need actual thumbnail URLs or remove empty img tags.
 - **Created**: 2026-05-09
+- **Completed**: 2026-05-12
 
 ### TASK-005: Week 4 Reading Response
-- **Status**: ⬜ Not Started
+- **Status**: ✅ Done
 - **Priority**: 🔴 High (due next week)
 - **Page**: `reading-response/` (new page, same style as Week 3)
 - **Description**: Read assigned paper (user to provide), write reading response, build webpage matching existing Week 3 design in `reading-response/index.html`. Link from `class-assignments/index.html`.
 - **Subtasks**:
-  - [ ] User provides paper title/link/PDF
-  - [ ] Read and analyze paper
-  - [ ] User writes/dictates response content
-  - [ ] Build webpage matching Week 3 style
-  - [ ] Add card to class-assignments hub
+  - [x] User provides paper title/link/PDF
+  - [x] Read and analyze paper
+  - [x] User writes/dictates response content
+  - [x] Build webpage matching Week 3 style
+  - [x] Add card to class-assignments hub
 - **Created**: 2026-05-09
+- **Completed**: 2026-05-12
 
 ### TASK-004: Add .gitignore
 - **Status**: ⬜ Not Started

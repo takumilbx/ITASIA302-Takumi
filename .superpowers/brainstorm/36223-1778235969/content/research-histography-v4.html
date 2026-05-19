@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #06090f; }
+  canvas { display: block; position: fixed; inset: 0; cursor: pointer; }
+  .hdr { position: fixed; top: 0; left: 0; right: 0; padding: 22px 40px 0; z-index: 10; pointer-events: none; }
+  .eyebrow { font-family: monospace; font-size: 8.5px; letter-spacing: 0.26em; text-transform: uppercase; color: #2a3a52; display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .eyebrow::before { content:''; width:24px; height:1px; background:#9e90d0; display:inline-block; }
+  .hdr-title { font-family: Georgia, serif; font-size: 22px; font-weight: 300; letter-spacing: -0.02em; color: #ede8e0; }
+  .hdr-title em { color: #9e90d0; font-style: italic; }
+  .hint { font-family: monospace; font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase; color: #1e2e42; margin-top: 5px; transition: opacity 0.4s; }
+  .back-btn { position: fixed; top: 24px; right: 40px; z-index: 20; font-family: monospace; font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: #3a4a62; background: none; border: 1px solid #1e2e42; border-radius: 4px; padding: 6px 14px; cursor: pointer; opacity: 0; pointer-events: none; transition: opacity 0.4s, color 0.2s, border-color 0.2s; }
+  .back-btn.visible { opacity: 1; pointer-events: auto; }
+  .back-btn:hover { color: #9aa3b0; border-color: #3a4a62; }
+  .card { position: fixed; background: rgba(8,14,24,0.97); border: 1px solid rgba(255,255,255,0.07); border-radius: 10px; padding: 18px 20px; width: 280px; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 20px 50px rgba(0,0,0,0.7); opacity: 0; pointer-events: none; transform: translateY(8px) scale(0.97); transition: opacity 0.3s ease, transform 0.3s cubic-bezier(.22,.61,.36,1); z-index: 100; }
+  .card.visible { opacity: 1; pointer-events: auto; transform: none; }
+  .card-ch { font-family: monospace; font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 8px; }
+  .card-title { font-family: Georgia, serif; font-size: 15px; font-weight: 400; line-height: 1.25; margin-bottom: 10px; }
+  .card-body { font-family: sans-serif; font-size: 11.5px; color: #7a8898; line-height: 1.6; }
+  .card-close { position: absolute; top: 10px; right: 14px; font-family: monospace; font-size: 14px; color: #2a3a52; cursor: pointer; transition: color 0.2s; background: none; border: none; }
+  .card-close:hover { color: #9aa3b0; }
+  .scrubber { position: fixed; bottom: 0; left: 0; right: 0; height: 64px; background: linear-gradient(0deg, rgba(6,9,15,0.98), transparent); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 18px; z-index: 10; }
+  .scrub-chapters { display: flex; border-top: 1px solid #0f1824; }
+  .scrub-ch { padding: 8px 26px 0; font-family: monospace; font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase; color: #1e2e42; cursor: pointer; position: relative; transition: color 0.3s; }
+  .scrub-ch::before { content: ''; position: absolute; top: -1px; left: 50%; transform: translateX(-50%); width: 5px; height: 5px; border-radius: 50%; background: var(--c); opacity: 0.35; transition: opacity 0.3s, transform 0.3s; }
+  .scrub-ch:hover { color: #9aa3b0; }
+  .scrub-ch:hover::before { opacity: 1; transform: translateX(-50%) scale(1.4); }
+  .scrub-ch.active { color: var(--c); }
+  .scrub-ch.active::before { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="eyebrow">Master's Thesis · Research Journey</div>
+  <div class="hdr-title">Two Countries, <em>One Question</em></div>
+  <div class="hint" id="hint">Click a cluster to zoom in and explore</div>
+</div>
+<button class="back-btn" id="backBtn" onclick="zoomOut()">← All chapters</button>
+<canvas id="c"></canvas>
+<div class="card" id="card">
+  <button class="card-close" onclick="closeCard()">×</button>
+  <div class="card-ch" id="card-ch"></div>
+  <div class="card-title" id="card-title"></div>
+  <div class="card-body" id="card-body"></div>
+</div>
+<div class="scrubber">
+  <div class="scrub-chapters" id="scrubber">
+    <div class="scrub-ch" style="--c:#f0a060" onclick="activateChapter(0)">Inspirations</div>
+    <div class="scrub-ch" style="--c:#5090c0" onclick="activateChapter(1)">Past Research</div>
+    <div class="scrub-ch" style="--c:#5ac8b0" onclick="activateChapter(2)">Iterations</div>
+    <div class="scrub-ch" style="--c:#9e90d0" onclick="activateChapter(3)">Now</div>
+  </div>
+</div>
+<script>
+const CHAPTERS = [
+  {
+    color: '#f0a060', label: 'Ch. 01', name: 'Inspirations',
+    subnodes: [
+      { label: '9 yrs Thai Education',        body: 'Watching teachers struggle with technology not because they lacked will, but because the system gave them no scaffolding. That gap stayed with me.' },
+      { label: 'SEAYLP 2019',                  body: 'Cross-cultural youth leadership across ASEAN. First time I saw how differently "technology in school" looked country-to-country.' },
+      { label: 'BMA Internship 2023',          body: 'Tracking BMA\'s education strategy and visualizing the Thai Scholarship Database. Data exposes what systems prioritize — and what they miss.' },
+      { label: 'Chiang Mai roots',             body: '[ A personal note about growing up and observing education inequity firsthand in northern Thailand ]' },
+      { label: 'Teaching Japanese to kids',    body: 'Volunteered teaching Japanese to underserved children in the SS11 Project. Seeing first-hand how language and technology access intertwine.' },
+      { label: 'Kob Junior documentary 2018',  body: 'Directed "Education Upload" — a documentary about the Thai education system\'s need for life skills and self-motivation. 2nd place nationally.' },
+      { label: 'Kob Junior documentary 2016',  body: 'Directed "The Creator", exploring technology\'s environmental and social burden on future generations. Finalist.' },
+      { label: 'GIGA School headlines',        body: 'Reading about Japan\'s 1-device-per-student nationwide rollout sparked the question: what happens to teachers when a system deploys tech top-down?' },
+      { label: 'Bilibili translation work',    body: 'Translating 50+ anime series made me think deeply about how language and cultural context shape learning — and how much gets lost in a bad subtitle.' },
+      { label: 'TikTok content creation',      body: 'Building an audience around Japanese language learning showed me how much people want informal, story-driven education outside the classroom.' },
+      { label: 'Thailand digital divide',      body: 'Observing how rural vs urban schools in Thailand have wildly different relationships with technology — same curriculum, completely different realities.' },
+      { label: 'UNESCO Learning Cities',       body: 'Working on BMA\'s UNESCO Global Network of Learning Cities submission. Understanding how cities frame lifelong learning in policy documents.' },
+      { label: 'Samui CMIC project 2019',      body: 'Led design thinking workshops for young innovators on Samui. Recognized as one of 100 impact contributors for social innovation.' },
+      { label: 'MIDL Youth Camp 2019',         body: 'Designed activities on Media Information and Digital Literacy — how media shapes society and what ethical digital consumption looks like.' },
+      { label: 'Shutter Story 2018',           body: 'Taught photography and visual storytelling to students in underprivileged Bangkok schools. Creativity as a gateway to learning.' },
+      { label: 'Serene Strength 2017',         body: 'Cross-Asian leadership development in India. Early exposure to how different Asian cultures approach learning and community.' },
+      { label: 'Japan move 2025',              body: 'Actually moving to Tokyo for the master\'s — experiencing the GIGA School aftermath firsthand, from the teacher\'s side.' },
+      { label: 'Education Easy BD role',       body: 'Entering Japan\'s EdTech market, pitching to schools, learning what teachers actually resist and why. A reality check on EdTech optimism.' },
+      { label: 'ITASIA program design',        body: 'The interdisciplinary lens of the ITASIA program — combining information studies, area studies, and policy — gave me a framework to think comparatively.' },
+      { label: 'YLab seminar',                 body: '[ Add notes from YLab seminar that shaped your research interest ]' },
+    ]
+  },
+  {
+    color: '#5090c0', label: 'Ch. 02', name: 'Past Research',
+    subnodes: [
+      { label: 'TDRI Internship 2019',           body: 'First exposure to policy-level EdTech thinking and structural issues in Thai education. 10-day research internship.' },
+      { label: 'Saturday School E-sports 2022',  body: 'Developed curriculum for E-sports classrooms in 8 Bangkok schools with SEA (Garena) Thailand. Designing for teacher adoption, not just student engagement.' },
+      { label: 'BA Thesis · Thammasat 2024',     body: '[ Add your Thammasat BA thesis topic and its connection to your current research ]' },
+      { label: 'BMA Education Strategy',         body: 'Data analysis and visual communications for BMA\'s education development press releases and strategy documents.' },
+      { label: 'Thai Scholarship Database',      body: 'Helped build and visualize the Thai national scholarship database during BMA internship.' },
+      { label: 'UNESCO Learning Cities report',  body: 'Research support for BMA\'s submission to the UNESCO Global Network of Learning Cities.' },
+      { label: 'Japan EdTech market research',   body: 'Conducted competitive analysis and market mapping for Education Easy\'s Japan entry strategy.' },
+      { label: 'GIGA School pilot schools',      body: 'Visited and researched pilot GIGA schools in Japan as part of Education Easy\'s business development work.' },
+      { label: 'Korea / Turkey / Saudi markets', body: 'Expanded EdTech market research to South Korea, Turkey, and Saudi Arabia — cross-country comparison of school tech adoption.' },
+      { label: 'Academic translation work',      body: 'Translated Japanese academic papers to English as a research assistant — deep exposure to Japan\'s EdTech research discourse.' },
+      { label: 'E-sports curriculum design',     body: 'First time designing curriculum with both pedagogical intent and technology integration. Precursor to TPACK thinking.' },
+      { label: 'Samui marine solutions project', body: 'Led design-thinking workshops resulting in community-led marine debris solutions. Systems thinking applied to social problems.' },
+      { label: 'TDRI education system brief',    body: 'Contributed to structuring solutions for systemic issues in Thai education — early encounter with policy research methods.' },
+      { label: 'Photography pedagogy research',  body: 'Researched visual storytelling as a learning tool while developing the Shutter Story volunteer program.' },
+      { label: '[ Reading list entry ]',         body: 'Add a key book, paper, or report that shaped your research thinking here.' },
+    ]
+  },
+  {
+    color: '#5ac8b0', label: 'Ch. 03', name: 'Iterations',
+    subnodes: [
+      { label: 'v1 · First thesis idea',            body: '[ What did you originally think you were studying? What was the first pitch you gave your advisor? ]' },
+      { label: 'v1 → v2 · What changed',            body: '[ What forced the pivot? A paper you read, a conversation, a realization about scope? ]' },
+      { label: 'Discovering TPACK',                  body: 'Reading Mishra & Koehler (2006) for the first time. The framework gave language to something I had been observing for years.' },
+      { label: 'First advisor meeting',              body: '[ What did your supervisor say that changed your direction? ]' },
+      { label: 'Why comparative?',                   body: 'The decision to make it Japan vs Thailand — not just one country. Two contexts make the institutional variable visible.' },
+      { label: 'Adding digital divide lens',         body: 'Realizing that Thailand\'s story isn\'t just about TPACK — it\'s about how sociodemographic factors shape who gets to develop it.' },
+      { label: 'Research question v1',               body: '[ Your first draft of the research question — probably too broad ]' },
+      { label: 'Research question v2',               body: '[ A tighter version — probably after your first lit review round ]' },
+      { label: 'Research question v3 · current',    body: 'How do institutional contexts shape TPACK development — and what can Japan and Thailand tell us about each other?' },
+      { label: 'Methodology v1 · pure qualitative',  body: '[ Did you originally plan only interviews? What made you add a survey component? ]' },
+      { label: 'Methodology v2 · mixed methods',     body: 'Semi-structured interviews + TPACK self-assessment survey. Qualitative depth, quantitative anchoring.' },
+      { label: 'Scope: which teachers?',             body: '[ How did you decide on your teacher population — subject, school level, region? ]' },
+      { label: 'Japan site selection',               body: '[ How did you choose which Japanese schools or regions to focus on? ]' },
+      { label: 'Thailand site selection',            body: '[ Which provinces or school types in Thailand, and why? ]' },
+      { label: 'IRB / ethics prep',                  body: '[ Notes on the ethics review process and what it forced you to clarify about your methodology ]' },
+      { label: 'Literature review round 1',          body: '[ Key papers from your first deep lit review — what surprised you, what was missing? ]' },
+      { label: 'Literature review round 2',          body: '[ Second pass — what did you add after your advisor\'s feedback? ]' },
+      { label: 'Conference paper draft',             body: '[ Did you present any early findings or proposals at a seminar or conference? ]' },
+      { label: 'Pilot interview',                    body: '[ Notes from your first pilot interview — what broke, what you changed ]' },
+      { label: 'Survey instrument v1',               body: '[ Which TPACK survey instrument did you choose, and what adaptations did you make? ]' },
+    ]
+  },
+  {
+    color: '#9e90d0', label: 'Ch. 04', name: 'Now',
+    subnodes: [
+      { label: 'Research question',         body: 'How do institutional contexts shape TPACK development in teachers — and what can Japan\'s GIGA School and Thailand\'s digital divide tell us about each other?' },
+      { label: 'Theoretical lens · TPACK',  body: 'Mishra & Koehler (2006). Technological Pedagogical Content Knowledge — the integrated knowledge teachers need to teach effectively with technology.' },
+      { label: 'Japan side · GIGA School',  body: 'National 1-device-per-student rollout across all public schools. Focus: how teachers adapted pedagogy under a top-down technology mandate.' },
+      { label: 'Thailand side · divide',    body: 'How sociodemographic factors — school location, teacher age, resource access — shape digital competency development from the ground up.' },
+      { label: 'Methodology · comp. case',  body: 'Cross-national comparative case study. Two contrasting institutional contexts, one theoretical lens.' },
+      { label: 'Data · interviews',         body: 'Semi-structured interviews with in-service teachers in both countries. Protocol designed around TPACK dimensions.' },
+      { label: 'Data · survey',             body: 'Adapted TPACK self-assessment survey for quantitative anchoring and cross-country comparison.' },
+      { label: 'Japan data collection',     body: 'In progress. [ Add current status, number of interviews completed, schools visited ]' },
+      { label: 'Thailand data collection',  body: 'Upcoming. [ Add planned timeline and target participant profile ]' },
+      { label: 'Analysis framework',        body: '[ What analytical framework are you applying to the interview data — thematic analysis, grounded theory, etc.? ]' },
+      { label: 'Expected contribution',     body: '[ What do you expect to add to the literature that isn\'t already there? ]' },
+      { label: 'Advisor · current notes',   body: '[ Latest feedback from your supervisor — what are they pushing you to clarify? ]' },
+      { label: 'Submission timeline',       body: '[ Target date for thesis submission and any departmental milestones ]' },
+      { label: 'Publication goal',          body: '[ Do you plan to submit a journal article or conference paper alongside the thesis? ]' },
+      { label: 'Open questions',            body: '[ What are the biggest things you still haven\'t figured out? Be honest — this is the most interesting part. ]' },
+    ]
+  },
+];
+
+// Pre-compute each subnode's orbit position around (0,0) — fixed, no recalc
+function buildSubnodePositions(ch) {
+  const n = ch.subnodes.length;
+  ch.subnodes.forEach((sn, i) => {
+    // Spread evenly around the hub with slight radius variation
+    const angle = (i / n) * Math.PI * 2 - Math.PI / 2;
+    const dist  = 60 + (i % 3) * 22 + (i % 7) * 8; // varied distances
+    sn._ox = Math.cos(angle) * dist; // offset from hub center
+    sn._oy = Math.sin(angle) * dist;
+    sn._px = Math.random() * Math.PI * 2; // unique phase per node
+    sn._py = Math.random() * Math.PI * 2;
+    sn._spx = 0.08 + Math.random() * 0.06; // very slow drift speed
+    sn._spy = 0.07 + Math.random() * 0.05;
+    sn._amp = 1.5 + Math.random() * 1.5;   // tiny amplitude — max ~3px drift
+  });
+}
+CHAPTERS.forEach(buildSubnodePositions);
+
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+let W, H, t = 0;
+let activeChapter = null;
+let activeSubnode = null;
+const cam    = { x: 0, y: 0, scale: 1 };
+const target = { x: 0, y: 0, scale: 1 };
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  cam.x = target.x = W / 2;
+  cam.y = target.y = H / 2;
+}
+window.addEventListener('resize', resize);
+resize();
+
+function hubX(i) { return W * (0.18 + i * 0.21); }
+function hubY(i) { return H * (0.42 + [0, 0.10, -0.05, 0.08][i]); }
+
+function draw(ts) {
+  t = ts * 0.001;
+  ctx.clearRect(0, 0, W, H);
+
+  cam.x     += (target.x     - cam.x)     * 0.07;
+  cam.y     += (target.y     - cam.y)     * 0.07;
+  cam.scale += (target.scale - cam.scale) * 0.07;
+
+  ctx.save();
+  ctx.translate(W / 2, H / 2);
+  ctx.scale(cam.scale, cam.scale);
+  ctx.translate(-cam.x, -cam.y);
+
+  // Dashed connectors
+  ctx.save();
+  ctx.setLineDash([2, 10]);
+  ctx.strokeStyle = '#0f1824';
+  ctx.lineWidth = 1;
+  for (let i = 0; i < CHAPTERS.length - 1; i++) {
+    ctx.beginPath();
+    ctx.moveTo(hubX(i), hubY(i));
+    ctx.lineTo(hubX(i+1), hubY(i+1));
+    ctx.stroke();
+  }
+  ctx.setLineDash([]);
+  ctx.restore();
+
+  CHAPTERS.forEach((ch, ci) => {
+    const hx = hubX(ci), hy = hubY(ci);
+    const isActive = activeChapter === ci;
+    const isDimmed = activeChapter !== null && !isActive;
+
+    ctx.globalAlpha = isDimmed ? 0.06 : 1;
+
+    // Ambient glow
+    const gR = isActive ? 160 : 90;
+    const g = ctx.createRadialGradient(hx, hy, 0, hx, hy, gR);
+    g.addColorStop(0, ch.color + (isActive ? '1e' : '0e'));
+    g.addColorStop(1, 'transparent');
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(hx, hy, gR, 0, Math.PI*2); ctx.fill();
+
+    // Subnodes
+    ch.subnodes.forEach((sn, si) => {
+      // Smooth tiny drift: add tiny sine offsets to fixed orbit position
+      const dx = Math.sin(t * sn._spx + sn._px) * sn._amp;
+      const dy = Math.cos(t * sn._spy + sn._py) * sn._amp;
+      const sx = hx + sn._ox + dx;
+      const sy = hy + sn._oy + dy;
+      sn._wx = sx; sn._wy = sy; // cache world coords for hit test
+
+      const isActiveSub = isActive && activeSubnode === si;
+
+      // Connector line
+      ctx.save();
+      ctx.globalAlpha = isDimmed ? 0.03 : (isActive ? 0.18 : 0.08);
+      ctx.strokeStyle = ch.color;
+      ctx.lineWidth = 0.5;
+      ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(sx, sy); ctx.stroke();
+      ctx.restore();
+
+      // Subnode dot
+      const snR = isActiveSub ? 7 : (isActive ? 4 : 3.5);
+      ctx.save();
+      ctx.globalAlpha = isDimmed ? 0.05 : (isActive ? (isActiveSub ? 1 : 0.75) : 0.4);
+
+      if (isActiveSub) {
+        const sg = ctx.createRadialGradient(sx, sy, 0, sx, sy, 20);
+        sg.addColorStop(0, ch.color + '44'); sg.addColorStop(1, 'transparent');
+        ctx.fillStyle = sg;
+        ctx.beginPath(); ctx.arc(sx, sy, 20, 0, Math.PI*2); ctx.fill();
+      }
+
+      ctx.fillStyle = ch.color;
+      ctx.beginPath(); ctx.arc(sx, sy, snR, 0, Math.PI*2); ctx.fill();
+
+      // Labels when zoomed in
+      if (isActive && cam.scale > 1.5) {
+        const fadeIn = Math.min(1, (cam.scale - 1.5) * 2.5);
+        ctx.globalAlpha = fadeIn * (isActiveSub ? 1 : 0.6);
+        ctx.fillStyle = isActiveSub ? '#ede8e0' : '#6a7a8a';
+        ctx.font = `${isActiveSub ? '600 ' : ''}9.5px monospace`;
+        ctx.textAlign = 'center';
+        // Label outside the dot, away from hub
+        const ang = Math.atan2(sn._oy, sn._ox);
+        const lx  = sx + Math.cos(ang) * (snR + 14);
+        const ly  = sy + Math.sin(ang) * (snR + 14) + 4;
+        ctx.fillText(sn.label, lx, ly);
+      }
+      ctx.restore();
+    });
+
+    // Hub slow drift
+    const hdx = Math.sin(t * 0.28 + ci * 1.7) * 3.5;
+    const hdy = Math.cos(t * 0.21 + ci * 2.3) * 2.5;
+    const rhx = hx + hdx, rhy = hy + hdy;
+
+    // Pulse ring on active hub
+    if (isActive) {
+      const pulse = 0.5 + 0.5 * Math.sin(t * 1.6);
+      ctx.save();
+      ctx.globalAlpha = 0.12 + pulse * 0.08;
+      ctx.strokeStyle = ch.color;
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(rhx, rhy, 20 + pulse * 5, 0, Math.PI*2); ctx.stroke();
+      ctx.restore();
+    }
+
+    // Hub dot
+    const hubR = isActive ? 11 : 8;
+    ctx.save();
+    ctx.globalAlpha = isDimmed ? 0.08 : 1;
+    const hg = ctx.createRadialGradient(rhx, rhy, 0, rhx, rhy, hubR * 3);
+    hg.addColorStop(0, ch.color + (isActive ? '99' : '44'));
+    hg.addColorStop(1, 'transparent');
+    ctx.fillStyle = hg;
+    ctx.beginPath(); ctx.arc(rhx, rhy, hubR * 3, 0, Math.PI*2); ctx.fill();
+
+    ctx.fillStyle = ch.color;
+    ctx.beginPath(); ctx.arc(rhx, rhy, hubR, 0, Math.PI*2); ctx.fill();
+
+    // Hub labels
+    ctx.fillStyle = isDimmed ? '#1e2e42' : (isActive ? ch.color : '#4a5a72');
+    ctx.font = '9px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(ch.label, rhx, rhy - hubR - 10);
+    ctx.fillStyle = isDimmed ? '#1e2e42' : (isActive ? '#ede8e0' : '#5a6a7a');
+    ctx.font = isActive ? '400 13px Georgia' : '11px Georgia';
+    ctx.fillText(ch.name, rhx, rhy - hubR - 22);
+    ctx.restore();
+
+    ctx.globalAlpha = 1;
+  });
+
+  ctx.restore();
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+
+// Hit testing: convert screen → world
+function toWorld(sx, sy) {
+  return { x: (sx - W/2) / cam.scale + cam.x, y: (sy - H/2) / cam.scale + cam.y };
+}
+
+canvas.addEventListener('click', e => {
+  const w = toWorld(e.clientX, e.clientY);
+
+  if (activeChapter !== null) {
+    const ch = CHAPTERS[activeChapter];
+    const hitSub = ch.subnodes.findIndex(sn => Math.hypot((sn._wx||0) - w.x, (sn._wy||0) - w.y) < 14);
+    if (hitSub !== -1) { showSubCard(activeChapter, hitSub); return; }
+  }
+
+  for (let ci = 0; ci < CHAPTERS.length; ci++) {
+    if (Math.hypot(hubX(ci) - w.x, hubY(ci) - w.y) < 22) {
+      activeChapter === ci ? zoomOut() : activateChapter(ci);
+      return;
+    }
+  }
+
+  if (activeChapter !== null) closeCard();
+});
+
+function activateChapter(ci) {
+  activeChapter = ci; activeSubnode = null;
+  target.x = hubX(ci); target.y = hubY(ci); target.scale = 2.4;
+  document.getElementById('backBtn').classList.add('visible');
+  document.getElementById('hint').style.opacity = '0';
+  document.querySelectorAll('.scrub-ch').forEach((el, i) => el.classList.toggle('active', i === ci));
+  closeCard();
+}
+
+function zoomOut() {
+  activeChapter = null; activeSubnode = null;
+  target.x = W/2; target.y = H/2; target.scale = 1;
+  document.getElementById('backBtn').classList.remove('visible');
+  document.getElementById('hint').style.opacity = '1';
+  document.querySelectorAll('.scrub-ch').forEach(el => el.classList.remove('active'));
+  closeCard();
+}
+
+function showSubCard(ci, si) {
+  const ch = CHAPTERS[ci], sn = ch.subnodes[si];
+  activeSubnode = si;
+  document.getElementById('card-ch').textContent = ch.label + ' · ' + ch.name;
+  document.getElementById('card-ch').style.color = ch.color;
+  document.getElementById('card-title').textContent = sn.label;
+  document.getElementById('card-body').textContent  = sn.body;
+
+  const card = document.getElementById('card');
+  const sx = (sn._wx - cam.x) * cam.scale + W/2;
+  const sy = (sn._wy - cam.y) * cam.scale + H/2;
+  let left = sx + 20, top = sy - 50;
+  if (left + 300 > W) left = sx - 308;
+  if (top < 80) top = 80;
+  if (top + 220 > H - 80) top = H - 260;
+  card.style.left = left + 'px';
+  card.style.top  = top  + 'px';
+  card.classList.add('visible');
+}
+
+function closeCard() {
+  activeSubnode = null;
+  document.getElementById('card').classList.remove('visible');
+}
+</script>
+</body>
+</html>

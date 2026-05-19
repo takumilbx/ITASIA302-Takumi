@@ -1,0 +1,12 @@
+{"type":"server-started","port":56284,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:56284","screen_dir":"/Users/takumyii/Documents/GitHub/ITASIA302-Takumi/.superpowers/brainstorm/16793-1778483945/content","state_dir":"/Users/takumyii/Documents/GitHub/ITASIA302-Takumi/.superpowers/brainstorm/16793-1778483945/state"}
+{"type":"screen-added","file":"/Users/takumyii/Documents/GitHub/ITASIA302-Takumi/.superpowers/brainstorm/16793-1778483945/content/directions.html"}
+{"type":"screen-added","file":"/Users/takumyii/Documents/GitHub/ITASIA302-Takumi/.superpowers/brainstorm/16793-1778483945/content/animated-directions.html"}
+{"type":"screen-added","file":"/Users/takumyii/Documents/GitHub/ITASIA302-Takumi/.superpowers/brainstorm/16793-1778483945/content/combo-ab.html"}
+{"type":"screen-added","file":"/Users/takumyii/Documents/GitHub/ITASIA302-Takumi/.superpowers/brainstorm/16793-1778483945/content/fonts.html"}
+{"type":"screen-added","file":"/Users/takumyii/Documents/GitHub/ITASIA302-Takumi/.superpowers/brainstorm/16793-1778483945/content/fonts-code.html"}
+{"type":"screen-added","file":"/Users/takumyii/Documents/GitHub/ITASIA302-Takumi/.superpowers/brainstorm/16793-1778483945/content/fonts-code2.html"}
+{"type":"screen-added","file":"/Users/takumyii/Documents/GitHub/ITASIA302-Takumi/.superpowers/brainstorm/16793-1778483945/content/fonts-system.html"}
+{"type":"screen-added","file":"/Users/takumyii/Documents/GitHub/ITASIA302-Takumi/.superpowers/brainstorm/16793-1778483945/content/terminal-ui.html"}
+{"type":"screen-added","file":"/Users/takumyii/Documents/GitHub/ITASIA302-Takumi/.superpowers/brainstorm/16793-1778483945/content/cli-animated.html"}
+{"type":"screen-added","file":"/Users/takumyii/Documents/GitHub/ITASIA302-Takumi/.superpowers/brainstorm/16793-1778483945/content/color-hacker.html"}
+{"type":"server-stopped","reason":"idle timeout"}

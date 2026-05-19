@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entry Title Options</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #05060e;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Courier New', monospace;
+    color: #e0e6f0;
+    gap: 40px;
+    flex-wrap: wrap;
+    padding: 40px 20px;
+  }
+
+  .label { font-family: system-ui, sans-serif; font-size: 11px; color: #4db8cc; text-align: center; letter-spacing: .1em; margin-bottom: 12px; }
+
+  .login-box {
+    width: 300px;
+    border: 1px solid #182030;
+    padding: 28px 32px 28px;
+    position: relative;
+    background: rgba(5,6,14,0.9);
+  }
+  .login-box::before {
+    content:''; position:absolute; top:-1px; left:-1px;
+    width:18px; height:18px;
+    border-top:2px solid #5299c8; border-left:2px solid #5299c8;
+    box-shadow: -2px -2px 10px rgba(82,153,200,.5);
+  }
+  .login-box::after {
+    content:''; position:absolute; bottom:-1px; right:-1px;
+    width:18px; height:18px;
+    border-bottom:2px solid #7272c0; border-right:2px solid #7272c0;
+    box-shadow: 2px 2px 10px rgba(114,114,192,.5);
+  }
+  .login-sep { border:none; border-top:1px solid #182030; margin:0 0 14px; }
+  .login-fields { display:flex; flex-direction:column; gap:7px; margin-bottom:18px; }
+  .lf { display:flex; font-size:10px; gap:8px; }
+  .lf-key { color:#2e3a55; letter-spacing:.1em; min-width:72px; }
+  .lf-val { color:#8899b8; }
+  .lf-val.ok { color:#45a884; text-shadow:0 0 6px rgba(69,168,132,.3); }
+  .login-btn {
+    display:block; width:100%; padding:10px 16px;
+    background:transparent; border:1px solid #5299c8; color:#5299c8;
+    font-family:'Courier New',monospace; font-size:9px; letter-spacing:.25em;
+    text-transform:uppercase; cursor:pointer;
+    box-shadow:0 0 10px rgba(82,153,200,.1);
+  }
+  .login-hint { font-size:8px; color:#2e3a55; text-align:center; margin-top:8px; letter-spacing:.1em; }
+
+  /* Option A: ASCII art only, no logo text */
+  .ascii-title {
+    font-size:7.5px; line-height:1.4; color:#2e3a55; text-align:center;
+    margin-bottom:14px; letter-spacing:.04em;
+    text-shadow: 0 0 10px rgba(82,153,200,.25);
+  }
+
+  /* Option B: Logo only, ASCII replaced with decorative lines */
+  .logo-only {
+    font-size:16px; letter-spacing:.18em;
+    color:#5299c8; text-shadow:0 0 16px rgba(82,153,200,.4);
+    margin-bottom:4px;
+  }
+  .ver { font-size:8px; letter-spacing:.2em; color:#2e3a55; margin-bottom:18px; }
+  .deco-lines {
+    font-size:8px; color:#2e3a55; text-align:center;
+    margin-bottom:14px; letter-spacing:.04em;
+    opacity:.6;
+  }
+</style>
+</head>
+<body>
+
+<!-- Option A: Just ASCII art (no logo text below) -->
+<div>
+  <p class="label">A — ASCII only</p>
+  <div class="login-box">
+    <div class="ascii-title">
+╔══════════════════════╗<br>
+║ I T A S I A 3 0 2 _ O S ║<br>
+╚══════════════════════╝
+    </div>
+    <div style="font-size:8px;letter-spacing:.2em;color:#2e3a55;margin-bottom:18px">v2026.05 · UTOKYO ITASIA PROGRAM</div>
+    <hr class="login-sep">
+    <div class="login-fields">
+      <div class="lf"><span class="lf-key">USER</span><span class="lf-val">TAKUMI OSHIYAMA</span></div>
+      <div class="lf"><span class="lf-key">PROGRAM</span><span class="lf-val">ITASIA / SPRING 2026</span></div>
+      <div class="lf"><span class="lf-key">STATUS</span><span class="lf-val ok">AUTHENTICATED ●</span></div>
+    </div>
+    <hr class="login-sep">
+    <button class="login-btn">[ INITIALIZE SESSION ]</button>
+    <div class="login-hint">press enter or click to continue</div>
+  </div>
+</div>
+
+<!-- Option B: Logo text only, decorative lines instead of ASCII -->
+<div>
+  <p class="label">B — Logo text only</p>
+  <div class="login-box">
+    <div class="deco-lines">── ── ── ── ── ── ── ──</div>
+    <div class="logo-only">ITASIA302_OS</div>
+    <div class="ver">v2026.05 · UTOKYO ITASIA PROGRAM</div>
+    <hr class="login-sep">
+    <div class="login-fields">
+      <div class="lf"><span class="lf-key">USER</span><span class="lf-val">TAKUMI OSHIYAMA</span></div>
+      <div class="lf"><span class="lf-key">PROGRAM</span><span class="lf-val">ITASIA / SPRING 2026</span></div>
+      <div class="lf"><span class="lf-key">STATUS</span><span class="lf-val ok">AUTHENTICATED ●</span></div>
+    </div>
+    <hr class="login-sep">
+    <button class="login-btn">[ INITIALIZE SESSION ]</button>
+    <div class="login-hint">press enter or click to continue</div>
+  </div>
+</div>
+
+</body>
+</html>

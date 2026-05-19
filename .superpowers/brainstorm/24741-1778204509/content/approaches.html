@@ -1,0 +1,68 @@
+<h2>Three ways to restructure the About page</h2>
+<p class="subtitle">Each handles the new Work content differently — pick what feels right</p>
+
+<div class="options">
+
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Add a "Work" tab (minimal change)</h3>
+      <p style="margin-bottom:12px;">Keep existing About Me + Thesis tabs. Add a third tab called <strong>Work</strong> containing TikTok videos, project links, and contact.</p>
+      <div style="background:#111;border-radius:6px;padding:12px;font-family:monospace;font-size:12px;color:#888;margin-bottom:10px;">
+        [ About Me ] &nbsp; [ Master's Thesis ] &nbsp; <span style="color:#5ac8b0;border-bottom:2px solid #5ac8b0;">[ Work ]</span>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <span style="background:#1a2a1a;color:#5ac8b0;padding:4px 10px;border-radius:4px;font-size:11px;">✓ Least disruption</span>
+        <span style="background:#1a2a1a;color:#5ac8b0;padding:4px 10px;border-radius:4px;font-size:11px;">✓ Quick to build</span>
+        <span style="background:#2a1a1a;color:#d86878;padding:4px 10px;border-radius:4px;font-size:11px;">✗ Work hidden behind click</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Restructure into 3 focused tabs ⭐ Recommended</h3>
+      <p style="margin-bottom:12px;">Rename and reorganize into three tabs with clear purpose: <strong>Profile</strong> (who I am) · <strong>Work</strong> (what I've made) · <strong>Research</strong> (thesis, expanded).</p>
+      <div style="background:#111;border-radius:6px;padding:12px;font-family:monospace;font-size:12px;color:#888;margin-bottom:10px;">
+        <span style="color:#5090c0;border-bottom:2px solid #5090c0;">[ Profile ]</span> &nbsp; <span style="color:#5ac8b0;">[ Work ]</span> &nbsp; <span style="color:#9e90d0;">[ Research ]</span>
+      </div>
+      <div style="font-size:12px;color:#aaa;margin-bottom:10px;line-height:1.8;">
+        <strong style="color:#5090c0;">Profile:</strong> Bio · Facts · Timeline · Languages<br>
+        <strong style="color:#5ac8b0;">Work:</strong> TikTok videos · Projects grid · Contact/links<br>
+        <strong style="color:#9e90d0;">Research:</strong> Expanded thesis · Research question · Methodology
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <span style="background:#1a2a1a;color:#5ac8b0;padding:4px 10px;border-radius:4px;font-size:11px;">✓ Clearest structure</span>
+        <span style="background:#1a2a1a;color:#5ac8b0;padding:4px 10px;border-radius:4px;font-size:11px;">✓ Work is a first-class section</span>
+        <span style="background:#1a2a1a;color:#5ac8b0;padding:4px 10px;border-radius:4px;font-size:11px;">✓ Research gets room to grow</span>
+        <span style="background:#2a1a1a;color:#d86878;padding:4px 10px;border-radius:4px;font-size:11px;">✗ More reorganization needed</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Single scrolling page (no tabs)</h3>
+      <p style="margin-bottom:12px;">Remove tabs entirely. One long scroll: Hero → TikTok reel → Projects → Bio/Timeline → Thesis → Contact. Feels more like a personal site than a CV.</p>
+      <div style="background:#111;border-radius:6px;padding:10px;font-family:monospace;font-size:11px;color:#888;line-height:1.9;margin-bottom:10px;">
+        ↓ Hero + social links<br>
+        ↓ Featured TikTok videos<br>
+        ↓ Projects grid<br>
+        ↓ Bio + timeline (condensed)<br>
+        ↓ Research / Thesis<br>
+        ↓ Contact
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <span style="background:#1a2a1a;color:#5ac8b0;padding:4px 10px;border-radius:4px;font-size:11px;">✓ Feels like a real portfolio</span>
+        <span style="background:#1a2a1a;color:#5ac8b0;padding:4px 10px;border-radius:4px;font-size:11px;">✓ Everything visible up front</span>
+        <span style="background:#2a1a1a;color:#d86878;padding:4px 10px;border-radius:4px;font-size:11px;">✗ Very long scroll</span>
+        <span style="background:#2a1a1a;color:#d86878;padding:4px 10px;border-radius:4px;font-size:11px;">✗ Biggest rebuild</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top:20px;">My recommendation is <strong>B</strong> — it gives Work a proper home without a full page rewrite, and the Research tab can grow as the thesis develops. Click your pick and let me know in chat.</p>

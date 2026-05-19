@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+  body {
+    background: #06090f;
+    color: #ede8e0;
+    font-family: Georgia, serif;
+  }
+
+  /* Header */
+  .hdr {
+    position: fixed; top: 0; left: 0; right: 0;
+    padding: 24px 40px 0;
+    z-index: 10;
+    pointer-events: none;
+  }
+  .hdr-eyebrow {
+    font-family: monospace; font-size: 8.5px; letter-spacing: 0.26em;
+    text-transform: uppercase; color: #2a3a52;
+    display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+  }
+  .hdr-eyebrow::before { content:''; width:24px; height:1px; background:#9e90d0; display:inline-block; }
+  .hdr-title { font-size: 22px; font-weight: 300; letter-spacing: -0.02em; color: #ede8e0; }
+  .hdr-title em { color: #9e90d0; font-style: italic; }
+  .hdr-hint {
+    font-family: monospace; font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: #1e2e42; margin-top: 6px;
+  }
+
+  /* Canvas fills viewport */
+  canvas { display: block; position: fixed; inset: 0; }
+
+  /* Floating card that pops up near clicked dot */
+  .card {
+    position: fixed;
+    background: rgba(8, 14, 24, 0.96);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 10px;
+    padding: 20px 22px;
+    width: 300px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px) scale(0.96);
+    transition: opacity 0.35s ease, transform 0.35s cubic-bezier(.22,.61,.36,1);
+    z-index: 100;
+  }
+  .card.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+  }
+  .card-ch {
+    font-family: monospace; font-size: 8px; letter-spacing: 0.22em;
+    text-transform: uppercase; margin-bottom: 10px;
+  }
+  .card-title { font-size: 17px; font-weight: 400; line-height: 1.2; margin-bottom: 12px; }
+  .card-title em { font-style: italic; }
+  .card-entries { display: flex; flex-direction: column; gap: 8px; }
+  .card-entry {
+    border-left: 2px solid; border-radius: 0 4px 4px 0;
+    padding: 8px 10px;
+    background: rgba(255,255,255,0.03);
+  }
+  .card-entry-title { font-family: sans-serif; font-size: 11px; font-weight: 600; color: #ede8e0; margin-bottom: 2px; }
+  .card-entry-body { font-family: sans-serif; font-size: 10.5px; color: #7a8898; line-height: 1.5; }
+  .card-close {
+    position: absolute; top: 12px; right: 14px;
+    font-family: monospace; font-size: 14px; color: #2a3a52; cursor: pointer;
+    transition: color 0.2s;
+  }
+  .card-close:hover { color: #9aa3b0; }
+
+  /* Bottom scrubber */
+  .scrubber {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    height: 72px;
+    background: linear-gradient(0deg, rgba(6,9,15,0.98) 0%, transparent 100%);
+    display: flex; align-items: flex-end; justify-content: center; gap: 0;
+    padding-bottom: 22px;
+    z-index: 10;
+    pointer-events: none;
+  }
+  .scrub-chapters {
+    display: flex; gap: 0;
+    border-top: 1px solid #0f1824;
+    pointer-events: auto;
+  }
+  .scrub-ch {
+    padding: 8px 28px 0;
+    font-family: monospace; font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: #1e2e42; cursor: pointer;
+    position: relative;
+    transition: color 0.3s;
+  }
+  .scrub-ch::before {
+    content: '';
+    position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--c);
+    opacity: 0.4;
+    transition: opacity 0.3s, transform 0.3s;
+  }
+  .scrub-ch:hover { color: #9aa3b0; }
+  .scrub-ch:hover::before { opacity: 1; transform: translateX(-50%) scale(1.4); }
+  .scrub-ch.active { color: var(--c); }
+  .scrub-ch.active::before { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-eyebrow">Master's Thesis · Research Journey</div>
+  <div class="hdr-title">Two Countries, <em>One Question</em></div>
+  <div class="hdr-hint">Click a node to explore each chapter</div>
+</div>
+
+<canvas id="c"></canvas>
+
+<!-- Floating card -->
+<div class="card" id="card">
+  <div class="card-close" onclick="closeCard()">×</div>
+  <div class="card-ch" id="card-ch"></div>
+  <div class="card-title" id="card-title"></div>
+  <div class="card-entries" id="card-entries"></div>
+</div>
+
+<!-- Bottom scrubber -->
+<div class="scrubber">
+  <div class="scrub-chapters">
+    <div class="scrub-ch" style="--c:#f0a060" onclick="activateChapter(0)">Inspirations</div>
+    <div class="scrub-ch" style="--c:#5090c0" onclick="activateChapter(1)">Past Research</div>
+    <div class="scrub-ch" style="--c:#5ac8b0" onclick="activateChapter(2)">Iterations</div>
+    <div class="scrub-ch" style="--c:#9e90d0" onclick="activateChapter(3)">Now</div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+
+const CHAPTERS = [
+  {
+    color: '#f0a060', label: 'Ch. 01', name: 'Inspirations',
+    title: 'What made me care about this',
+    entries: [
+      { title: '9 years in Thai education', body: 'Watching teachers struggle with tech not because they lacked will, but because the system gave no scaffolding.' },
+      { title: 'SEAYLP 2019 · Northern Illinois', body: 'First time I saw how different "technology in school" looked country-to-country across ASEAN.' },
+      { title: 'Bangkok Metro Admin · 2023', body: 'Visualizing BMA\'s education strategy — data exposes what systems prioritize and what they miss.' },
+    ]
+  },
+  {
+    color: '#5090c0', label: 'Ch. 02', name: 'Past Research',
+    title: 'Work that shaped my thinking',
+    entries: [
+      { title: 'TDRI Internship · 2019', body: 'My first exposure to policy-level thinking about EdTech and structural issues in Thai education.' },
+      { title: 'Saturday School · E-sports · 2022', body: 'Developed curriculum for E-sports classrooms in 8 Bangkok schools. First time designing for teacher adoption.' },
+      { title: 'BA Thesis · Thammasat · 2024', body: '[ Add your BA thesis topic here ]' },
+    ]
+  },
+  {
+    color: '#5ac8b0', label: 'Ch. 03', name: 'Iterations',
+    title: 'How this thesis has evolved',
+    entries: [
+      { title: 'Version 1 · Initial concept', body: '[ What did you originally think you were studying? What changed? ]' },
+      { title: 'Version 2 · Narrowing to TPACK', body: '[ How did you arrive at TPACK as the framework? ]' },
+    ]
+  },
+  {
+    color: '#9e90d0', label: 'Ch. 04', name: 'Now',
+    title: 'Where I am today',
+    entries: [
+      { title: 'Research question', body: 'How do institutional contexts shape TPACK development — and what can Japan\'s GIGA School and Thailand\'s digital divide tell us about each other?' },
+      { title: 'Status', body: 'Actively developing. Data collection on the Japan side in progress.' },
+    ]
+  },
+];
+
+// Each chapter gets a cluster of particles
+const particles = [];
+let activeChapter = null;
+let W, H;
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  placeParticles();
+}
+
+function chapterX(i) { return W * (0.15 + i * 0.23); }
+function chapterY(i) { return H * (0.38 + [0, 0.14, -0.08, 0.1][i]); }
+
+function placeParticles() {
+  particles.length = 0;
+  CHAPTERS.forEach((ch, ci) => {
+    const cx = chapterX(ci), cy = chapterY(ci);
+    const n = ci === 3 ? 6 : 9; // "Now" is the focal point, slightly fewer
+    for (let i = 0; i < n; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const r = 18 + Math.random() * 52;
+      particles.push({
+        ci,
+        x: cx + Math.cos(angle) * r,
+        y: cy + Math.sin(angle) * r,
+        ox: cx + Math.cos(angle) * r, // origin
+        oy: cy + Math.sin(angle) * r,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        r: 2.5 + Math.random() * 3.5,
+        isMain: i === 0, // first particle is the "main" dot
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.004 + Math.random() * 0.006,
+      });
+    }
+  });
+  // Make main dots larger
+  particles.filter(p => p.isMain).forEach(p => { p.r = 7; });
+}
+
+window.addEventListener('resize', resize);
+resize();
+
+// ── Render loop ──
+function draw(t) {
+  ctx.clearRect(0, 0, W, H);
+
+  // Draw soft glow behind each chapter cluster
+  CHAPTERS.forEach((ch, ci) => {
+    const cx = chapterX(ci), cy = chapterY(ci);
+    const alpha = activeChapter === null ? 0.06 : (activeChapter === ci ? 0.12 : 0.02);
+    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 90);
+    grad.addColorStop(0, ch.color + Math.round(alpha * 255).toString(16).padStart(2,'0'));
+    grad.addColorStop(1, 'transparent');
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.arc(cx, cy, 90, 0, Math.PI * 2); ctx.fill();
+  });
+
+  // Draw connecting lines between chapter centers
+  ctx.save();
+  for (let i = 0; i < CHAPTERS.length - 1; i++) {
+    const x1 = chapterX(i), y1 = chapterY(i);
+    const x2 = chapterX(i+1), y2 = chapterY(i+1);
+    ctx.beginPath();
+    ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+    ctx.strokeStyle = 'rgba(30,46,66,0.5)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([2, 6]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  ctx.restore();
+
+  // Draw particles
+  particles.forEach(p => {
+    const ch = CHAPTERS[p.ci];
+    const isActive = activeChapter === p.ci;
+    const isDimmed = activeChapter !== null && activeChapter !== p.ci;
+
+    // Drift
+    p.x += Math.sin(t * p.speed + p.phase) * 0.4;
+    p.y += Math.cos(t * p.speed * 0.7 + p.phase) * 0.3;
+
+    const baseAlpha = isDimmed ? 0.15 : (isActive ? 1 : 0.55);
+    const radius = p.isMain
+      ? (isActive ? p.r * 1.8 : p.r)
+      : (isActive ? p.r * 1.2 : p.r);
+
+    // Glow for main dots
+    if (p.isMain) {
+      const glowR = radius * (isActive ? 5 : 3);
+      const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, glowR);
+      g.addColorStop(0, ch.color + (isDimmed ? '15' : (isActive ? '55' : '30')));
+      g.addColorStop(1, 'transparent');
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(p.x, p.y, glowR, 0, Math.PI * 2); ctx.fill();
+    }
+
+    // Dot
+    ctx.globalAlpha = baseAlpha;
+    ctx.fillStyle = ch.color;
+    ctx.beginPath(); ctx.arc(p.x, p.y, radius, 0, Math.PI * 2); ctx.fill();
+
+    // Label for main dots
+    if (p.isMain) {
+      ctx.globalAlpha = isDimmed ? 0.1 : (isActive ? 1 : 0.5);
+      ctx.fillStyle = ch.color;
+      ctx.font = `${isActive ? '500 ' : ''}${isActive ? 10 : 8}px monospace`;
+      ctx.letterSpacing = '0.15em';
+      ctx.textAlign = 'center';
+      ctx.fillText(ch.label, p.x, p.y - radius - 10);
+      ctx.font = `${isActive ? 13 : 10}px Georgia`;
+      ctx.fillStyle = isActive ? '#ede8e0' : '#6a7a8a';
+      ctx.fillText(ch.name, p.x, p.y - radius - (isActive ? 26 : 22));
+    }
+
+    ctx.globalAlpha = 1;
+  });
+
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+
+// ── Interaction ──
+canvas.addEventListener('click', e => {
+  const mx = e.clientX, my = e.clientY;
+  // Check if clicking a main dot
+  const hit = particles.find(p => p.isMain && Math.hypot(p.x - mx, p.y - my) < 28);
+  if (hit) {
+    activateChapter(hit.ci, hit.x, hit.y);
+  } else {
+    closeCard();
+  }
+});
+
+function activateChapter(ci, dotX, dotY) {
+  activeChapter = ci;
+  const ch = CHAPTERS[ci];
+
+  // Update scrubber
+  document.querySelectorAll('.scrub-ch').forEach((el, i) => {
+    el.classList.toggle('active', i === ci);
+  });
+
+  // Build card
+  document.getElementById('card-ch').textContent = ch.label + ' · ' + ch.name;
+  document.getElementById('card-ch').style.color = ch.color;
+  document.getElementById('card-title').innerHTML = ch.title.replace(/(\w+)$/, '<em>$1</em>');
+
+  const entriesEl = document.getElementById('card-entries');
+  entriesEl.innerHTML = '';
+  ch.entries.forEach(en => {
+    const div = document.createElement('div');
+    div.className = 'card-entry';
+    div.style.borderColor = ch.color + '55';
+    div.innerHTML = `<div class="card-entry-title">${en.title}</div><div class="card-entry-body">${en.body}</div>`;
+    entriesEl.appendChild(div);
+  });
+
+  // Position card near dot, or center if no dot coords
+  const card = document.getElementById('card');
+  const cx = dotX ?? chapterX(ci);
+  const cy = dotY ?? chapterY(ci);
+  let left = cx + 30;
+  let top = cy - 60;
+  if (left + 320 > W) left = cx - 330;
+  if (top < 80) top = 80;
+  if (top + 340 > H - 80) top = H - 420;
+  card.style.left = left + 'px';
+  card.style.top = top + 'px';
+  card.classList.add('visible');
+}
+
+function closeCard() {
+  activeChapter = null;
+  document.getElementById('card').classList.remove('visible');
+  document.querySelectorAll('.scrub-ch').forEach(el => el.classList.remove('active'));
+}
+</script>
+</body>
+</html>
