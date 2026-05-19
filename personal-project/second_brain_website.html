@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Building a Second Brain (For Real This Time) · ITASIA302</title>
+  <meta name="description" content="Four datasets, one PKM framework, and an honest attempt to figure out where my thesis is.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500;1,9..144,600&family=Geist+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #05060e;
+      --bg-soft: #0b0d1a;
+      --ink: #e0e6f0;
+      --ink-dim: #8899b8;
+      --ink-faint: #2e3a55;
+      --rule: #182030;
+      --amber: #e8634a;
+      --teal: #45a884;
+      --sky: #5299c8;
+      --lilac: #7272c0;
+      --coral: #b85c7a;
+      --serif: "Fraunces", Georgia, "Times New Roman", serif;
+      --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+      --ease: cubic-bezier(.22,.61,.36,1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      background-image:
+        linear-gradient(rgba(232,99,74,.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(232,99,74,.018) 1px, transparent 1px);
+      background-size: 52px 52px;
+      color: var(--ink);
+      font-family: var(--serif);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Atmospheric */
+    .grain {
+      position: fixed; inset: 0; z-index: 9999; pointer-events: none;
+      opacity: .03;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/></filter><rect width='256' height='256' filter='url(%23n)'/></svg>");
+      background-size: 220px 220px; mix-blend-mode: overlay;
+    }
+    .glow-tl { position: fixed; top: 0; left: 0; width: 55vw; height: 55vh; pointer-events: none; z-index: 0; background: radial-gradient(at 0% 0%, rgba(232,99,74,.08) 0%, transparent 60%); }
+    .glow-br { position: fixed; bottom: 0; right: 0; width: 50vw; height: 50vh; pointer-events: none; z-index: 0; background: radial-gradient(at 100% 100%, rgba(114,114,192,.06) 0%, transparent 65%); }
+    .edge-gradient { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 10000; background: linear-gradient(90deg, transparent 0%, var(--sky) 22%, var(--lilac) 62%, transparent 100%); opacity: .5; pointer-events: none; }
+
+    /* Top nav */
+    .topbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 48px;
+      height: 52px;
+      background: linear-gradient(180deg, rgba(5,6,14,.97) 0%, rgba(5,6,14,.80) 70%, transparent 100%);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    }
+    .topbar-title { font-family: var(--serif); font-weight: 300; font-size: 15px; letter-spacing: -0.01em; color: var(--ink); white-space: nowrap; }
+    .topbar-title em { color: var(--amber); font-style: italic; }
+    .topbar-nav { display: flex; gap: 0; list-style: none; }
+    .topbar-nav a {
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--ink-faint); text-decoration: none;
+      padding: 6px 12px; transition: color 150ms ease;
+    }
+    .topbar-nav a:hover { color: var(--amber); }
+    .topbar-nav a.active { color: var(--ink); }
+    .journal-link { color: inherit; text-decoration: none; border-bottom: 1px dotted var(--ink-faint); transition: color 180ms ease, border-color 180ms ease; }
+    .journal-link:hover { color: var(--amber); border-bottom-color: var(--amber); }
+
+    /* Reveal */
+    .reveal { opacity: 0; transform: translateY(14px); transition: opacity .9s var(--ease), transform .9s var(--ease); }
+    .reveal.in-view { opacity: 1; transform: translateY(0); }
+    .reveal.d1 { transition-delay: .08s; }
+    .reveal.d2 { transition-delay: .18s; }
+    .reveal.d3 { transition-delay: .30s; }
+    .reveal.d4 { transition-delay: .44s; }
+    .reveal.d5 { transition-delay: .58s; }
+
+    /* Skeleton shimmer */
+    @keyframes shimmer {
+      0% { background-position: -400px 0; }
+      100% { background-position: 400px 0; }
+    }
+    .skeleton {
+      background: linear-gradient(90deg, rgba(46,58,85,.6) 25%, rgba(69,87,128,.5) 50%, rgba(46,58,85,.6) 75%);
+      background-size: 400px 100%;
+      animation: shimmer 2s infinite linear;
+      border-radius: 3px;
+    }
+    .skeleton-block {
+      padding: 28px 30px;
+      border-left: 2px solid var(--ink-faint);
+      max-width: 760px;
+      position: relative;
+      overflow: hidden;
+    }
+    .skeleton-block::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(180deg, rgba(14,24,36,.3) 0%, rgba(14,24,36,.1) 100%);
+    }
+    .skeleton-line { height: 14px; margin-bottom: 10px; border-radius: 3px; }
+    .skeleton-line.w-full { width: 100%; }
+    .skeleton-line.w-90 { width: 90%; }
+    .skeleton-line.w-75 { width: 75%; }
+    .skeleton-line.w-60 { width: 60%; }
+    .skeleton-line.w-45 { width: 45%; }
+    .skeleton-label {
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--ink-faint); margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .skeleton-label .spin { display: inline-block; width: 8px; height: 8px; border: 1.5px solid var(--ink-faint); border-top-color: transparent; border-radius: 50%; animation: spin 1.6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.4;} }
+
+    /* Layout */
+    main { position: relative; z-index: 1; max-width: 820px; margin: 0 auto; padding: 80px 48px 64px; }
+
+    /* Section scaffolding */
+    .essay-section { margin-bottom: 88px; scroll-margin-top: 68px; }
+    .section-tag {
+      font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.28em;
+      text-transform: uppercase; color: var(--ink-faint); margin-bottom: 16px;
+    }
+    .section-tag em { color: var(--amber); font-style: normal; }
+    .section-heading {
+      font-family: var(--serif); font-weight: 300;
+      font-size: clamp(28px, 3.2vw, 40px);
+      line-height: 1.1; letter-spacing: -0.022em;
+      color: var(--ink); margin-bottom: 26px; max-width: 24ch;
+    }
+    .section-heading em { font-style: italic; font-weight: 400; color: var(--amber); }
+    .body-text {
+      font-family: var(--serif); font-weight: 300;
+      font-size: clamp(15.5px, 1.2vw, 17.5px);
+      line-height: 1.7; color: var(--ink-dim); max-width: 64ch; margin-bottom: 20px;
+    }
+    .body-text em { font-style: italic; color: var(--ink); }
+    .body-text a { color: var(--sky); text-decoration: underline; text-decoration-color: rgba(82,153,200,.4); text-underline-offset: 3px; }
+
+    /* Hero */
+    .hero { margin-bottom: 80px; padding-top: 32px; }
+    .hero-eyebrow { font-family: var(--mono); font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 18px; }
+    .hero-eyebrow .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); margin: 0 12px 2px 0; box-shadow: 0 0 10px var(--amber); vertical-align: middle; animation: pulse 2s ease-in-out infinite; }
+    .hero-title { font-family: var(--serif); font-weight: 300; font-size: clamp(36px, 4.8vw, 60px); line-height: 1.04; letter-spacing: -0.03em; color: var(--ink); margin-bottom: 18px; }
+    .hero-title em { font-style: italic; font-weight: 400; color: var(--amber); }
+    .hero-subtitle { font-family: var(--serif); font-weight: 300; font-size: clamp(16px, 1.4vw, 20px); line-height: 1.5; color: var(--ink-dim); max-width: 56ch; margin-bottom: 18px; }
+    .hero-subtitle em { color: var(--ink); font-style: italic; }
+    .hero-byline { font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-faint); }
+    .hero-byline em { color: var(--amber); font-style: normal; letter-spacing: 0.14em; }
+    .cmd-prompt { color: var(--amber); font-style: normal; user-select: none; }
+    .blink-cursor { display: inline-block; width: 7px; height: 10px; background: var(--sky); vertical-align: middle; margin-left: 2px; animation: cur-blink 1s step-end infinite; border-radius: 1px; }
+    @keyframes cur-blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+    .blink-cursor.steady { animation: cur-steady 3s ease-in-out infinite; }
+    @keyframes cur-steady { 0%,100%{opacity:.5;} 50%{opacity:.15;} }
+
+    /* Pull-quote */
+    .pull-quote {
+      position: relative; margin: 36px 0;
+      padding: 28px 32px 28px 40px;
+      border-left: 3px solid var(--amber);
+      background: linear-gradient(180deg, rgba(232,99,74,.07) 0%, rgba(232,99,74,.02) 100%);
+      max-width: 720px;
+    }
+    .pull-quote blockquote {
+      font-family: var(--serif); font-weight: 300; font-size: clamp(15px,1.1vw,17px);
+      line-height: 1.7; color: var(--ink); font-style: italic; margin-bottom: 14px;
+    }
+    .pull-quote cite {
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--ink-faint); font-style: normal;
+    }
+    .pull-quote cite em { color: var(--amber); font-style: italic; font-size: 10px; letter-spacing: 0.1em; text-transform: none; }
+
+    /* Viz cards */
+    .viz-grid { display: flex; flex-direction: column; gap: 20px; margin-top: 28px; }
+    .viz-card {
+      position: relative;
+      padding: 24px 28px;
+      background: linear-gradient(180deg, rgba(14,24,36,.5) 0%, rgba(14,24,36,.2) 100%);
+      border: 1px solid var(--rule);
+      border-left: 3px solid var(--ink-faint);
+      transition: border-left-color 220ms ease;
+    }
+    .viz-card:hover { border-left-color: var(--amber); }
+    .viz-card.available { border-left-color: var(--teal); }
+    .viz-card.available:hover { border-left-color: var(--amber); }
+    .viz-tag { font-family: var(--mono); font-size: 9px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 8px; }
+    .viz-tag .badge { display: inline-block; padding: 2px 8px; background: rgba(69,168,132,.15); color: var(--teal); border: 1px solid rgba(69,168,132,.3); border-radius: 2px; font-size: 8px; margin-left: 8px; }
+    .viz-tag .badge.unavailable { background: rgba(46,58,85,.3); color: var(--ink-faint); border-color: var(--rule); }
+    .viz-title { font-family: var(--serif); font-weight: 400; font-size: clamp(17px,1.5vw,20px); color: var(--ink); margin-bottom: 10px; line-height: 1.3; }
+    .viz-title em { font-style: italic; color: var(--amber); }
+    .viz-desc { font-family: var(--serif); font-weight: 300; font-size: 14.5px; line-height: 1.65; color: var(--ink-dim); margin-bottom: 16px; }
+    .viz-desc em { color: var(--ink); font-style: italic; }
+    .viz-learned-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 10px; }
+    .viz-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--amber); text-decoration: none;
+      padding: 8px 16px; border: 1px solid rgba(232,99,74,.3);
+      transition: background 200ms ease, border-color 200ms ease;
+    }
+    .viz-link:hover { background: rgba(232,99,74,.08); border-color: var(--amber); }
+    .viz-link.disabled { color: var(--ink-faint); border-color: var(--rule); pointer-events: none; }
+    .viz-link .arrow { transition: transform 200ms ease; }
+    .viz-link:hover .arrow { transform: translateX(3px); }
+
+    /* Source cards */
+    .source-grid { display: flex; flex-direction: column; gap: 20px; margin-top: 28px; }
+    .source-card {
+      padding: 26px 30px;
+      background: linear-gradient(180deg, rgba(114,114,192,.07) 0%, rgba(114,114,192,.02) 100%);
+      border-left: 2px solid var(--lilac);
+      max-width: 760px;
+    }
+    .source-citekey { font-family: var(--mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--lilac); margin-bottom: 8px; }
+    .source-title { font-family: var(--serif); font-weight: 400; font-size: 17px; color: var(--ink); margin-bottom: 14px; }
+    .source-title em { font-style: italic; }
+    .source-sub { font-family: var(--mono); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-faint); margin-top: 16px; margin-bottom: 8px; }
+    .source-body { font-family: var(--serif); font-weight: 300; font-size: 14.5px; line-height: 1.65; color: var(--ink-dim); }
+    .source-body em { color: var(--ink); font-style: italic; }
+
+    /* Callout */
+    .callout {
+      padding: 26px 30px; margin: 32px 0;
+      background: linear-gradient(180deg, rgba(82,153,200,.09) 0%, rgba(82,153,200,.03) 100%);
+      border-left: 2px solid var(--sky); max-width: 720px;
+    }
+    .callout p { font-family: var(--serif); font-weight: 300; font-size: clamp(15.5px,1.2vw,17.5px); line-height: 1.7; color: var(--ink); font-style: italic; }
+    .callout p em { font-style: normal; color: var(--sky); }
+
+    /* Failure modes */
+    .failure-list { list-style: none; margin: 24px 0; max-width: 720px; }
+    .failure-list li {
+      position: relative; padding: 18px 20px 18px 52px;
+      border-bottom: 1px solid var(--rule);
+    }
+    .failure-list li:first-child { border-top: 1px solid var(--rule); }
+    .failure-list li::before {
+      content: attr(data-n);
+      position: absolute; left: 20px; top: 20px;
+      font-family: var(--mono); font-size: 11px; font-weight: 600;
+      color: var(--amber);
+    }
+    .failure-list li strong { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink); display: block; margin-bottom: 6px; }
+    .failure-list li p { font-family: var(--serif); font-weight: 300; font-size: 14.5px; line-height: 1.65; color: var(--ink-dim); }
+
+    /* System table */
+    .system-table-wrap { overflow-x: auto; margin: 24px 0; max-width: 760px; }
+    table.system-table { width: 100%; border-collapse: collapse; }
+    table.system-table th {
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--ink-faint);
+      padding: 10px 16px; border-bottom: 1px solid var(--rule);
+      text-align: left; background: rgba(14,24,36,.4);
+    }
+    table.system-table td {
+      font-family: var(--serif); font-weight: 300; font-size: 14px;
+      color: var(--ink-dim); padding: 14px 16px;
+      border-bottom: 1px solid rgba(24,32,48,.7); vertical-align: top;
+    }
+    table.system-table td:first-child {
+      font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--amber); white-space: nowrap;
+    }
+    table.system-table tr:hover td { background: rgba(46,58,85,.2); }
+    .td-skeleton { display: flex; flex-direction: column; gap: 6px; }
+
+    /* References */
+    .ref-list { list-style: none; margin-top: 20px; }
+    .ref-list li { padding: 16px 0; border-bottom: 1px solid var(--rule); font-family: var(--serif); font-weight: 300; font-size: 14px; line-height: 1.65; color: var(--ink-dim); }
+    .ref-list li:last-child { border-bottom: none; }
+    .ref-key { font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--lilac); margin-bottom: 6px; }
+
+    /* Divider */
+    .section-rule { height: 1px; background: var(--rule); max-width: 760px; margin: 0 0 64px; }
+
+    /* Footer */
+    footer.footer {
+      margin-top: 80px; padding: 28px 0 4px;
+      border-top: 1px solid var(--rule);
+      display: flex; justify-content: space-between; align-items: baseline;
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--ink-faint);
+    }
+    footer.footer em { color: var(--amber); font-style: normal; letter-spacing: 0.14em; }
+
+    /* Responsive */
+    @media (max-width: 720px) {
+      .topbar { padding: 0 22px; }
+      .topbar-nav { display: none; }
+      main { padding: 72px 22px 48px; }
+      .pull-quote { padding: 22px 22px 22px 28px; }
+      footer.footer { flex-direction: column; gap: 8px; }
+    }
+    @media (max-width: 480px) {
+      .topbar { padding: 0 18px; }
+      main { padding: 68px 18px 40px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { transition: none !important; opacity: 1; transform: none; }
+      html { scroll-behavior: auto; }
+      .hero-eyebrow .dot, .skeleton-label .spin, .blink-cursor { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="grain"></div>
+<div class="glow-tl"></div>
+<div class="glow-br"></div>
+<div class="edge-gradient"></div>
+
+<header class="topbar">
+  <div class="topbar-title">
+    <a class="journal-link" href="../home.html">&larr; All</a> &nbsp;&middot;&nbsp; Personal <em>Project</em>
+  </div>
+  <nav aria-label="Section navigation">
+    <ul class="topbar-nav">
+      <li><a href="#intro">Intro</a></li>
+      <li><a href="#viz">Visualizations</a></li>
+      <li><a href="#pkm">Framework</a></li>
+      <li><a href="#synthesis">Synthesis</a></li>
+      <li><a href="#thesis">Thesis</a></li>
+      <li><a href="#system">System</a></li>
+      <li><a href="#refs">References</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ─── HERO ─── -->
+  <section class="hero">
+    <div class="hero-eyebrow reveal">
+      <span class="dot"></span>
+      <span class="cmd-prompt">~/itasia302/personal-project $ </span><span id="hero-cmd"></span><span class="blink-cursor" id="hero-cursor"></span>
+    </div>
+    <h1 class="hero-title reveal d1">
+      Building a Second Brain <em>(For Real This Time)</em>
+    </h1>
+    <p class="hero-subtitle reveal d2">
+      Four datasets, one PKM framework, and an <em>honest attempt</em> to figure out where my thesis is.
+    </p>
+    <div class="hero-byline reveal d3">
+      Takumi &nbsp;&middot;&nbsp; ITASIA302, University of Tokyo &nbsp;&middot;&nbsp; <em>May 2026</em>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 0: INTRODUCTION ─── -->
+  <section id="intro" class="essay-section">
+    <div class="section-tag reveal"><em>00</em> &nbsp;&middot;&nbsp; Introduction</div>
+    <h2 class="section-heading reveal d1">What this is</h2>
+
+    <p class="body-text reveal d2">
+      This website is a test. The question it's testing: does building a personal knowledge management system actually help you understand things you couldn't understand before, or does it just give you a more sophisticated way to avoid doing the work?
+    </p>
+
+    <p class="body-text reveal d3">
+      I built four data visualizations over the past year, across different datasets and domains. Each one involved different data, a different method, and a different kind of question. But I hadn't put them in conversation with each other until now. This site is that conversation, structured by a PKM framework from three academic sources, and ending with two things: a thesis direction I couldn't have named before I started, and a concrete personal system I'm actually going to use going forward.
+    </p>
+
+    <p class="body-text reveal d4">
+      There are also a few jokes. This is a coping mechanism.
+    </p>
+
+    <div class="pull-quote reveal d5">
+      <blockquote>
+        "Excuse me while I laugh at tech bros hyping 'second brains' who still have to ask their wife where the car keys are, where the glasses are, when the kid's next doctor's appointment is... Your wife's brain IS your second brain, the one you've been using for free all along, offloading your mental clutter onto her with unlimited tokens."
+      </blockquote>
+      <cite>— @nunoei: <em>"Before you have a second brain, you need to have a first brain first"</em></cite>
+    </div>
+
+    <p class="body-text reveal">
+      The joke lands in two directions. One: PKM hype is often just rebranded executive dysfunction with a Notion subscription. Two, and more seriously: cognitive labor is already being offloaded and distributed all the time, just onto people rather than tools, and without credit or compensation. The "second brain" industry sells individual productivity solutions to what is often a structural and relational problem. The wife was doing RAG before RAG was cool.
+    </p>
+  </section>
+
+  <div class="section-rule reveal"></div>
+
+  <!-- ─── SECTION 1: VISUALIZATIONS ─── -->
+  <section id="viz" class="essay-section">
+    <div class="section-tag reveal"><em>01</em> &nbsp;&middot;&nbsp; The material</div>
+    <h2 class="section-heading reveal d1">The four datasets</h2>
+
+    <p class="body-text reveal d2">
+      Each visualization below gets a short description, a link to the live version, and an honest account of what building it actually taught me. These aren't just portfolio pieces. They're the raw material this whole project is working with.
+    </p>
+
+    <div class="viz-grid">
+
+      <!-- 1a: JMET/JJET -->
+      <div class="viz-card available reveal">
+        <div class="viz-tag">01a &nbsp;&middot;&nbsp; Japanese EdTech Research Trends <span class="badge">Live</span></div>
+        <div class="viz-title">JMET / JJET research trends, <em>1977&ndash;2025</em></div>
+        <p class="viz-desc">
+          4,280 articles from JMET and JJET (1977&ndash;2025), classified into 42 themes across 7 groups. Six interactive panels: trend lines, inflection points, co-occurrence heatmap, UpSet chart, territory map, and methodology. <em>It took a while.</em>
+        </p>
+        <div class="viz-learned-label">What I learned</div>
+        <div class="skeleton-block" style="margin-bottom: 16px; padding: 18px 20px;">
+          <div class="skeleton-label"><span class="spin"></span> Takumi's notes loading</div>
+          <div class="skeleton skeleton-line w-full"></div>
+          <div class="skeleton skeleton-line w-90"></div>
+          <div class="skeleton skeleton-line w-75"></div>
+          <div class="skeleton skeleton-line w-60" style="margin-bottom:0"></div>
+        </div>
+        <a class="viz-link" href="jp-edtech-trends/" target="_blank" rel="noopener">
+          Open interactive visualization <span class="arrow">&rarr;</span>
+        </a>
+      </div>
+
+      <!-- 1b: AI & Society -->
+      <div class="viz-card available reveal">
+        <div class="viz-tag">01b &nbsp;&middot;&nbsp; AI &amp; Society Research Trends <span class="badge">Live</span></div>
+        <div class="viz-title">How a field's conversation about <em>AI</em> changed</div>
+        <p class="viz-desc">
+          1,849 articles from the journal <em>AI &amp; Society</em> (2021&ndash;2025). A scrolling trace of how a field's conversation about AI evolved over five years, including the very obvious moment when ChatGPT dropped.
+        </p>
+        <div class="viz-learned-label">What I learned</div>
+        <div class="skeleton-block" style="margin-bottom: 16px; padding: 18px 20px;">
+          <div class="skeleton-label"><span class="spin"></span> Takumi's notes loading</div>
+          <div class="skeleton skeleton-line w-full"></div>
+          <div class="skeleton skeleton-line w-90"></div>
+          <div class="skeleton skeleton-line w-75"></div>
+          <div class="skeleton skeleton-line w-45" style="margin-bottom:0"></div>
+        </div>
+        <a class="viz-link" href="../research-trends/" target="_blank" rel="noopener">
+          Open interactive visualization <span class="arrow">&rarr;</span>
+        </a>
+      </div>
+
+      <!-- 1c: Genealogy -->
+      <div class="viz-card reveal">
+        <div class="viz-tag">01c &nbsp;&middot;&nbsp; Japan EdTech Genealogy <span class="badge unavailable">Coming</span></div>
+        <div class="viz-title">Connections, <em>not counts</em></div>
+        <p class="viz-desc">
+          A node-based genealogy of Japanese educational technology. Shows how ideas, researchers, and institutions <em>relate</em> rather than just how often things appear. The "v8" in the filename is a personal milestone I'm not proud of.
+        </p>
+        <div class="viz-learned-label">What I learned</div>
+        <div class="skeleton-block" style="margin-bottom: 16px; padding: 18px 20px;">
+          <div class="skeleton-label"><span class="spin"></span> Takumi's notes loading</div>
+          <div class="skeleton skeleton-line w-full"></div>
+          <div class="skeleton skeleton-line w-90"></div>
+          <div class="skeleton skeleton-line w-60"></div>
+          <div class="skeleton skeleton-line w-75" style="margin-bottom:0"></div>
+        </div>
+        <span class="viz-link disabled">Visualization not yet published &nbsp;&middot;&nbsp; coming soon</span>
+      </div>
+
+      <!-- 1d: Bangkok BMA -->
+      <div class="viz-card reveal">
+        <div class="viz-tag">01d &nbsp;&middot;&nbsp; Bangkok City Resident Survey <span class="badge unavailable">Coming</span></div>
+        <div class="viz-title">Real civic data, <em>real stakes</em></div>
+        <p class="viz-desc">
+          A D3.js chord diagram built during my internship at the Bangkok Metropolitan Administration (BMA) Secretariat, Office of the Deputy Governor. Real civic survey data: 24 issues across 9 "Good [Category]" groups. The matrix encodes co-occurrence, meaning how often residents flagged two issues together.
+        </p>
+        <p class="viz-desc">
+          Unlike the other three, this one came from a live policy environment. The data came from residents; the visualization was made for actual decision-makers. <em>Stakes were different.</em>
+        </p>
+        <div class="viz-learned-label">What I learned</div>
+        <div class="skeleton-block" style="margin-bottom: 16px; padding: 18px 20px;">
+          <div class="skeleton-label"><span class="spin"></span> Takumi's notes loading</div>
+          <div class="skeleton skeleton-line w-full"></div>
+          <div class="skeleton skeleton-line w-90"></div>
+          <div class="skeleton skeleton-line w-75"></div>
+          <div class="skeleton skeleton-line w-60"></div>
+          <div class="skeleton skeleton-line w-45" style="margin-bottom:0"></div>
+        </div>
+        <span class="viz-link disabled">Visualization not yet published &nbsp;&middot;&nbsp; coming soon</span>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="section-rule reveal"></div>
+
+  <!-- ─── SECTION 2: PKM FRAMEWORK ─── -->
+  <section id="pkm" class="essay-section">
+    <div class="section-tag reveal"><em>02</em> &nbsp;&middot;&nbsp; The framework</div>
+    <h2 class="section-heading reveal d1">The framework, and <em>its failure modes</em></h2>
+
+    <p class="body-text reveal d2">
+      The structure I'm using to make sense of these four datasets comes from three sources on personal knowledge management. But before getting into what they argue, it's worth naming the ways this whole genre tends to go wrong. Because if you've spent any time in PKM spaces online, you've probably seen more elaborate Obsidian dashboards than finished essays.
+    </p>
+
+    <div class="section-tag reveal" style="margin-top: 32px;">The failure modes</div>
+
+    <ul class="failure-list reveal">
+      <li data-n="01">
+        <strong>The optimization trap</strong>
+        <p>Building the system becomes the task. Rearranging notes instead of writing. Picking tools instead of using them. The second brain becomes a way to feel productive without producing anything. Anyone who has spent a Sunday afternoon perfecting their weekly review template instead of doing the actual weekly review knows exactly what I mean.</p>
+      </li>
+      <li data-n="02">
+        <strong>Analysis paralysis</strong>
+        <p>More data, more frameworks, more structure, but no clearer sense of what to do next. Over-capture leads to overwhelm. The inbox becomes a graveyard of things you meant to think about.</p>
+      </li>
+      <li data-n="03">
+        <strong>The first brain problem</strong>
+        <p>A PKM system amplifies your thinking, it doesn't replace it. If you don't have a clear research question, no amount of linked notes will give you one. You'll just have very well-organized confusion.</p>
+      </li>
+    </ul>
+
+    <p class="body-text reveal" style="margin-top: 28px;">With those caveats in place, here's what the three sources contribute:</p>
+
+    <div class="source-grid">
+
+      <!-- Source 1: Forte 2022 -->
+      <div class="source-card reveal">
+        <div class="source-citekey">@FORTE2022</div>
+        <div class="source-title">Building a Second Brain (2022) — <em>Tiago Forte</em></div>
+        <div class="source-sub">Core contribution</div>
+        <p class="source-body">
+          CODE workflow (Capture, Organize, Distill, Express) and PARA system (Projects, Areas, Resources, Archives). A second brain externalizes thinking so attention can focus on synthesis, not storage. The promise is that you stop re-reading the same paper for the fourth time because you actually wrote down what it said.
+        </p>
+        <div class="source-sub">Applied here</div>
+        <p class="source-body">
+          Each visualization in this project is a Distill artifact: it compresses a dataset into navigable patterns. This website is the Express step: turning four distillations into an argument. The chord diagram, heatmap, and genealogy network are intermediate packets that did cognitive work before this synthesis was possible.
+        </p>
+      </div>
+
+      <!-- Source 2: Ji 2011 -->
+      <div class="source-card reveal">
+        <div class="source-citekey">@JI2011</div>
+        <div class="source-title">Ji et al. (2011)</div>
+        <div class="source-sub">Core contribution</div>
+        <div class="skeleton-block" style="padding: 16px 20px;">
+          <div class="skeleton-label"><span class="spin"></span> Obsidian vault resolving</div>
+          <div class="skeleton skeleton-line w-full"></div>
+          <div class="skeleton skeleton-line w-90"></div>
+          <div class="skeleton skeleton-line w-75" style="margin-bottom:0"></div>
+        </div>
+        <div class="source-sub">Applied here</div>
+        <div class="skeleton-block" style="padding: 16px 20px; margin-top: 8px;">
+          <div class="skeleton-label"><span class="spin"></span> Obsidian vault resolving</div>
+          <div class="skeleton skeleton-line w-full"></div>
+          <div class="skeleton skeleton-line w-60" style="margin-bottom:0"></div>
+        </div>
+      </div>
+
+      <!-- Source 3: Ferreira 2026 -->
+      <div class="source-card reveal">
+        <div class="source-citekey">@FERREIRA2026</div>
+        <div class="source-title">Ferreira (2026)</div>
+        <div class="source-sub">Core contribution</div>
+        <div class="skeleton-block" style="padding: 16px 20px;">
+          <div class="skeleton-label"><span class="spin"></span> Obsidian vault resolving</div>
+          <div class="skeleton skeleton-line w-full"></div>
+          <div class="skeleton skeleton-line w-90"></div>
+          <div class="skeleton skeleton-line w-75" style="margin-bottom:0"></div>
+        </div>
+        <div class="source-sub">Applied here</div>
+        <div class="skeleton-block" style="padding: 16px 20px; margin-top: 8px;">
+          <div class="skeleton-label"><span class="spin"></span> Obsidian vault resolving</div>
+          <div class="skeleton skeleton-line w-full"></div>
+          <div class="skeleton skeleton-line w-75"></div>
+          <div class="skeleton skeleton-line w-45" style="margin-bottom:0"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="callout reveal" style="margin-top: 32px;">
+      <p>A visualization is an intermediate packet. It externalizes pattern-finding so your attention can move to interpretation. But it only works if you actually stop and interpret it, rather than immediately building the next one. <em>I say this as someone who built four.</em></p>
+    </div>
+  </section>
+
+  <div class="section-rule reveal"></div>
+
+  <!-- ─── SECTION 3: SYNTHESIS ─── -->
+  <section id="synthesis" class="essay-section">
+    <div class="section-tag reveal"><em>03</em> &nbsp;&middot;&nbsp; Synthesis</div>
+    <h2 class="section-heading reveal d1">Cross-visualization <em>synthesis</em></h2>
+
+    <p class="body-text reveal d2">What the four datasets say when they're in the same room together.</p>
+
+    <div class="skeleton-block reveal d3" style="padding: 28px 30px;">
+      <div class="skeleton-label"><span class="spin"></span> Takumi's synthesis loading</div>
+      <div class="skeleton skeleton-line w-full"></div>
+      <div class="skeleton skeleton-line w-90"></div>
+      <div class="skeleton skeleton-line w-full"></div>
+      <div class="skeleton skeleton-line w-75"></div>
+      <div class="skeleton skeleton-line w-90" style="height:1px; background: var(--rule); background-image: none; margin: 18px 0;"></div>
+      <div class="skeleton skeleton-line w-full"></div>
+      <div class="skeleton skeleton-line w-60"></div>
+      <div class="skeleton skeleton-line w-90"></div>
+      <div class="skeleton skeleton-line w-45" style="margin-bottom:0"></div>
+    </div>
+  </section>
+
+  <div class="section-rule reveal"></div>
+
+  <!-- ─── SECTION 4: THESIS ─── -->
+  <section id="thesis" class="essay-section">
+    <div class="section-tag reveal"><em>04</em> &nbsp;&middot;&nbsp; Thesis direction</div>
+    <h2 class="section-heading reveal d1">Where <em>this is pointing</em></h2>
+
+    <p class="body-text reveal d2">
+      The concrete output of this whole process. A candidate thesis direction, with a brief account of how the data led me there.
+    </p>
+
+    <div class="skeleton-block reveal d3" style="padding: 28px 30px;">
+      <div class="skeleton-label"><span class="spin"></span> Takumi's thesis directions loading</div>
+      <div class="skeleton skeleton-line w-60"></div>
+      <div class="skeleton skeleton-line w-full"></div>
+      <div class="skeleton skeleton-line w-90"></div>
+      <div class="skeleton skeleton-line" style="height: 1px; background: var(--rule); background-image: none; margin: 18px 0;"></div>
+      <div class="skeleton skeleton-line w-75"></div>
+      <div class="skeleton skeleton-line w-full"></div>
+      <div class="skeleton skeleton-line w-60"></div>
+      <div class="skeleton skeleton-line" style="height: 1px; background: var(--rule); background-image: none; margin: 18px 0;"></div>
+      <div class="skeleton skeleton-line w-45"></div>
+      <div class="skeleton skeleton-line w-90"></div>
+      <div class="skeleton skeleton-line w-75" style="margin-bottom:0"></div>
+    </div>
+  </section>
+
+  <div class="section-rule reveal"></div>
+
+  <!-- ─── SECTION 5: PERSONAL SYSTEM ─── -->
+  <section id="system" class="essay-section">
+    <div class="section-tag reveal"><em>05</em> &nbsp;&middot;&nbsp; Personal system design</div>
+    <h2 class="section-heading reveal d1">What I'm <em>actually going to do</em></h2>
+
+    <p class="body-text reveal d2">
+      The part that makes this project useful beyond the grade. A concrete design for how I'm going to manage knowledge, track work, and write research going forward. Not a generic PKM template lifted from a YouTube video. A system shaped by the failure modes I've actually experienced and what building these four visualizations revealed about how I actually work.
+    </p>
+
+    <div class="section-tag reveal" style="margin-top: 8px; margin-bottom: 12px;">Design principles</div>
+    <div class="skeleton-block reveal" style="padding: 22px 26px; margin-bottom: 32px;">
+      <div class="skeleton-label"><span class="spin"></span> Takumi's design principles loading</div>
+      <div class="skeleton skeleton-line w-full"></div>
+      <div class="skeleton skeleton-line w-75"></div>
+      <div class="skeleton skeleton-line w-90"></div>
+      <div class="skeleton skeleton-line w-60" style="margin-bottom:0"></div>
+    </div>
+
+    <div class="section-tag reveal" style="margin-bottom: 12px;">The system</div>
+    <div class="system-table-wrap reveal">
+      <table class="system-table">
+        <thead>
+          <tr>
+            <th>Stage</th>
+            <th>Tool / Method</th>
+            <th>Rule</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Capture</td>
+            <td><div class="td-skeleton"><div class="skeleton skeleton-line w-75" style="height:12px"></div></div></td>
+            <td><div class="td-skeleton"><div class="skeleton skeleton-line w-90" style="height:12px"></div></div></td>
+          </tr>
+          <tr>
+            <td>Process</td>
+            <td><div class="td-skeleton"><div class="skeleton skeleton-line w-60" style="height:12px"></div></div></td>
+            <td><div class="td-skeleton"><div class="skeleton skeleton-line w-75" style="height:12px"></div></div></td>
+          </tr>
+          <tr>
+            <td>Synthesize</td>
+            <td><div class="td-skeleton"><div class="skeleton skeleton-line w-75" style="height:12px"></div></div></td>
+            <td><div class="td-skeleton"><div class="skeleton skeleton-line w-90" style="height:12px"></div></div></td>
+          </tr>
+          <tr>
+            <td>Write</td>
+            <td><div class="td-skeleton"><div class="skeleton skeleton-line w-60" style="height:12px"></div></div></td>
+            <td><div class="td-skeleton"><div class="skeleton skeleton-line w-75" style="height:12px"></div></div></td>
+          </tr>
+          <tr>
+            <td>Review</td>
+            <td><div class="td-skeleton"><div class="skeleton skeleton-line w-75" style="height:12px"></div></div></td>
+            <td>
+              <div class="td-skeleton">
+                <div class="skeleton skeleton-line w-90" style="height:12px"></div>
+                <div style="font-size:11px; color: var(--ink-faint); font-family: var(--mono); letter-spacing: 0.1em; margin-top: 4px; font-style: italic;">
+                  (includes: do not reorganize the folder structure again)
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="section-rule reveal"></div>
+
+  <!-- ─── SECTION 6: REFERENCES ─── -->
+  <section id="refs" class="essay-section">
+    <div class="section-tag reveal"><em>06</em> &nbsp;&middot;&nbsp; References</div>
+    <h2 class="section-heading reveal d1">References</h2>
+
+    <ul class="ref-list reveal d2">
+      <li>
+        <div class="ref-key">@FORTE2022</div>
+        <div class="skeleton-block" style="padding: 14px 18px; border-left-width: 1px; border-left-color: var(--ink-faint);">
+          <div class="skeleton-label"><span class="spin"></span> Obsidian vault resolving full citation</div>
+          <div class="skeleton skeleton-line w-90" style="height: 12px; margin-bottom: 0;"></div>
+        </div>
+      </li>
+      <li>
+        <div class="ref-key">@JI2011</div>
+        <div class="skeleton-block" style="padding: 14px 18px; border-left-width: 1px; border-left-color: var(--ink-faint);">
+          <div class="skeleton-label"><span class="spin"></span> Obsidian vault resolving full citation</div>
+          <div class="skeleton skeleton-line w-75" style="height: 12px; margin-bottom: 0;"></div>
+        </div>
+      </li>
+      <li>
+        <div class="ref-key">@FERREIRA2026</div>
+        <div class="skeleton-block" style="padding: 14px 18px; border-left-width: 1px; border-left-color: var(--ink-faint);">
+          <div class="skeleton-label"><span class="spin"></span> Obsidian vault resolving full citation</div>
+          <div class="skeleton skeleton-line w-90" style="height: 12px; margin-bottom: 0;"></div>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <footer class="footer reveal">
+    <div>Personal Project &nbsp;&middot;&nbsp; <a class="journal-link" href="../home.html">Return to directory</a></div>
+    <div><em>ITASIA302</em> &nbsp;&middot;&nbsp; May 2026</div>
+  </footer>
+
+</main>
+
+<script>
+"use strict";
+
+// Reveal on scroll
+document.addEventListener("DOMContentLoaded", () => {
+  const observed = document.querySelectorAll(".reveal");
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add("in-view");
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: "0px 0px -4% 0px" });
+  observed.forEach(n => io.observe(n));
+
+  // Trigger anything already visible
+  setTimeout(() => {
+    const batch = [];
+    document.querySelectorAll(".reveal:not(.in-view)").forEach(n => {
+      const r = n.getBoundingClientRect();
+      if (r.top < window.innerHeight * 0.96) batch.push({ el: n, top: r.top });
+    });
+    batch.sort((a, b) => a.top - b.top);
+    let bi = 0;
+    batch.forEach(({ el }) => {
+      el.style.transitionDelay = `${bi++ * 0.06}s`;
+      el.classList.add("in-view");
+    });
+  }, 80);
+
+  // Hero typewriter
+  const cmdEl = document.getElementById("hero-cmd");
+  const cursor = document.getElementById("hero-cursor");
+  if (cmdEl && cursor) {
+    const text = "final-project · building-a-second-brain";
+    let i = 0;
+    const tick = () => {
+      if (i < text.length) {
+        cmdEl.textContent += text[i++];
+        setTimeout(tick, 34 + Math.random() * 22);
+      } else {
+        cursor.classList.add("steady");
+      }
+    };
+    setTimeout(tick, 300);
+  }
+
+  // Active nav on scroll
+  const sections = document.querySelectorAll("section[id]");
+  const navLinks = document.querySelectorAll(".topbar-nav a");
+  const onScroll = () => {
+    let current = "";
+    sections.forEach(s => {
+      const rect = s.getBoundingClientRect();
+      if (rect.top <= 80) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.classList.toggle("active", a.getAttribute("href") === `#${current}`);
+    });
+  };
+  window.addEventListener("scroll", onScroll, { passive: true });
+});
+</script>
+
+<script src="../rain.js" data-color="#e8634a"></script>
+<script src="../cursor.js"></script>
+</body>
+</html>
