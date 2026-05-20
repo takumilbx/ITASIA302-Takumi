@@ -711,6 +711,85 @@
       background: rgba(232,99,74,.15); color: var(--amber);
     }
     .pl-alloy-arrow { color: var(--ink-faint); }
+
+    /* --- Step 07: Notion --- */
+    .pl-stage-notion { padding: 0; display: block; overflow: hidden; }
+    .pl-notion-page {
+      position: relative; width: 92%; max-width: 420px;
+      margin: 18px auto; padding: 22px;
+      background: #f7f6f3;
+      color: #37352f;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+      border-radius: 4px;
+      box-shadow: 0 8px 28px rgba(0,0,0,.4);
+      transform: translateX(120%);
+      opacity: 0;
+      transition: transform 0.8s cubic-bezier(.22,.61,.36,1), opacity 0.6s ease;
+    }
+    .pl-step.pl-ran-07 .pl-notion-page {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    .pl-notion-icon { font-size: 26px; margin-bottom: 6px; }
+    .pl-notion-title {
+      font-size: 18px; font-weight: 700; line-height: 1.25;
+      color: #37352f; margin-bottom: 8px;
+    }
+    .pl-notion-title em { font-style: italic; font-weight: 600; color: #6b5b48; }
+    .pl-notion-meta {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 11px; color: #787774;
+      margin-bottom: 14px;
+    }
+    .pl-notion-pill {
+      display: inline-block; padding: 2px 8px;
+      border-radius: 3px; font-weight: 500;
+      background: #fdecc8; color: #806c2a;
+    }
+    .pl-notion-pill-active { background: #cfeae4; color: #2d6a52; }
+    .pl-notion-pill-text { color: #9b9a97; }
+    .pl-notion-divider {
+      height: 1px; background: #e9e8e3; margin: 12px 0;
+    }
+    .pl-notion-section-label {
+      font-size: 11px; font-weight: 600; color: #9b9a97;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+    .pl-notion-checklist {
+      list-style: none; padding: 0; margin: 0;
+    }
+    .pl-notion-li {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12.5px; padding: 3px 0; color: #37352f;
+    }
+    .pl-notion-box {
+      display: inline-block; width: 14px; height: 14px;
+      border: 1.5px solid #b7b6b3; border-radius: 3px;
+      text-align: center; line-height: 11px;
+      font-size: 10px; color: #fff; background: #fff;
+      flex-shrink: 0;
+    }
+    .pl-notion-done .pl-notion-box {
+      background: #2d6a52; border-color: #2d6a52;
+    }
+    .pl-notion-done { color: #9b9a97; text-decoration: line-through; }
+    .pl-notion-ref {
+      color: #6b5b48; font-size: 10px; margin-left: 4px;
+    }
+    .pl-notion-linkcard {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: #fff; border: 1px solid #e9e8e3;
+      padding: 10px 12px; border-radius: 4px;
+    }
+    .pl-notion-linkcard-icon { color: #b7b6b3; font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+    .pl-notion-linkcard-title {
+      font-size: 12.5px; font-weight: 500; line-height: 1.35;
+      color: #37352f; margin-bottom: 2px;
+    }
+    .pl-notion-linkcard-sub {
+      font-size: 10.5px; color: #9b9a97;
+    }
   </style>
 </head>
 <body>
@@ -975,13 +1054,43 @@
 
       <div class="pl-step" data-step="07" id="pl-step-07">
         <div class="pl-step-prose">
-          <div class="pl-step-num">Step 07</div>
+          <div class="pl-step-num">Step 07 &middot; Notion</div>
           <h3 class="pl-step-title">Alloys surface in <em>Notion</em></h3>
-          <p class="pl-step-body">Placeholder prose, Notion.</p>
+          <p class="pl-step-body">
+            Notion is where the system meets actual work. Each alloy gets surfaced as a thesis chapter draft, a fieldwork milestone, or an unfinished argument needing one more source. Deadlines, status pills, and writing tasks reference back to vault notes by citekey. Obsidian is the brain. Notion is the calendar.
+          </p>
         </div>
         <div class="pl-step-visual">
           <button class="pl-replay" aria-label="Replay animation">&#x21bb; Replay</button>
-          <div class="pl-stage pl-stage-notion">Step 07 visual placeholder</div>
+          <div class="pl-stage pl-stage-notion">
+            <div class="pl-notion-page">
+              <div class="pl-notion-icon">&#128214;</div>
+              <div class="pl-notion-title">Thesis &middot; <em>TPACK across GIGA and BMA</em></div>
+              <div class="pl-notion-meta">
+                <span class="pl-notion-pill pl-notion-pill-active">In Progress</span>
+                <span class="pl-notion-pill-text">Defense: 2027 Q1</span>
+              </div>
+              <div class="pl-notion-divider"></div>
+              <div class="pl-notion-section-label">Chapter outline</div>
+              <ul class="pl-notion-checklist">
+                <li class="pl-notion-li pl-notion-done"><span class="pl-notion-box">&check;</span> Ch 1 &middot; Introduction</li>
+                <li class="pl-notion-li pl-notion-done"><span class="pl-notion-box">&check;</span> Ch 2 &middot; Theoretical framework <span class="pl-notion-ref">[@FERREIRA2026, @FORTE2022]</span></li>
+                <li class="pl-notion-li"><span class="pl-notion-box"></span> Ch 3 &middot; Methodology</li>
+                <li class="pl-notion-li"><span class="pl-notion-box"></span> Ch 4 &middot; Japan fieldwork (GIGA)</li>
+                <li class="pl-notion-li"><span class="pl-notion-box"></span> Ch 5 &middot; Bangkok fieldwork (BMA)</li>
+                <li class="pl-notion-li"><span class="pl-notion-box"></span> Ch 6 &middot; Comparative analysis</li>
+              </ul>
+              <div class="pl-notion-divider"></div>
+              <div class="pl-notion-section-label">Linked from vault</div>
+              <div class="pl-notion-linkcard">
+                <div class="pl-notion-linkcard-icon">&#128279;</div>
+                <div class="pl-notion-linkcard-body">
+                  <div class="pl-notion-linkcard-title">Retrieval-first organization explains why generic PKM templates fail</div>
+                  <div class="pl-notion-linkcard-sub">Alloy &middot; 3 supporting molecules &middot; 11 atoms</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1599,6 +1708,12 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => {
       stepEl.classList.add('pl-alloy-fused');
     }, 1500);
+  };
+
+  pipelineRunners['07'] = function(stepEl) {
+    stepEl.classList.remove('pl-ran-07');
+    void stepEl.offsetWidth;
+    stepEl.classList.add('pl-ran-07');
   };
 
   const pipelineRan = new Set();
