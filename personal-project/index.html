@@ -389,6 +389,75 @@
       .pl-step-visual { min-height: 280px; }
       .pl-stage { min-height: 280px; padding: 20px; }
     }
+
+    /* --- Step 01: Zotero --- */
+    .pl-stage-zotero { display: block; padding: 24px; }
+    .pl-zot-pdf {
+      position: absolute; right: 32px; top: 50%;
+      transform: translateY(-50%) translateX(180px);
+      width: 130px; height: 170px;
+      background: linear-gradient(180deg, #1a2030 0%, #0e1420 100%);
+      border: 1px solid var(--rule);
+      border-radius: 3px;
+      box-shadow: -8px 4px 24px rgba(0,0,0,.55);
+      opacity: 0;
+    }
+    .pl-zot-pdf-label {
+      position: absolute; top: 10px; right: 10px;
+      font-family: var(--mono); font-size: 8px; letter-spacing: 0.18em;
+      color: var(--ink-faint);
+    }
+    .pl-zot-pdf-lines {
+      position: absolute; top: 32px; left: 14px; right: 14px; bottom: 14px;
+      background:
+        repeating-linear-gradient(180deg, transparent 0 7px, var(--ink-faint) 7px 8px);
+      opacity: .25;
+    }
+    .pl-zot-meta {
+      position: absolute; left: 28px; top: 50%;
+      transform: translateY(-50%);
+      list-style: none; padding: 0; margin: 0;
+      max-width: 260px;
+    }
+    .pl-zot-mf {
+      font-family: var(--mono); font-size: 10.5px; line-height: 1.7;
+      color: var(--ink-dim); margin-bottom: 4px;
+      opacity: 0;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .pl-zot-k { color: var(--sky); margin-right: 6px; }
+    .pl-zot-stamp {
+      position: absolute; bottom: 28px; left: 28px;
+      font-family: var(--mono); font-size: 13px; letter-spacing: 0.08em;
+      font-weight: 600; color: var(--amber);
+      padding: 6px 12px;
+      border: 1.5px solid var(--amber);
+      transform: scale(0) rotate(-12deg);
+      opacity: 0;
+      transform-origin: center;
+    }
+
+    .pl-step.pl-ran-01 .pl-zot-pdf {
+      animation: pl-zot-slide 0.9s cubic-bezier(.22,.61,.36,1) 0.15s forwards;
+    }
+    .pl-step.pl-ran-01 .pl-zot-mf-1 { animation: pl-zot-meta 0.45s ease 1.05s forwards; }
+    .pl-step.pl-ran-01 .pl-zot-mf-2 { animation: pl-zot-meta 0.45s ease 1.35s forwards; }
+    .pl-step.pl-ran-01 .pl-zot-mf-3 { animation: pl-zot-meta 0.45s ease 1.65s forwards; }
+    .pl-step.pl-ran-01 .pl-zot-mf-4 { animation: pl-zot-meta 0.45s ease 1.95s forwards; }
+    .pl-step.pl-ran-01 .pl-zot-stamp {
+      animation: pl-zot-stamp 0.5s cubic-bezier(.5,1.7,.4,1) 2.45s forwards;
+    }
+
+    @keyframes pl-zot-slide {
+      to { transform: translateY(-50%) translateX(0); opacity: 1; }
+    }
+    @keyframes pl-zot-meta {
+      from { opacity: 0; transform: translateX(-12px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes pl-zot-stamp {
+      to { transform: scale(1) rotate(-5deg); opacity: 1; }
+    }
   </style>
 </head>
 <body>
@@ -479,13 +548,27 @@
 
       <div class="pl-step" data-step="01" id="pl-step-01">
         <div class="pl-step-prose">
-          <div class="pl-step-num">Step 01</div>
+          <div class="pl-step-num">Step 01 &middot; Zotero</div>
           <h3 class="pl-step-title">Capture <em>the paper</em></h3>
-          <p class="pl-step-body">Placeholder prose, Zotero capture.</p>
+          <p class="pl-step-body">
+            Every source enters the system through Zotero. PDF attached, metadata extracted, citekey auto-generated using the <code>authorYEAR</code> convention. The Obsidian Zotero Integration plugin then drops a structured import note into the vault inbox, ready for processing.
+          </p>
         </div>
         <div class="pl-step-visual">
           <button class="pl-replay" aria-label="Replay animation">&#x21bb; Replay</button>
-          <div class="pl-stage pl-stage-zotero">Step 01 visual placeholder</div>
+          <div class="pl-stage pl-stage-zotero">
+            <div class="pl-zot-pdf">
+              <div class="pl-zot-pdf-label">PDF</div>
+              <div class="pl-zot-pdf-lines"></div>
+            </div>
+            <ul class="pl-zot-meta">
+              <li class="pl-zot-mf pl-zot-mf-1"><span class="pl-zot-k">title</span> "How People Manage Knowledge in Their Second Brains"</li>
+              <li class="pl-zot-mf pl-zot-mf-2"><span class="pl-zot-k">author</span> Ferreira, Segura, Souza, Brasil</li>
+              <li class="pl-zot-mf pl-zot-mf-3"><span class="pl-zot-k">year</span> 2026</li>
+              <li class="pl-zot-mf pl-zot-mf-4"><span class="pl-zot-k">doi</span> 10.1007/978-3-032-05008-3_15</li>
+            </ul>
+            <div class="pl-zot-stamp">@FERREIRA2026</div>
+          </div>
         </div>
       </div>
 
@@ -958,6 +1041,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ============ PIPELINE STEP ANIMATION RUNNER ============
   const pipelineRunners = {}; // populated by per-step tasks below
+
+  pipelineRunners['01'] = function(stepEl) {
+    stepEl.classList.remove('pl-ran-01');
+    // Force reflow so animations restart on replay
+    void stepEl.offsetWidth;
+    stepEl.classList.add('pl-ran-01');
+  };
   const pipelineRan = new Set();
 
   function runPipelineStep(stepEl) {
