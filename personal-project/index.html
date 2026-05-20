@@ -790,6 +790,29 @@
     .pl-notion-linkcard-sub {
       font-size: 10.5px; color: #9b9a97;
     }
+
+    /* --- Reduced motion overrides --- */
+    @media (prefers-reduced-motion: reduce) {
+      .pl-step .pl-zot-pdf,
+      .pl-step .pl-zot-mf,
+      .pl-step .pl-zot-stamp,
+      .pl-step .pl-ln-sec,
+      .pl-step .pl-mol-dot,
+      .pl-step .pl-mol-label,
+      .pl-step .pl-mol-line,
+      .pl-step .pl-alloy-mol,
+      .pl-step .pl-alloy-block,
+      .pl-step .pl-notion-page,
+      .pl-step .pl-term-line {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+        transition: none !important;
+      }
+      .pl-step .pl-zot-stamp { transform: rotate(-5deg) !important; }
+      .pl-step .pl-mol-line { opacity: 0.45 !important; }
+      .pl-replay { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -1492,7 +1515,13 @@ document.addEventListener("DOMContentLoaded", () => {
   // ============ PIPELINE STEP ANIMATION RUNNER ============
   const pipelineRunners = {}; // populated by per-step tasks below
 
+  const plPrefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   pipelineRunners['01'] = function(stepEl) {
+    if (plPrefersReducedMotion) {
+      // CSS @media rule has already forced final state
+      return;
+    }
     stepEl.classList.remove('pl-ran-01');
     // Force reflow so animations restart on replay
     void stepEl.offsetWidth;
@@ -1500,6 +1529,10 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   pipelineRunners['02'] = function(stepEl) {
+    if (plPrefersReducedMotion) {
+      // CSS @media rule has already forced final state
+      return;
+    }
     stepEl.classList.remove('pl-ran-02');
     void stepEl.offsetWidth;
     stepEl.classList.add('pl-ran-02');
@@ -1536,6 +1569,15 @@ document.addEventListener("DOMContentLoaded", () => {
       { html: '<span class="pl-tdim">  Suggestions written to /NotebookLM Atom Sources/</span>', delay: 5500 },
       { html: '<span class="pl-tok">&check; EXTRACT complete</span> <span class="pl-tdim">7 verified, 0 rejected</span>', delay: 6200 }
     ];
+    if (plPrefersReducedMotion) {
+      lines.forEach(({ html }) => {
+        const line = document.createElement('div');
+        line.className = 'pl-term-line pl-in';
+        line.innerHTML = html;
+        body.appendChild(line);
+      });
+      return;
+    }
     lines.forEach(({ html, delay }) => {
       const line = document.createElement('div');
       line.className = 'pl-term-line';
@@ -1558,12 +1600,6 @@ document.addEventListener("DOMContentLoaded", () => {
     counter.textContent = '0';
 
     const tickTargets = [12, 47, 156, 423, 718, 891, 1003, 1056];
-    let ti = 0;
-    const tickIv = setInterval(() => {
-      if (ti >= tickTargets.length) { clearInterval(tickIv); return; }
-      counter.textContent = tickTargets[ti].toLocaleString();
-      ti++;
-    }, 520);
 
     const atomClaims = [
       "Retrieval strategies determine note organization",
@@ -1601,6 +1637,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const isMobile = window.matchMedia('(max-width: 720px)').matches;
     const claimsToRender = isMobile ? atomClaims.slice(0, 12) : atomClaims;
+
+    if (plPrefersReducedMotion) {
+      counter.textContent = '1,056';
+      const stageRect2 = scatter.getBoundingClientRect();
+      const W2 = stageRect2.width || 420;
+      const H2 = stageRect2.height || 320;
+      claimsToRender.forEach((claim, i) => {
+        const card = document.createElement('div');
+        card.className = 'pl-atom-card';
+        card.textContent = claim;
+        const minLeft = (i < 5) ? 220 : 12;
+        const minTop = (i < 8) ? 90 : 12;
+        const left = minLeft + Math.random() * Math.max(W2 - 180 - minLeft - 12, 40);
+        const top = minTop + Math.random() * Math.max(H2 - 36 - minTop - 12, 40);
+        card.style.left = left + 'px';
+        card.style.top = top + 'px';
+        card.style.opacity = '1';
+        card.style.transform = 'scale(1)';
+        scatter.appendChild(card);
+      });
+      return;
+    }
+
+    let ti = 0;
+    const tickIv = setInterval(() => {
+      if (ti >= tickTargets.length) { clearInterval(tickIv); return; }
+      counter.textContent = tickTargets[ti].toLocaleString();
+      ti++;
+    }, 520);
+
     claimsToRender.forEach((claim, i) => {
       setTimeout(() => {
         const card = document.createElement('div');
@@ -1642,6 +1708,43 @@ document.addEventListener("DOMContentLoaded", () => {
       { atoms: [3,4,5],    cx: 78, cy: 32, r: 7, label: '⊕ system-combination-beats-single-pipeline' },
       { atoms: [6,7,8,9,10], cx: 60, cy: 76, r: 9, label: '⊕ intermediate-packets-as-cognitive-units' }
     ];
+
+    if (plPrefersReducedMotion) {
+      const targets = {};
+      clusters.forEach(cluster => {
+        cluster.atoms.forEach((aIdx, j) => {
+          const angle = (j / cluster.atoms.length) * Math.PI * 2 - Math.PI / 2;
+          targets[aIdx] = { x: cluster.cx + Math.cos(angle) * cluster.r, y: cluster.cy + Math.sin(angle) * cluster.r };
+        });
+      });
+      scatter.forEach((_, i) => {
+        const dot = document.createElement('div');
+        dot.className = 'pl-mol-dot pl-in';
+        const t = targets[i];
+        dot.style.left = t.x + '%';
+        dot.style.top = t.y + '%';
+        field.appendChild(dot);
+      });
+      clusters.forEach(cluster => {
+        for (let i = 0; i < cluster.atoms.length; i++) {
+          for (let j = i + 1; j < cluster.atoms.length; j++) {
+            const aT = targets[cluster.atoms[i]], bT = targets[cluster.atoms[j]];
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', aT.x + '%'); line.setAttribute('y1', aT.y + '%');
+            line.setAttribute('x2', bT.x + '%'); line.setAttribute('y2', bT.y + '%');
+            line.setAttribute('class', 'pl-mol-line pl-in');
+            svg.appendChild(line);
+          }
+        }
+        const lbl = document.createElement('div');
+        lbl.className = 'pl-mol-label pl-in';
+        lbl.style.left = cluster.cx + '%';
+        lbl.style.top = (cluster.cy + cluster.r + 4) + '%';
+        lbl.textContent = cluster.label;
+        field.appendChild(lbl);
+      });
+      return;
+    }
 
     const dots = scatter.map((p, i) => {
       const dot = document.createElement('div');
@@ -1702,6 +1805,10 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   pipelineRunners['06'] = function(stepEl) {
+    if (plPrefersReducedMotion) {
+      // CSS @media rule has already forced final state
+      return;
+    }
     stepEl.classList.remove('pl-ran-06', 'pl-alloy-fused');
     void stepEl.offsetWidth;
     stepEl.classList.add('pl-ran-06');
@@ -1711,6 +1818,10 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   pipelineRunners['07'] = function(stepEl) {
+    if (plPrefersReducedMotion) {
+      // CSS @media rule has already forced final state
+      return;
+    }
     stepEl.classList.remove('pl-ran-07');
     void stepEl.offsetWidth;
     stepEl.classList.add('pl-ran-07');
