@@ -7,21 +7,22 @@
   <meta name="description" content="Building a second brain with Obsidian, Zotero, Notion, and AI agents, and an honest account of what it actually takes to get there.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500;1,9..144,600&family=Geist+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Sans:wght@400;500;600&family=Geist+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #05060e;
       --bg-soft: #0b0d1a;
       --ink: #e0e6f0;
-      --ink-dim: #8899b8;
-      --ink-faint: #2e3a55;
+      --ink-dim: #b8c4dc;
+      --ink-faint: #6b7a99;
       --rule: #182030;
       --amber: #e8634a;
       --teal: #45a884;
       --sky: #5299c8;
       --lilac: #7272c0;
       --coral: #b85c7a;
-      --serif: "Fraunces", Georgia, "Times New Roman", serif;
+      --serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+      --sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
       --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
       --ease: cubic-bezier(.22,.61,.36,1);
     }
@@ -36,7 +37,7 @@
         linear-gradient(90deg, rgba(232,99,74,.018) 1px, transparent 1px);
       background-size: 52px 52px;
       color: var(--ink);
-      font-family: var(--serif);
+      font-family: var(--sans);
       -webkit-font-smoothing: antialiased;
       text-rendering: optimizeLegibility;
       overflow-x: hidden;
@@ -151,13 +152,13 @@
 
     /* Hero */
     .hero { margin-bottom: 80px; padding-top: 32px; }
-    .hero-eyebrow { font-family: var(--mono); font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 18px; }
+    .hero-eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 18px; }
     .hero-eyebrow .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); margin: 0 12px 2px 0; box-shadow: 0 0 10px var(--amber); vertical-align: middle; animation: pulse 2s ease-in-out infinite; }
     .hero-title { font-family: var(--serif); font-weight: 300; font-size: clamp(36px, 4.8vw, 60px); line-height: 1.04; letter-spacing: -0.03em; color: var(--ink); margin-bottom: 18px; }
     .hero-title em { font-style: italic; font-weight: 400; color: var(--amber); }
     .hero-subtitle { font-family: var(--serif); font-weight: 300; font-size: clamp(16px, 1.4vw, 20px); line-height: 1.5; color: var(--ink-dim); max-width: 56ch; margin-bottom: 18px; }
     .hero-subtitle em { color: var(--ink); font-style: italic; }
-    .hero-byline { font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-faint); }
+    .hero-byline { font-family: var(--mono); font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-faint); }
     .hero-byline em { color: var(--amber); font-style: normal; letter-spacing: 0.14em; }
     .cmd-prompt { color: var(--amber); font-style: normal; user-select: none; }
     .blink-cursor { display: inline-block; width: 7px; height: 10px; background: var(--sky); vertical-align: middle; margin-left: 2px; animation: cur-blink 1s step-end infinite; border-radius: 1px; }
@@ -291,7 +292,7 @@
       margin-top: 80px; padding: 28px 0 4px;
       border-top: 1px solid var(--rule);
       display: flex; justify-content: space-between; align-items: baseline;
-      font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em;
+      font-family: var(--mono); font-size: 12px; letter-spacing: 0.22em;
       text-transform: uppercase; color: var(--ink-faint);
     }
     footer.footer em { color: var(--amber); font-style: normal; letter-spacing: 0.14em; }
@@ -543,7 +544,7 @@
     .pl-term-dot-y { background: #ffbd2e; }
     .pl-term-dot-g { background: #27c93f; }
     .pl-term-bar-title {
-      font-family: var(--mono); font-size: 10px; color: var(--ink-faint);
+      font-family: var(--mono); font-size: 12px; color: var(--ink-faint);
       margin-left: 10px; letter-spacing: 0.04em;
     }
     .pl-term-body {

@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500;1,9..144,600&family=Geist+Mono:wght@300;400;500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Sans:wght@400;500;600&family=Geist+Mono:wght@300;400;500;600;700&display=swap"
     rel="stylesheet">
 
   <style>
@@ -22,8 +22,8 @@
       --bg: #05060e;
       --bg-soft: #0b0d1a;
       --ink: #e0e6f0;
-      --ink-dim: #8899b8;
-      --ink-faint: #2e3a55;
+      --ink-dim: #b8c4dc;
+      --ink-faint: #6b7a99;
       --rule: #182030;
       --amber: #4db8cc;
       --amber-lo: #4db8cc14;
@@ -34,7 +34,8 @@
       --lilac: #7272c0;
       --gold: #4db8cc;
 
-      --serif: "Fraunces", Georgia, "Times New Roman", serif;
+      --serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+      --sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
       --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
       --ease: cubic-bezier(.22, .61, .36, 1);
@@ -59,7 +60,7 @@
         linear-gradient(90deg, rgba(77,184,204,.022) 1px, transparent 1px);
       background-size: 52px 52px;
       color: var(--ink);
-      font-family: var(--serif);
+      font-family: var(--sans);
       -webkit-font-smoothing: antialiased;
       text-rendering: optimizeLegibility;
       overflow-x: hidden;
@@ -149,7 +150,7 @@
     .topbar-meta {
       font-family: var(--mono);
       font-weight: 400;
-      font-size: 8.5px;
+      font-size: 11px;
       letter-spacing: 0.22em;
       text-transform: uppercase;
       color: var(--ink-faint);
@@ -225,7 +226,7 @@
 
     .hero-eyebrow {
       font-family: var(--mono);
-      font-size: 10px;
+      font-size: 12px;
       letter-spacing: 0.28em;
       text-transform: uppercase;
       color: var(--ink-faint);
@@ -263,7 +264,7 @@
 
     .hero-byline {
       font-family: var(--mono);
-      font-size: 10px;
+      font-size: 12px;
       letter-spacing: 0.22em;
       text-transform: uppercase;
       color: var(--ink-faint);
@@ -482,7 +483,7 @@
       justify-content: space-between;
       align-items: baseline;
       font-family: var(--mono);
-      font-size: 10px;
+      font-size: 12px;
       letter-spacing: 0.22em;
       text-transform: uppercase;
       color: var(--ink-faint);
@@ -842,7 +843,7 @@
       .card-num {
         top: 14px;
         right: 16px;
-        font-size: 8.5px;
+        font-size: 11px;
       }
 
       .card-headline {

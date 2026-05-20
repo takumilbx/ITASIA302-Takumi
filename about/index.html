@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500;1,9..144,600&family=Geist+Mono:wght@300;400;500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Sans:wght@400;500;600&family=Geist+Mono:wght@300;400;500;600;700&display=swap"
     rel="stylesheet">
 
   <style>
@@ -22,8 +22,8 @@
       --bg: #05060e;
       --bg-soft: #0b0d1a;
       --ink: #e0e6f0;
-      --ink-dim: #8899b8;
-      --ink-faint: #2e3a55;
+      --ink-dim: #b8c4dc;
+      --ink-faint: #6b7a99;
       --rule: #182030;
       --amber: #5299c8;
       --amber-lo: #5299c814;
@@ -34,7 +34,8 @@
       --lilac: #7272c0;
       --gold: #5299c8;
 
-      --serif: "Fraunces", Georgia, "Times New Roman", serif;
+      --serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+      --sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
       --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
       --ease: cubic-bezier(.22, .61, .36, 1);
@@ -59,7 +60,7 @@
         linear-gradient(90deg, rgba(82,153,200,.022) 1px, transparent 1px);
       background-size: 52px 52px;
       color: var(--ink);
-      font-family: var(--serif);
+      font-family: var(--sans);
       -webkit-font-smoothing: antialiased;
       text-rendering: optimizeLegibility;
       overflow-x: hidden;
@@ -247,7 +248,7 @@
 
     .hero-eyebrow {
       font-family: var(--mono);
-      font-size: 10px;
+      font-size: 12px;
       letter-spacing: 0.28em;
       text-transform: uppercase;
       color: var(--ink-faint);
@@ -394,7 +395,7 @@
 
     .about-section-label {
       font-family: var(--mono);
-      font-size: 10px;
+      font-size: 12px;
       letter-spacing: 0.28em;
       text-transform: uppercase;
       color: var(--ink-faint);
@@ -422,7 +423,7 @@
 
     .interest-list li {
       font-family: var(--mono);
-      font-size: 10px;
+      font-size: 12px;
       font-weight: 500;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -532,7 +533,7 @@
 
     .timeline-org {
       font-family: var(--mono);
-      font-size: 10px;
+      font-size: 12px;
       letter-spacing: 0.12em;
       color: var(--ink-dim);
       margin-bottom: 8px;
@@ -630,7 +631,7 @@
        ======================================================================== */
     .thesis-eyebrow {
       font-family: var(--mono);
-      font-size: 10px;
+      font-size: 12px;
       letter-spacing: 0.28em;
       text-transform: uppercase;
       color: var(--ink-faint);
@@ -670,7 +671,7 @@
       align-items: center;
       gap: 8px;
       font-family: var(--mono);
-      font-size: 10px;
+      font-size: 12px;
       letter-spacing: 0.2em;
       text-transform: uppercase;
       color: var(--teal);
@@ -728,7 +729,7 @@
 
     .kw {
       font-family: var(--mono);
-      font-size: 10px;
+      font-size: 12px;
       font-weight: 500;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -772,7 +773,7 @@
     #viz-back-btn {
       position: absolute; top: 18px; left: 22px; z-index: 100;
       font-family: var(--mono);
-      font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+      font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
       color: var(--ink-faint); background: none; border: none; cursor: pointer;
       transition: color 200ms ease;
       display: none;
@@ -797,7 +798,7 @@
 
     #viz-card .card-label {
       font-family: var(--mono);
-      font-size: 8.5px; letter-spacing: 0.22em; text-transform: uppercase;
+      font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
       color: var(--card-accent, #F0A060); margin-bottom: 8px;
     }
     #viz-card .card-title {
@@ -811,7 +812,7 @@
     }
     #viz-card .card-close {
       position: absolute; top: 10px; right: 14px;
-      font-family: var(--mono); font-size: 10px;
+      font-family: var(--mono); font-size: 12px;
       color: var(--ink-faint); cursor: pointer; pointer-events: auto;
       transition: color 180ms ease;
     }
@@ -864,7 +865,7 @@
       justify-content: space-between;
       align-items: baseline;
       font-family: var(--mono);
-      font-size: 10px;
+      font-size: 12px;
       letter-spacing: 0.22em;
       text-transform: uppercase;
       color: var(--ink-faint);
@@ -1148,7 +1149,7 @@
       left: 12px;
       z-index: 2;
       font-family: var(--mono);
-      font-size: 10px;
+      font-size: 12px;
       letter-spacing: 0.1em;
       color: var(--ink-dim);
       background: rgba(0, 0, 0, 0.65);
@@ -1322,7 +1323,7 @@
 
     #panel-work .contact-link {
       font-family: var(--mono);
-      font-size: 10px;
+      font-size: 12px;
       letter-spacing: 0.12em;
       color: var(--lilac);
       text-decoration: none;
