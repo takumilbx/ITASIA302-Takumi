@@ -524,6 +524,50 @@
     @keyframes pl-ln-section-in {
       to { opacity: 1; transform: translateY(0); }
     }
+
+    /* --- Step 03: Terminal --- */
+    .pl-stage-terminal { padding: 0; align-items: stretch; }
+    .pl-term {
+      width: 100%; height: 100%;
+      background: #02030a;
+      display: flex; flex-direction: column;
+      border-radius: 3px;
+    }
+    .pl-term-bar {
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 12px;
+      background: #0a0d16;
+      border-bottom: 1px solid var(--rule);
+    }
+    .pl-term-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; opacity: .65; }
+    .pl-term-dot-r { background: #ff5f56; }
+    .pl-term-dot-y { background: #ffbd2e; }
+    .pl-term-dot-g { background: #27c93f; }
+    .pl-term-bar-title {
+      font-family: var(--mono); font-size: 10px; color: var(--ink-faint);
+      margin-left: 10px; letter-spacing: 0.04em;
+    }
+    .pl-term-body {
+      flex: 1; padding: 14px 16px;
+      font-family: var(--mono); font-size: 11px;
+      line-height: 1.75; color: var(--ink-dim);
+      overflow: hidden;
+    }
+    .pl-term-line {
+      opacity: 0;
+      transition: opacity .15s ease;
+    }
+    .pl-term-line.pl-in { opacity: 1; }
+    .pl-tprompt { color: var(--amber); }
+    .pl-tuser { color: var(--ink); }
+    .pl-tmcp { color: var(--sky); }
+    .pl-tok { color: var(--teal); }
+    .pl-tdim { color: var(--ink-faint); }
+    .pl-tcur {
+      display: inline-block; width: 7px; height: 11px;
+      background: var(--sky); vertical-align: middle; margin-left: 1px;
+      animation: pl-ln-blink 1s step-end infinite;
+    }
   </style>
 </head>
 <body>
@@ -680,14 +724,25 @@
 
       <div class="pl-step" data-step="03" id="pl-step-03">
         <div class="pl-step-prose">
-          <div class="pl-step-num">Step 03</div>
-          <h3 class="pl-step-title">Extract atoms via <em>Claude Code + NotebookLM MCP</em></h3>
-          <p class="pl-step-body">Placeholder prose, Claude Code MCP.</p>
+          <div class="pl-step-num">Step 03 &middot; Claude Code + NLM MCP</div>
+          <h3 class="pl-step-title">Extract atoms via <em>NotebookLM</em></h3>
+          <p class="pl-step-body">
+            Claude Code reads the literature note, opens the PDF via the Zotero path, and runs the NotebookLM MCP integration. Three focused queries return candidate atoms. Each suggestion gets verified against the source. Verified atoms land in <code>/Atoms/</code>, rejected ones get logged with reasons.
+          </p>
         </div>
         <div class="pl-step-visual">
           <button class="pl-replay" aria-label="Replay animation">&#x21bb; Replay</button>
-          <div class="pl-stage pl-stage-terminal">Step 03 visual placeholder</div>
-        </div>
+          <div class="pl-stage pl-stage-terminal">
+            <div class="pl-term">
+              <div class="pl-term-bar">
+                <span class="pl-term-dot pl-term-dot-r"></span>
+                <span class="pl-term-dot pl-term-dot-y"></span>
+                <span class="pl-term-dot pl-term-dot-g"></span>
+                <span class="pl-term-bar-title">claude code &middot; nlm-integrate</span>
+              </div>
+              <div class="pl-term-body" id="pl-term-body"></div>
+            </div>
+          </div>
       </div>
 
       <div class="pl-step" data-step="04" id="pl-step-04">
@@ -1161,6 +1216,37 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
     setTimeout(tick, 200);
+  };
+
+  pipelineRunners['03'] = function(stepEl) {
+    const body = stepEl.querySelector('#pl-term-body');
+    if (!body) return;
+    body.innerHTML = '';
+    const lines = [
+      { html: '<span class="pl-tprompt">~/itasia302 $</span> <span class="pl-tuser">claude</span>', delay: 200 },
+      { html: '<span class="pl-tdim">[claude code session &middot; opus 4.7]</span>', delay: 600 },
+      { html: '<span class="pl-tprompt">&gt;</span> <span class="pl-tuser">run nlm-integrate for @FERREIRA2026</span>', delay: 1300 },
+      { html: '<span class="pl-tdim">  Reading literature note...</span>', delay: 2100 },
+      { html: '<span class="pl-tdim">  Opening PDF from Zotero path...</span>', delay: 2500 },
+      { html: '<span class="pl-tmcp">&rarr; mcp__notebooklm__add_source</span> <span class="pl-tok">&check;</span>', delay: 3100 },
+      { html: '<span class="pl-tmcp">&rarr; mcp__notebooklm__query</span> <span class="pl-tdim">"core claims"</span> <span class="pl-tok">&check;</span>', delay: 3700 },
+      { html: '<span class="pl-tmcp">&rarr; mcp__notebooklm__query</span> <span class="pl-tdim">"methodology"</span> <span class="pl-tok">&check;</span>', delay: 4300 },
+      { html: '<span class="pl-tmcp">&rarr; mcp__notebooklm__query</span> <span class="pl-tdim">"gaps"</span> <span class="pl-tok">&check;</span>', delay: 4900 },
+      { html: '<span class="pl-tdim">  Suggestions written to /NotebookLM Atom Sources/</span>', delay: 5500 },
+      { html: '<span class="pl-tok">&check; EXTRACT complete</span> <span class="pl-tdim">7 verified, 0 rejected</span>', delay: 6200 }
+    ];
+    lines.forEach(({ html, delay }) => {
+      const line = document.createElement('div');
+      line.className = 'pl-term-line';
+      line.innerHTML = html;
+      body.appendChild(line);
+      setTimeout(() => line.classList.add('pl-in'), delay);
+    });
+    setTimeout(() => {
+      const cur = document.createElement('span');
+      cur.className = 'pl-tcur';
+      body.appendChild(cur);
+    }, 6400);
   };
   const pipelineRan = new Set();
 
