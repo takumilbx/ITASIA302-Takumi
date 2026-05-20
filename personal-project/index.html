@@ -630,6 +630,87 @@
       transition: opacity .6s ease;
     }
     .pl-mol-line.pl-in { opacity: 0.45; }
+
+    /* --- Step 06: Alloys --- */
+    .pl-stage-alloys { padding: 0; display: block; }
+    .pl-alloy-stage {
+      position: relative; width: 100%; height: 100%;
+      min-height: 320px; padding: 24px;
+    }
+    .pl-alloy-mol {
+      position: absolute; width: 32px; height: 32px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(69,168,132,.35) 30%, rgba(69,168,132,.05) 70%);
+      border: 1px solid rgba(69,168,132,.5);
+      opacity: 0;
+      transition: all 0.9s cubic-bezier(.5,.1,.3,1);
+    }
+    .pl-alloy-mol-1 { left: 18%; top: 22%; }
+    .pl-alloy-mol-2 { left: 75%; top: 22%; }
+    .pl-alloy-mol-3 { left: 46%; top: 70%; }
+    .pl-step.pl-ran-06 .pl-alloy-mol { opacity: 1; }
+    .pl-step.pl-ran-06 .pl-alloy-mol {
+      animation: pl-alloy-mol-pulse 1s ease forwards;
+    }
+    @keyframes pl-alloy-mol-pulse {
+      0%   { opacity: 0; transform: scale(0.4); }
+      40%  { opacity: 1; transform: scale(1.15); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    .pl-step.pl-ran-06.pl-alloy-fused .pl-alloy-mol {
+      left: 50%; top: 50%;
+      transform: translate(-50%, -50%) scale(0.2);
+      opacity: 0;
+    }
+
+    .pl-alloy-block {
+      position: absolute; left: 50%; top: 50%;
+      transform: translate(-50%, -50%) scale(0.85);
+      width: 88%; max-width: 380px;
+      background: linear-gradient(180deg, rgba(232,99,74,.06) 0%, rgba(232,99,74,.01) 100%);
+      border: 1px solid rgba(232,99,74,.35);
+      border-left: 2px solid var(--amber);
+      padding: 16px 18px;
+      opacity: 0;
+      transition: opacity 0.7s ease, transform 0.7s cubic-bezier(.5,.1,.3,1);
+      border-radius: 3px;
+    }
+    .pl-step.pl-ran-06.pl-alloy-fused .pl-alloy-block {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .pl-alloy-label {
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--amber); margin-bottom: 8px;
+    }
+    .pl-alloy-thesis {
+      font-family: var(--serif); font-weight: 400; font-style: italic;
+      font-size: 13.5px; line-height: 1.5; color: var(--ink);
+      margin-bottom: 14px;
+    }
+    .pl-alloy-evidence {
+      border-top: 1px solid rgba(232,99,74,.2);
+      padding-top: 10px;
+      display: flex; flex-direction: column; gap: 5px;
+    }
+    .pl-alloy-chain {
+      display: flex; align-items: center; gap: 5px;
+      font-family: var(--mono); font-size: 9px;
+      color: var(--ink-dim);
+      white-space: nowrap; overflow: hidden;
+    }
+    .pl-alloy-node {
+      padding: 1px 5px;
+      background: rgba(114,114,192,.12); color: var(--lilac);
+      border-radius: 2px;
+    }
+    .pl-alloy-node-mol {
+      background: rgba(69,168,132,.12); color: var(--teal);
+    }
+    .pl-alloy-node-alloy {
+      background: rgba(232,99,74,.15); color: var(--amber);
+    }
+    .pl-alloy-arrow { color: var(--ink-faint); }
   </style>
 </head>
 <body>
@@ -847,13 +928,48 @@
 
       <div class="pl-step" data-step="06" id="pl-step-06">
         <div class="pl-step-prose">
-          <div class="pl-step-num">Step 06</div>
+          <div class="pl-step-num">Step 06 &middot; Alloys</div>
           <h3 class="pl-step-title">Molecules fuse into <em>alloys</em></h3>
-          <p class="pl-step-body">Placeholder prose, Alloys.</p>
+          <p class="pl-step-body">
+            An alloy is a thesis-grade synthesis: an original argument built from molecules and atoms. It can never be drafted directly from a source. It needs molecules underneath it. Alloys are where this project's actual research output lives, in <code>/Alloys/</code>, each one tagged to a chapter of the thesis.
+          </p>
         </div>
         <div class="pl-step-visual">
           <button class="pl-replay" aria-label="Replay animation">&#x21bb; Replay</button>
-          <div class="pl-stage pl-stage-alloys">Step 06 visual placeholder</div>
+          <div class="pl-stage pl-stage-alloys">
+            <div class="pl-alloy-stage" id="pl-alloy-stage">
+              <div class="pl-alloy-mol pl-alloy-mol-1"></div>
+              <div class="pl-alloy-mol pl-alloy-mol-2"></div>
+              <div class="pl-alloy-mol pl-alloy-mol-3"></div>
+              <div class="pl-alloy-block">
+                <div class="pl-alloy-label">ALLOY &middot; CHAPTER 02</div>
+                <div class="pl-alloy-thesis">Retrieval-first organization explains why generic PKM templates fail in domain-expert workflows.</div>
+                <div class="pl-alloy-evidence">
+                  <div class="pl-alloy-chain">
+                    <span class="pl-alloy-node">@FERREIRA2026</span>
+                    <span class="pl-alloy-arrow">&rarr;</span>
+                    <span class="pl-alloy-node pl-alloy-node-mol">retrieval-first-org</span>
+                    <span class="pl-alloy-arrow">&rarr;</span>
+                    <span class="pl-alloy-node pl-alloy-node-alloy">alloy</span>
+                  </div>
+                  <div class="pl-alloy-chain">
+                    <span class="pl-alloy-node">@FORTE2022</span>
+                    <span class="pl-alloy-arrow">&rarr;</span>
+                    <span class="pl-alloy-node pl-alloy-node-mol">intermediate-packets</span>
+                    <span class="pl-alloy-arrow">&rarr;</span>
+                    <span class="pl-alloy-node pl-alloy-node-alloy">alloy</span>
+                  </div>
+                  <div class="pl-alloy-chain">
+                    <span class="pl-alloy-node">@JI2011</span>
+                    <span class="pl-alloy-arrow">&rarr;</span>
+                    <span class="pl-alloy-node pl-alloy-node-mol">system-combination</span>
+                    <span class="pl-alloy-arrow">&rarr;</span>
+                    <span class="pl-alloy-node pl-alloy-node-alloy">alloy</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1474,6 +1590,15 @@ document.addEventListener("DOMContentLoaded", () => {
         requestAnimationFrame(() => lbl.classList.add('pl-in'));
       });
     }, 2500);
+  };
+
+  pipelineRunners['06'] = function(stepEl) {
+    stepEl.classList.remove('pl-ran-06', 'pl-alloy-fused');
+    void stepEl.offsetWidth;
+    stepEl.classList.add('pl-ran-06');
+    setTimeout(() => {
+      stepEl.classList.add('pl-alloy-fused');
+    }, 1500);
   };
 
   const pipelineRan = new Set();
