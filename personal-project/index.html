@@ -324,11 +324,10 @@
       grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
       gap: 36px;
       align-items: center;
-      min-height: 92vh;
-      padding: 40px 0;
+      padding: 24px 0;
       border-top: 1px solid var(--rule);
     }
-    .pl-step:first-child { border-top: none; padding-top: 24px; }
+    .pl-step:first-child { border-top: none; padding-top: 16px; }
 
     .pl-step-num {
       font-family: var(--mono); font-size: 9px; letter-spacing: 0.28em;
@@ -384,7 +383,7 @@
     @media (max-width: 720px) {
       .pl-step {
         grid-template-columns: 1fr; gap: 24px;
-        min-height: auto; padding: 32px 0;
+        padding: 20px 0;
       }
       .pl-step-visual { min-height: 280px; }
       .pl-stage { min-height: 280px; padding: 20px; }
