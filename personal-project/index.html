@@ -568,6 +568,37 @@
       background: var(--sky); vertical-align: middle; margin-left: 1px;
       animation: pl-ln-blink 1s step-end infinite;
     }
+
+    /* --- Step 04: Atoms --- */
+    .pl-stage-atoms { padding: 24px; align-items: flex-start; justify-content: flex-start; display: block; position: relative; }
+    .pl-atoms-counter-wrap { position: absolute; top: 24px; left: 28px; z-index: 2; }
+    .pl-atoms-counter {
+      font-family: var(--mono); font-size: 34px; font-weight: 300;
+      color: var(--ink); letter-spacing: -0.025em;
+    }
+    .pl-atoms-counter-lbl {
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--ink-faint); margin-top: 2px;
+    }
+    .pl-atoms-scatter { position: absolute; inset: 0; overflow: hidden; }
+    .pl-atom-card {
+      position: absolute;
+      background: rgba(232,99,74,.07);
+      border: 1px solid rgba(232,99,74,.25);
+      border-left: 2px solid var(--amber);
+      padding: 5px 8px;
+      font-family: var(--mono); font-size: 9px; color: var(--ink-dim);
+      line-height: 1.4; max-width: 180px;
+      border-radius: 2px;
+      opacity: 0;
+      transform: scale(0.4) translateY(16px);
+      pointer-events: none;
+    }
+    @keyframes pl-atom-pop {
+      0%   { opacity: 0; transform: scale(0.3) translateY(20px); }
+      60%  { opacity: 1; transform: scale(1.08) translateY(0); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
   </style>
 </head>
 <body>
@@ -748,13 +779,21 @@
 
       <div class="pl-step" data-step="04" id="pl-step-04">
         <div class="pl-step-prose">
-          <div class="pl-step-num">Step 04</div>
+          <div class="pl-step-num">Step 04 &middot; Atoms</div>
           <h3 class="pl-step-title">Verified atoms <em>land in the vault</em></h3>
-          <p class="pl-step-body">Placeholder prose, Atoms.</p>
+          <p class="pl-step-body">
+            Each verified suggestion becomes its own file in <code>/Atoms/</code>. Filename is the claim itself as a full declarative sentence, findable by search alone. The vault currently holds 1,056 of them across thesis topics: TPACK, PKM, Japan's GIGA program, Bangkok's BMA pilot, AI epistemics.
+          </p>
         </div>
         <div class="pl-step-visual">
           <button class="pl-replay" aria-label="Replay animation">&#x21bb; Replay</button>
-          <div class="pl-stage pl-stage-atoms">Step 04 visual placeholder</div>
+          <div class="pl-stage pl-stage-atoms">
+            <div class="pl-atoms-counter-wrap">
+              <div class="pl-atoms-counter" id="pl-atoms-counter">0</div>
+              <div class="pl-atoms-counter-lbl">atoms in vault</div>
+            </div>
+            <div class="pl-atoms-scatter" id="pl-atoms-scatter"></div>
+          </div>
         </div>
       </div>
 
@@ -1249,6 +1288,76 @@ document.addEventListener("DOMContentLoaded", () => {
       body.appendChild(cur);
     }, 6400);
   };
+
+  pipelineRunners['04'] = function(stepEl) {
+    const counter = stepEl.querySelector('#pl-atoms-counter');
+    const scatter = stepEl.querySelector('#pl-atoms-scatter');
+    if (!counter || !scatter) return;
+    scatter.innerHTML = '';
+    counter.textContent = '0';
+
+    const tickTargets = [12, 47, 156, 423, 718, 891, 1003, 1056];
+    let ti = 0;
+    const tickIv = setInterval(() => {
+      if (ti >= tickTargets.length) { clearInterval(tickIv); return; }
+      counter.textContent = tickTargets[ti].toLocaleString();
+      ti++;
+    }, 520);
+
+    const atomClaims = [
+      "Retrieval strategies determine note organization",
+      "PKBs externalize tacit knowledge",
+      "Scaffolded templates reduce onboarding friction",
+      "A naive web-popularity baseline outperformed 24 of 46 systems",
+      "Cross-sentence coreference is the bottleneck",
+      "Resonance is more reliable than analytical checklists",
+      "PARA orders folders by actionability, not subject",
+      "Progressive Summarization is disciplined forgetting",
+      "Intermediate Packets make work interruption-proof",
+      "Capture, format, retrieve: three temporal phases",
+      "Writing triggers the Generation Effect",
+      "ML re-ranking yields 4.7% absolute improvement",
+      "Curator's Perspective filters input streams",
+      "Noticing habits compound discoverability",
+      "Weekly Review batch-sorts captured notes",
+      "Express is the purpose of CODE",
+      "Salience can beat elaborate analytical filters",
+      "Tags click is one of four retrieval strategies",
+      "TPACK overlap is necessary but not sufficient",
+      "Knowledge accumulates through atomic notes that link",
+      "Areas in PARA uphold a standard over time",
+      "AI features should link templates to retrieval intent",
+      "Project Completion Checklists extract reusable assets",
+      "A note is a knowledge building block",
+      "Folder placement gives a sense of task completion"
+    ];
+
+    const stageRect = scatter.getBoundingClientRect();
+    const W = stageRect.width || 420;
+    const H = stageRect.height || 320;
+    const counterReservedH = 90;
+    const cardW = 180, cardH = 36;
+
+    const isMobile = window.matchMedia('(max-width: 720px)').matches;
+    const claimsToRender = isMobile ? atomClaims.slice(0, 12) : atomClaims;
+    claimsToRender.forEach((claim, i) => {
+      setTimeout(() => {
+        const card = document.createElement('div');
+        card.className = 'pl-atom-card';
+        card.textContent = claim;
+        const minLeft = (i < 5) ? 220 : 12;
+        const minTop = (i < 8) ? counterReservedH : 12;
+        const left = minLeft + Math.random() * Math.max(W - cardW - minLeft - 12, 40);
+        const top = minTop + Math.random() * Math.max(H - cardH - minTop - 12, 40);
+        card.style.left = left + 'px';
+        card.style.top = top + 'px';
+        card.style.transform = `scale(0.4) translateY(16px) rotate(${(Math.random() * 8 - 4).toFixed(1)}deg)`;
+        card.style.animation = 'pl-atom-pop 0.5s ease forwards';
+        scatter.appendChild(card);
+      }, 250 + i * 220);
+    });
+  };
+
   const pipelineRan = new Set();
 
   function runPipelineStep(stepEl) {
