@@ -599,6 +599,37 @@
       60%  { opacity: 1; transform: scale(1.08) translateY(0); }
       100% { opacity: 1; transform: scale(1) translateY(0); }
     }
+    /* --- Step 05: Molecules --- */
+    .pl-stage-molecules { padding: 0; position: relative; display: block; }
+    .pl-mol-svg {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 1;
+    }
+    .pl-mol-field { position: absolute; inset: 0; z-index: 2; }
+    .pl-mol-dot {
+      position: absolute; width: 10px; height: 10px;
+      background: var(--amber); border-radius: 50%;
+      box-shadow: 0 0 10px rgba(232,99,74,.55);
+      transition: left 1.2s cubic-bezier(.4,.1,.3,1), top 1.2s cubic-bezier(.4,.1,.3,1);
+      transform: translate(-50%, -50%);
+      opacity: 0;
+    }
+    .pl-mol-dot.pl-in { opacity: 1; }
+    .pl-mol-label {
+      position: absolute;
+      font-family: var(--mono); font-size: 9.5px;
+      color: var(--teal); letter-spacing: 0.04em;
+      transform: translate(-50%, 0);
+      opacity: 0;
+      transition: opacity .6s ease;
+    }
+    .pl-mol-label.pl-in { opacity: 1; }
+    .pl-mol-line {
+      stroke: var(--teal); stroke-width: 1;
+      opacity: 0;
+      transition: opacity .6s ease;
+    }
+    .pl-mol-line.pl-in { opacity: 0.45; }
   </style>
 </head>
 <body>
@@ -799,13 +830,18 @@
 
       <div class="pl-step" data-step="05" id="pl-step-05">
         <div class="pl-step-prose">
-          <div class="pl-step-num">Step 05</div>
+          <div class="pl-step-num">Step 05 &middot; Molecules</div>
           <h3 class="pl-step-title">Atoms <em>cluster into molecules</em></h3>
-          <p class="pl-step-body">Placeholder prose, Molecules.</p>
+          <p class="pl-step-body">
+            When 2 to 5 atoms share a theme, they get pulled into a molecule: a connection note with no new claims, only relations. The molecule lives in <code>/Molecules/</code> and links back to its atoms. This is where pattern recognition stops being implicit and becomes a saved object.
+          </p>
         </div>
         <div class="pl-step-visual">
           <button class="pl-replay" aria-label="Replay animation">&#x21bb; Replay</button>
-          <div class="pl-stage pl-stage-molecules">Step 05 visual placeholder</div>
+          <div class="pl-stage pl-stage-molecules">
+            <svg class="pl-mol-svg" id="pl-mol-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+            <div class="pl-mol-field" id="pl-mol-field"></div>
+          </div>
         </div>
       </div>
 
@@ -1356,6 +1392,88 @@ document.addEventListener("DOMContentLoaded", () => {
         scatter.appendChild(card);
       }, 250 + i * 220);
     });
+  };
+
+  pipelineRunners['05'] = function(stepEl) {
+    const svg = stepEl.querySelector('#pl-mol-svg');
+    const field = stepEl.querySelector('#pl-mol-field');
+    if (!svg || !field) return;
+    svg.innerHTML = '';
+    field.innerHTML = '';
+
+    const stageRect = field.getBoundingClientRect();
+    const W = stageRect.width || 420;
+    const H = stageRect.height || 320;
+
+    const scatter = [
+      {x: 18, y: 32}, {x: 35, y: 18}, {x: 48, y: 38},
+      {x: 65, y: 22}, {x: 78, y: 42}, {x: 88, y: 28},
+      {x: 22, y: 72}, {x: 40, y: 82}, {x: 55, y: 76},
+      {x: 70, y: 84}, {x: 84, y: 72}, {x: 30, y: 55}
+    ];
+
+    const clusters = [
+      { atoms: [0,1,2,11], cx: 32, cy: 30, r: 9, label: '⊕ retrieval-first-organization' },
+      { atoms: [3,4,5],    cx: 78, cy: 32, r: 7, label: '⊕ system-combination-beats-single-pipeline' },
+      { atoms: [6,7,8,9,10], cx: 60, cy: 76, r: 9, label: '⊕ intermediate-packets-as-cognitive-units' }
+    ];
+
+    const dots = scatter.map((p, i) => {
+      const dot = document.createElement('div');
+      dot.className = 'pl-mol-dot';
+      dot.style.left = p.x + '%';
+      dot.style.top = p.y + '%';
+      field.appendChild(dot);
+      requestAnimationFrame(() => dot.classList.add('pl-in'));
+      return { el: dot, idx: i, x: p.x, y: p.y };
+    });
+
+    const targets = {};
+    clusters.forEach(cluster => {
+      cluster.atoms.forEach((aIdx, j) => {
+        const angle = (j / cluster.atoms.length) * Math.PI * 2 - Math.PI / 2;
+        const tx = cluster.cx + Math.cos(angle) * cluster.r;
+        const ty = cluster.cy + Math.sin(angle) * cluster.r;
+        targets[aIdx] = { x: tx, y: ty };
+      });
+    });
+
+    setTimeout(() => {
+      dots.forEach(d => {
+        const t = targets[d.idx];
+        if (t) {
+          d.el.style.left = t.x + '%';
+          d.el.style.top = t.y + '%';
+          d.x = t.x; d.y = t.y;
+        }
+      });
+    }, 1100);
+
+    setTimeout(() => {
+      clusters.forEach(cluster => {
+        const memberDots = cluster.atoms.map(idx => dots[idx]);
+        for (let i = 0; i < memberDots.length; i++) {
+          for (let j = i + 1; j < memberDots.length; j++) {
+            const a = memberDots[i], b = memberDots[j];
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', a.x + '%');
+            line.setAttribute('y1', a.y + '%');
+            line.setAttribute('x2', b.x + '%');
+            line.setAttribute('y2', b.y + '%');
+            line.setAttribute('class', 'pl-mol-line');
+            svg.appendChild(line);
+            requestAnimationFrame(() => line.classList.add('pl-in'));
+          }
+        }
+        const lbl = document.createElement('div');
+        lbl.className = 'pl-mol-label';
+        lbl.style.left = cluster.cx + '%';
+        lbl.style.top = (cluster.cy + cluster.r + 4) + '%';
+        lbl.textContent = cluster.label;
+        field.appendChild(lbl);
+        requestAnimationFrame(() => lbl.classList.add('pl-in'));
+      });
+    }, 2500);
   };
 
   const pipelineRan = new Set();
