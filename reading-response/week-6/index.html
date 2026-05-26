@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>On Attention &mdash; Week 6 Reading Response</title>
+  <meta name="description"
+    content="ITASIA302 reading response to Burnett et al. (2026), Attensity! A Manifesto of the Attention Liberation Movement.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500;1,9..144,600&family=Geist+Mono:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    /* ========================================================================
+     Design tokens "Scientific Sublime"
+     ======================================================================== */
+    :root {
+      --bg: #05060e;
+      --bg-soft: #0b0d1a;
+      --ink: #e0e6f0;
+      --ink-dim: #8899b8;
+      --ink-faint: #2e3a55;
+      --rule: #182030;
+      --amber: #e0607e;
+      --amber-lo: #e0607e14;
+      --amber-hi: #f09aaa;
+      --teal: #45a884;
+      --sky: #5299c8;
+      --coral: #b85c7a;
+      --lilac: #7272c0;
+      --gold: #e0607e;
+
+      --serif: "Fraunces", Georgia, "Times New Roman", serif;
+      --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+      --ease: cubic-bezier(.22, .61, .36, 1);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      background-image:
+        linear-gradient(rgba(224, 96, 126, .022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(224, 96, 126, .022) 1px, transparent 1px);
+      background-size: 52px 52px;
+      color: var(--ink);
+      font-family: var(--serif);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* Atmospheric overlays */
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: .032;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/></filter><rect width='256' height='256' filter='url(%23n)'/></svg>");
+      background-size: 220px 220px;
+      mix-blend-mode: overlay;
+    }
+
+    .glow-tl,
+    .glow-br {
+      position: fixed;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .glow-tl {
+      top: 0;
+      left: 0;
+      width: 55vw;
+      height: 55vh;
+      background: radial-gradient(at 0% 0%, rgba(224, 96, 126, 0.07) 0%, transparent 60%);
+    }
+
+    .glow-br {
+      bottom: 0;
+      right: 0;
+      width: 50vw;
+      height: 50vh;
+      background: radial-gradient(at 100% 100%, rgba(114, 114, 192, 0.07) 0%, transparent 65%);
+    }
+
+    .edge-gradient {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      z-index: 10000;
+      background: linear-gradient(90deg, transparent 0%, var(--sky) 22%, var(--lilac) 62%, transparent 100%);
+      opacity: .55;
+      pointer-events: none;
+    }
+
+    /* ========================================================================
+     Topbar
+     ======================================================================== */
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 14px 48px 12px;
+      background: linear-gradient(180deg, rgba(5, 6, 14, 0.95) 0%, rgba(5, 6, 14, 0.70) 70%, transparent 100%);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .topbar-title {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 17px;
+      letter-spacing: -0.015em;
+      color: var(--ink);
+    }
+
+    .topbar-title em {
+      color: var(--amber);
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .topbar-meta {
+      font-family: var(--mono);
+      font-weight: 400;
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .journal-link {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px dotted var(--ink-faint);
+      transition: color 180ms ease, border-color 180ms ease;
+    }
+
+    .journal-link:hover,
+    .journal-link:focus-visible {
+      color: var(--amber);
+      border-bottom-color: var(--amber);
+      outline: none;
+    }
+
+    /* ========================================================================
+     Scroll progress bar
+     ======================================================================== */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      z-index: 60;
+      background: linear-gradient(90deg, var(--amber), var(--coral));
+      width: 0%;
+      transition: width .08s linear;
+    }
+
+    /* ========================================================================
+     Scene containers
+     ======================================================================== */
+    main {
+      position: relative;
+      z-index: 1;
+    }
+
+    .scene {
+      min-height: 100vh;
+      padding: 120px 48px 80px;
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+
+    .scene-tall {
+      min-height: 110vh;
+    }
+
+    .scene-number {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 24px;
+    }
+
+    .scene-number::before {
+      content: "";
+      display: inline-block;
+      width: 32px;
+      height: 1px;
+      background: var(--amber);
+      vertical-align: middle;
+      margin-right: 14px;
+      transform: translateY(-3px);
+    }
+
+    /* ========================================================================
+     Typography scale
+     ======================================================================== */
+    .eyebrow {
+      font-family: var(--mono);
+      font-weight: 400;
+      font-size: 12px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 18px;
+    }
+
+    .headline {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(38px, 5.2vw, 68px);
+      line-height: 1.02;
+      letter-spacing: -0.028em;
+      color: var(--ink);
+      margin-bottom: 28px;
+      max-width: 20ch;
+    }
+
+    .headline em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--amber);
+    }
+
+    .headline-sm {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(28px, 3.2vw, 42px);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 20px;
+      max-width: 24ch;
+    }
+
+    .headline-sm em {
+      color: var(--amber);
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .dek {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(17px, 1.4vw, 21px);
+      line-height: 1.55;
+      letter-spacing: -0.005em;
+      color: var(--ink-dim);
+      max-width: 62ch;
+      margin-bottom: 36px;
+    }
+
+    .dek em {
+      font-style: italic;
+      color: var(--ink);
+    }
+
+    .body-copy {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(17px, 1.35vw, 20px);
+      line-height: 1.62;
+      color: var(--ink-dim);
+      max-width: 66ch;
+    }
+
+    .body-copy em {
+      font-style: italic;
+      color: var(--ink);
+    }
+
+    .body-copy strong {
+      color: var(--ink);
+      font-weight: 400;
+    }
+
+    .body-copy p+p {
+      margin-top: 22px;
+    }
+
+    .label {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .cmd-prompt {
+      color: var(--teal);
+      font-style: normal;
+      user-select: none;
+    }
+
+    .blink-cursor {
+      display: inline-block;
+      width: 7px;
+      height: 10px;
+      background: var(--sky);
+      vertical-align: middle;
+      margin-left: 2px;
+      animation: cur-blink 1s step-end infinite;
+      border-radius: 1px;
+    }
+
+    @keyframes cur-blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
+    }
+
+    .blink-cursor.steady {
+      animation: cur-steady 3s ease-in-out infinite;
+    }
+
+    @keyframes cur-steady {
+
+      0%,
+      100% {
+        opacity: 0.5;
+      }
+
+      50% {
+        opacity: 0.15;
+      }
+    }
+
+    /* ========================================================================
+     Reveal state (IntersectionObserver adds .in-view)
+     ======================================================================== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity .9s var(--ease), transform .9s var(--ease);
+    }
+
+    .reveal.in-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal.delay-1 {
+      transition-delay: .12s;
+    }
+
+    .reveal.delay-2 {
+      transition-delay: .24s;
+    }
+
+    .reveal.delay-3 {
+      transition-delay: .36s;
+    }
+
+    .reveal.delay-4 {
+      transition-delay: .50s;
+    }
+
+    .reveal.delay-5 {
+      transition-delay: .64s;
+    }
+
+    .reveal.delay-6 {
+      transition-delay: .80s;
+    }
+
+    /* ========================================================================
+     Hero (Scene 0)
+     ======================================================================== */
+    .hero-scene {
+      min-height: 100vh;
+      padding: 140px 48px 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      position: relative;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .hero-kicker {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 32px;
+    }
+
+    .hero-kicker .dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--amber);
+      margin: 0 12px 2px 0;
+      box-shadow: 0 0 10px var(--amber);
+      vertical-align: middle;
+    }
+
+    .hero-title {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(56px, 8.4vw, 128px);
+      line-height: 0.96;
+      letter-spacing: -0.038em;
+      color: var(--ink);
+      margin-bottom: 36px;
+      max-width: 16ch;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--amber);
+    }
+
+    .hero-dek {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(18px, 1.55vw, 24px);
+      line-height: 1.5;
+      color: var(--ink-dim);
+      max-width: 58ch;
+      margin-bottom: 56px;
+    }
+
+    .hero-dek strong {
+      color: var(--ink);
+      font-weight: 400;
+    }
+
+    .hero-dek em {
+      color: var(--ink);
+      font-style: italic;
+    }
+
+    .scroll-cue {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .scroll-cue .arrow {
+      width: 24px;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      animation: nudge 2.2s infinite var(--ease);
+    }
+
+    @keyframes nudge {
+
+      0%,
+      100% {
+        transform: translateY(0);
+        opacity: .6;
+      }
+
+      50% {
+        transform: translateY(6px);
+        opacity: 1;
+      }
+    }
+
+    /* ========================================================================
+     Pull quote
+     ======================================================================== */
+    .pull-quote {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(24px, 2.4vw, 34px);
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      font-style: italic;
+      color: var(--ink);
+      max-width: 36ch;
+      border-left: 2px solid var(--amber);
+      padding-left: 28px;
+      margin: 56px 0 8px;
+    }
+
+    .pull-quote .attr {
+      display: block;
+      font-family: var(--mono);
+      font-style: normal;
+      font-size: 12px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-top: 18px;
+    }
+
+    /* ========================================================================
+     Closing / citation
+     ======================================================================== */
+    .closing-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 64px;
+      margin-top: 40px;
+    }
+
+    .citation-block {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 18px;
+      line-height: 1.7;
+      color: var(--ink);
+      max-width: 52ch;
+      border-left: 2px solid var(--amber);
+      padding: 6px 0 6px 26px;
+    }
+
+    .citation-block .cite-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 14px;
+    }
+
+    .citation-block em {
+      font-style: italic;
+      color: var(--ink);
+    }
+
+    .meta-block {
+      font-family: var(--mono);
+      font-size: 11px;
+      line-height: 1.75;
+      color: var(--ink-faint);
+      letter-spacing: 0.04em;
+    }
+
+    .meta-block .meta-key {
+      color: var(--ink-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      font-size: 9.5px;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .meta-block .meta-val {
+      color: var(--ink);
+      display: block;
+      margin-bottom: 18px;
+    }
+
+    .meta-block .meta-val em {
+      color: var(--amber);
+      font-style: italic;
+    }
+
+    /* AI Statement block */
+    .ai-statement {
+      margin-top: 56px;
+      padding: 22px 26px;
+      border: 1px solid var(--rule);
+      border-left: 2px solid var(--lilac);
+      background: linear-gradient(180deg, rgba(114, 114, 192, 0.04) 0%, transparent 100%);
+      max-width: 66ch;
+    }
+
+    .ai-statement .ai-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--lilac);
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .ai-statement p {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 15px;
+      line-height: 1.62;
+      color: var(--ink-dim);
+    }
+
+    .ai-statement p+p {
+      margin-top: 14px;
+    }
+
+    footer.footer {
+      margin-top: 72px;
+      padding: 40px 0 60px;
+      border-top: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    footer.footer em {
+      color: var(--amber);
+      font-style: normal;
+      letter-spacing: 0.14em;
+    }
+
+    /* ========================================================================
+     Responsive
+     ======================================================================== */
+    @media (min-width: 1600px) {
+
+      .scene,
+      .hero-scene {
+        max-width: 1440px;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .topbar {
+        padding: 12px 24px;
+      }
+
+      .scene,
+      .hero-scene {
+        padding-left: 24px;
+        padding-right: 24px;
+      }
+
+      .closing-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .pull-quote {
+        padding-left: 18px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .topbar {
+        padding: 10px 18px;
+        flex-wrap: wrap;
+        row-gap: 4px;
+      }
+
+      .topbar-title {
+        font-size: 15px;
+        letter-spacing: -0.01em;
+      }
+
+      .topbar-meta {
+        font-size: 8px;
+      }
+
+      .scene {
+        padding: 96px 20px 64px;
+      }
+
+      .hero-scene {
+        padding: 110px 20px 64px;
+      }
+
+      .pull-quote {
+        margin: 40px 0 8px;
+        padding-left: 16px;
+      }
+
+      .citation-block {
+        padding-left: 18px;
+        font-size: 16px;
+      }
+
+      footer.footer {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal {
+        transition: none !important;
+        opacity: 1;
+        transform: none;
+      }
+
+      html {
+        scroll-behavior: auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="grain"></div>
+  <div class="glow-tl"></div>
+  <div class="glow-br"></div>
+  <div class="edge-gradient"></div>
+
+  <div class="scroll-progress" id="scroll-progress"></div>
+
+  <header class="topbar">
+    <div class="topbar-title"><a class="journal-link back-link" href="../../home.html">&larr; All assignments</a>
+      &nbsp;&middot;&nbsp; Reading Response <em>On Attention</em></div>
+    <div class="topbar-meta">ITASIA302 &nbsp;&bull;&nbsp; Week 6 &nbsp;&bull;&nbsp; May 2026</div>
+  </header>
+
+  <main>
+
+    <!-- ===============================================================
+       Scene 0 Hero
+       =============================================================== -->
+    <section class="hero-scene" id="scene-0">
+      <div class="hero-kicker reveal"><span class="dot"></span><span class="cmd-prompt">~/itasia302 $ </span><span
+          id="hero-cmd"></span><span class="blink-cursor" id="hero-cursor"></span></div>
+
+      <h1 class="hero-title reveal delay-1">
+        Technology as <em>amplifier</em>. But of what?
+      </h1>
+
+      <p class="hero-dek reveal delay-2">
+        The Friends of Attention argue that school exists not to transmit information
+        but to form attention: to teach us <strong>what is worth noticing</strong> and how long
+        to stay with it. This is a response about what happens when the technology
+        we bring into schools amplifies the <em>wrong thing</em>.
+      </p>
+
+      <div class="scroll-cue reveal delay-4">
+        Scroll to begin
+        <span class="arrow" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M9 3V15M9 15L4.5 10.5M9 15L13.5 10.5" stroke="currentColor" stroke-width="1.2"
+              stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </span>
+      </div>
+    </section>
+
+    <!-- ===============================================================
+       Scene 1 The claim that landed
+       =============================================================== -->
+    <section class="scene scene-tall" id="scene-1">
+      <div class="scene-number reveal">01 &nbsp;&middot;&nbsp; The claim that landed</div>
+
+      <h2 class="headline reveal delay-1">
+        School was never really about <em>knowledge</em>.
+      </h2>
+
+      <div class="body-copy reveal delay-2">
+        <p>
+          When I first read the claim that &ldquo;people go to school to learn how to attend&rdquo;
+          (not to acquire facts, not to gain a trade, but to learn how to give
+          attention, and to what), my instinct was to push back. But the more I
+          thought about it, the more I recognised something true in it. I think school,
+          at its best, has always been more about forming the student than filling her.
+          What kinds of things deserve concentration? How do you stay with something
+          long enough for it to mean something? Chemistry class trains you to attend
+          to data, patterns, and evidence. History class trains you to attend to time,
+          cause, and perspective. The subject is almost secondary.
+        </p>
+        <p>
+          My own experience of school felt something like this. I feel I was taught
+          not just to receive information but to act upon it, to question what is
+          worth considering and to weigh what kind of knowledge deserves sustained
+          attention. That distinction mattered to me. But I also think this is not
+          the experience most schools deliver. Many schools operate closer to a
+          different model: give out information, test recall, move on. And I think
+          this problem has gotten worse, not better, with the arrival of digital tools.
+        </p>
+        <p>
+          What I find useful about the book is that it gives this observation a
+          historical structure. This is a recurring failure, not a new one.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===============================================================
+       Scene 2 The Industrial Revolution is still running
+       =============================================================== -->
+    <section class="scene scene-tall" id="scene-2">
+      <div class="scene-number reveal">02 &nbsp;&middot;&nbsp; The Industrial Revolution is still running</div>
+
+      <h2 class="headline reveal delay-1">
+        The classroom as <em>quasi-factory</em> of mind-numbingly rote tasks.
+      </h2>
+
+      <div class="body-copy reveal delay-2">
+        <p>
+          The book is careful to say that attentional formation is not inherently
+          liberatory. &ldquo;As often as not,&rdquo; the authors write, &ldquo;schools have served to
+          acculturate new generations to kinds of attention that consign them to
+          lifeways of cramped spirits and even outright exploitation.&rdquo; I think the
+          Industrial Revolution example is the clearest one they give: students in
+          Birmingham were learning to attend, but to forms of attention prefabricated
+          for factory labour. The ways of seeing and doing they acquired were, as the
+          book puts it, &ldquo;mostly prefabricated for the exercise of dull and demeaning
+          labour.&rdquo;
+        </p>
+      </div>
+
+      <blockquote class="pull-quote reveal delay-3">
+        Study is what you do with other people. It&rsquo;s talking and walking around
+        with other people, working, dancing, suffering, some irreducible convergence
+        of all three.
+        <span class="attr">Fred Moten, cited in Attensity! p. 135-136</span>
+      </blockquote>
+
+      <div class="body-copy reveal delay-4" style="margin-top: 40px;">
+        <p>
+          What the book offers as the counter is an expanded definition of school: jazz
+          bands, tai chi in the park, chess clubs, fishing at the pier, Fred Moten&rsquo;s
+          study groups. I find this genuinely compelling. These are communities of
+          attention and they form you differently, toward understanding rather than
+          toward compliance, toward the world rather than toward the metric.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===============================================================
+       Scene 3 Who has access to the jazz band?
+       =============================================================== -->
+    <section class="scene scene-tall" id="scene-3">
+      <div class="scene-number reveal">03 &nbsp;&middot;&nbsp; Who has access to the jazz band?</div>
+
+      <h2 class="headline reveal delay-1">
+        The <em>informal</em> community is not equally available.
+      </h2>
+
+      <div class="body-copy reveal delay-2">
+        <p>
+          I think the book&rsquo;s expanded definition of school is genuinely useful, but it
+          also makes me uneasy. The informal communities the authors name (chess clubs,
+          surf groups, tai chi in the park) are not equally available to everyone.
+          I feel they assume a certain kind of neighbourhood, a certain kind of time,
+          a certain kind of social infrastructure. For students in under-resourced
+          communities, those alternatives are precisely what has been stripped away,
+          and not gradually. It happens as a direct consequence of the economic
+          pressures that under-resourced communities absorb the most.
+        </p>
+        <p>
+          This matters because the authors are arguing that these informal communities
+          of attention are the antidote to the attention economy. But if you cannot
+          access them, you are left with only the formal school. And if that school
+          is increasingly organised around digital platforms optimising for completion
+          metrics (lessons finished, badges earned, time-on-task recorded), I think
+          the cost is borne entirely by the student who is least equipped to absorb it.
+        </p>
+        <p>
+          I feel the book is stronger as a critique than as an equity argument. It
+          names the problem of attentional monoculture clearly. But it is quieter
+          about who tends to be left in that monoculture with no exit.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===============================================================
+       Scene 4 Not one gap. Two.
+       =============================================================== -->
+    <section class="scene scene-tall" id="scene-4">
+      <div class="scene-number reveal">04 &nbsp;&middot;&nbsp; Not one gap. Two.</div>
+
+      <h2 class="headline reveal delay-1">
+        The platform does not arrive <em>neutrally</em>.
+      </h2>
+
+      <div class="body-copy reveal delay-2">
+        <p>
+          When I think about how digital learning platforms actually land in schools,
+          I see two layers of distortion, not one.
+        </p>
+        <p>
+          The first is the teacher layer. A well-resourced classroom has a teacher who
+          uses the platform as one tool among many, corrected for when it falls short,
+          supplemented when it is not enough. An under-resourced classroom may have
+          the platform as the teacher. The educator who does exist is overloaded: not
+          with fewer tasks, but with more. I think the platform generates data,
+          tracking demands, and reporting requirements that bury her. She cannot
+          correct for the platform&rsquo;s limits because she is already submerged under
+          its outputs.
+        </p>
+        <p>
+          The second is the student layer. A student in a well-resourced school learns
+          to use the platform strategically, to complete and then go beyond. A student
+          in a platform-dependent classroom learns to give attention to completion
+          itself: the lesson finished, the badge earned, the metric satisfied. I feel
+          this is attention trained toward an endpoint that serves the application&rsquo;s
+          corporate interest, not her own understanding.
+        </p>
+      </div>
+
+      <blockquote class="pull-quote reveal delay-3">
+        There is no way to outsource understanding. And there is no other path
+        to freedom.
+        <span class="attr">Burnett et al., Attensity! p. 135</span>
+      </blockquote>
+
+      <div class="body-copy reveal delay-4" style="margin-top: 40px;">
+        <p>
+          I think of the platform, in both cases, as an amplifier. In the first
+          classroom, it amplifies human teaching. In the second, it amplifies the
+          distortion. I think the more honest question is not whether to use it, but
+          what exactly it is amplifying, and for whom.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===============================================================
+       Scene 5 What this leaves me with
+       =============================================================== -->
+    <section class="scene scene-tall" id="scene-5">
+      <div class="scene-number reveal">05 &nbsp;&middot;&nbsp; What this leaves me with</div>
+
+      <h2 class="headline reveal delay-1">
+        Policy cannot just be about <em>access</em>.
+      </h2>
+
+      <div class="body-copy reveal delay-2">
+        <p>
+          My research examines digital learning materials policy: how institutions
+          decide what tools go into classrooms, and whether those choices serve
+          quality education for all students. I think this reading sharpens a question
+          I have been circling for a while.
+        </p>
+        <p>
+          Policy conversations about digital learning tend to centre on access: who
+          has a device, who has connectivity, who has the software licence. I feel
+          the <em>Attensity!</em> argument forces a prior question: what is the technology
+          amplifying, and for whom? A policy that delivers a completion-optimised
+          platform equally to every classroom has not achieved equity. I think it has
+          delivered the Industrial Revolution classroom at scale, with a login screen.
+        </p>
+        <p>
+          What the book leaves me with is a criterion I did not have before. I wonder
+          if digital learning materials should be evaluated not only by what they teach,
+          but by what kind of attention they form. Do they amplify human study, the
+          kind that happens between people, irreducibly intellectual and alive? Or do
+          they replace it with something that looks like learning and measures like
+          completion? I do not yet know what a policy framework built on that criterion
+          would look like. But reading this has made me think that the current ones are
+          asking the wrong question.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===============================================================
+       Scene 6 Source + AI Statement
+       =============================================================== -->
+    <section class="scene" id="scene-6">
+      <div class="scene-number reveal">06 &nbsp;&middot;&nbsp; Source</div>
+
+      <h2 class="headline reveal delay-1">
+        The <em>source</em>.
+      </h2>
+
+      <div class="closing-grid">
+        <div class="citation-block reveal delay-2">
+          <span class="cite-label">Full citation</span>
+          Burnett, D. G., Loh, A., &amp; Schmidt, P. (Eds.). (2026).
+          <em>Attensity! A Manifesto of the Attention Liberation Movement.</em>
+          Crown / Penguin Random House.
+        </div>
+
+        <div class="meta-block reveal delay-3">
+          <span class="meta-key">Course</span>
+          <span class="meta-val"><em>ITASIA302</em> Introduction to Digital Technology and Society</span>
+
+          <span class="meta-key">Response</span>
+          <span class="meta-val">Week 6 reading response</span>
+
+          <span class="meta-key">Author</span>
+          <span class="meta-val">Takumi</span>
+
+          <span class="meta-key">Date</span>
+          <span class="meta-val">May 2026</span>
+        </div>
+      </div>
+
+      <div class="ai-statement reveal delay-4">
+        <span class="ai-label">AI Statement</span>
+        <p>
+          I used Claude (Anthropic) as a Socratic interlocutor while working through
+          the STUDY section of <em>Attensity!</em> (pp. 128-136). The conversation began with
+          the book&rsquo;s central claim, that school exists to form attention rather than
+          transmit information, and pushed me to test that claim against my own
+          experience of schooling and my understanding of how digital learning
+          platforms actually work in classrooms.
+        </p>
+        <p>
+          The two-layer argument (teacher overload and student attentional
+          misdirection) and the framing of technology as an amplifier emerged from
+          that dialogue. The interpretations and conclusions are my own. Claude served
+          as a thinking partner during the reading process, not as a co-author.
+        </p>
+      </div>
+
+      <footer class="footer">
+        <div>Reading Response &nbsp;&middot;&nbsp; Burnett et al. (2026)</div>
+        <div><em>ITASIA302</em> &nbsp;&middot;&nbsp; Week 6 &nbsp;&middot;&nbsp; Takumi</div>
+      </footer>
+    </section>
+
+  </main>
+
+  <script>
+    "use strict";
+
+    function updateScrollProgress() {
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+      document.getElementById("scroll-progress").style.width = pct + "%";
+    }
+
+    const _tq = [];
+    let _ta = false;
+    function _nextType() {
+      if (!_tq.length) { _ta = false; return; }
+      _ta = true;
+      const { el, tokens } = _tq.shift();
+      let built = '', idx = 0;
+      const tick = () => {
+        while (idx < tokens.length && tokens[idx].tag) built += tokens[idx++].tag;
+        if (idx >= tokens.length) { el.innerHTML = built; setTimeout(_nextType, 80); return; }
+        built += tokens[idx++];
+        el.innerHTML = built;
+        setTimeout(tick, 7 + Math.random() * 5);
+      };
+      tick();
+    }
+    function typeElement(el) {
+      const html = (el.dataset.html || '').trim();
+      if (!html) return;
+      const tokens = [];
+      let i = 0;
+      while (i < html.length) {
+        if (html[i] === '<') {
+          const end = html.indexOf('>', i);
+          if (end < 0) { tokens.push(html[i++]); continue; }
+          tokens.push({ tag: html.slice(i, end + 1) }); i = end + 1;
+        } else if (html[i] === '&') {
+          const end = html.indexOf(';', i);
+          if (end < 0) { tokens.push(html[i++]); continue; }
+          tokens.push(html.slice(i, end + 1)); i = end + 1;
+        } else { tokens.push(html[i++]); }
+      }
+      _tq.push({ el, tokens });
+      if (!_ta) _nextType();
+    }
+
+    function setupObservers() {
+      document.querySelectorAll("main section, main .block").forEach(el => {
+        if (el.classList.contains("reveal") && !el.classList.contains("hero") && !el.classList.contains("hero-scene")) {
+          el.classList.remove("reveal");
+        }
+      });
+
+      document.querySelectorAll("main h1, main h2, main h3, main h4, main h5").forEach(el => {
+        if (!el.dataset.html && el.innerHTML.trim() && !el.querySelector('.cmd-prompt,.blink-cursor')) {
+          el.dataset.html = el.innerHTML;
+          el.innerHTML = '';
+          if (!el.classList.contains("reveal")) el.classList.add("reveal");
+        }
+      });
+
+      document.querySelectorAll("main p, main li, main blockquote, main figcaption, main dt, main dd").forEach(el => {
+        if (!el.classList.contains("reveal") && el.textContent.trim()) el.classList.add("reveal");
+      });
+
+      const observed = document.querySelectorAll(".reveal");
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add("in-view");
+            if (/^H[1-5]$/.test(e.target.tagName)) typeElement(e.target);
+          }
+        });
+      }, { threshold: 0.18, rootMargin: "0px 0px -8% 0px" });
+      observed.forEach(n => io.observe(n));
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      setupObservers();
+      updateScrollProgress();
+      window.addEventListener("scroll", updateScrollProgress, { passive: true });
+
+      const cmdEl = document.getElementById("hero-cmd");
+      const cursor = document.getElementById("hero-cursor");
+      if (cmdEl && cursor) {
+        const text = "ITASIA302 · Reading Response · Week 6";
+        let i = 0;
+        const tick = () => {
+          if (i < text.length) {
+            cmdEl.textContent += text[i++];
+            setTimeout(tick, 36 + Math.random() * 24);
+          } else {
+            cursor.classList.add("steady");
+          }
+        };
+        setTimeout(tick, 200);
+      }
+    });
+  </script>
+
+  <script src="../../rain.js" data-color="#e0607e"></script>
+  <script src="../../cursor.js"></script>
+</body>
+
+</html>
