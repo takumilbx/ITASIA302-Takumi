@@ -25,9 +25,9 @@
       --ink-dim: #b8c4dc;
       --ink-faint: #6b7a99;
       --rule: #182030;
-      --amber: #4db8cc;
-      --amber-lo: #4db8cc14;
-      --amber-hi: #7dd3e8;
+      --accent: #4db8cc;
+      --accent-lo: #4db8cc14;
+      --accent-hi: #7dd3e8;
       --teal: #45a884;
       --sky: #5299c8;
       --coral: #7a60b8;
@@ -65,7 +65,7 @@
       text-rendering: optimizeLegibility;
       overflow-x: hidden;
       line-height: 1.6;
-      min-height: 100vh;
+      min-height: 100dvh;
     }
 
     /* Atmospheric overlays verbatim from sub-pages */
@@ -142,7 +142,7 @@
     }
 
     .topbar-title em {
-      color: var(--amber);
+      color: var(--accent);
       font-style: italic;
       font-weight: 400;
     }
@@ -166,8 +166,8 @@
 
     .journal-link:hover,
     .journal-link:focus-visible {
-      color: var(--amber);
-      border-bottom-color: var(--amber);
+      color: var(--accent);
+      border-bottom-color: var(--accent);
       outline: none;
     }
 
@@ -177,7 +177,7 @@
     .reveal {
       opacity: 0;
       transform: translateY(14px);
-      transition: opacity .9s var(--ease), transform .9s var(--ease);
+      transition: opacity .45s var(--ease), transform .45s var(--ease);
     }
 
     .reveal.in-view {
@@ -214,7 +214,7 @@
       max-width: 1180px;
       margin: 0 auto;
       padding: 92px 48px 36px;
-      min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       flex-direction: column;
     }
@@ -238,9 +238,9 @@
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: var(--amber);
+      background: var(--accent);
       margin: 0 12px 2px 0;
-      box-shadow: 0 0 8px var(--amber), 0 0 16px rgba(77,184,204,.12);
+      box-shadow: 0 0 8px var(--accent), 0 0 16px rgba(77,184,204,.12);
       vertical-align: middle;
     }
 
@@ -258,7 +258,7 @@
     .hero-title em {
       font-style: italic;
       font-weight: 400;
-      color: var(--amber);
+      color: var(--accent);
       text-shadow: 0 0 22px rgba(77, 184, 204, .22);
     }
 
@@ -272,7 +272,7 @@
     }
 
     .hero-byline em {
-      color: var(--amber);
+      color: var(--accent);
       font-style: normal;
       letter-spacing: 0.14em;
     }
@@ -331,26 +331,26 @@
       left: 0;
       right: 0;
       height: 1px;
-      background: linear-gradient(90deg, var(--card-accent, var(--amber)) 0%, transparent 70%);
+      background: linear-gradient(90deg, var(--card-accent, var(--accent)) 0%, transparent 70%);
       opacity: .55;
       transition: opacity 280ms var(--ease);
     }
 
     .card:hover,
     .card:focus-visible {
-      border-color: var(--card-accent, var(--amber));
+      border-color: var(--card-accent, var(--accent));
       background: linear-gradient(180deg,
-          color-mix(in oklab, var(--card-accent, var(--amber)) 12%, rgba(13,15,28,0.9)) 0%,
+          color-mix(in oklab, var(--card-accent, var(--accent)) 12%, rgba(13,15,28,0.9)) 0%,
           rgba(13, 15, 28, 0.50) 100%);
-      box-shadow: 0 0 0 1px color-mix(in srgb, var(--card-accent, var(--amber)) 40%, transparent),
-                  0 8px 40px color-mix(in srgb, var(--card-accent, var(--amber)) 15%, transparent),
-                  inset 0 0 30px color-mix(in srgb, var(--card-accent, var(--amber)) 4%, transparent);
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--card-accent, var(--accent)) 40%, transparent),
+                  0 8px 40px color-mix(in srgb, var(--card-accent, var(--accent)) 15%, transparent),
+                  inset 0 0 30px color-mix(in srgb, var(--card-accent, var(--accent)) 4%, transparent);
       outline: none;
     }
 
     /* Accent variants only the --card-accent token differs */
     .card.card-amber {
-      --card-accent: var(--amber);
+      --card-accent: var(--accent);
     }
 
     .card.card-sky {
@@ -388,7 +388,7 @@
       font-size: 9.5px;
       letter-spacing: 0.24em;
       text-transform: uppercase;
-      color: var(--card-accent, var(--amber));
+      color: var(--card-accent, var(--accent));
       margin-bottom: 14px;
     }
 
@@ -442,7 +442,7 @@
       display: inline-block;
       width: 14px;
       height: 1px;
-      background: var(--card-accent, var(--amber));
+      background: var(--card-accent, var(--accent));
       opacity: 0.7;
       flex-shrink: 0;
     }
@@ -461,7 +461,7 @@
     .card-arrow {
       font-family: var(--serif);
       font-size: 18px;
-      color: var(--card-accent, var(--amber));
+      color: var(--card-accent, var(--accent));
       letter-spacing: 0;
       line-height: 1;
       transition: transform 280ms var(--ease);
@@ -490,7 +490,7 @@
     }
 
     footer.footer em {
-      color: var(--amber);
+      color: var(--accent);
       font-style: normal;
       letter-spacing: 0.14em;
     }
@@ -538,7 +538,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(90deg, transparent 0%, var(--sky) 40%, var(--amber-hi) 50%, var(--lilac) 60%, transparent 100%);
+      background: linear-gradient(90deg, transparent 0%, var(--sky) 40%, var(--accent-hi) 50%, var(--lilac) 60%, transparent 100%);
       animation: login-sweep 2.4s linear infinite;
       box-shadow: 0 0 8px var(--sky);
     }
@@ -878,7 +878,9 @@
         transition: none !important;
       }
     }
-  </style>
+    button:active, .fw-cta:active, .tab-btn:active, .visit-btn:active, .compare-btn:active, .cam-btn:active, .hs-toggle:active, .sel-btn:active, .chip:active, .viz-link:active { transform: scale(0.97); }
+</style>
+  <noscript><meta http-equiv="refresh" content="0; url=home.html"></noscript>
 </head>
 
 <body>
@@ -888,7 +890,7 @@
     <div class="login-sweep"></div>
     <div class="login-box">
       <div class="login-ascii">&#x2554;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2557;<br>&#x2551;&nbsp;&nbsp;I T A S I A 3 0 2 _ O S&nbsp;&nbsp;&#x2551;<br>&#x255a;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x255d;</div>
-      <div class="login-ver">v2026.05 &nbsp;·&nbsp; UTOKYO ITASIA PROGRAM</div>
+      <div class="login-ver">UTOKYO ITASIA PROGRAM</div>
       <hr class="login-sep">
       <div class="login-fields">
         <div class="lf"><span class="lf-key">USER</span><span class="lf-val">TAKUMI OSHIYAMA</span></div>
@@ -904,7 +906,7 @@
   <div id="boot-overlay">
     <div class="boot-inner">
       <div class="boot-log">
-        <div class="bl" data-d="0"><span class="hi">ITASIA302_OS</span> v2026.05</div>
+        <div class="bl" data-d="0"><span class="hi">ITASIA302_OS</span></div>
         <div class="bl" data-d="130">────────────────────────────────────────</div>
         <div class="bl" data-d="280">▸ mount /volumes/coursework <span class="ok">.............. OK</span></div>
         <div class="bl" data-d="400">▸ init <span class="hi">about</span>.module <span class="ok">......................... OK</span></div>
@@ -928,6 +930,13 @@
 
     // ── Login screen → boot → page ──────────────────────────────────
     document.addEventListener("DOMContentLoaded", () => {
+
+      // Skip intro for returning visitors (this session) or reduced-motion users → straight to content
+      const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let seen = false;
+      try { seen = sessionStorage.getItem("itasia_intro_seen") === "1"; } catch (e) {}
+      if (seen || prefersReduced) { location.replace("home.html"); return; }
+      try { sessionStorage.setItem("itasia_intro_seen", "1"); } catch (e) {}
 
       // Binary rain on login screen
       (function() {

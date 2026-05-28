@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500;1,9..144,600&family=Geist+Mono:wght@300;400;500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=Geist+Mono:wght@300;400;500;600;700&display=swap"
     rel="stylesheet">
 
   <style>
@@ -25,16 +25,16 @@
       --ink-dim: #8899b8;
       --ink-faint: #2e3a55;
       --rule: #182030;
-      --amber: #e0607e;
-      --amber-lo: #e0607e14;
-      --amber-hi: #f09aaa;
+      --accent: #e0607e;
+      --accent-lo: #e0607e14;
+      --accent-hi: #f09aaa;
       --teal: #45a884;
       --sky: #5299c8;
       --coral: #b85c7a;
       --lilac: #7272c0;
       --gold: #e0607e;
 
-      --serif: "Fraunces", Georgia, "Times New Roman", serif;
+      --serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
       --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
       --ease: cubic-bezier(.22, .61, .36, 1);
@@ -140,7 +140,7 @@
     }
 
     .topbar-title em {
-      color: var(--amber);
+      color: var(--accent);
       font-style: italic;
       font-weight: 400;
     }
@@ -166,8 +166,8 @@
 
     .journal-link:hover,
     .journal-link:focus-visible {
-      color: var(--amber);
-      border-bottom-color: var(--amber);
+      color: var(--accent);
+      border-bottom-color: var(--accent);
       outline: none;
     }
 
@@ -180,7 +180,7 @@
       left: 0;
       height: 2px;
       z-index: 60;
-      background: linear-gradient(90deg, var(--amber), var(--coral));
+      background: linear-gradient(90deg, var(--accent), var(--coral));
       width: 0%;
       transition: width .08s linear;
     }
@@ -222,7 +222,7 @@
       display: inline-block;
       width: 32px;
       height: 1px;
-      background: var(--amber);
+      background: var(--accent);
       vertical-align: middle;
       margin-right: 14px;
       transform: translateY(-3px);
@@ -237,7 +237,7 @@
       font-size: 12px;
       letter-spacing: 0.24em;
       text-transform: uppercase;
-      color: var(--amber);
+      color: var(--accent);
       margin-bottom: 18px;
     }
 
@@ -255,7 +255,7 @@
     .headline em {
       font-style: italic;
       font-weight: 400;
-      color: var(--amber);
+      color: var(--accent);
     }
 
     .headline-sm {
@@ -270,7 +270,7 @@
     }
 
     .headline-sm em {
-      color: var(--amber);
+      color: var(--accent);
       font-style: italic;
       font-weight: 400;
     }
@@ -328,7 +328,7 @@
     .reveal {
       opacity: 0;
       transform: translateY(18px);
-      transition: opacity .9s var(--ease), transform .9s var(--ease);
+      transition: opacity .45s var(--ease), transform .45s var(--ease);
     }
 
     .reveal.in-view {
@@ -434,9 +434,9 @@
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: var(--amber);
+      background: var(--accent);
       margin: 0 12px 2px 0;
-      box-shadow: 0 0 10px var(--amber);
+      box-shadow: 0 0 10px var(--accent);
       vertical-align: middle;
     }
 
@@ -454,7 +454,7 @@
     .hero-title em {
       font-style: italic;
       font-weight: 400;
-      color: var(--amber);
+      color: var(--accent);
     }
 
     .hero-dek {
@@ -477,26 +477,6 @@
       font-style: italic;
     }
 
-    .scroll-cue {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      font-family: var(--mono);
-      font-size: 12px;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--ink-faint);
-    }
-
-    .scroll-cue .arrow {
-      width: 24px;
-      height: 24px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      animation: nudge 2.2s infinite var(--ease);
-    }
-
     @keyframes nudge {
 
       0%,
@@ -515,7 +495,7 @@
      Insight card
      ======================================================================== */
     .insight {
-      border-left: 2px solid var(--amber);
+      border-left: 2px solid var(--accent);
       padding: 14px 0 14px 22px;
       margin-top: 40px;
       max-width: 54ch;
@@ -526,7 +506,7 @@
       font-style: italic;
       font-weight: 400;
       font-size: 28px;
-      color: var(--amber);
+      color: var(--accent);
       letter-spacing: -0.02em;
       display: block;
       margin-bottom: 4px;
@@ -557,7 +537,7 @@
       font-style: italic;
       color: var(--ink);
       max-width: 36ch;
-      border-left: 2px solid var(--amber);
+      border-left: 2px solid var(--accent);
       padding-left: 28px;
       margin: 56px 0 8px;
     }
@@ -569,7 +549,7 @@
       font-size: 12px;
       letter-spacing: 0.24em;
       text-transform: uppercase;
-      color: var(--amber);
+      color: var(--accent);
       margin-top: 18px;
     }
 
@@ -603,12 +583,12 @@
       top: 0;
       bottom: 0;
       width: 2px;
-      background: var(--tile-color, var(--amber));
+      background: var(--tile-color, var(--accent));
       opacity: 0.9;
     }
 
     .theme-tile:hover {
-      border-color: var(--tile-color, var(--amber));
+      border-color: var(--tile-color, var(--accent));
       transform: translateY(-2px);
       background:
         linear-gradient(180deg, rgba(5, 6, 14, 0.58) 0%, rgba(5, 6, 14, 0.84) 100%),
@@ -620,7 +600,7 @@
       font-size: 9.5px;
       letter-spacing: 0.24em;
       text-transform: uppercase;
-      color: var(--tile-color, var(--amber));
+      color: var(--tile-color, var(--accent));
       margin-bottom: 12px;
     }
 
@@ -664,7 +644,7 @@
       font-size: clamp(17px, 1.3vw, 20px);
       line-height: 1.6;
       color: var(--ink-dim);
-      border-left: 2px solid var(--amber);
+      border-left: 2px solid var(--accent);
       padding-left: 22px;
     }
 
@@ -674,14 +654,14 @@
     }
 
     .citation-block a {
-      color: var(--amber);
+      color: var(--accent);
       text-decoration: none;
-      border-bottom: 1px dotted var(--amber-lo);
+      border-bottom: 1px dotted var(--accent-lo);
       transition: border-color 180ms ease;
     }
 
     .citation-block a:hover {
-      border-bottom-color: var(--amber);
+      border-bottom-color: var(--accent);
     }
 
     .cite-label {
@@ -690,7 +670,7 @@
       font-size: 9px;
       letter-spacing: 0.28em;
       text-transform: uppercase;
-      color: var(--amber);
+      color: var(--accent);
       margin-bottom: 12px;
     }
 
@@ -845,10 +825,16 @@
         scroll-behavior: auto;
       }
     }
-  </style>
+    button:active, .fw-cta:active, .tab-btn:active, .visit-btn:active, .compare-btn:active, .cam-btn:active, .hs-toggle:active, .sel-btn:active, .chip:active, .viz-link:active { transform: scale(0.97); }
+  html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
+  .skip-link { position: absolute; left: -9999px; top: 8px; z-index: 100000; background: var(--bg-soft); color: var(--ink); padding: 10px 16px; font-family: var(--mono); font-size: 12px; letter-spacing: .08em; border: 1px solid var(--accent); border-radius: 4px; }
+  .skip-link:focus { left: 8px; }
+</style>
+  <script>document.documentElement.classList.add('js');</script>
 </head>
 
 <body>
+  <a href="#main" class="skip-link">Skip to content</a>
 
   <div class="grain"></div>
   <div class="glow-tl"></div>
@@ -863,7 +849,7 @@
     <div class="topbar-meta">ITASIA302 &nbsp;&bull;&nbsp; Week 4 &nbsp;&bull;&nbsp; May 2026</div>
   </header>
 
-  <main>
+  <main id="main">
 
     <!-- ===============================================================
        Scene 0 Hero
@@ -884,15 +870,6 @@
         matters more than <em>the main narratives itself</em>.
       </p>
 
-      <div class="scroll-cue reveal delay-4">
-        Scroll to begin
-        <span class="arrow" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-            <path d="M9 3V15M9 15L4.5 10.5M9 15L13.5 10.5" stroke="currentColor" stroke-width="1.2"
-              stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-        </span>
-      </div>
     </section>
 
     <!-- ===============================================================
@@ -924,7 +901,7 @@
         </div>
 
         <div class="theme-tile"
-          style="--tile-color: var(--amber-hi); --tile-bg: url('https://images.unsplash.com/photo-1561812938-f6e60cbf95e3?w=900&q=80');">
+          style="--tile-color: var(--accent-hi); --tile-bg: url('https://images.unsplash.com/photo-1561812938-f6e60cbf95e3?w=900&q=80');">
           <div class="tile-num">Theme 02</div>
           <div class="tile-name">Encoded Behaviour</div>
           <div class="tile-body">
@@ -1148,7 +1125,8 @@
     // IntersectionObserver reveals
     function setupObservers() {
       // Headings → typing animation
-      document.querySelectorAll("main h1, main h2, main h3, main h4, main h5").forEach(el => {
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!reduceMotion) document.querySelectorAll("main h1, main h2, main h3, main h4, main h5").forEach(el => {
         if (!el.dataset.html && el.innerHTML.trim() && !el.querySelector('.cmd-prompt,.blink-cursor')) {
           el.dataset.html = el.innerHTML;
           el.innerHTML = '';

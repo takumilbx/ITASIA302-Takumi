@@ -7,7 +7,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,300;0,400;1,300;1,400&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 
 <style>
   :root {
@@ -15,12 +15,12 @@
     --bg-soft: #0b0d1a;
     --ink: #e0e6f0;
     --ink-dim: #8899b8;
-    --ink-faint: #2e3a55;
+    --ink-faint: #6b7a99;
     --rule: #182030;
-    --amber: #5299c8;
+    --accent: #5299c8;
     --sky: #5299c8;
     --lilac: #7272c0;
-    --serif: "Fraunces", Georgia, "Times New Roman", serif;
+    --serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
     --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
     --ease: cubic-bezier(.22, .61, .36, 1);
   }
@@ -102,7 +102,7 @@
     cursor: pointer;
   }
   .back-link:hover, .back-link:focus-visible {
-    color: var(--amber); border-bottom-color: var(--amber); outline: none;
+    color: var(--accent); border-bottom-color: var(--accent); outline: none;
   }
 
   /* Card popup */
@@ -178,6 +178,8 @@
     transition: opacity 600ms ease;
   }
   #hint.hidden { opacity: 0; }
+  button:active, .fw-cta:active, .tab-btn:active, .visit-btn:active, .compare-btn:active, .cam-btn:active, .hs-toggle:active, .sel-btn:active, .chip:active, .viz-link:active { transform: scale(0.97); }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 </style>
 </head>
 <body>
@@ -187,7 +189,16 @@
 <div class="glow-br"></div>
 <div class="edge-gradient"></div>
 
-<canvas id="c"></canvas>
+<canvas id="c" role="img" aria-label="Interactive visualization of Takumi's research journey, in four chapters — Inspirations, Past Research, Iterations, and Now. Use the chapter buttons to step through it; the full text of every node is listed for assistive technology below."></canvas>
+
+<noscript>
+  <div style="position:relative;z-index:50;max-width:760px;margin:90px auto;padding:0 24px;font-family:var(--serif);color:var(--ink);line-height:1.7;">
+    <p style="font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:12px;">This research-journey visualization needs JavaScript.</p>
+    <p><a href="./index.html" style="color:var(--sky);">&larr; Back to About / Research</a></p>
+  </div>
+</noscript>
+
+<section id="viz-sr" class="sr-only" aria-label="Research journey — full text"></section>
 
 <header class="topbar">
   <div class="topbar-title" id="topbar-title">
@@ -606,6 +617,24 @@ canvas.addEventListener("touchend", (e) => {
   const t = e.changedTouches[0];
   canvas.dispatchEvent(new MouseEvent("click", { clientX: t.clientX, clientY: t.clientY }));
 });
+
+// Accessibility: build a visually-hidden text version of the journey for screen readers
+(function buildSrText() {
+  const host = document.getElementById("viz-sr");
+  if (!host || typeof CHAPTERS === "undefined") return;
+  CHAPTERS.forEach(ch => {
+    const h = document.createElement("h2");
+    h.textContent = ch.label;
+    host.appendChild(h);
+    const dl = document.createElement("dl");
+    ch.nodes.forEach(n => {
+      const dt = document.createElement("dt"); dt.textContent = n.title;
+      const dd = document.createElement("dd"); dd.textContent = n.desc;
+      dl.appendChild(dt); dl.appendChild(dd);
+    });
+    host.appendChild(dl);
+  });
+})();
 </script>
 <script src="../rain.js" data-color="#5299c8"></script>
 <script src="../cursor.js"></script>

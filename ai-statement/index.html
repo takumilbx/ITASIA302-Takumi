@@ -22,7 +22,7 @@
       --ink-dim: #b8c4dc;
       --ink-faint: #6b7a99;
       --rule: #182030;
-      --amber: #c9cc48;
+      --accent: #c9cc48;
       --teal: #45a884;
       --sky: #5299c8;
       --coral: #7a60b8;
@@ -61,7 +61,7 @@
       text-rendering: optimizeLegibility;
       overflow-x: hidden;
       line-height: 1.6;
-      min-height: 100vh;
+      min-height: 100dvh;
     }
 
     /* Atmospheric overlays */
@@ -169,7 +169,7 @@
     .reveal {
       opacity: 0;
       transform: translateY(14px);
-      transition: opacity .9s var(--ease), transform .9s var(--ease);
+      transition: opacity .45s var(--ease), transform .45s var(--ease);
     }
 
     .reveal.in-view {
@@ -204,7 +204,7 @@
       max-width: 1180px;
       margin: 0 auto;
       padding: 92px 48px 36px;
-      min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       flex-direction: column;
     }
@@ -433,7 +433,7 @@
     }
 
     .tool-card.tc-amber {
-      --tool-accent: var(--amber);
+      --tool-accent: var(--accent);
     }
 
     .tool-card.tc-teal {
@@ -688,7 +688,7 @@
     }
 
     .br-col.col-me h4 {
-      color: var(--amber);
+      color: var(--accent);
     }
 
     .br-col.col-ai h4 {
@@ -723,7 +723,7 @@
     }
 
     .br-col.col-me li::before {
-      background: var(--amber);
+      background: var(--accent);
     }
 
     .br-col.col-ai li::before {
@@ -878,10 +878,16 @@
         transition: none !important;
       }
     }
-  </style>
+    button:active, .fw-cta:active, .tab-btn:active, .visit-btn:active, .compare-btn:active, .cam-btn:active, .hs-toggle:active, .sel-btn:active, .chip:active, .viz-link:active { transform: scale(0.97); }
+  html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
+  .skip-link { position: absolute; left: -9999px; top: 8px; z-index: 100000; background: var(--bg-soft); color: var(--ink); padding: 10px 16px; font-family: var(--mono); font-size: 12px; letter-spacing: .08em; border: 1px solid var(--accent); border-radius: 4px; }
+  .skip-link:focus { left: 8px; }
+</style>
+  <script>document.documentElement.classList.add('js');</script>
 </head>
 
 <body>
+  <a href="#main" class="skip-link">Skip to content</a>
 
   <div class="grain"></div>
   <div class="glow-tl"></div>
@@ -895,7 +901,7 @@
     <div class="topbar-meta">Disclosure &nbsp;&bull;&nbsp; Method &nbsp;&bull;&nbsp; May 2026</div>
   </header>
 
-  <main>
+  <main id="main">
 
     <!-- =====================================================================
        HERO
@@ -1353,7 +1359,8 @@
       });
 
       // Headings → typing animation
-      document.querySelectorAll("main h1, main h2, main h3, main h4, main h5").forEach(el => {
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!reduceMotion) document.querySelectorAll("main h1, main h2, main h3, main h4, main h5").forEach(el => {
         if (!el.dataset.html && el.innerHTML.trim() && !el.querySelector('.cmd-prompt,.blink-cursor')) {
           el.dataset.html = el.innerHTML;
           el.innerHTML = '';

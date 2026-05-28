@@ -25,9 +25,9 @@
       --ink-dim: #b8c4dc;
       --ink-faint: #6b7a99;
       --rule: #182030;
-      --amber: #5299c8;
-      --amber-lo: #5299c814;
-      --amber-hi: #7ab8d8;
+      --accent: #5299c8;
+      --accent-lo: #5299c814;
+      --accent-hi: #7ab8d8;
       --teal: #45a884;
       --sky: #5299c8;
       --coral: #b85c7a;
@@ -65,7 +65,7 @@
       text-rendering: optimizeLegibility;
       overflow-x: hidden;
       line-height: 1.6;
-      min-height: 100vh;
+      min-height: 100dvh;
     }
 
     /* Atmospheric overlays */
@@ -155,8 +155,8 @@
     }
     .journal-link:hover,
     .journal-link:focus-visible {
-      color: var(--amber);
-      border-bottom-color: var(--amber);
+      color: var(--accent);
+      border-bottom-color: var(--accent);
       outline: none;
     }
 
@@ -166,7 +166,7 @@
     .reveal {
       opacity: 0;
       transform: translateY(14px);
-      transition: opacity .9s var(--ease), transform .9s var(--ease);
+      transition: opacity .45s var(--ease), transform .45s var(--ease);
     }
 
     .reveal.in-view {
@@ -207,7 +207,7 @@
       max-width: 1180px;
       margin: 0 auto;
       padding: 110px 48px 36px;
-      min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       flex-direction: column;
     }
@@ -763,7 +763,7 @@
        ======================================================================== */
     #viz-container {
       position: relative;
-      height: calc(100vh - 155px);
+      height: calc(100dvh - 155px);
       overflow: hidden;
       background: var(--bg);
     }
@@ -1034,7 +1034,7 @@
     }
 
     #panel-work .wt-section-title em {
-      color: var(--amber);
+      color: var(--accent);
       font-style: italic;
     }
 
@@ -1359,10 +1359,16 @@
       background: #1a2535;
       flex-shrink: 0;
     }
-  </style>
+    button:active, .fw-cta:active, .tab-btn:active, .visit-btn:active, .compare-btn:active, .cam-btn:active, .hs-toggle:active, .sel-btn:active, .chip:active, .viz-link:active { transform: scale(0.97); }
+  html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
+  .skip-link { position: absolute; left: -9999px; top: 8px; z-index: 100000; background: var(--bg-soft); color: var(--ink); padding: 10px 16px; font-family: var(--mono); font-size: 12px; letter-spacing: .08em; border: 1px solid var(--accent); border-radius: 4px; }
+  .skip-link:focus { left: 8px; }
+</style>
+  <script>document.documentElement.classList.add('js');</script>
 </head>
 
 <body>
+  <a href="#main" class="skip-link">Skip to content</a>
 
   <div class="grain"></div>
   <div class="glow-tl"></div>
@@ -1373,7 +1379,7 @@
     <div class="topbar-title"><a class="journal-link back-link" href="../home.html">&larr; All</a> &nbsp;&middot;&nbsp; About / <em>Research</em></div>
   </header>
 
-  <main>
+  <main id="main">
 
     <!-- ===============================================================
          Hero — always visible
@@ -1975,7 +1981,8 @@
       });
 
       // Headings → typing animation
-      document.querySelectorAll("main h1, main h2, main h3, main h4, main h5").forEach(el => {
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!reduceMotion) document.querySelectorAll("main h1, main h2, main h3, main h4, main h5").forEach(el => {
         if (!el.dataset.html && el.innerHTML.trim() && !el.querySelector('.cmd-prompt,.blink-cursor')) {
           el.dataset.html = el.innerHTML;
           el.innerHTML = '';

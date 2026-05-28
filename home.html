@@ -22,9 +22,9 @@
       --ink-dim: #b8c4dc;
       --ink-faint: #6b7a99;
       --rule: #182030;
-      --amber: #4db8cc;
-      --amber-lo: #4db8cc14;
-      --amber-hi: #7dd3e8;
+      --accent: #4db8cc;
+      --accent-lo: #4db8cc14;
+      --accent-hi: #7dd3e8;
       --teal: #45a884;
       --sky: #5299c8;
       --coral: #7a60b8;
@@ -58,7 +58,7 @@
       text-rendering: optimizeLegibility;
       overflow-x: hidden;
       line-height: 1.6;
-      min-height: 100vh;
+      min-height: 100dvh;
     }
 
     .grain {
@@ -123,12 +123,12 @@
     }
 
     .topbar-title em {
-      color: var(--amber);
+      color: var(--accent);
       font-style: italic;
       font-weight: 400;
     }
 
-    .topbar-title:hover em { color: var(--amber-hi); }
+    .topbar-title:hover em { color: var(--accent-hi); }
 
     .topbar-meta {
       font-family: var(--mono);
@@ -147,15 +147,15 @@
     }
 
     .journal-link:hover, .journal-link:focus-visible {
-      color: var(--amber);
-      border-bottom-color: var(--amber);
+      color: var(--accent);
+      border-bottom-color: var(--accent);
       outline: none;
     }
 
     .reveal {
       opacity: 0;
       transform: translateY(14px);
-      transition: opacity .9s var(--ease), transform .9s var(--ease);
+      transition: opacity .45s var(--ease), transform .45s var(--ease);
     }
 
     .reveal.in-view { opacity: 1; transform: translateY(0); }
@@ -171,7 +171,7 @@
       max-width: 1180px;
       margin: 0 auto;
       padding: 92px 48px 36px;
-      min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       flex-direction: column;
     }
@@ -191,9 +191,9 @@
       display: inline-block;
       width: 6px; height: 6px;
       border-radius: 50%;
-      background: var(--amber);
+      background: var(--accent);
       margin: 0 12px 2px 0;
-      box-shadow: 0 0 8px var(--amber), 0 0 16px rgba(77,184,204,.12);
+      box-shadow: 0 0 8px var(--accent), 0 0 16px rgba(77,184,204,.12);
       vertical-align: middle;
     }
 
@@ -211,7 +211,7 @@
     .hero-title em {
       font-style: italic;
       font-weight: 400;
-      color: var(--amber);
+      color: var(--accent);
       text-shadow: 0 0 22px rgba(77, 184, 204, .22);
     }
 
@@ -225,7 +225,7 @@
     }
 
     .hero-byline em {
-      color: var(--amber);
+      color: var(--accent);
       font-style: normal;
       letter-spacing: 0.14em;
     }
@@ -275,19 +275,19 @@
       position: absolute;
       top: 0; left: 0; right: 0;
       height: 1px;
-      background: linear-gradient(90deg, var(--card-accent, var(--amber)) 0%, transparent 70%);
+      background: linear-gradient(90deg, var(--card-accent, var(--accent)) 0%, transparent 70%);
       opacity: .55;
       transition: opacity 280ms var(--ease);
     }
 
     .card:hover, .card:focus-visible {
-      border-color: var(--card-accent, var(--amber));
+      border-color: var(--card-accent, var(--accent));
       background: linear-gradient(180deg,
-          color-mix(in oklab, var(--card-accent, var(--amber)) 12%, rgba(13,15,28,0.9)) 0%,
+          color-mix(in oklab, var(--card-accent, var(--accent)) 12%, rgba(13,15,28,0.9)) 0%,
           rgba(13, 15, 28, 0.50) 100%);
-      box-shadow: 0 0 0 1px color-mix(in srgb, var(--card-accent, var(--amber)) 40%, transparent),
-                  0 8px 40px color-mix(in srgb, var(--card-accent, var(--amber)) 15%, transparent),
-                  inset 0 0 30px color-mix(in srgb, var(--card-accent, var(--amber)) 4%, transparent);
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--card-accent, var(--accent)) 40%, transparent),
+                  0 8px 40px color-mix(in srgb, var(--card-accent, var(--accent)) 15%, transparent),
+                  inset 0 0 30px color-mix(in srgb, var(--card-accent, var(--accent)) 4%, transparent);
       outline: none;
     }
 
@@ -325,7 +325,7 @@
       font-size: 9.5px;
       letter-spacing: 0.24em;
       text-transform: uppercase;
-      color: var(--card-accent, var(--amber));
+      color: var(--card-accent, var(--accent));
       margin-bottom: 14px;
     }
 
@@ -370,7 +370,7 @@
     .card-subitems .sub-dash {
       display: inline-block;
       width: 14px; height: 1px;
-      background: var(--card-accent, var(--amber));
+      background: var(--card-accent, var(--accent));
       opacity: 0.7;
       flex-shrink: 0;
     }
@@ -389,7 +389,7 @@
     .card-arrow {
       font-family: var(--serif);
       font-size: 18px;
-      color: var(--card-accent, var(--amber));
+      color: var(--card-accent, var(--accent));
       letter-spacing: 0;
       line-height: 1;
       transition: transform 280ms var(--ease);
@@ -411,7 +411,7 @@
       color: var(--ink-faint);
     }
 
-    footer.footer em { color: var(--amber); font-style: normal; letter-spacing: 0.14em; }
+    footer.footer em { color: var(--accent); font-style: normal; letter-spacing: 0.14em; }
 
     .scanlines {
       position: fixed;
@@ -475,10 +475,16 @@
       .card { transition: none !important; }
       .card-arrow { transition: none !important; }
     }
-  </style>
+    button:active, .fw-cta:active, .tab-btn:active, .visit-btn:active, .compare-btn:active, .cam-btn:active, .hs-toggle:active, .sel-btn:active, .chip:active, .viz-link:active { transform: scale(0.97); }
+  html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
+  .skip-link { position: absolute; left: -9999px; top: 8px; z-index: 100000; background: var(--bg-soft); color: var(--ink); padding: 10px 16px; font-family: var(--mono); font-size: 12px; letter-spacing: .08em; border: 1px solid var(--accent); border-radius: 4px; }
+  .skip-link:focus { left: 8px; }
+</style>
+  <script>document.documentElement.classList.add('js');</script>
 </head>
 
 <body>
+  <a href="#main" class="skip-link">Skip to content</a>
 
   <div class="grain"></div>
   <div class="scanlines"></div>
@@ -491,7 +497,7 @@
     <div class="topbar-meta">UTokyo &nbsp;&middot;&nbsp; Spring 2026</div>
   </header>
 
-  <main>
+  <main id="main">
 
     <section class="hero">
       <div class="hero-eyebrow reveal"><span class="dot"></span><span class="cmd-prompt">~/itasia302 $ </span><span id="hero-cmd"></span><span class="blink-cursor" id="hero-cursor"></span></div>
@@ -623,22 +629,24 @@
       };
       setTimeout(tick, 200);
 
-      document.querySelectorAll(".card").forEach(card => {
-        card.addEventListener("mousemove", e => {
-          const r = card.getBoundingClientRect();
-          const x = (e.clientX - r.left) / r.width - 0.5;
-          const y = (e.clientY - r.top) / r.height - 0.5;
-          card.style.transition =
-            "border-color 280ms var(--ease), background 280ms var(--ease), box-shadow 280ms var(--ease)";
-          card.style.transform =
-            `perspective(700px) rotateY(${x * 16}deg) rotateX(${-y * 11}deg) translateZ(8px)`;
+      if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+        document.querySelectorAll(".card").forEach(card => {
+          card.addEventListener("mousemove", e => {
+            const r = card.getBoundingClientRect();
+            const x = (e.clientX - r.left) / r.width - 0.5;
+            const y = (e.clientY - r.top) / r.height - 0.5;
+            card.style.transition =
+              "border-color 280ms var(--ease), background 280ms var(--ease), box-shadow 280ms var(--ease)";
+            card.style.transform =
+              `perspective(700px) rotateY(${x * 16}deg) rotateX(${-y * 11}deg) translateZ(8px)`;
+          });
+          card.addEventListener("mouseleave", () => {
+            card.style.transition =
+              "border-color 280ms var(--ease), background 280ms var(--ease), box-shadow 280ms var(--ease), transform 450ms var(--ease)";
+            card.style.transform = "";
+          });
         });
-        card.addEventListener("mouseleave", () => {
-          card.style.transition =
-            "border-color 280ms var(--ease), background 280ms var(--ease), box-shadow 280ms var(--ease), transform 450ms var(--ease)";
-          card.style.transform = "";
-        });
-      });
+      }
 
     });
   </script>

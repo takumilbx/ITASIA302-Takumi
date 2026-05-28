@@ -1,4 +1,7 @@
 (function () {
+  // Decorative background rain — skip entirely for reduced-motion users.
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
   const src   = document.currentScript;
   const hex   = (src && src.dataset.color) || '#4db8cc';
   const r     = parseInt(hex.slice(1,3),16);
