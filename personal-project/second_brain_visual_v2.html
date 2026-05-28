@@ -1,0 +1,1550 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Second Brain · a visual essay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300..700&family=Inter:wght@300..600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <style>
+    :root {
+      --ink:    #eef0f6;
+      --ink-2:  #aab3c8;
+      --ink-dim:#5c6884;
+      --line:   rgba(255, 255, 255, 0.10);
+      --sans: "Inter Tight", -apple-system, BlinkMacSystemFont, sans-serif;
+      --body: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+      --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      background: #05060e;
+      color: var(--ink);
+      font-family: var(--body);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Three.js brain canvas backdrop ────────────────────── */
+    #brain {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+      display: block;
+    }
+
+    /* ─── Beat panels ───────────────────────────────────────── */
+    main.story {
+      position: relative;
+      z-index: 1;
+    }
+
+    .beat {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: 100vw;
+      display: grid;
+      place-items: center;
+      opacity: 0;
+      pointer-events: none;
+      will-change: opacity;
+      /* Vertical gradient: brain visible top/bottom, text readable in mid band */
+      background: linear-gradient(
+        180deg,
+        rgba(5, 6, 14, 0)    0%,
+        rgba(5, 6, 14, 0.55) 22%,
+        rgba(5, 6, 14, 0.55) 78%,
+        rgba(5, 6, 14, 0)    100%
+      );
+    }
+    /* Beat 6 (Pipeline) is taller — 10 normal beats' worth of scroll for 9 sub-steps + morph.
+       Override base flex/grid centering: content is positioned by a nested sticky frame. */
+    .beat-pipeline {
+      height: 1000vh;
+      display: block;
+      background: none; /* gradient moves onto .pipeline-stack so it tracks viewport */
+    }
+    .beat h2 {
+      margin: 0;
+      font-family: var(--sans);
+      font-size: clamp(46px, 6.6vw, 104px);
+      letter-spacing: -0.038em;
+      font-weight: 600;
+      line-height: 0.98;
+      color: var(--ink);
+    }
+    .beat .badge {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--ink-2);
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .beat .badge::before,
+    .beat .badge::after {
+      content: "";
+      width: 22px;
+      height: 1px;
+      background: var(--line);
+    }
+
+    /* ─── Pipeline sub-step stack (inside beat 6) ─────────────
+       Sticky 100vh frame nested inside beat 6's 800vh sticky parent.
+       Keeps the active sub-step pinned at the viewport center while
+       beat 6's outer scroll drives sub-step selection. */
+    .pipeline-stack {
+      position: sticky;
+      top: 0;
+      display: grid;
+      place-items: center;
+      width: 100%;
+      height: 100vh;
+      background: linear-gradient(
+        180deg,
+        rgba(5, 6, 14, 0)    0%,
+        rgba(5, 6, 14, 0.55) 22%,
+        rgba(5, 6, 14, 0.55) 78%,
+        rgba(5, 6, 14, 0)    100%
+      );
+    }
+    .pipeline-step {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      opacity: 0;
+      will-change: opacity;
+    }
+    .pipeline-step h2 {
+      margin: 0;
+      font-size: clamp(40px, 6.4vw, 96px);
+      letter-spacing: -0.02em;
+      font-weight: 700;
+      text-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
+      text-align: center;
+    }
+    .pipeline-step .badge {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 14px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      opacity: 0.6;
+      white-space: nowrap;
+    }
+    .pipeline-step .badge code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 13px;
+      letter-spacing: 0;
+      text-transform: none;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 2px 6px;
+      border-radius: 4px;
+      opacity: 1;
+    }
+    .pipeline-step .section-label {
+      position: absolute;
+      top: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      opacity: 0.45;
+      white-space: nowrap;
+    }
+
+    /* ─── Scroll runway: lets last sticky beat scroll out cleanly ─ */
+    .scroll-runway {
+      height: 100vh;
+      width: 100%;
+      pointer-events: none;
+    }
+
+    /* ─── Debug HUD: hidden in design mode, still updated for verification ── */
+    .progress-hud {
+      position: fixed;
+      bottom: 8px;
+      left: 8px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.18);
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    /* ─── Chrome ─────────────────────────────────────────────── */
+    .chrome { position: fixed; inset: 0; z-index: 50; pointer-events: none; }
+    .wordmark {
+      position: absolute; top: 32px; left: 36px;
+      font-family: var(--sans); font-weight: 600; font-size: 15px; letter-spacing: -0.01em;
+      color: var(--ink);
+    }
+    .wordmark .slash { color: var(--ink-dim); margin: 0 8px; font-weight: 300; }
+    .wordmark .sub { color: var(--ink-2); font-weight: 400; }
+    .counter {
+      position: absolute; top: 32px; right: 36px;
+      font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; color: var(--ink-2);
+    }
+    .counter b { color: var(--ink); font-weight: 500; }
+
+    .rail {
+      position: absolute; top: 50%; right: 34px; transform: translateY(-50%);
+      display: flex; flex-direction: column; gap: 14px; align-items: center;
+    }
+    .rail .tick {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(255, 255, 255, 0.18);
+      transition: background 0.45s ease, box-shadow 0.45s ease, transform 0.45s ease;
+    }
+    .rail .tick.done { background: rgba(255, 255, 255, 0.40); }
+    .rail .tick.on {
+      background: var(--ink);
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.06);
+      transform: scale(1.15);
+    }
+
+    .scroll-hint {
+      position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase;
+      color: var(--ink-dim); display: flex; align-items: center; gap: 10px;
+      transition: opacity 0.5s ease;
+    }
+    .scroll-hint .ln { width: 30px; height: 1px; background: linear-gradient(90deg, transparent, var(--ink-dim)); }
+    .scroll-hint .ln.r { transform: scaleX(-1); }
+
+    /* film grain */
+    .grain {
+      position: fixed; inset: 0; z-index: 40; opacity: 0.045;
+      mix-blend-mode: overlay; pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    }
+  </style>
+</head>
+<body data-active-beat="0">
+
+  <canvas id="brain" aria-hidden="true"></canvas>
+
+  <main class="story">
+    <section class="beat" id="beat-0" data-beat="0">
+      <h2>Beat 0</h2>
+      <div class="badge">Hero</div>
+    </section>
+    <section class="beat" id="beat-1" data-beat="1">
+      <h2>Beat 1</h2>
+      <div class="badge">PKM</div>
+    </section>
+    <section class="beat" id="beat-2" data-beat="2">
+      <h2>Beat 2</h2>
+      <div class="badge">Second Brain</div>
+    </section>
+    <section class="beat" id="beat-3" data-beat="3">
+      <h2>Beat 3</h2>
+      <div class="badge">Hype</div>
+    </section>
+    <section class="beat" id="beat-4" data-beat="4">
+      <h2>Beat 4</h2>
+      <div class="badge">Meme</div>
+    </section>
+    <section class="beat" id="beat-5" data-beat="5">
+      <h2>Beat 5</h2>
+      <div class="badge">What I'm Building</div>
+    </section>
+    <section class="beat beat-pipeline" id="beat-6" data-beat="6">
+      <div class="pipeline-stack">
+        <div class="pipeline-step" data-step="0" data-section="1">
+          <div class="section-label">Section 1 · Tool Explanation</div>
+          <h2>Zotero</h2>
+          <div class="badge">Capture sources</div>
+        </div>
+        <div class="pipeline-step" data-step="1" data-section="1">
+          <div class="section-label">Section 1 · Tool Explanation</div>
+          <h2>Obsidian</h2>
+          <div class="badge">Vault</div>
+        </div>
+        <div class="pipeline-step" data-step="2" data-section="1">
+          <div class="section-label">Section 1 · Tool Explanation</div>
+          <h2>Claude</h2>
+          <div class="badge">Synthesize</div>
+        </div>
+        <div class="pipeline-step" data-step="3" data-section="1">
+          <div class="section-label">Section 1 · Tool Explanation</div>
+          <h2>NotebookLM</h2>
+          <div class="badge">Connect &amp; integrate sources</div>
+        </div>
+        <div class="pipeline-step" data-step="4" data-section="1">
+          <div class="section-label">Section 1 · Tool Explanation</div>
+          <h2>Notion</h2>
+          <div class="badge">Publish</div>
+        </div>
+        <div class="pipeline-step" data-step="5" data-section="2">
+          <div class="section-label">Section 2 · Process Logic</div>
+          <h2>Zettelkasten</h2>
+          <div class="badge">Atoms link by ideas, not folders</div>
+        </div>
+        <div class="pipeline-step" data-step="6" data-section="3">
+          <div class="section-label">Section 3 · Process Walkthrough</div>
+          <h2>Atoms</h2>
+          <div class="badge">Extracted by <code>nlm integrate</code></div>
+        </div>
+        <div class="pipeline-step" data-step="7" data-section="3">
+          <div class="section-label">Section 3 · Process Walkthrough</div>
+          <h2>Molecules</h2>
+          <div class="badge">Atoms link into clusters</div>
+        </div>
+        <div class="pipeline-step" data-step="8" data-section="3">
+          <div class="section-label">Section 3 · Process Walkthrough</div>
+          <h2>Alloys</h2>
+          <div class="badge">Refined synthesis</div>
+        </div>
+      </div>
+    </section>
+    <section class="beat" id="beat-7" data-beat="7">
+      <h2>Beat 7</h2>
+      <div class="badge">Thesis</div>
+    </section>
+    <section class="beat" id="beat-8" data-beat="8">
+      <h2>Beat 8</h2>
+      <div class="badge">End</div>
+    </section>
+
+    <div class="scroll-runway"></div>
+  </main>
+
+  <div class="grain" aria-hidden="true"></div>
+
+  <div class="chrome" aria-hidden="true">
+    <div class="wordmark">Second&nbsp;Brain <span class="slash">/</span> <span class="sub">a visual essay</span></div>
+    <div class="counter"><b id="counter-num">01</b> / 09</div>
+    <div class="rail" id="rail"></div>
+    <div class="scroll-hint" id="scroll-hint"><span class="ln"></span>Scroll<span class="ln r"></span></div>
+  </div>
+
+  <div class="progress-hud" id="hud">beat: 0 · progress: 0.000</div>
+
+  <script>
+  "use strict";
+
+  if (typeof THREE === "undefined" || typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") {
+    console.error("Three.js, GSAP, or ScrollTrigger failed to load");
+  } else {
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* ── Scene setup ──────────────────────────────────────── */
+    const canvas = document.getElementById("brain");
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearColor(0x000000, 0);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 100);
+    camera.position.set(0, 0, 6.5);
+
+    function viewportWH() {
+      const vv = window.visualViewport;
+      const w = (vv && vv.width)  || window.innerWidth  || canvas.clientWidth  || 1280;
+      const h = (vv && vv.height) || window.innerHeight || canvas.clientHeight || 720;
+      return { w, h };
+    }
+    function resize() {
+      const { w, h } = viewportWH();
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+    }
+    requestAnimationFrame(resize);
+    window.addEventListener("resize", resize);
+    if (window.visualViewport) window.visualViewport.addEventListener("resize", resize);
+
+    /* ── Pointer tracking for hover glow ──────────────────── */
+    const mouseNDC = { x: 2.0, y: 2.0 };
+    let cursorX = 0, cursorY = 0;
+    window.addEventListener("pointermove", (e) => {
+      const { w, h } = viewportWH();
+      mouseNDC.x =  (e.clientX / w) * 2 - 1;
+      mouseNDC.y = -((e.clientY / h) * 2 - 1);
+      cursorX = (e.clientX / w) - 0.5;
+      cursorY = (e.clientY / h) - 0.5;
+    }, { passive: true });
+    window.addEventListener("pointerleave", () => {
+      mouseNDC.x = 2.0; mouseNDC.y = 2.0;
+      cursorX = 0; cursorY = 0;
+    });
+
+    /* ── Constants ────────────────────────────────────────── */
+    const N = 4500, C = 4;
+    const TAU = Math.PI * 2;
+    const COLS = [
+      [0.91, 0.39, 0.29], // amber  · Obsidian
+      [0.72, 0.36, 0.48], // coral  · Zotero
+      [0.27, 0.66, 0.52], // teal   · Notion
+      [0.45, 0.45, 0.75]  // lilac  · AI / MCP
+    ];
+
+    function rSph() {
+      const theta = Math.random() * TAU;
+      const phi = Math.acos(2 * Math.random() - 1);
+      return [Math.sin(phi) * Math.cos(theta), Math.sin(phi) * Math.sin(theta), Math.cos(phi)];
+    }
+
+    function clamp01(t) { return Math.min(1, Math.max(0, t)); }
+    function easeInOutCubic(t) {
+      t = clamp01(t);
+      // Smootherstep (5th order, zero 1st AND 2nd derivative at endpoints) —
+      // gentler than cubic ease, eliminates "kick" at start/end of morph.
+      return t * t * t * (t * (t * 6 - 15) + 10);
+    }
+    // ── Easing variants for per-boundary morph physics (B) ─────
+    function easeOutCubic(t) { t = clamp01(t); return 1 - Math.pow(1 - t, 3); }       // burst: fast start, slow settle
+    function easeInQuad(t)   { t = clamp01(t); return t * t; }                         // gravity: slow start, accelerate
+    function easeOutBack(t)  {                                                         // snap: overshoot + settle
+      t = clamp01(t);
+      const c1 = 1.70158, c3 = c1 + 1;
+      return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+    }
+    function applyEase(name, t) {
+      switch (name) {
+        case "burst":   return easeOutCubic(t);
+        case "gravity": return easeInQuad(t);
+        case "snap":    return easeOutBack(t);
+        default:        return easeInOutCubic(t);
+      }
+    }
+
+    /* ── Anatomical brain regions ─────────────────────────── */
+    const S = 0.80;
+    const REGIONS = [
+      [-0.30,  0.18,  0.10,  0.55, 0.62, 0.85, 0.26], // L cerebrum
+      [ 0.30,  0.18,  0.10,  0.55, 0.62, 0.85, 0.26], // R cerebrum
+      [ 0.00,  0.45,  0.55,  0.50, 0.38, 0.42, 0.16], // frontal bulge
+      [ 0.00,  0.10, -0.70,  0.40, 0.40, 0.30, 0.12], // occipital bulge
+      [ 0.00, -0.48, -0.42,  0.34, 0.28, 0.36, 0.12], // cerebellum
+      [ 0.00, -0.78, -0.10,  0.13, 0.22, 0.15, 0.08]  // brainstem
+    ];
+    const REG_CUM = (() => { let s = 0; return REGIONS.map(r => (s += r[6])); })();
+    const REG_TOTAL = REG_CUM[REG_CUM.length - 1];
+
+    function pointInsideOtherRegion(px, py, pz, excludeIdx) {
+      for (let r = 0; r < REGIONS.length; r++) {
+        if (r === excludeIdx) continue;
+        const reg = REGIONS[r];
+        const dx = (px / S - reg[0]) / reg[3];
+        const dy = (py / S - reg[1]) / reg[4];
+        const dz = (pz / S - reg[2]) / reg[5];
+        if (dx*dx + dy*dy + dz*dz < 0.85) return true;
+      }
+      return false;
+    }
+
+    /* ── Shape factories ──────────────────────────────────── */
+    function makeBrain() {
+      const a = new Float32Array(N * 3);
+      let i = 0, tries = 0;
+      while (i < N && tries < N * 80) {
+        tries++;
+        const u = Math.random() * REG_TOTAL;
+        let ri = 0; while (u > REG_CUM[ri]) ri++;
+        const reg = REGIONS[ri];
+        const [x, y, z] = rSph();
+        const k = 1.0 + (Math.random() - 0.5) * 0.06;
+        const px = (reg[0] + x * reg[3] * k) * S;
+        const py = (reg[1] + y * reg[4] * k) * S;
+        const pz = (reg[2] + z * reg[5] * k) * S;
+        if (pointInsideOtherRegion(px, py, pz, ri)) continue;
+        a[i*3] = px; a[i*3+1] = py; a[i*3+2] = pz;
+        i++;
+      }
+      while (i < N) {
+        a[i*3] = a[(i-1)*3]; a[i*3+1] = a[(i-1)*3+1]; a[i*3+2] = a[(i-1)*3+2];
+        i++;
+      }
+      return a;
+    }
+    function makeChaos() {
+      const a = new Float32Array(N * 3);
+      for (let i = 0; i < N; i++) {
+        a[i*3]   = (Math.random() - 0.5) * 2.8;
+        a[i*3+1] = (Math.random() - 0.5) * 2.8;
+        a[i*3+2] = (Math.random() - 0.5) * 2.8;
+      }
+      return a;
+    }
+    function makeClusters() {
+      const a = new Float32Array(N * 3);
+      const cx = [-0.85,  0.85, -0.85,  0.85].map(v => v * S);
+      const cy = [ 0.70,  0.70, -0.70, -0.70].map(v => v * S);
+      const cz = [ 0.0,   0.0,   0.0,   0.0 ];
+      for (let i = 0; i < N; i++) {
+        const c = i % C;
+        a[i*3]   = cx[c] + (Math.random() - 0.5) * 0.28;
+        a[i*3+1] = cy[c] + (Math.random() - 0.5) * 0.28;
+        a[i*3+2] = cz[c] + (Math.random() - 0.5) * 0.20;
+      }
+      return a;
+    }
+    function makeFocus() {
+      const a = new Float32Array(N * 3);
+      for (let i = 0; i < N; i++) {
+        const [x, y, z] = rSph();
+        const r = 0.015 + Math.random() * 0.06;
+        a[i*3]   = r * x;
+        a[i*3+1] = r * y;
+        a[i*3+2] = r * z;
+      }
+      return a;
+    }
+    function makeSlipbox() {
+      const a = new Float32Array(N * 3);
+      const nx = 15, ny = 15, nz = 20;
+      const sx = 0.13, sy = 0.13, sz = 0.10;
+      const ox = (nx - 1) / 2, oy = (ny - 1) / 2, oz = (nz - 1) / 2;
+      for (let i = 0; i < N; i++) {
+        const ix = i % nx;
+        const iy = Math.floor(i / nx) % ny;
+        const iz = Math.floor(i / (nx * ny)) % nz;
+        a[i*3]   = (ix - ox) * sx + (Math.random() - 0.5) * 0.018;
+        a[i*3+1] = (iy - oy) * sy + (Math.random() - 0.5) * 0.018;
+        a[i*3+2] = (iz - oz) * sz + (Math.random() - 0.5) * 0.018;
+      }
+      return a;
+    }
+    function makeDualBrain(brain) {
+      const a = new Float32Array(N * 3);
+      const scale = 0.62;
+      const gap = 0.90;
+      for (let i = 0; i < N; i++) {
+        const isMirror = (i % 2 === 1);
+        const offX = isMirror ? gap : -gap;
+        a[i*3]   = brain[i*3] * scale + offX;
+        a[i*3+1] = brain[i*3+1] * scale;
+        a[i*3+2] = brain[i*3+2] * scale;
+      }
+      return a;
+    }
+    function makeFalling(brain) {
+      const a = new Float32Array(N * 3);
+      for (let i = 0; i < N; i++) {
+        a[i*3]   = brain[i*3] * 1.4 + (Math.random() - 0.5) * 0.35;
+        const r = Math.random();
+        a[i*3+1] = -1.30 + r * r * 0.55;
+        a[i*3+2] = brain[i*3+2] * 1.2 + (Math.random() - 0.5) * 0.35;
+      }
+      return a;
+    }
+
+    // ── Pipeline-phase shapes (atoms → molecules → alloys) ─────
+    // Atoms: dispersed individual points (each = one extracted fact).
+    function makeAtoms() {
+      const a = new Float32Array(N * 3);
+      for (let i = 0; i < N; i++) {
+        a[i*3]   = (Math.random() - 0.5) * 3.2;
+        a[i*3+1] = (Math.random() - 0.5) * 3.2;
+        a[i*3+2] = (Math.random() - 0.5) * 3.2;
+      }
+      return a;
+    }
+    // Molecules: ~200 small spherical clusters of ~22 atoms each — atoms
+    // that have linked into related groups.
+    function makeMolecules() {
+      const a = new Float32Array(N * 3);
+      const molCount = 200;
+      const centers = new Float32Array(molCount * 3);
+      for (let m = 0; m < molCount; m++) {
+        centers[m*3]   = (Math.random() - 0.5) * 2.4;
+        centers[m*3+1] = (Math.random() - 0.5) * 2.4;
+        centers[m*3+2] = (Math.random() - 0.5) * 2.4;
+      }
+      for (let i = 0; i < N; i++) {
+        const m = i % molCount;
+        const cx = centers[m*3], cy = centers[m*3+1], cz = centers[m*3+2];
+        const [x, y, z] = rSph();
+        const r = 0.04 + Math.random() * 0.07;
+        a[i*3]   = cx + x * r;
+        a[i*3+1] = cy + y * r;
+        a[i*3+2] = cz + z * r;
+      }
+      return a;
+    }
+    // Alloys: refined dense organized structure — synthesized arguments
+    // forged from molecules. Compressed brain silhouette with tighter packing.
+    function makeAlloys() {
+      const a = new Float32Array(N * 3);
+      for (let i = 0; i < N; i++) {
+        a[i*3]   = K_BRAIN[i*3] * 0.72 + (Math.random() - 0.5) * 0.04;
+        a[i*3+1] = K_BRAIN[i*3+1] * 0.72 + (Math.random() - 0.5) * 0.04;
+        a[i*3+2] = K_BRAIN[i*3+2] * 0.72 + (Math.random() - 0.5) * 0.04;
+      }
+      return a;
+    }
+
+    // ── Tool logo shapes ──────────────────────────────────────
+    // Each tool's pipeline step morphs particles into its logo silhouette.
+
+    // Zotero: bold "Z" letter (top bar + diagonal + bottom bar).
+    function makeZoteroLogo() {
+      const a = new Float32Array(N * 3);
+      const W = 1.5, H = 1.5;
+      const stroke = 0.24;
+      const D = Math.sqrt(W * W + H * H);
+      const perpX = -H / D, perpY = W / D;
+      for (let i = 0; i < N; i++) {
+        const r = Math.random();
+        let x, y;
+        if (r < 0.28) {
+          x = -W/2 + Math.random() * W;
+          y = H/2 - Math.random() * stroke;
+        } else if (r < 0.72) {
+          const t = Math.random();
+          const px = W/2 - t * W;
+          const py = H/2 - t * H;
+          const perp = (Math.random() - 0.5) * stroke;
+          x = px + perp * perpX;
+          y = py + perp * perpY;
+        } else {
+          x = -W/2 + Math.random() * W;
+          y = -H/2 + Math.random() * stroke;
+        }
+        a[i*3]   = x;
+        a[i*3+1] = y;
+        a[i*3+2] = (Math.random() - 0.5) * 0.08;
+      }
+      return a;
+    }
+
+    // Obsidian: multifaceted gem — pointed top + wider middle + tapering bottom.
+    function makeObsidianLogo() {
+      const a = new Float32Array(N * 3);
+      for (let i = 0; i < N; i++) {
+        const yRel = Math.random() * 2 - 1; // -1..1
+        const tShape = Math.abs(yRel);
+        let rMax;
+        if (yRel >= 0) {
+          // top half — bulgy widest at ~y=0.3, tapers to point at top
+          rMax = (1 - tShape) * 0.62 + (1 - tShape * tShape) * 0.12;
+        } else {
+          // bottom half — sharper taper to point
+          rMax = (1 - tShape) * 0.52;
+        }
+        const theta = Math.random() * TAU;
+        const r = Math.sqrt(Math.random()) * rMax;
+        a[i*3]   = r * Math.cos(theta);
+        a[i*3+1] = yRel * 1.0;
+        a[i*3+2] = r * Math.sin(theta) * 0.62; // squash z so it reads as front-facing
+      }
+      return a;
+    }
+
+    // Claude: 11-pointed asterisk burst — spokes radiating from center, tapered.
+    function makeClaudeLogo() {
+      const a = new Float32Array(N * 3);
+      const armCount = 11;
+      for (let i = 0; i < N; i++) {
+        const arm = i % armCount;
+        const armBias = (Math.random() - 0.5) * 0.09; // small angular spread per spoke
+        const angle = (arm / armCount) * TAU + armBias;
+        const t = Math.pow(Math.random(), 0.65); // bias toward outer radius for visible spokes
+        const radius = t * 1.25;
+        const perp = (Math.random() - 0.5) * 0.07 * (1 - t * 0.7); // taper outward
+        const cos = Math.cos(angle), sin = Math.sin(angle);
+        a[i*3]   = radius * cos - perp * sin;
+        a[i*3+1] = radius * sin + perp * cos;
+        a[i*3+2] = (Math.random() - 0.5) * 0.06;
+      }
+      return a;
+    }
+
+    // NotebookLM: 3 nested arcs (half-rainbow opening to upper right).
+    function makeNotebookLMLogo() {
+      const a = new Float32Array(N * 3);
+      const arcCount = 3;
+      const radii = [0.45, 0.80, 1.15];
+      const thickness = 0.10;
+      for (let i = 0; i < N; i++) {
+        const arcIdx = i % arcCount;
+        const r = radii[arcIdx] + (Math.random() - 0.5) * thickness;
+        // Half arc from theta = -PI/2 to PI/2 (upper-right opening)
+        // Original logo arcs span ~ 200deg, sweep from lower-left up to right
+        const theta = Math.PI * 0.5 + Math.random() * Math.PI * 1.1; // ~from top to lower-left
+        a[i*3]   = r * Math.cos(theta);
+        a[i*3+1] = r * Math.sin(theta);
+        a[i*3+2] = (Math.random() - 0.5) * 0.06;
+      }
+      return a;
+    }
+
+    // Notion: bold "N" letter (left vertical + diagonal + right vertical).
+    function makeNotionLogo() {
+      const a = new Float32Array(N * 3);
+      const W = 1.3, H = 1.5;
+      const stroke = 0.26;
+      const D = Math.sqrt(W * W + H * H);
+      // diagonal goes from top-left to bottom-right: direction (W, -H)/D, perp = (H, W)/D
+      const perpX = H / D, perpY = W / D;
+      for (let i = 0; i < N; i++) {
+        const r = Math.random();
+        let x, y;
+        if (r < 0.34) {
+          x = -W/2 + (Math.random() - 0.5) * stroke;
+          y = (Math.random() - 0.5) * H;
+        } else if (r < 0.66) {
+          const t = Math.random();
+          const px = -W/2 + t * W;
+          const py = H/2 - t * H;
+          const perp = (Math.random() - 0.5) * stroke;
+          x = px + perp * perpX;
+          y = py + perp * perpY;
+        } else {
+          x = W/2 + (Math.random() - 0.5) * stroke;
+          y = (Math.random() - 0.5) * H;
+        }
+        a[i*3]   = x;
+        a[i*3+1] = y;
+        a[i*3+2] = (Math.random() - 0.5) * 0.08;
+      }
+      return a;
+    }
+
+    const K_BRAIN   = makeBrain();
+    const K_CHAOS   = makeChaos();
+    const K_CLUSTER = makeClusters();
+    const K_FOCUS   = makeFocus();
+    const K_SLIP    = makeSlipbox();
+    const K_DUAL    = makeDualBrain(K_BRAIN);
+    const K_FALL    = makeFalling(K_BRAIN);
+    const K_ATOMS     = makeAtoms();
+    const K_MOLECULES = makeMolecules();
+    const K_ALLOYS    = makeAlloys();
+    const K_ZOTERO    = makeZoteroLogo();
+    const K_OBSIDIAN  = makeObsidianLogo();
+    const K_CLAUDE    = makeClaudeLogo();
+    const K_NLM       = makeNotebookLMLogo();
+    const K_NOTION    = makeNotionLogo();
+
+    /* ── Cluster highlight presets ────────────────────────── */
+    const ALL_ON   = [1.0, 1.0, 1.0, 1.0];
+    const FAINT    = [0.45, 0.45, 0.45, 0.45];
+    const BASE_DIM = [0.18, 0.18, 0.18, 0.18];
+
+    /* ── Per-beat shape + alpha tables ────────────────────── */
+    // One shape per beat. Particle morph happens ONLY in the boundary
+    // zone. Within a beat, shape is held steady; alpha + highlights
+    // are stable too. At boundary, EVERYTHING interpolates smoothly
+    // between the two adjacent beats — no intermediate chunk flashes.
+    const BEAT_STATES = [
+      K_BRAIN,   // 0 Hero
+      K_SLIP,    // 1 PKM
+      K_DUAL,    // 2 Second Brain
+      K_CHAOS,   // 3 Hype
+      K_FALL,    // 4 Meme
+      K_BRAIN,   // 5 What I'm Building
+      K_CHAOS,   // 6 Pipeline ENTRY — boundary 5→6 disperses K_BRAIN → K_CHAOS;
+                 //   beat 6 entry zone reforms K_CHAOS → K_CLUSTER for tool intros.
+      K_FOCUS,   // 7 Thesis
+      K_BRAIN,   // 8 End
+    ];
+    const BEAT_BRAIN_ALPHA = [1.00, 1.00, 1.00, 0.85, 0.60, 1.00, 1.00, 1.00, 0.25];
+    const BEAT_LINE_ALPHA  = [0.40, 0.00, 0.00, 0.00, 0.00, 0.40, 0.00, 0.00, 0.12];
+    const BEAT_HL = [
+      ALL_ON,   // 0
+      ALL_ON,   // 1
+      ALL_ON,   // 2
+      ALL_ON,   // 3
+      FAINT,    // 4 Meme
+      ALL_ON,   // 5
+      BASE_DIM, // 6 Pipeline base — overridden per sub-step
+      ALL_ON,   // 7
+      ALL_ON,   // 8
+    ];
+
+    /* ── (A) Per-beat motion signature ────────────────────────
+       Idle behavior while a beat is held. Indices match BEAT_STATES.
+       energy = shimmer amplitude, turb = chaos noise, swirl = spin drift,
+       gravity = downward sag, pull = inward collapse. */
+    const BEAT_ENERGY  = [0.30, 0.22, 0.30, 1.00, 0.55, 0.35, 0.28, 0.18, 0.25];
+    const BEAT_TURB    = [0.00, 0.00, 0.00, 1.00, 0.20, 0.00, 0.00, 0.00, 0.00];
+    const BEAT_SWIRL   = [0.10, 0.00, 0.06, 0.55, 0.10, 0.08, 0.04, 0.00, 0.10];
+    const BEAT_GRAVITY = [0.00, 0.00, 0.00, 0.00, 0.70, 0.00, 0.00, 0.00, 0.00];
+    const BEAT_PULL    = [0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.65, 0.00];
+
+    /* ── (B) Per-boundary morph easing ────────────────────────
+       Easing for the OUTGOING morph from beat i → i+1.
+       burst = explode out (into chaos), gravity = accelerate (into falling),
+       snap = overshoot settle, smooth = default smootherstep. */
+    const BEAT_MORPH_EASE = [
+      "smooth",  // 0→1
+      "smooth",  // 1→2
+      "burst",   // 2→3  into chaos — explode
+      "gravity", // 3→4  into falling — accelerate down
+      "smooth",  // 4→5
+      "smooth",  // 5→6
+      "smooth",  // 6→7  (pipeline exit → thesis)
+      "snap",    // 7→8  settle into final brain
+      "smooth",  // 8 (last)
+    ];
+
+    /* ── Beat widths (in scroll units) ────────────────────── */
+    // Beat 6 (Pipeline) is wider — 9 sub-steps across 3 sections need readable scroll room.
+    const BEAT_SIZES = [1, 1, 1, 1, 1, 1, 10, 1, 1]; // total = 18 units
+    const BEAT_CUM = (() => {
+      const arr = [0];
+      for (const s of BEAT_SIZES) arr.push(arr[arr.length - 1] + s);
+      return arr;
+    })();
+    const TOTAL_BEAT_UNITS = BEAT_CUM[BEAT_CUM.length - 1];
+
+    /* ── Pipeline sub-steps (inside beat 6) ───────────────── */
+    // 9 sub-steps across 3 sections:
+    //   Section 1 (Tool Explanation):  Zotero, Obsidian, Claude, NotebookLM, Notion
+    //   Section 2 (Process Logic):     Zettelkasten (K_SLIP lattice)
+    //   Section 3 (Process Walkthrough): Atoms ← `nlm integrate` disperse, Molecules, Alloys
+    const PIPELINE_STEP_COUNT = 9;
+    const PIPELINE_BEAT_IDX = 6;
+    const PIPELINE_ENTRY_END = 0.10; // fraction of stable phase: K_CHAOS → K_ZOTERO reform
+    const PIPELINE_STATES = [
+      K_ZOTERO,    // 1 Zotero        (Section 1)
+      K_OBSIDIAN,  // 2 Obsidian      (Section 1)
+      K_CLAUDE,    // 3 Claude        (Section 1)
+      K_NLM,       // 4 NotebookLM    (Section 1)
+      K_NOTION,    // 5 Notion        (Section 1)
+      K_SLIP,      // 6 Zettelkasten  (Section 2)
+      K_ATOMS,     // 7 Atoms         (Section 3) ← DISPERSE via `nlm integrate`
+      K_MOLECULES, // 8 Molecules     (Section 3)
+      K_ALLOYS,    // 9 Alloys        (Section 3)
+    ];
+    // Highlights tint each logo toward its brand color while keeping all
+    // particles visible enough to read the shape.
+    const PIPELINE_HL = [
+      [0.30, 1.00, 0.30, 0.30], // 1 Zotero    — coral
+      [0.30, 0.30, 0.30, 1.00], // 2 Obsidian  — lilac
+      [1.00, 0.55, 0.30, 0.30], // 3 Claude    — amber+coral
+      [0.40, 0.40, 1.00, 0.40], // 4 NotebookLM — teal
+      [0.60, 0.60, 0.60, 0.60], // 5 Notion    — neutral
+      [1.00, 1.00, 1.00, 1.00], // 6 Zettelkasten — all clusters lit
+      [1.00, 1.00, 1.00, 1.00], // 7 Atoms
+      [1.00, 1.00, 1.00, 1.00], // 8 Molecules
+      [1.00, 1.00, 1.00, 1.00], // 9 Alloys
+    ];
+
+    // Line opacity per step. Tool logos and lattice get a visible frame; atom
+    // phases mostly fade lines out (scattered shapes don't make sense wired).
+    const PIPELINE_LINE_ALPHA = [
+      0.70, // 1 Zotero    (mono-color filter = fewer lines, brighter)
+      0.70, // 2 Obsidian
+      0.70, // 3 Claude
+      0.70, // 4 NotebookLM
+      0.70, // 5 Notion
+      0.55, // 6 Zettelkasten (K_BRAIN topo, all-color)
+      0.10, // 7 Atoms
+      0.25, // 8 Molecules
+      0.45, // 9 Alloys
+    ];
+
+    // Per-step camera. Tools pull back so logos read at comfortable size + frame.
+    const PIPELINE_CAMS = [
+      { z: 3.40, ang: 0.10, x: 0, y: 0, lookX: 0, lookY: 0 }, // 1 Zotero
+      { z: 3.40, ang: 0.10, x: 0, y: 0, lookX: 0, lookY: 0 }, // 2 Obsidian
+      { z: 3.50, ang: 0.12, x: 0, y: 0, lookX: 0, lookY: 0 }, // 3 Claude
+      { z: 3.50, ang: 0.10, x: 0, y: 0, lookX: 0, lookY: 0 }, // 4 NotebookLM
+      { z: 3.40, ang: 0.10, x: 0, y: 0, lookX: 0, lookY: 0 }, // 5 Notion
+      { z: 4.00, ang: 0.30, x: 0, y: 0, lookX: 0, lookY: 0 }, // 6 Zettelkasten (3D lattice — show rotation)
+      { z: 5.50, ang: 0.30, x: 0, y: 0, lookX: 0, lookY: 0 }, // 7 Atoms (far back)
+      { z: 4.20, ang: 0.25, x: 0, y: 0, lookX: 0, lookY: 0 }, // 8 Molecules
+      { z: 3.40, ang: 0.20, x: 0, y: 0, lookX: 0, lookY: 0 }, // 9 Alloys
+    ];
+
+    // Within each beat: stable phase from intra=0 → MORPH_START,
+    // then morph from MORPH_START → 1.0 toward next beat's shape.
+    function morphStartFor(beatIdx) {
+      return beatIdx === PIPELINE_BEAT_IDX ? 9 / 10 : 0.40;
+    }
+    // Text fade ramps inside the stable phase so text never appears mid-morph.
+    const TEXT_FADE_IN_END  = 0.06;
+
+    // One comfortable camera per beat. Shapes K_SLIP / K_DUAL / K_CHAOS are
+    // bigger than brain — need farther z to keep them recognizable.
+    const BEAT_CAMS = [
+      { z: 6.5, ang: 0.40, x: 0.00, y: 0.05, lookX: 0.00, lookY: 0.00 }, // 0 Hero - far
+      { z: 3.8, ang: 0.30, x: 0.00, y: 0.00, lookX: 0.00, lookY: 0.00 }, // 1 PKM - show full slipbox lattice
+      { z: 4.2, ang: 0.35, x: 0.00, y: 0.00, lookX: 0.00, lookY: 0.00 }, // 2 Second Brain - both lobes visible
+      { z: 4.8, ang: 0.50, x: 0.00, y: 0.00, lookX: 0.00, lookY: 0.00 }, // 3 Hype - chaos cloud
+      { z: 3.4, ang: 0.30, x: 0.00, y:-0.55, lookX: 0.00, lookY:-0.85 }, // 4 Meme - look at floor pile
+      { z: 4.0, ang: 0.32, x: 0.00, y: 0.00, lookX: 0.00, lookY: 0.00 }, // 5 What Building - clean brain
+      { z: 4.5, ang: 0.20, x: 0.00, y: 0.00, lookX: 0.00, lookY: 0.00 }, // 6 Pipeline - cluster splay
+      { z: 2.2, ang: 0.22, x: 0.00, y: 0.00, lookX: 0.00, lookY: 0.00 }, // 7 Thesis - tight focus singularity
+      { z: 6.0, ang: 0.40, x: 0.00, y: 0.05, lookX: 0.00, lookY: 0.00 }, // 8 End - pull back
+    ];
+
+    function getBeatProgress(p) {
+      // p in [0, 1] → scroll unit in [0, TOTAL_BEAT_UNITS]. Find beat by cum.
+      const u = Math.min(TOTAL_BEAT_UNITS - 1e-6, p * TOTAL_BEAT_UNITS);
+      let i = 0;
+      while (i < BEAT_SIZES.length - 1 && u >= BEAT_CUM[i + 1]) i++;
+      const intra = (u - BEAT_CUM[i]) / BEAT_SIZES[i]; // 0..1 within this beat
+      return { i, intra };
+    }
+    // For each beat boundary, returns the morph fraction (0 = at beat i,
+    // 1 = at beat i+1). 0 inside the stable phase, eased during morph zone.
+    function getMorph(p) {
+      const { i, intra } = getBeatProgress(p);
+      const last = BEAT_STATES.length - 1;
+      const ms = morphStartFor(i);
+      if (intra < ms || i === last) {
+        return { i, next: Math.min(last, i + 1), f: 0 };
+      }
+      const t = (intra - ms) / (1 - ms);
+      return { i, next: Math.min(last, i + 1), f: applyEase(BEAT_MORPH_EASE[i], t) };
+    }
+    // Pipeline sub-step index within beat 6 stable phase. -1 if not in pipeline beat
+    // or in morph zone.
+    function getPipelineStep(p) {
+      const { i, intra } = getBeatProgress(p);
+      if (i !== PIPELINE_BEAT_IDX) return -1;
+      const ms = morphStartFor(i);
+      if (intra >= ms) return -1; // morph zone — no active step
+      // 7 sub-steps occupy intra [0, ms]
+      const subF = (intra / ms) * PIPELINE_STEP_COUNT;
+      return Math.min(PIPELINE_STEP_COUNT - 1, Math.max(0, Math.floor(subF)));
+    }
+    // Shared step-blend helper. Returns indices + localF such that
+    // PIPELINE_*[k] peaks at step k's TEXT CENTER (intra/ms = (k+0.5)/7).
+    function getPipelineStepBlend(p) {
+      const { i, intra } = getBeatProgress(p);
+      if (i !== PIPELINE_BEAT_IDX) return null;
+      const ms = morphStartFor(i);
+      if (intra >= ms) return null;
+      const stepF = (intra / ms) * PIPELINE_STEP_COUNT - 0.5;
+      const last = PIPELINE_STEP_COUNT - 1;
+      const s0 = Math.max(0, Math.min(last, Math.floor(stepF)));
+      const s1 = Math.max(0, Math.min(last, s0 + 1));
+      const localF = Math.max(0, Math.min(1, stepF - s0));
+      // (B) Gather snap for atoms→molecules→alloys (steps 6→7, 7→8): overshoot
+      // settle so particles "click" together. Disperse 5→6 (into atoms) bursts.
+      let ease = "smooth";
+      if (s1 === 6) ease = "burst";       // → atoms: explode apart
+      else if (s1 === 7 || s1 === 8) ease = "snap"; // → molecules / alloys: snap together
+      return { s0, s1, ef: applyEase(ease, localF) };
+    }
+    // Tool steps (Zotero/Obsidian/Claude/NotebookLM/Notion) need rotation locked
+    // so 2D logos read face-on. Returns 0..1 weight indicating "this step is a
+    // tool step" — interpolated across step blends so locking is smooth.
+    function isToolStep(s) {
+      // 0-4 = Section 1 tools: Zotero, Obsidian, Claude, NotebookLM, Notion
+      return s <= 4;
+    }
+    function getToolLockWeight(p) {
+      const blend = getPipelineStepBlend(p);
+      if (!blend) return 0;
+      const a = isToolStep(blend.s0) ? 1 : 0;
+      const b = isToolStep(blend.s1) ? 1 : 0;
+      return a + (b - a) * blend.ef;
+    }
+    // Interpolated cluster highlight across pipeline sub-steps. null when not
+    // in pipeline beat stable phase — caller falls back to BEAT_HL interp.
+    function getPipelineHL(p) {
+      const b = getPipelineStepBlend(p);
+      if (!b) return null;
+      const A = PIPELINE_HL[b.s0], B = PIPELINE_HL[b.s1], ef = b.ef;
+      return [
+        A[0] + (B[0] - A[0]) * ef,
+        A[1] + (B[1] - A[1]) * ef,
+        A[2] + (B[2] - A[2]) * ef,
+        A[3] + (B[3] - A[3]) * ef,
+      ];
+    }
+    // Interpolated line opacity across pipeline sub-steps. null when outside.
+    function getPipelineLineAlpha(p) {
+      const b = getPipelineStepBlend(p);
+      if (!b) return null;
+      return PIPELINE_LINE_ALPHA[b.s0] +
+        (PIPELINE_LINE_ALPHA[b.s1] - PIPELINE_LINE_ALPHA[b.s0]) * b.ef;
+    }
+    // Per-step camera blend inside pipeline beat. Returns null outside it.
+    function getPipelineCam(p) {
+      const b = getPipelineStepBlend(p);
+      if (!b) return null;
+      const A = PIPELINE_CAMS[b.s0], B = PIPELINE_CAMS[b.s1], ef = b.ef;
+      return {
+        z:     A.z     + (B.z     - A.z)     * ef,
+        ang:   A.ang   + (B.ang   - A.ang)   * ef,
+        x:     A.x     + (B.x     - A.x)     * ef,
+        y:     A.y     + (B.y     - A.y)     * ef,
+        lookX: A.lookX + (B.lookX - A.lookX) * ef,
+        lookY: A.lookY + (B.lookY - A.lookY) * ef,
+      };
+    }
+    function getCameraTarget(p) {
+      const pipe = getPipelineCam(p);
+      if (pipe) return pipe;
+      const { i, intra } = getBeatProgress(p);
+      const f = easeInOutCubic(intra);
+      const kA = BEAT_CAMS[i];
+      const kB = BEAT_CAMS[Math.min(BEAT_CAMS.length - 1, i + 1)];
+      return {
+        z: kA.z + (kB.z - kA.z) * f,
+        ang: kA.ang + (kB.ang - kA.ang) * f,
+        x: kA.x + (kB.x - kA.x) * f,
+        y: kA.y + (kB.y - kA.y) * f,
+        lookX: kA.lookX + (kB.lookX - kA.lookX) * f,
+        lookY: kA.lookY + (kB.lookY - kA.lookY) * f
+      };
+    }
+
+    /* ── Geometry ─────────────────────────────────────────── */
+    const curr = K_BRAIN.slice();
+    const aColor = new Float32Array(N * 3);
+    const aAlpha = new Float32Array(N);
+    const aSize  = new Float32Array(N);
+    for (let i = 0; i < N; i++) {
+      const c = i % C;
+      aColor[i*3]   = COLS[c][0];
+      aColor[i*3+1] = COLS[c][1];
+      aColor[i*3+2] = COLS[c][2];
+      aAlpha[i] = 1.0;
+      aSize[i]  = 0.15 + Math.random() * 0.175;
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(curr,   3));
+    geo.setAttribute("aColor",   new THREE.BufferAttribute(aColor, 3));
+    geo.setAttribute("aAlpha",   new THREE.BufferAttribute(aAlpha, 1));
+    geo.setAttribute("aSize",    new THREE.BufferAttribute(aSize,  1));
+
+    /* ── Shaders ──────────────────────────────────────────── */
+    const VERT = `
+      attribute vec3 aColor;
+      attribute float aAlpha;
+      attribute float aSize;
+      varying vec3 vC;
+      varying float vA;
+      varying float vPulse;
+      uniform float uTime;
+      uniform vec2 uMouse;
+      uniform float uAspect;
+      uniform float uHoverRadius;
+      uniform float uHoverStrength;
+      uniform float uBeatPulse;
+      uniform float uEnergy;      // overall idle motion intensity
+      uniform float uTurbulence;  // chaotic noise displacement
+      uniform float uSwirl;       // rotational drift
+      uniform float uGravity;     // downward sag
+      uniform float uPull;        // inward pull toward center
+      void main() {
+        vec3 p = position;
+        // Base shimmer, amplitude scaled by per-beat energy
+        float sh = 0.6 + uEnergy;
+        p.y += sin(uTime * 0.40 + position.x * 2.3) * 0.022 * sh;
+        p.x += cos(uTime * 0.30 + position.z * 1.9) * 0.018 * sh;
+        p.z += sin(uTime * 0.22 + position.y * 1.4) * 0.012 * sh;
+
+        // ── Per-beat motion signature ───────────────────────
+        // Turbulence: layered noise displacement (chaos)
+        if (uTurbulence > 0.001) {
+          vec3 turb = vec3(
+            sin(position.y * 3.4 + uTime * 2.1),
+            cos(position.z * 3.8 + uTime * 1.8),
+            sin(position.x * 3.1 + uTime * 2.4)
+          ) * 0.09 * uTurbulence;
+          p += turb;
+        }
+        // Swirl: time-varying rotation around Y
+        if (uSwirl > 0.001) {
+          float a = uSwirl * 0.5 * sin(uTime * 0.4 + length(position.xz));
+          float cs = cos(a), sn = sin(a);
+          p = vec3(p.x * cs - p.z * sn, p.y, p.x * sn + p.z * cs);
+        }
+        // Gravity sag (falling beat)
+        p.y -= uGravity * 0.12 * (0.5 + 0.5 * sin(uTime * 0.8 + position.x * 2.0));
+        // Inward pull (focus beat)
+        float pr = length(position);
+        if (pr > 0.001 && uPull > 0.001) {
+          p -= (position / pr) * uPull * 0.10 * (0.5 + 0.5 * sin(uTime * 0.6));
+        }
+
+        vec3 dir1 = normalize(vec3( 0.60, 0.40,  0.70));
+        vec3 dir2 = normalize(vec3(-0.55, 0.30,  0.80));
+        vec3 dir3 = normalize(vec3( 0.20,-0.60,  0.78));
+        float w1 = sin(dot(position, dir1) * 3.2 - uTime * 0.75);
+        float w2 = sin(dot(position, dir2) * 2.6 - uTime * 0.58);
+        float w3 = sin(dot(position, dir3) * 4.0 - uTime * 1.00);
+        float pulse = smoothstep(0.96, 1.00, w1)
+                    + smoothstep(0.97, 1.00, w2)
+                    + smoothstep(0.97, 1.00, w3);
+        vec4 mv = modelViewMatrix * vec4(p, 1.0);
+        gl_Position = projectionMatrix * mv;
+        vec2 ndc = gl_Position.xy / max(gl_Position.w, 0.0001);
+        vec2 delta = ndc - uMouse;
+        delta.x *= uAspect;
+        float hover = uHoverStrength * (1.0 - smoothstep(0.0, uHoverRadius, length(delta)));
+        float pSize = aSize * (340.0 / max(-mv.z, 0.05)) * (1.0 + pulse * 0.10 + hover * 0.50 + uBeatPulse * 0.55);
+        gl_PointSize = min(pSize, 90.0);
+        vC = aColor;
+        vA = aAlpha;
+        vPulse = clamp(pulse + hover * 0.45 + uBeatPulse * 0.85, 0.0, 2.0);
+      }`;
+    const FRAG = `
+      varying vec3 vC;
+      varying float vA;
+      varying float vPulse;
+      uniform float uOpacity;
+      void main() {
+        vec2 uv = gl_PointCoord - 0.5;
+        float d = length(uv);
+        if (d > 0.5) discard;
+        float core = 1.0 - smoothstep(0.03, 0.09, d);
+        float halo = exp(-d * 4.5) * 0.32;
+        vec3 col = vC + vPulse * 0.22;
+        float alpha = (core + halo * (1.0 + vPulse * 0.20)) * vA * uOpacity;
+        gl_FragColor = vec4(col, alpha);
+      }`;
+
+    const uniforms = {
+      uTime: { value: 0 },
+      uOpacity: { value: 1.0 },
+      uMouse: { value: new THREE.Vector2(2.0, 2.0) },
+      uAspect: { value: 1.0 },
+      uHoverRadius: { value: 0.10 },
+      uHoverStrength: { value: 1.0 },
+      uBeatPulse: { value: 0.0 },
+      uEnergy: { value: 0.3 },
+      uTurbulence: { value: 0.0 },
+      uSwirl: { value: 0.0 },
+      uGravity: { value: 0.0 },
+      uPull: { value: 0.0 }
+    };
+    let camKick = 0;
+    const material = new THREE.ShaderMaterial({
+      uniforms, vertexShader: VERT, fragmentShader: FRAG,
+      transparent: true, depthWrite: false, blending: THREE.AdditiveBlending
+    });
+    const points = new THREE.Points(geo, material);
+    scene.add(points);
+
+    /* ── Line connections (per-shape topology) ──────────────── */
+    let linesAlphaCurr = 0.40, linesAlphaTgt = 0.40;
+
+    // colorIdx: -1 = all colors (brain default); 0..3 = restrict to that color cluster.
+    function buildLineTopology(positions, radius, maxConn, colorIdx) {
+      const pairs = [];
+      const connCount = new Int8Array(N);
+      const r2 = radius * radius;
+      const restrict = colorIdx >= 0;
+      for (let i = 0; i < N; i++) {
+        if (restrict && i % C !== colorIdx) continue;
+        if (connCount[i] >= maxConn) continue;
+        const ix = positions[i*3], iy = positions[i*3+1], iz = positions[i*3+2];
+        const close = [];
+        for (let j = i + 1; j < N; j++) {
+          if (restrict && j % C !== colorIdx) continue;
+          const dx = positions[j*3] - ix, dy = positions[j*3+1] - iy, dz = positions[j*3+2] - iz;
+          const d2 = dx*dx + dy*dy + dz*dz;
+          if (d2 < r2) close.push([d2, j]);
+        }
+        close.sort((a, b) => a[0] - b[0]);
+        for (let k = 0; k < close.length && connCount[i] < maxConn; k++) {
+          const j = close[k][1];
+          if (connCount[j] >= maxConn) continue;
+          pairs.push(i, j);
+          connCount[i]++;
+          connCount[j]++;
+        }
+      }
+      return pairs;
+    }
+
+    // Default brain topology: all colors, K_BRAIN proximity. Used for hero,
+    // pipeline atom phases, and any non-tool step.
+    const TOPO_BRAIN = buildLineTopology(K_BRAIN, 0.18, 6, -1);
+    // Per-tool topologies: ONLY connect particles of the tool's brand color.
+    // Coral idx 1 = Zotero/red; lilac idx 3 = Obsidian/purple & Notion;
+    // amber idx 0 = Claude/orange; teal idx 2 = NotebookLM.
+    const TOPO_ZOTERO   = buildLineTopology(K_ZOTERO,   0.22, 6, 1);
+    const TOPO_OBSIDIAN = buildLineTopology(K_OBSIDIAN, 0.22, 6, 3);
+    const TOPO_CLAUDE   = buildLineTopology(K_CLAUDE,   0.16, 6, 0);
+    const TOPO_NLM      = buildLineTopology(K_NLM,      0.20, 6, 2);
+    const TOPO_NOTION   = buildLineTopology(K_NOTION,   0.22, 6, 3);
+
+    function pickPipelineTopology(p) {
+      const blend = getPipelineStepBlend(p);
+      if (!blend) return TOPO_BRAIN;
+      switch (blend.s0) {
+        case 0: return TOPO_ZOTERO;
+        case 1: return TOPO_OBSIDIAN;
+        case 2: return TOPO_CLAUDE;
+        case 3: return TOPO_NLM;
+        case 4: return TOPO_NOTION;
+        default: return TOPO_BRAIN; // Zettelkasten + atom phases
+      }
+    }
+
+    // Allocate buffers at MAX topology size so we can swap without reallocating.
+    const MAX_TOPO_LEN = Math.max(
+      TOPO_BRAIN.length, TOPO_ZOTERO.length, TOPO_OBSIDIAN.length,
+      TOPO_CLAUDE.length, TOPO_NLM.length, TOPO_NOTION.length
+    );
+    const lineVerts = new Float32Array(MAX_TOPO_LEN * 3);
+    const lineCols  = new Float32Array(MAX_TOPO_LEN * 3);
+
+    let activeTopo = TOPO_BRAIN;
+    function refillLineCols(topo) {
+      for (let k = 0; k < topo.length; k++) {
+        const idx = topo[k];
+        const c = idx % C;
+        lineCols[k*3]   = COLS[c][0];
+        lineCols[k*3+1] = COLS[c][1];
+        lineCols[k*3+2] = COLS[c][2];
+      }
+    }
+    refillLineCols(activeTopo);
+    for (let k = 0; k < activeTopo.length; k++) {
+      const idx = activeTopo[k];
+      lineVerts[k*3]   = curr[idx*3];
+      lineVerts[k*3+1] = curr[idx*3+1];
+      lineVerts[k*3+2] = curr[idx*3+2];
+    }
+    const lineGeo = new THREE.BufferGeometry();
+    lineGeo.setAttribute("position", new THREE.BufferAttribute(lineVerts, 3));
+    lineGeo.setAttribute("color",    new THREE.BufferAttribute(lineCols,  3));
+    lineGeo.setDrawRange(0, activeTopo.length);
+    const lineMat = new THREE.LineBasicMaterial({
+      vertexColors: true, transparent: true, opacity: linesAlphaCurr,
+      depthWrite: false, blending: THREE.AdditiveBlending
+    });
+    const lines = new THREE.LineSegments(lineGeo, lineMat);
+    scene.add(lines);
+    const linePosAttr = lineGeo.attributes.position;
+    const lineColAttr = lineGeo.attributes.color;
+    function setActiveTopology(topo) {
+      if (topo === activeTopo) return;
+      activeTopo = topo;
+      refillLineCols(topo);
+      lineColAttr.needsUpdate = true;
+      lineGeo.setDrawRange(0, topo.length);
+    }
+    const positionAttr = geo.attributes.position;
+    const alphaAttr = geo.attributes.aAlpha;
+    const alphaTargets = ALL_ON.slice();
+
+    /* ── State machine ────────────────────────────────────── */
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const ROT_SPEED = reduceMotion ? 0 : 0.0016;
+    let camLocalCurrZ = 6.5, camLocalCurrAng = 0.40;
+    let camLocalCurrOffX = 0, camLocalCurrOffY = 0.05;
+    let camLocalCurrLookX = 0, camLocalCurrLookY = 0;
+    let brainAlphaCurr = 1.0, brainAlphaTgt = 1.0;
+
+    /* ── ScrollTrigger: drives beat cross-fade + brain scrollT ─ */
+    const BEAT_COUNT = 9;
+    const hud = document.getElementById("hud");
+    const beats = Array.from(document.querySelectorAll(".beat"));
+    let scrollProgress = 0;
+    let scrollT = 0;
+    let lastIdx = 0;
+    let lastPipelineStep = -1;
+
+    /* ── Chrome: counter + progress rail + scroll hint ──────── */
+    const BEAT_TOTAL = beats.length; // 9
+    const counterNum = document.getElementById("counter-num");
+    const scrollHintEl = document.getElementById("scroll-hint");
+    const railEl = document.getElementById("rail");
+    const railTicks = [];
+    if (railEl) {
+      for (let n = 0; n < BEAT_TOTAL; n++) {
+        const t = document.createElement("span");
+        t.className = "tick";
+        railEl.appendChild(t);
+        railTicks.push(t);
+      }
+    }
+    function updateChrome(activeBeat) {
+      if (counterNum) counterNum.textContent = String(activeBeat + 1).padStart(2, "0");
+      for (let n = 0; n < railTicks.length; n++) {
+        railTicks[n].classList.toggle("on", n === activeBeat);
+        railTicks[n].classList.toggle("done", n < activeBeat);
+      }
+      if (scrollHintEl) scrollHintEl.style.opacity = activeBeat === 0 ? "1" : "0";
+    }
+    updateChrome(0);
+
+    function smoothstep(a, b, x) {
+      const t = Math.max(0, Math.min(1, (x - a) / Math.max(b - a, 1e-6)));
+      return t * t * (3 - 2 * t);
+    }
+    // Beat i text visible ONLY during its own stable phase (intra < MORPH_START).
+    // Both adjacent panels are hidden during the morph zone so particles dominate.
+    function beatOpacityAt(i, p) {
+      const bp = getBeatProgress(p);
+      if (bp.i !== i) return 0;
+      const intra = bp.intra;
+      const last = BEAT_COUNT - 1;
+      const ms = morphStartFor(i);
+      // Hero/end beats clamp: hero has no fade-in, end has no fade-out.
+      const fadeInEnd   = (i === 0)    ? 0 : TEXT_FADE_IN_END;
+      const fadeOutStart = (i === last) ? 1 : ms;
+      const fadeOutEnd   = (i === last) ? 1 : ms + 0.05;
+      const rampIn  = (fadeInEnd === 0)   ? 1 : smoothstep(0, fadeInEnd, intra);
+      const rampOut = (fadeOutStart === 1) ? 1 : 1 - smoothstep(fadeOutStart, fadeOutEnd, intra);
+      return rampIn * rampOut;
+    }
+    // Pipeline sub-step opacity inside beat 6. Each step visible while it's
+    // the active sub-step; soft crossfade between adjacent steps.
+    function pipelineStepOpacityAt(step, p) {
+      const { i, intra } = getBeatProgress(p);
+      if (i !== PIPELINE_BEAT_IDX) return 0;
+      const ms = morphStartFor(i);
+      if (intra >= ms) return 0; // morph zone
+      const stepWidth = ms / PIPELINE_STEP_COUNT;
+      const stepStart = step * stepWidth;
+      const stepEnd   = (step + 1) * stepWidth;
+      const fade = stepWidth * 0.09;
+      const rampIn  = (step === 0)
+        ? 1
+        : smoothstep(stepStart - fade, stepStart + fade, intra);
+      const rampOut = (step === PIPELINE_STEP_COUNT - 1)
+        ? 1 - smoothstep(stepEnd - fade, stepEnd, intra) // fade out before morph zone
+        : 1 - smoothstep(stepEnd - fade, stepEnd + fade, intra);
+      return rampIn * rampOut;
+    }
+    function applyBeatOpacities(p) {
+      for (let i = 0; i < BEAT_COUNT; i++) {
+        beats[i].style.opacity = beatOpacityAt(i, p);
+      }
+      // Pipeline sub-step opacities (inside beat 6)
+      for (let s = 0; s < pipelineStepEls.length; s++) {
+        pipelineStepEls[s].style.opacity = pipelineStepOpacityAt(s, p);
+      }
+    }
+    const pipelineStepEls = Array.from(document.querySelectorAll(".pipeline-step"));
+    applyBeatOpacities(0); // initial: beat 0 fully visible
+
+    ScrollTrigger.create({
+      trigger: "main.story",
+      start: "top top",
+      end: "bottom bottom",
+      scrub: 0.9,
+      onUpdate: (self) => {
+        const p = self.progress;
+        scrollProgress = p;
+        const { i, f } = getMorph(p);
+        scrollT = i + f; // continuous beat-float for HUD/debug
+        applyBeatOpacities(p);
+        if (i !== lastIdx) {
+          document.body.dataset.activeBeat = i;
+          // Subtle pulse only — no big flash that reads as jitter.
+          uniforms.uBeatPulse.value = Math.max(uniforms.uBeatPulse.value, 0.25);
+          camKick = 0.35;
+          updateChrome(i);
+          lastIdx = i;
+        }
+        // Pipeline sub-step transitions: no pulse, dataset only.
+        const ps = getPipelineStep(p);
+        if (ps !== lastPipelineStep) {
+          if (ps >= 0) {
+            document.body.dataset.pipelineStep = ps;
+          } else {
+            delete document.body.dataset.pipelineStep;
+          }
+          lastPipelineStep = ps;
+        }
+        if (hud) {
+          const psLabel = ps >= 0 ? " · step: " + (ps + 1) + "/" + PIPELINE_STEP_COUNT : "";
+          hud.textContent =
+            "beat: " + i + " · progress: " + p.toFixed(3) +
+            " · morphF: " + f.toFixed(2) + psLabel;
+        }
+      },
+    });
+
+    window.addEventListener("load", () => ScrollTrigger.refresh());
+    window.addEventListener("resize", () => ScrollTrigger.refresh());
+
+    /* ── Render loop ──────────────────────────────────────── */
+    function tick() {
+      requestAnimationFrame(tick);
+
+      uniforms.uTime.value += 0.008;
+      uniforms.uMouse.value.set(mouseNDC.x, mouseNDC.y);
+      const { w: vw, h: vh } = viewportWH();
+      uniforms.uAspect.value = vw / Math.max(vh, 1);
+
+      // (A) Per-beat motion signature — blend targets between adjacent beats,
+      // smooth toward them so signature shifts gracefully across boundaries.
+      {
+        const mm = getMorph(scrollProgress);
+        const bi = mm.i, bn = mm.next, bf = mm.f;
+        const lerpB = (arr) => arr[bi] + (arr[bn] - arr[bi]) * bf;
+        const tEnergy = lerpB(BEAT_ENERGY);
+        const tTurb   = lerpB(BEAT_TURB);
+        const tSwirl  = lerpB(BEAT_SWIRL);
+        const tGrav   = lerpB(BEAT_GRAVITY);
+        const tPull   = lerpB(BEAT_PULL);
+        uniforms.uEnergy.value     += (tEnergy - uniforms.uEnergy.value)     * 0.06;
+        uniforms.uTurbulence.value += (tTurb   - uniforms.uTurbulence.value) * 0.06;
+        uniforms.uSwirl.value      += (tSwirl  - uniforms.uSwirl.value)      * 0.06;
+        uniforms.uGravity.value    += (tGrav   - uniforms.uGravity.value)    * 0.06;
+        uniforms.uPull.value       += (tPull   - uniforms.uPull.value)       * 0.06;
+      }
+
+      // Rotation: ambient spin scaled by swirl (chaos spins faster), EXCEPT
+      // during pipeline tool steps where 2D logos must stay face-on.
+      const toolWeight = getToolLockWeight(scrollProgress);
+      const spin = ROT_SPEED * (1 + uniforms.uSwirl.value * 2.5);
+      const freeDelta = spin * (1 - toolWeight);
+      let lockDiff = -points.rotation.y;
+      lockDiff = ((lockDiff + Math.PI) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2) - Math.PI;
+      const lockDelta = lockDiff * 0.06 * toolWeight;
+      points.rotation.y += freeDelta + lockDelta;
+      lines.rotation.y = points.rotation.y;
+
+      const morph = getMorph(scrollProgress);
+      const i0 = morph.i;
+      const i1 = morph.next;
+      const f = morph.f;
+      // Shape blend: pipeline sub-steps use PIPELINE_STATES; otherwise BEAT_STATES.
+      // Beat 5→6 entry: K_BRAIN → K_CHAOS via BEAT_STATES[6]=K_CHAOS, then beat 6
+      // entry zone reforms K_CHAOS → PIPELINE_STATES[0] (K_CLUSTER) for tool intros.
+      // Beat 6 exit: PIPELINE_STATES[last] (Alloys) → BEAT_STATES[7] (K_FOCUS).
+      let shapeA, shapeB, shapeF;
+      const pipeBlend = getPipelineStepBlend(scrollProgress);
+      if (pipeBlend) {
+        const bp = getBeatProgress(scrollProgress);
+        const ms = morphStartFor(PIPELINE_BEAT_IDX);
+        const entryEnd = PIPELINE_ENTRY_END * ms;
+        if (bp.intra < entryEnd) {
+          // Entry reform zone: K_CHAOS → K_CLUSTER (tools reassemble out of disperse)
+          shapeA = K_CHAOS;
+          shapeB = PIPELINE_STATES[0];
+          shapeF = easeInOutCubic(bp.intra / entryEnd);
+        } else {
+          shapeA = PIPELINE_STATES[pipeBlend.s0];
+          shapeB = PIPELINE_STATES[pipeBlend.s1];
+          shapeF = pipeBlend.ef;
+        }
+      } else if (i0 === PIPELINE_BEAT_IDX) {
+        shapeA = PIPELINE_STATES[PIPELINE_STEP_COUNT - 1];
+        shapeB = BEAT_STATES[i1];
+        shapeF = f;
+      } else {
+        shapeA = BEAT_STATES[i0];
+        shapeB = BEAT_STATES[i1];
+        shapeF = f;
+      }
+
+      const camTarget = getCameraTarget(scrollProgress);
+      camLocalCurrZ    += (camTarget.z     - camLocalCurrZ)    * 0.09;
+      camLocalCurrAng  += (camTarget.ang   - camLocalCurrAng)  * 0.09;
+      camLocalCurrOffX += (camTarget.x     - camLocalCurrOffX) * 0.09;
+      camLocalCurrOffY += (camTarget.y     - camLocalCurrOffY) * 0.09;
+      camLocalCurrLookX += (camTarget.lookX - camLocalCurrLookX) * 0.09;
+      camLocalCurrLookY += (camTarget.lookY - camLocalCurrLookY) * 0.09;
+
+      const angR = camLocalCurrAng * Math.PI;
+      const localCamX = Math.sin(angR) * camLocalCurrZ * 0.30 + camLocalCurrOffX;
+      const localCamY = camLocalCurrOffY;
+      const localCamZ = Math.cos(angR) * camLocalCurrZ;
+
+      const localLookX = camLocalCurrLookX;
+      const localLookY = camLocalCurrLookY;
+      const localLookZ = 0;
+
+      const theta = points.rotation.y;
+      const cosT = Math.cos(theta);
+      const sinT = Math.sin(theta);
+
+      const localCamZWithKick = localCamZ + camKick * 0.7;
+      const rotCamX = localCamX * cosT + localCamZWithKick * sinT;
+      const rotCamY = localCamY;
+      const rotCamZ = -localCamX * sinT + localCamZWithKick * cosT;
+
+      const rotLookX = localLookX * cosT + localLookZ * sinT;
+      const rotLookY = localLookY;
+      const rotLookZ = -localLookX * sinT + localLookZ * cosT;
+
+      uniforms.uBeatPulse.value *= 0.96; // slower decay = softer pulse
+      camKick *= 0.94;
+
+      camera.position.set(rotCamX, rotCamY, rotCamZ);
+      camera.lookAt(rotLookX, rotLookY, rotLookZ);
+
+      brainAlphaTgt = BEAT_BRAIN_ALPHA[i0] + (BEAT_BRAIN_ALPHA[i1] - BEAT_BRAIN_ALPHA[i0]) * f;
+      const pipelineLA = getPipelineLineAlpha(scrollProgress);
+      linesAlphaTgt = (pipelineLA !== null)
+        ? pipelineLA
+        : BEAT_LINE_ALPHA[i0] + (BEAT_LINE_ALPHA[i1] - BEAT_LINE_ALPHA[i0]) * f;
+      linesAlphaCurr += (linesAlphaTgt - linesAlphaCurr) * 0.07;
+      lineMat.opacity = linesAlphaCurr;
+      brainAlphaCurr += (brainAlphaTgt - brainAlphaCurr) * 0.07;
+      uniforms.uOpacity.value = brainAlphaCurr;
+
+      const pipelineHL = getPipelineHL(scrollProgress);
+      if (pipelineHL) {
+        for (let k = 0; k < 4; k++) alphaTargets[k] = pipelineHL[k];
+      } else {
+        const hlA = BEAT_HL[i0], hlB = BEAT_HL[i1];
+        for (let k = 0; k < 4; k++) {
+          alphaTargets[k] = hlA[k] + (hlB[k] - hlA[k]) * f;
+        }
+      }
+
+      for (let i = 0; i < N * 3; i++) {
+        curr[i] = shapeA[i] + (shapeB[i] - shapeA[i]) * shapeF;
+      }
+      positionAttr.needsUpdate = true;
+
+      setActiveTopology(pickPipelineTopology(scrollProgress));
+      if (linesAlphaCurr > 0.005) {
+        for (let k = 0; k < activeTopo.length; k++) {
+          const idx = activeTopo[k];
+          lineVerts[k*3]   = curr[idx*3];
+          lineVerts[k*3+1] = curr[idx*3+1];
+          lineVerts[k*3+2] = curr[idx*3+2];
+        }
+        linePosAttr.needsUpdate = true;
+      }
+
+      let aDirty = false;
+      for (let i = 0; i < N; i++) {
+        const t = alphaTargets[i % C];
+        const d = t - aAlpha[i];
+        if (Math.abs(d) > 0.001) { aAlpha[i] += d * 0.045; aDirty = true; }
+      }
+      if (aDirty) alphaAttr.needsUpdate = true;
+
+      renderer.render(scene, camera);
+    }
+    tick();
+
+    /* ── expose for preview verification ──────────────────── */
+    window.__getActiveBeat = () => document.body.dataset.activeBeat;
+    window.__getScrollProgress = () => scrollProgress;
+    window.__getScrollT = () => scrollT;
+    window.__getCamState = () => ({
+      pos: { x: camera.position.x, y: camera.position.y, z: camera.position.z },
+      brainAlpha: brainAlphaCurr,
+      linesAlpha: linesAlphaCurr
+    });
+    window.__probeCamTarget = (p) => getCameraTarget(p);
+    window.__probeMorph = (p) => getMorph(p);
+    window.__forceSettleBeats = () => applyBeatOpacities(scrollProgress);
+    window.__countVisibleBeats = () =>
+      beats.filter((el) => parseFloat(getComputedStyle(el).opacity) > 0.5).length;
+  }
+  </script>
+</body>
+</html>
