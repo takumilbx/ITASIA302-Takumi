@@ -417,5 +417,12 @@ window.FW_DATA = {
      anchorKey values will map to named objects returned by the scene builder,
      e.g. "teacher", "projector", "dataEntryStudent", "pendulum",
      "blackboard", "appleWatch", "doorway", "room". */
-  hotspots: []
+  hotspots: [
+    { id: "teacher",    anchorKey: "teacher",    label: "Enoki-sensei",                theme: "Teacher background, beliefs & assessment",      questionIds: ["Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "Q17", "Q18"] },
+    { id: "projector",  anchorKey: "projector",  label: "Projector — Doc scaffold",     theme: "Analog → digital translation & lesson design",  questionIds: ["Q11", "Q13", "Q14"] },
+    { id: "dataEntry",  anchorKey: "dataEntry",  label: "Data-entry student · Sheets",  theme: "Digital access vs. constraint",                 questionIds: ["Q12"] },
+    { id: "pendulum",   anchorKey: "pendulum",   label: "Experiment · pendulum",        theme: "Student agency",                                questionIds: ["Q15"] },
+    { id: "blackboard", anchorKey: "blackboard", label: "Blackboard & reference sheets", theme: "Preparation & improvement",                    questionIds: ["Q16"] },
+    { id: "room",       anchorKey: "room",       label: "The lab & school environment", theme: "School environment, colleagues & conditions",   questionIds: ["Q7", "Q8", "Q9", "Q10", "Q19", "Q20", "Q21", "Q22"] }
+  ]
 };

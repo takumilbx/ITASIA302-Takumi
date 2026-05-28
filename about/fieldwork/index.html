@@ -247,6 +247,57 @@
     .cv-note { font-family: var(--serif); font-style: italic; font-size: 11.5px; color: var(--ink-faint); margin-top: 7px; }
     @media (max-width: 680px) { .cv-cols { grid-template-columns: 1fr; gap: 20px; } .cv-ba { grid-template-columns: 1fr; } .cv-arrow { display: none; } .cv-title { font-size: 24px; } }
 
+    /* interview layer */
+    #interview-ctl { top: 322px; left: 26px; padding: 8px; }
+    .hs-toggle {
+      font-family: var(--mono); font-size: 11px; letter-spacing: .05em; color: var(--ink-dim);
+      background: transparent; border: 1px solid var(--rule); border-radius: 3px; padding: 8px 12px; cursor: pointer;
+      transition: all .2s var(--ease); white-space: nowrap;
+    }
+    .hs-toggle:hover { color: var(--ink); border-color: var(--analog); }
+    .hs-toggle[aria-pressed="true"] { color: var(--ink); border-color: var(--analog); background: rgba(232,99,74,.14); }
+
+    #hotspots { inset: 0; pointer-events: none; }
+    .hotspot {
+      position: absolute; transform: translate(-50%, -50%); pointer-events: auto; cursor: pointer;
+      width: 26px; height: 26px; border-radius: 50%; display: none;
+      align-items: center; justify-content: center;
+      font-family: var(--mono); font-size: 13px; color: #06080d; font-weight: 700;
+      background: var(--analog); border: 2px solid rgba(255,255,255,.85);
+      animation: hs-pulse 2s var(--ease) infinite;
+    }
+    body.show-hotspots .hotspot { display: flex; }
+    .hotspot:hover { transform: translate(-50%, -50%) scale(1.16); }
+    @keyframes hs-pulse {
+      0% { box-shadow: 0 0 0 0 rgba(232,99,74,.55); }
+      70% { box-shadow: 0 0 0 13px rgba(232,99,74,0); }
+      100% { box-shadow: 0 0 0 0 rgba(232,99,74,0); }
+    }
+
+    #annotation {
+      position: fixed; inset: 0; z-index: 85; display: none; align-items: center; justify-content: center; padding: 40px 20px;
+      background: rgba(5,6,14,.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    }
+    #annotation.open { display: flex; }
+    .an-card {
+      position: relative; width: min(560px, 95vw); max-height: 84vh; overflow-y: auto;
+      background: var(--panel-solid); border: 1px solid var(--rule); border-left: 3px solid var(--analog); border-radius: 6px;
+      padding: 26px 28px 28px; box-shadow: 0 30px 90px rgba(0,0,0,.5);
+    }
+    .an-close { position: absolute; top: 14px; right: 16px; font-family: var(--mono); font-size: 15px; color: var(--ink-faint); background: none; border: none; cursor: pointer; }
+    .an-close:hover { color: var(--ink); }
+    .an-eyebrow { font-family: var(--mono); font-size: 9.5px; letter-spacing: .24em; text-transform: uppercase; color: var(--analog); margin-bottom: 8px; }
+    .an-label { font-family: var(--serif); font-weight: 400; font-size: 23px; letter-spacing: -0.01em; color: var(--ink); margin-bottom: 4px; }
+    .an-theme { font-family: var(--mono); font-size: 10.5px; letter-spacing: .08em; color: var(--ink-faint); margin-bottom: 16px; }
+    .an-q { border-top: 1px solid var(--rule); padding: 13px 0 4px; }
+    .an-q-id { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; color: var(--digital); margin-bottom: 5px; }
+    .an-q-en { font-family: var(--serif); font-size: 14.5px; line-height: 1.45; color: var(--ink); margin-bottom: 4px; }
+    .an-q-ja { font-family: var(--jp); font-size: 13px; line-height: 1.5; color: var(--ink-dim); margin-bottom: 9px; }
+    .an-q-ja.empty { color: var(--ink-faint); font-style: italic; }
+    .an-finding { font-family: var(--sans); font-size: 12.5px; line-height: 1.45; padding: 8px 11px; border-radius: 4px; background: rgba(20,22,40,.5); border: 1px dashed var(--rule); color: var(--ink-dim); }
+    .an-finding .lbl { font-family: var(--mono); font-size: 8.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-faint); display: block; margin-bottom: 3px; }
+    .an-finding.pending { color: var(--ink-faint); font-style: italic; }
+
     /* timeline (bottom) */
     #timeline { bottom: 0; left: 0; right: 0; z-index: 40; padding: 14px 26px 16px;
       background: linear-gradient(0deg, rgba(5,6,14,.95) 0%, rgba(5,6,14,.78) 62%, transparent 100%); }
@@ -353,6 +404,13 @@
     <button class="cam-btn" data-cam="top">Top-down</button>
   </div>
 
+  <div id="interview-ctl" class="hud panel-base">
+    <button class="hs-toggle" id="interview-toggle" aria-pressed="false">❓ Interview layer</button>
+  </div>
+
+  <!-- interview hotspot markers (DOM, projected from 3D anchors) -->
+  <div id="hotspots" class="hud"></div>
+
   <div id="visit" class="hud panel-base">
     <button class="visit-btn active" data-visit="v1">Visit 1<small>21 May</small></button>
     <button class="visit-btn" data-visit="v2">Visit 2<small>25 May</small></button>
@@ -403,8 +461,20 @@
     </div>
   </div>
 
-  <!-- data (classic script → global, so file:// works and content stays editable) -->
+  <!-- interview annotation card -->
+  <div id="annotation" aria-hidden="true">
+    <div class="an-card">
+      <button class="an-close" id="an-close" aria-label="Close">✕</button>
+      <div class="an-eyebrow">Interview hotspot · 29 May</div>
+      <div class="an-label" id="an-label">—</div>
+      <div class="an-theme" id="an-theme"></div>
+      <div class="an-qs" id="an-qs"></div>
+    </div>
+  </div>
+
+  <!-- data (classic scripts → globals, so file:// works and content stays editable) -->
   <script src="data.js"></script>
+  <script src="findings.js"></script>
 
   <!-- three.js as ES module via import map -->
   <script type="importmap">
@@ -1135,6 +1205,80 @@
     window.addEventListener("keydown", e => { if (e.key === "Escape") closeCV(); });
 
     /* ----------------------------------------------------------------------
+       INTERVIEW HOTSPOT LAYER (questions visible now; findings filled post-29-May)
+    ---------------------------------------------------------------------- */
+    const F = window.FW_FINDINGS || { questions: {}, findings: {}, pendingLabel: "Pending" };
+    const _hv = new THREE.Vector3();
+    const _ho = new THREE.Vector3();
+    const hotspotMarkers = [];
+
+    function anchorPos(key, out) {
+      switch (key) {
+        case "teacher":    return R.teacher ? out.copy(R.teacher.position).add(_ho.set(0, 1.15, 0)) : null;
+        case "projector":  return out.set(3.4, 2.95, FRONT_Z + 0.4);
+        case "dataEntry":  return (R.dataEntry && R.dataEntry[0]) ? out.copy(R.dataEntry[0].position).add(_ho.set(0, 1.0, 0)) : null;
+        case "pendulum":   return out.set(-1.0, 1.98, FRONT_Z + 1.9);
+        case "blackboard": return out.set(-1.7, 2.75, FRONT_Z + 0.4);
+        case "room":       return out.set(-5.2, 2.5, 5.6);
+        default:           return null;
+      }
+    }
+
+    function buildHotspots() {
+      const wrap = document.getElementById("hotspots");
+      (D.hotspots || []).forEach(hs => {
+        const el = document.createElement("button");
+        el.className = "hotspot"; el.textContent = "?";
+        el.title = hs.label; el.setAttribute("aria-label", "Interview questions: " + hs.label);
+        el.addEventListener("click", () => openAnnotation(hs));
+        wrap.appendChild(el);
+        hotspotMarkers.push({ el, hs });
+      });
+    }
+
+    function projectHotspots() {
+      if (!document.body.classList.contains("show-hotspots")) return;
+      const w = window.innerWidth, h = window.innerHeight;
+      hotspotMarkers.forEach(m => {
+        const p = anchorPos(m.hs.anchorKey, _hv);
+        if (!p) { m.el.style.visibility = "hidden"; return; }
+        _hv.project(camera);
+        if (_hv.z > 1) { m.el.style.visibility = "hidden"; return; }
+        m.el.style.visibility = "visible";
+        m.el.style.left = ((_hv.x * 0.5 + 0.5) * w) + "px";
+        m.el.style.top = ((-_hv.y * 0.5 + 0.5) * h) + "px";
+      });
+    }
+
+    const anEl = document.getElementById("annotation");
+    function openAnnotation(hs) {
+      document.getElementById("an-label").textContent = hs.label;
+      document.getElementById("an-theme").textContent = hs.theme;
+      document.getElementById("an-qs").innerHTML = hs.questionIds.map(qid => {
+        const q = F.questions[qid] || { en: "(question text pending)", ja: "" };
+        const ans = F.findings[qid];
+        const ja = q.ja
+          ? `<div class="an-q-ja">${escapeJP(q.ja)}</div>`
+          : `<div class="an-q-ja empty">日本語：インタビュー資料より（未入力）</div>`;
+        const finding = ans
+          ? `<div class="an-finding"><span class="lbl">Finding</span>${escapeJP(ans)}</div>`
+          : `<div class="an-finding pending"><span class="lbl">Finding</span>${escapeJP(F.pendingLabel)}</div>`;
+        return `<div class="an-q"><div class="an-q-id">${qid}</div><div class="an-q-en">${escapeJP(q.en)}</div>${ja}${finding}</div>`;
+      }).join("");
+      anEl.classList.add("open"); anEl.setAttribute("aria-hidden", "false");
+    }
+    function closeAnnotation() { anEl.classList.remove("open"); anEl.setAttribute("aria-hidden", "true"); }
+    document.getElementById("an-close").addEventListener("click", closeAnnotation);
+    anEl.addEventListener("click", e => { if (e.target === anEl) closeAnnotation(); });
+    window.addEventListener("keydown", e => { if (e.key === "Escape") closeAnnotation(); });
+
+    const ivToggle = document.getElementById("interview-toggle");
+    ivToggle.addEventListener("click", () => {
+      const on = document.body.classList.toggle("show-hotspots");
+      ivToggle.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+
+    /* ----------------------------------------------------------------------
        ANIMATION LOOP
     ---------------------------------------------------------------------- */
     const clock = new THREE.Clock();
@@ -1222,6 +1366,7 @@
 
       controls.update();
       renderer.render(scene, camera);
+      projectHotspots();
     }
 
     /* ----------------------------------------------------------------------
@@ -1259,6 +1404,7 @@
       buildLab();
       buildActors();
       buildV2Extras();
+      buildHotspots();
       setBoardSheets(2);          // Visit 1 baseline
       buildTimeline();
       // ensure CJK font is ready before first projector draw
