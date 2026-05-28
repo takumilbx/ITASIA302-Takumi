@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inside the Science Lab — Fieldwork · ITASIA312</title>
+  <meta name="description"
+    content="An interactive 3D presentation of a Grade-5 science classroom: scrub the lesson timeline and watch the analog/digital boundary change. Fieldwork by Takumi Oshiyama." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Sans:wght@400;500;600&family=Geist+Mono:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #05060e;
+      --bg-soft: #0b0d1a;
+      --ink: #e0e6f0;
+      --ink-dim: #b8c4dc;
+      --ink-faint: #6b7a99;
+      --rule: #182030;
+      --panel: rgba(11, 13, 26, 0.82);
+      --panel-solid: #0c0f1c;
+
+      --analog: #e8634a;   /* warm — paper / blackboard / pendulum */
+      --digital: #5299c8;  /* cool — Sheets / Docs / projector / 学びポケット */
+      --teal: #45a884;
+      --lilac: #7272c0;
+
+      --serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+      --sans: "IBM Plex Sans", "Noto Sans JP", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      --jp: "Noto Sans JP", "IBM Plex Sans", sans-serif;
+      --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+      --ease: cubic-bezier(.22, .61, .36, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body { height: 100%; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow: hidden;
+      line-height: 1.55;
+    }
+
+    /* ---- ambient overlays (match portfolio chrome) ---- */
+    .grain, .scanlines, .glow-tl, .glow-br, .edge-gradient { position: fixed; pointer-events: none; }
+    .grain {
+      inset: 0; z-index: 9999; opacity: .03; mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/></filter><rect width='256' height='256' filter='url(%23n)'/></svg>");
+      background-size: 220px 220px;
+    }
+    .scanlines {
+      inset: 0; z-index: 9998;
+      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,.025) 3px, rgba(0,0,0,.025) 4px);
+    }
+    .glow-tl { top: 0; left: 0; width: 55vw; height: 55vh; z-index: 0; background: radial-gradient(at 0% 0%, rgba(82,153,200,.07) 0%, transparent 60%); }
+    .glow-br { bottom: 0; right: 0; width: 50vw; height: 50vh; z-index: 0; background: radial-gradient(at 100% 100%, rgba(232,99,74,.06) 0%, transparent 65%); }
+    .edge-gradient { top: 0; left: 0; right: 0; height: 2px; z-index: 10000; background: linear-gradient(90deg, transparent 0%, var(--analog) 24%, var(--digital) 70%, transparent 100%); opacity: .9; }
+
+    /* ---- topbar ---- */
+    .topbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 13px 26px 11px;
+      background: linear-gradient(180deg, rgba(5,6,14,.94) 0%, rgba(5,6,14,.62) 70%, transparent 100%);
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    }
+    .topbar-title { font-family: var(--serif); font-weight: 300; font-size: 16px; letter-spacing: -0.015em; color: var(--ink); }
+    .topbar-title em { color: var(--analog); font-style: italic; font-weight: 400; }
+    .topbar-meta { font-family: var(--mono); font-size: 10.5px; letter-spacing: .22em; text-transform: uppercase; color: var(--ink-faint); }
+    .back-link {
+      color: var(--ink-dim); text-decoration: none; border-bottom: 1px dotted var(--ink-faint);
+      transition: color .18s ease, border-color .18s ease; font-family: var(--mono); font-size: 11px; letter-spacing: .08em;
+    }
+    .back-link:hover { color: var(--digital); border-bottom-color: var(--digital); }
+
+    /* ---- 3D stage ---- */
+    #stage { position: fixed; inset: 0; z-index: 1; }
+    #lab { display: block; width: 100%; height: 100%; }
+
+    /* ===================== INTRO ===================== */
+    #intro {
+      position: fixed; inset: 0; z-index: 60;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 8vh clamp(26px, 7vw, 120px);
+      background:
+        radial-gradient(60% 80% at 18% 20%, rgba(82,153,200,.10), transparent 60%),
+        radial-gradient(55% 75% at 90% 90%, rgba(232,99,74,.10), transparent 62%),
+        var(--bg);
+      transition: opacity .9s var(--ease), visibility .9s var(--ease);
+    }
+    #intro.gone { opacity: 0; visibility: hidden; }
+    .intro-eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .28em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 22px; }
+    .intro-eyebrow .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--analog); margin-right: 11px; box-shadow: 0 0 8px var(--analog); vertical-align: middle; }
+    .intro-q {
+      font-family: var(--serif); font-weight: 300; font-size: clamp(26px, 3.5vw, 46px); line-height: 1.18;
+      letter-spacing: -0.022em; color: var(--ink); max-width: 24ch; margin-bottom: 30px;
+    }
+    .intro-q em { font-style: italic; color: var(--analog); }
+    .intro-q .dg { color: var(--digital); font-style: italic; }
+    .intro-subs { list-style: none; max-width: 60ch; margin-bottom: 38px; display: grid; gap: 11px; }
+    .intro-subs li {
+      font-family: var(--serif); font-weight: 300; font-size: clamp(14px, 1.15vw, 16.5px); color: var(--ink-dim);
+      padding-left: 22px; position: relative;
+    }
+    .intro-subs li::before { content: "→"; position: absolute; left: 0; color: var(--digital); font-family: var(--mono); }
+    .intro-meta { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; color: var(--ink-faint); margin-bottom: 30px; text-transform: uppercase; }
+    .intro-meta b { color: var(--ink-dim); font-weight: 500; }
+    .enter-btn {
+      align-self: flex-start; font-family: var(--mono); font-size: 13px; letter-spacing: .16em; text-transform: uppercase;
+      color: var(--ink); background: linear-gradient(180deg, rgba(82,153,200,.18), rgba(82,153,200,.06));
+      border: 1px solid var(--digital); border-radius: 3px; padding: 14px 26px; cursor: pointer;
+      transition: background .25s var(--ease), transform .15s var(--ease), box-shadow .25s var(--ease);
+    }
+    .enter-btn:hover { background: linear-gradient(180deg, rgba(82,153,200,.32), rgba(82,153,200,.12)); box-shadow: 0 6px 30px rgba(82,153,200,.22); }
+    .enter-btn:active { transform: translateY(1px) scale(.99); }
+    .enter-hint { margin-top: 14px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; color: var(--ink-faint); }
+
+    /* ===================== HUD ===================== */
+    .hud { position: fixed; z-index: 40; opacity: 0; visibility: hidden; transition: opacity .7s var(--ease) .2s, visibility .7s var(--ease) .2s; }
+    body.entered .hud { opacity: 1; visibility: visible; }
+
+    .panel-base {
+      background: var(--panel); border: 1px solid var(--rule); border-radius: 4px;
+      backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px);
+    }
+
+    /* legend (top-left) */
+    #legend { top: 58px; left: 26px; padding: 11px 13px; display: flex; flex-direction: column; gap: 8px; max-width: 230px; }
+    #legend .legend-title { font-family: var(--mono); font-size: 9px; letter-spacing: .22em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 1px; }
+    .legend-chip { display: flex; align-items: center; gap: 9px; font-family: var(--mono); font-size: 11px; letter-spacing: .04em; color: var(--ink-dim); transition: opacity .4s var(--ease); }
+    .legend-chip .swatch { width: 13px; height: 13px; border-radius: 3px; display: grid; place-items: center; font-size: 9px; color: #06080d; flex-shrink: 0; }
+    .legend-chip.analog .swatch { background: var(--analog); }
+    .legend-chip.digital .swatch { background: var(--digital); }
+    .legend-chip .ja { font-family: var(--jp); color: var(--ink-faint); font-size: 10px; }
+    .legend-chip.dim { opacity: .32; }
+    .legend-chip.hot { color: var(--ink); }
+
+    /* camera presets (top-right) */
+    #cam { top: 172px; left: 26px; padding: 9px; display: flex; flex-direction: column; gap: 6px; }
+    #cam .cam-label { font-family: var(--mono); font-size: 9px; letter-spacing: .22em; text-transform: uppercase; color: var(--ink-faint); margin: 1px 2px 3px; }
+    .cam-btn {
+      font-family: var(--mono); font-size: 11px; letter-spacing: .05em; color: var(--ink-dim);
+      background: transparent; border: 1px solid var(--rule); border-radius: 3px; padding: 7px 12px; cursor: pointer; text-align: left;
+      transition: border-color .2s var(--ease), color .2s var(--ease), background .2s var(--ease);
+    }
+    .cam-btn:hover { color: var(--ink); border-color: var(--digital); }
+    .cam-btn.active { color: var(--ink); border-color: var(--digital); background: rgba(82,153,200,.12); }
+
+    /* info panel (right) */
+    #info { top: 58px; right: 26px; width: clamp(260px, 24vw, 332px); padding: 18px 18px 16px; max-height: calc(100vh - 246px); overflow-y: auto; }
+    #info .ph-n { font-family: var(--mono); font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: var(--digital); }
+    #info .ph-title { font-family: var(--serif); font-weight: 400; font-size: 20px; line-height: 1.2; letter-spacing: -0.01em; color: var(--ink); margin: 6px 0 2px; }
+    #info .ph-title-ja { font-family: var(--jp); font-weight: 500; font-size: 12.5px; color: var(--ink-faint); margin-bottom: 9px; }
+    #info .ph-time { font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; color: var(--ink-faint); margin-bottom: 11px; }
+    #info .ph-desc { font-family: var(--serif); font-weight: 300; font-size: 13.5px; line-height: 1.5; color: var(--ink-dim); margin-bottom: 14px; }
+    #info .ph-desc .jp { font-family: var(--jp); }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px; }
+    .tag { font-family: var(--mono); font-size: 10px; letter-spacing: .03em; padding: 3px 8px 3px 7px; border-radius: 3px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid; }
+    .tag .g { font-size: 10px; }
+    .tag.analog { color: #f2a594; border-color: rgba(232,99,74,.5); background: rgba(232,99,74,.1); }
+    .tag.digital { color: #a8cce6; border-color: rgba(82,153,200,.5); background: rgba(82,153,200,.1); }
+    .tag .jp { font-family: var(--jp); }
+    .spradley-title { font-family: var(--mono); font-size: 9px; letter-spacing: .22em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 8px; }
+    .spradley { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; }
+    .sp-cell { background: var(--panel-solid); padding: 9px 10px; }
+    .sp-k { font-family: var(--mono); font-size: 8.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--digital); margin-bottom: 4px; }
+    .sp-v { font-family: var(--sans); font-size: 11.5px; line-height: 1.42; color: var(--ink-dim); }
+    .sp-v .jp { font-family: var(--jp); }
+
+    /* caption (bottom-center, above timeline) */
+    #caption {
+      bottom: 118px; left: 50%; transform: translateX(-50%); z-index: 40;
+      font-family: var(--mono); font-size: 12px; letter-spacing: .05em; color: var(--ink-dim);
+      background: rgba(5,6,14,.7); padding: 8px 16px; border-radius: 20px; border: 1px solid var(--rule);
+      backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); white-space: nowrap; max-width: 92vw; overflow: hidden; text-overflow: ellipsis;
+      opacity: 0; visibility: hidden; transition: opacity .5s var(--ease), visibility .5s var(--ease);
+    }
+    body.entered #caption { opacity: 1; visibility: visible; }
+    #caption .sep { color: var(--ink-faint); margin: 0 9px; }
+
+    /* visit toggle (top-center) */
+    #visit { top: 56px; left: 50%; transform: translateX(-50%); padding: 5px; display: flex; gap: 4px; }
+    .visit-btn {
+      font-family: var(--mono); font-size: 11px; letter-spacing: .08em; color: var(--ink-dim);
+      background: transparent; border: 1px solid transparent; border-radius: 3px; padding: 6px 14px; cursor: pointer;
+      transition: all .2s var(--ease);
+    }
+    .visit-btn.active { color: var(--ink); background: rgba(82,153,200,.14); border-color: var(--digital); }
+    .visit-btn:disabled { color: var(--ink-faint); cursor: not-allowed; opacity: .55; }
+    .visit-btn small { font-size: 8px; letter-spacing: .16em; text-transform: uppercase; display: block; color: var(--ink-faint); }
+
+    /* timeline (bottom) */
+    #timeline { bottom: 0; left: 0; right: 0; z-index: 40; padding: 14px 26px 16px;
+      background: linear-gradient(0deg, rgba(5,6,14,.95) 0%, rgba(5,6,14,.78) 62%, transparent 100%); }
+    .tl-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 9px; padding: 0 2px; }
+    .tl-play {
+      font-family: var(--mono); font-size: 12px; color: var(--ink); background: rgba(82,153,200,.14);
+      border: 1px solid var(--digital); border-radius: 3px; width: 34px; height: 30px; cursor: pointer; flex-shrink: 0;
+      display: grid; place-items: center; transition: background .2s var(--ease);
+    }
+    .tl-play:hover { background: rgba(82,153,200,.26); }
+    .tl-clock { font-family: var(--mono); font-size: 13px; letter-spacing: .08em; color: var(--digital); flex-shrink: 0; min-width: 92px; }
+    .tl-now { font-family: var(--serif); font-style: italic; font-size: 14px; color: var(--ink-dim); flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .tl-pace { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; color: var(--ink-faint); display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .tl-pace input { accent-color: var(--digital); width: 78px; }
+    .tl-track {
+      position: relative; height: 40px; display: flex; gap: 3px; cursor: pointer; user-select: none;
+    }
+    .tl-seg {
+      position: relative; flex-grow: 1; border-radius: 3px; overflow: hidden; border: 1px solid var(--rule);
+      background: rgba(20,26,40,.6); transition: background .3s var(--ease), border-color .3s var(--ease);
+    }
+    .tl-seg .seg-fill { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(82,153,200,.28), rgba(82,153,200,.1)); width: 0%; transition: width .12s linear; }
+    .tl-seg .seg-n { position: absolute; top: 4px; left: 6px; font-family: var(--mono); font-size: 9px; color: var(--ink-faint); z-index: 2; }
+    .tl-seg .seg-emph { position: absolute; bottom: 4px; right: 6px; width: 7px; height: 7px; border-radius: 50%; z-index: 2; opacity: .9; }
+    .tl-seg.analog .seg-emph { background: var(--analog); }
+    .tl-seg.digital .seg-emph { background: var(--digital); }
+    .tl-seg.neutral .seg-emph { background: var(--ink-faint); }
+    .tl-seg:hover { border-color: var(--ink-faint); }
+    .tl-seg.active { border-color: var(--digital); background: rgba(82,153,200,.16); }
+    .tl-playhead { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink); box-shadow: 0 0 10px rgba(224,230,240,.8); pointer-events: none; z-index: 5; transition: left .12s linear; }
+    .tl-playhead::before { content: ""; position: absolute; top: -4px; left: -4px; width: 10px; height: 10px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 10px rgba(224,230,240,.7); }
+
+    /* loading hint inside intro button while three boots */
+    #boot { font-family: var(--mono); font-size: 10.5px; color: var(--ink-faint); letter-spacing: .1em; margin-top: 10px; }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 880px) {
+      #info { position: fixed; top: auto; bottom: 150px; right: 14px; left: 14px; width: auto; max-height: 38vh; }
+      #legend { top: 52px; left: 14px; }
+      #cam { top: 52px; right: 14px; left: auto; flex-direction: row; flex-wrap: wrap; max-width: 56vw; }
+      #cam .cam-label { width: 100%; }
+      #caption { bottom: auto; top: 150px; font-size: 11px; }
+      #visit { top: 92px; }
+      .intro-subs { display: none; }
+    }
+
+    @media (max-width: 560px) {
+      .topbar-meta { display: none; }
+      .topbar-title { font-size: 13px; }
+      #caption { display: none; }
+      #cam { display: none; }                 /* orbit by touch; presets return at larger sizes */
+      #legend { top: 46px; left: 10px; padding: 8px 10px; gap: 5px; max-width: 180px; }
+      #visit { top: 46px; left: auto; right: 10px; transform: none; }
+      #info { bottom: 132px; max-height: 30vh; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { scroll-behavior: auto; }
+      .tl-seg .seg-fill, .tl-playhead { transition: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="grain"></div>
+  <div class="scanlines"></div>
+  <div class="glow-tl"></div>
+  <div class="glow-br"></div>
+  <div class="edge-gradient"></div>
+
+  <header class="topbar">
+    <div class="topbar-title">
+      <a class="back-link" href="../index.html">&larr; About / Research</a>
+      &nbsp;&middot;&nbsp; Inside the <em>Science Lab</em>
+    </div>
+    <div class="topbar-meta">ITASIA312 · Field Work</div>
+  </header>
+
+  <!-- 3D stage -->
+  <div id="stage"><canvas id="lab"></canvas></div>
+
+  <!-- Intro / analytical-question screen -->
+  <section id="intro">
+    <div class="intro-eyebrow"><span class="dot"></span><span id="intro-course">Ethnographic Fieldwork · Grade-5 Science</span></div>
+    <h1 class="intro-q" id="intro-q">…</h1>
+    <ul class="intro-subs" id="intro-subs"></ul>
+    <div class="intro-meta" id="intro-metaline"></div>
+    <button class="enter-btn" id="enter-btn" disabled>Booting 3D scene…</button>
+    <div class="enter-hint" id="enter-hint">A bright Japanese science lab, built from scratch. Rotate · zoom · scrub the lesson.</div>
+  </section>
+
+  <!-- HUD -->
+  <div id="legend" class="hud panel-base">
+    <div class="legend-title">The boundary</div>
+    <div class="legend-chip analog" id="lg-analog"><span class="swatch">✎</span><span>Analog</span><span class="ja">紙・黒板</span></div>
+    <div class="legend-chip digital" id="lg-digital"><span class="swatch">⌨</span><span>Digital</span><span class="ja">画面・端末</span></div>
+  </div>
+
+  <div id="cam" class="hud panel-base">
+    <div class="cam-label">Camera</div>
+    <button class="cam-btn" data-cam="back">Back of room</button>
+    <button class="cam-btn" data-cam="teacher">Teacher's view</button>
+    <button class="cam-btn" data-cam="top">Top-down</button>
+  </div>
+
+  <div id="visit" class="hud panel-base">
+    <button class="visit-btn active" data-visit="v1">Visit 1<small>21 May</small></button>
+    <button class="visit-btn" data-visit="v2" disabled title="Added in the next build phase">Visit 2<small>soon</small></button>
+  </div>
+
+  <aside id="info" class="hud panel-base">
+    <div class="ph-n" id="info-n">Phase 1 / 7</div>
+    <div class="ph-title" id="info-title">—</div>
+    <div class="ph-title-ja" id="info-title-ja"></div>
+    <div class="ph-time" id="info-time"></div>
+    <div class="ph-desc" id="info-desc"></div>
+    <div class="tags" id="info-tags"></div>
+    <div class="spradley-title">Observation grid</div>
+    <div class="spradley" id="info-spradley"></div>
+  </aside>
+
+  <div id="caption" class="hud">—</div>
+
+  <div id="timeline" class="hud">
+    <div class="tl-head">
+      <button class="tl-play" id="play-btn" aria-label="Play / pause">▶</button>
+      <span class="tl-clock" id="tl-clock">9:30–9:31</span>
+      <span class="tl-now" id="tl-now">Opening &amp; Introductions</span>
+      <span class="tl-pace">PACE <input type="range" id="pace" min="0.5" max="2" step="0.1" value="1" /></span>
+    </div>
+    <div class="tl-track" id="tl-track"></div>
+  </div>
+
+  <!-- data (classic script → global, so file:// works and content stays editable) -->
+  <script src="data.js"></script>
+
+  <!-- three.js as ES module via import map -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script type="module">
+    import * as THREE from "three";
+    import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+    const D = window.FW_DATA;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /* ----------------------------------------------------------------------
+       PALETTE — from reference_science_lab.png
+    ---------------------------------------------------------------------- */
+    const PAL = {
+      floor:      0xb9cc3d,  // lime / chartreuse linoleum
+      woodLow:    0xd8c198,  // light-wood wainscoting
+      wallCream:  0xf1ece1,  // upper walls / ceiling
+      tableTop:   0x202228,  // matte black
+      tableBase:  0xede7da,  // cream cabinet base
+      stool:      0xf2c21d,  // yellow stool
+      board:      0x26312b,  // dark green-black blackboard
+      boardFrame: 0xcaa86a,  // light-wood frame
+      screenOff:  0x12161d,
+      frameDark:  0x2a2f38,
+      glass:      0xc4e2f0,  // daylight window
+      counter:    0xe9e5db,
+      metal:      0xb6bcc6,
+      sheet:      0xf8f4ec,  // paper
+      teacher:    0xcf8a5e,  // warm actor tone
+      student:    0xaab2c0,
+      head:       0xd8c3a8,
+      analog:     0xe8634a,
+      digital:    0x5299c8
+    };
+
+    /* ----------------------------------------------------------------------
+       RENDERER / SCENE / CAMERA / LIGHTS
+    ---------------------------------------------------------------------- */
+    const canvas = document.getElementById("lab");
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0b0d1a);
+
+    const camera = new THREE.PerspectiveCamera(52, 1, 0.1, 200);
+    camera.position.set(0, 3.2, 9.4);
+
+    const controls = new OrbitControls(camera, canvas);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.07;
+    controls.target.set(0, 1.0, 1.0);
+    controls.minDistance = 2.5;
+    controls.maxDistance = 18;
+    controls.maxPolarAngle = Math.PI * 0.495; // don't go under the floor
+    controls.enablePan = true;
+
+    scene.add(new THREE.HemisphereLight(0xffffff, 0xbcc596, 1.25));
+    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    const sun = new THREE.DirectionalLight(0xfff4e0, 2.1);
+    sun.position.set(9, 8, 3);     // from the right-side windows
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(2048, 2048);
+    sun.shadow.camera.left = -12; sun.shadow.camera.right = 12;
+    sun.shadow.camera.top = 12; sun.shadow.camera.bottom = -12;
+    sun.shadow.camera.near = 1; sun.shadow.camera.far = 40;
+    sun.shadow.bias = -0.0004;
+    scene.add(sun);
+    const fill = new THREE.DirectionalLight(0xdfe8ff, 0.5);
+    fill.position.set(-6, 5, 6);
+    scene.add(fill);
+
+    /* ----------------------------------------------------------------------
+       ROOM DIMENSIONS
+    ---------------------------------------------------------------------- */
+    const ROOM = { w: 14, d: 16, h: 3.4 };
+    const FRONT_Z = -ROOM.d / 2;  // -8 : blackboard wall, students face this (-z)
+    const RIGHT_X = ROOM.w / 2;   // +7 : window wall
+
+    // object registry (named handles for state machine + future hotspots)
+    const R = {};
+    const analogObjs = [];
+    const digitalObjs = [];
+
+    /* helper builders ---------------------------------------------------- */
+    function mat(color, opts = {}) {
+      const { rough, metal, ...rest } = opts;
+      return new THREE.MeshStandardMaterial({ color, roughness: rough ?? 0.85, metalness: metal ?? 0.0, ...rest });
+    }
+    function box(w, h, d, m, x = 0, y = 0, z = 0) {
+      const me = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m);
+      me.position.set(x, y, z); me.castShadow = true; me.receiveShadow = true; return me;
+    }
+
+    /* ----------------------------------------------------------------------
+       buildLab()  — static shell + furniture, returns nothing (registers in R)
+    ---------------------------------------------------------------------- */
+    function buildLab() {
+      const g = new THREE.Group();
+
+      // floor
+      const floor = new THREE.Mesh(new THREE.PlaneGeometry(ROOM.w, ROOM.d), mat(PAL.floor, { rough: 0.95 }));
+      floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; g.add(floor);
+
+      // ceiling
+      const ceil = new THREE.Mesh(new THREE.PlaneGeometry(ROOM.w, ROOM.d), mat(PAL.wallCream));
+      ceil.rotation.x = Math.PI / 2; ceil.position.y = ROOM.h; g.add(ceil);
+
+      // ceiling fluorescent strips
+      const lampMat = new THREE.MeshBasicMaterial({ color: 0xf2f6ff });
+      for (let zx = -4; zx <= 4; zx += 4) {
+        for (let zz = -5; zz <= 5; zz += 5) {
+          const lamp = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.06, 2.2), lampMat);
+          lamp.position.set(zx, ROOM.h - 0.05, zz); g.add(lamp);
+        }
+      }
+
+      // walls (cream upper) + wainscoting (wood lower) on 3 sides
+      const wallMat = mat(PAL.wallCream);
+      const woodMat = mat(PAL.woodLow);
+      const WAINS = 1.0;
+      function wall(w, x, z, ry) {
+        const upper = new THREE.Mesh(new THREE.PlaneGeometry(w, ROOM.h - WAINS), wallMat);
+        upper.position.set(x, WAINS + (ROOM.h - WAINS) / 2, z); upper.rotation.y = ry; upper.receiveShadow = true; g.add(upper);
+        const lower = new THREE.Mesh(new THREE.PlaneGeometry(w, WAINS), woodMat);
+        lower.position.set(x, WAINS / 2, z); lower.rotation.y = ry; lower.receiveShadow = true; g.add(lower);
+      }
+      wall(ROOM.w, 0, FRONT_Z, 0);                 // front
+      wall(ROOM.w, 0, ROOM.d / 2, Math.PI);        // back
+      wall(ROOM.d, -ROOM.w / 2, 0, Math.PI / 2);   // left
+
+      // ---- blackboard (front-left), dual panels in light-wood frame
+      const bb = new THREE.Group();
+      bb.add(box(4.6, 1.7, 0.12, mat(PAL.boardFrame), 0, 0, 0));           // frame
+      const boardMat = mat(PAL.board, { rough: 0.95 });
+      bb.add(box(4.3, 0.72, 0.04, boardMat, 0, 0.38, 0.07));               // upper panel
+      bb.add(box(4.3, 0.72, 0.04, boardMat, 0, -0.38, 0.07));              // lower panel
+      bb.position.set(-1.7, 1.75, FRONT_Z + 0.07);
+      g.add(bb);
+      R.blackboard = bb; analogObjs.push(...bb.children.slice(1));
+
+      // reference sheets clipped to the board (count grows in V2)
+      R.boardSheets = new THREE.Group(); bb.add(R.boardSheets);
+      R.boardSheetPositions = [
+        [-1.6, 0.35], [1.5, 0.3], [-1.4, -0.4], [0.2, -0.42], [1.6, -0.38]
+      ];
+
+      // ---- projector screen (front-right of teacher table)
+      const screenW = 3.0, screenH = 1.9;
+      const projGroup = new THREE.Group();
+      projGroup.add(box(screenW + 0.16, screenH + 0.16, 0.08, mat(PAL.frameDark, { metal: 0.4, rough: 0.5 })));
+      R.projCanvas = document.createElement("canvas");
+      R.projCanvas.width = 768; R.projCanvas.height = 480;
+      R.projTex = new THREE.CanvasTexture(R.projCanvas);
+      R.projTex.colorSpace = THREE.SRGBColorSpace;
+      const screen = new THREE.Mesh(new THREE.PlaneGeometry(screenW, screenH),
+        new THREE.MeshBasicMaterial({ map: R.projTex }));
+      screen.position.z = 0.05; projGroup.add(screen);
+      projGroup.position.set(3.4, 1.8, FRONT_Z + 0.12);
+      g.add(projGroup);
+      R.projector = projGroup; R.screenMesh = screen; digitalObjs.push(projGroup.children[0]);
+
+      // ---- right wall: windows + counter/sink + cabinets
+      const winWall = new THREE.Group();
+      const glassMat = new THREE.MeshBasicMaterial({ color: PAL.glass });
+      for (let i = -1; i <= 1; i++) {
+        const pane = new THREE.Mesh(new THREE.PlaneGeometry(3.4, 1.5), glassMat);
+        pane.position.set(0, 2.0, i * 3.7); pane.rotation.y = -Math.PI / 2; winWall.add(pane);
+        const fr = box(0.06, 1.6, 3.6, mat(PAL.metal, { metal: 0.5, rough: 0.5 }), 0.02, 2.0, i * 3.7);
+        fr.rotation.y = -Math.PI / 2; winWall.add(fr);
+      }
+      // counter + cabinets under windows
+      winWall.add(box(0.7, 0.9, ROOM.d - 1.2, mat(PAL.counter), -0.35, 0.45, 0));
+      winWall.add(box(0.74, 0.06, ROOM.d - 1.2, mat(PAL.counter, { rough: 0.5 }), -0.35, 0.92, 0));
+      // sink basin
+      winWall.add(box(0.5, 0.12, 0.7, mat(PAL.metal, { metal: 0.6, rough: 0.4 }), -0.35, 0.9, 1.2));
+      winWall.position.set(RIGHT_X, 0, 0);
+      g.add(winWall);
+
+      // ---- teacher demo table (front, by the board) + pendulum
+      R.demoTable = box(2.6, 0.78, 0.9, mat(PAL.tableTop), -1.0, 0.39, FRONT_Z + 1.9);
+      g.add(R.demoTable);
+      g.add(box(2.6, 0.36, 0.86, mat(PAL.tableBase), -1.0, 0.18, FRONT_Z + 1.9));
+
+      buildPendulum(g);
+
+      scene.add(g);
+      R.root = g;
+    }
+
+    /* ----------------------------------------------------------------------
+       Pendulum on the demo table (gentle swing during experiment phases)
+    ---------------------------------------------------------------------- */
+    function buildPendulum(g) {
+      const stand = new THREE.Group();
+      const postMat = mat(0x8a6a44, { rough: 0.7 });
+      stand.add(box(0.05, 1.0, 0.05, postMat, -0.5, 0.5, 0));
+      stand.add(box(0.05, 1.0, 0.05, postMat, 0.5, 0.5, 0));
+      stand.add(box(1.1, 0.05, 0.05, postMat, 0, 1.0, 0));
+      // swinging arm pivot
+      const pivot = new THREE.Group();
+      pivot.position.set(0, 1.0, 0);
+      const string = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.006, 0.66, 6), mat(0x3a3a3a));
+      string.position.y = -0.33; pivot.add(string);
+      const bob = new THREE.Mesh(new THREE.SphereGeometry(0.07, 18, 18), mat(0xb24a3a, { metal: 0.3, rough: 0.4 }));
+      bob.position.y = -0.66; bob.castShadow = true; pivot.add(bob);
+      stand.add(pivot);
+      stand.position.set(-1.0, 0.78, FRONT_Z + 1.9);
+      g.add(stand);
+      R.pendulum = stand; R.pendulumPivot = pivot;
+      analogObjs.push(string, bob);
+    }
+
+    /* ----------------------------------------------------------------------
+       ACTORS — teacher + 24 students (6 groups) + intern + observer
+    ---------------------------------------------------------------------- */
+    function makeFigure(bodyColor, scale = 1) {
+      const fig = new THREE.Group();
+      const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.16 * scale, 0.42 * scale, 6, 14), mat(bodyColor, { rough: 0.8 }));
+      body.position.y = 0.42 * scale; body.castShadow = true; fig.add(body);
+      const head = new THREE.Mesh(new THREE.SphereGeometry(0.13 * scale, 18, 18), mat(PAL.head, { rough: 0.7 }));
+      head.position.y = 0.78 * scale; head.castShadow = true; fig.add(head);
+      fig.userData.body = body;
+      return fig;
+    }
+
+    // 3 long benches running front-to-back (perpendicular to the blackboard), side by side
+    const TABLES = [
+      { x: -3.6, z: 1.0 },   // left bench
+      { x: 0.0, z: 1.0 },    // center bench
+      { x: 3.6, z: 1.0 }     // right bench
+    ];
+    const BENCH = { w: 0.95, d: 3.6 };   // X-width, Z-length
+
+    function buildActors() {
+      // students — each table seats 8 (two rows of 4), split into 2 groups of 4
+      R.students = [];
+      R.dataEntry = [];
+      const studentsGroup = new THREE.Group();
+      TABLES.forEach((t, ti) => {
+        // bench surface + base (long along Z)
+        studentsGroup.add(box(BENCH.w, 0.76, BENCH.d, mat(PAL.tableTop), t.x, 0.38, t.z));
+        studentsGroup.add(box(BENCH.w - 0.05, 0.34, BENCH.d, mat(PAL.tableBase), t.x, 0.17, t.z));
+        const sideX = [-0.7, 0.7];                      // a seat each side of the bench
+        const seatZ = [-1.25, -0.45, 0.45, 1.25];       // 4 seats down the length
+        seatZ.forEach((cz, zi) => {
+          sideX.forEach((cx, xi) => {
+            const sx = t.x + cx, sz = t.z + cz;
+            // stool
+            const stool = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.06, 18), mat(PAL.stool, { rough: 0.6 }));
+            stool.position.set(sx, 0.44, sz); stool.castShadow = true; studentsGroup.add(stool);
+            const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.42, 8), mat(PAL.metal, { metal: 0.5, rough: 0.5 }));
+            leg.position.set(sx, 0.22, sz); studentsGroup.add(leg);
+            // 2 groups of 4 per bench: front half vs back half
+            const groupId = ti * 2 + (cz > 0 ? 1 : 0);
+            const isEntry = (xi === 0 && (zi === 0 || zi === 2)); // one data-entry student per group
+            const fig = makeFigure(isEntry ? PAL.digital : PAL.student, 0.92);
+            fig.position.set(sx, 0.48, sz);
+            fig.rotation.y = cx > 0 ? -0.35 : 0.35;     // angled slightly inward toward the bench
+            fig.userData.baseY = 0.48;
+            fig.userData.groupId = groupId;
+            fig.userData.isEntry = isEntry;
+            studentsGroup.add(fig);
+            R.students.push(fig);
+            if (isEntry) R.dataEntry.push(fig);
+          });
+        });
+      });
+      scene.add(studentsGroup);
+      R.studentsGroup = studentsGroup;
+
+      // teacher
+      R.teacher = makeFigure(PAL.teacher, 1.05);
+      R.teacherFront = new THREE.Vector3(-1.0, 0.52, FRONT_Z + 2.7);
+      R.teacher.position.copy(R.teacherFront);
+      R.teacher.rotation.y = 0; // faces +z (toward students)
+      scene.add(R.teacher);
+
+      // student-teacher intern (near front-right)
+      R.intern = makeFigure(0x9ab0a0, 0.98);
+      R.intern.position.set(2.2, 0.5, FRONT_Z + 3.4);
+      scene.add(R.intern);
+
+      // observer marker (Takumi) at back of room
+      const obs = makeFigure(0x7272c0, 0.98);
+      obs.position.set(-4.6, 0.5, ROOM.d / 2 - 1.4);
+      scene.add(obs); R.observer = obs;
+
+      // teacher circulation waypoints (near each table)
+      R.waypoints = TABLES.map(t => new THREE.Vector3(t.x, 0.52, t.z - 2.1));
+    }
+
+    /* ----------------------------------------------------------------------
+       PROJECTOR CANVAS — off / liveGraph / completedGraph / docScaffold
+    ---------------------------------------------------------------------- */
+    const LENGTHS = [20, 40, 60];
+    const PERIODS = [1.0, 1.3, 1.6];
+    function buildPoints() {
+      const pts = [];
+      LENGTHS.forEach((L, i) => {
+        for (let k = 0; k < 6; k++) {
+          pts.push({ L, T: PERIODS[i] + (Math.random() - 0.5) * 0.12 });
+        }
+      });
+      return pts; // 18 points
+    }
+    R.points = buildPoints();
+
+    function drawProjector(stateOrProgress) {
+      const c = R.projCanvas, ctx = c.getContext("2d");
+      const W = c.width, H = c.height;
+      const mode = R.projMode;
+      ctx.clearRect(0, 0, W, H);
+
+      if (mode === "off") {
+        ctx.fillStyle = "#0e1218"; ctx.fillRect(0, 0, W, H);
+        ctx.fillStyle = "#1d2530";
+        ctx.font = "500 22px 'Geist Mono', monospace";
+        ctx.textAlign = "center";
+        ctx.fillText("— screen idle —", W / 2, H / 2);
+      } else if (mode === "liveGraph" || mode === "completedGraph") {
+        drawGraph(ctx, W, H, mode === "completedGraph" ? 1 : (R.graphProgress ?? 0));
+      } else if (mode === "docScaffold") {
+        drawDoc(ctx, W, H);
+      }
+      R.projTex.needsUpdate = true;
+    }
+
+    function drawGraph(ctx, W, H, progress) {
+      ctx.fillStyle = "#fbfcff"; ctx.fillRect(0, 0, W, H);
+      const m = { l: 86, r: 40, t: 54, b: 70 };
+      const x0 = m.l, x1 = W - m.r, y0 = H - m.b, y1 = m.t;
+      // title
+      ctx.fillStyle = "#10203a"; ctx.textAlign = "center";
+      ctx.font = "600 27px 'IBM Plex Sans', 'Noto Sans JP', sans-serif";
+      ctx.fillText("ふりこの長さ と 周期", W / 2, 34);
+      // axes
+      ctx.strokeStyle = "#26405f"; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(x0, y1); ctx.lineTo(x0, y0); ctx.lineTo(x1, y0); ctx.stroke();
+      // axis labels
+      ctx.fillStyle = "#3a567a"; ctx.font = "500 17px 'IBM Plex Sans', sans-serif";
+      ctx.textAlign = "center"; ctx.fillText("length (cm)", (x0 + x1) / 2, H - 24);
+      ctx.save(); ctx.translate(26, (y0 + y1) / 2); ctx.rotate(-Math.PI / 2);
+      ctx.fillText("period (s)", 0, 0); ctx.restore();
+      // gridlines + x ticks
+      ctx.font = "400 14px 'Geist Mono', monospace"; ctx.fillStyle = "#7d93ad";
+      const xFor = L => x0 + (L / 70) * (x1 - x0);
+      const yFor = T => y0 - (T / 2.0) * (y0 - y1);
+      [20, 40, 60].forEach(L => { ctx.textAlign = "center"; ctx.fillText(L, xFor(L), y0 + 22); });
+      [0.5, 1.0, 1.5, 2.0].forEach(T => {
+        ctx.textAlign = "right"; ctx.fillText(T.toFixed(1), x0 - 10, yFor(T) + 5);
+        ctx.strokeStyle = "#e4ebf3"; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(x0, yFor(T)); ctx.lineTo(x1, yFor(T)); ctx.stroke();
+      });
+      // points (revealed by progress)
+      const n = Math.round(R.points.length * progress);
+      for (let i = 0; i < n; i++) {
+        const p = R.points[i];
+        ctx.fillStyle = "#3b86c4";
+        ctx.beginPath(); ctx.arc(xFor(p.L), yFor(p.T), 6, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = "#1d5a8f"; ctx.lineWidth = 1.5; ctx.stroke();
+      }
+      if (progress >= 1) {
+        ctx.fillStyle = "#c0392b"; ctx.font = "italic 600 18px 'IBM Plex Serif', serif";
+        ctx.textAlign = "left"; ctx.fillText("length ↑  ⇒  period ↑", x0 + 16, y1 + 6);
+      }
+    }
+
+    function drawDoc(ctx, W, H) {
+      ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = "#f0f2f5"; ctx.fillRect(0, 0, W, 46);
+      ctx.fillStyle = "#5f6b7a"; ctx.font = "500 17px 'Geist Mono', monospace"; ctx.textAlign = "left";
+      ctx.fillText("Google Docs — ふりかえり", 24, 30);
+      const rows = [
+        { jp: "よそく", en: "prediction", a: "ふりこが長いほど、ゆっくりゆれると思う。" },
+        { jp: "結果", en: "result", a: "20→1.0秒　40→1.3秒　60→1.6秒。" },
+        { jp: "わかった", en: "understood", a: "長さが長いほど、周期は長くなる。" }
+      ];
+      let y = 96;
+      rows.forEach(r => {
+        ctx.fillStyle = "#111111"; // black prompt
+        ctx.font = "700 25px 'Noto Sans JP', sans-serif"; ctx.fillText(r.jp, 30, y);
+        ctx.fillStyle = "#9aa3ad"; ctx.font = "400 15px 'Geist Mono', monospace";
+        ctx.fillText("（" + r.en + "）", 30 + ctx.measureText(r.jp).width + 70, y);
+        ctx.fillStyle = "#cc1f1f"; // red model answer
+        ctx.font = "500 21px 'Noto Sans JP', sans-serif";
+        ctx.fillText(r.a, 54, y + 36);
+        ctx.strokeStyle = "#e6e9ee"; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(24, y + 58); ctx.lineTo(W - 24, y + 58); ctx.stroke();
+        y += 116;
+      });
+      // legend
+      ctx.font = "400 14px 'Geist Mono', monospace";
+      ctx.fillStyle = "#111"; ctx.fillText("■ prompt", W - 230, 30);
+      ctx.fillStyle = "#cc1f1f"; ctx.fillText("■ model answer", W - 150, 30);
+    }
+
+    /* ----------------------------------------------------------------------
+       EMPHASIS — analog vs digital highlight
+    ---------------------------------------------------------------------- */
+    function setEmphasis(emph) {
+      const aHot = emph === "analog", dHot = emph === "digital";
+      analogObjs.forEach(o => { if (o.material) { o.material.emissive = new THREE.Color(PAL.analog); o.material.emissiveIntensity = aHot ? 0.32 : 0.0; } });
+      digitalObjs.forEach(o => { if (o.material) { o.material.emissive = new THREE.Color(PAL.digital); o.material.emissiveIntensity = dHot ? 0.4 : 0.0; } });
+      // legend chips
+      document.getElementById("lg-analog").classList.toggle("hot", aHot);
+      document.getElementById("lg-analog").classList.toggle("dim", dHot);
+      document.getElementById("lg-digital").classList.toggle("hot", dHot);
+      document.getElementById("lg-digital").classList.toggle("dim", aHot);
+    }
+
+    /* ----------------------------------------------------------------------
+       BOARD SHEETS — count varies (more in V2)
+    ---------------------------------------------------------------------- */
+    function setBoardSheets(count) {
+      R.boardSheets.clear();
+      const sheetMat = mat(PAL.sheet, { rough: 0.9 });
+      for (let i = 0; i < Math.min(count, R.boardSheetPositions.length); i++) {
+        const [sx, sy] = R.boardSheetPositions[i];
+        const s = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 0.62), sheetMat);
+        s.position.set(sx, sy, 0.1); R.boardSheets.add(s); analogObjs.push(s);
+      }
+    }
+
+    /* ----------------------------------------------------------------------
+       STATE MACHINE — applyPhase(visitId, index)
+    ---------------------------------------------------------------------- */
+    const STATE = { visit: "v1", index: 0, playing: false, playT: 0, pace: 1, intraFrac: 0 };
+
+    function phasesOf(v) { return D.visits[v].phases; }
+    function curPhase() { return phasesOf(STATE.visit)[STATE.index]; }
+
+    function projLabel(s) {
+      return ({
+        off: "Projector idle",
+        liveGraph: "Projector — scatter plot filling in real time",
+        completedGraph: "Projector — finalized graph",
+        docScaffold: "Projector — Google Doc scaffold (black prompts · red answers)"
+      })[s] || "Projector";
+    }
+    function teacherLabel(p) { return p === "circulating" ? "Teacher circulating among the 6 groups" : "Teacher at the front"; }
+
+    function applyPhase(idx, animate = true) {
+      const phases = phasesOf(STATE.visit);
+      STATE.index = Math.max(0, Math.min(phases.length - 1, idx));
+      const p = phases[STATE.index];
+
+      // projector
+      R.projMode = p.projectorState;
+      if (p.projectorState === "liveGraph") R.graphProgress = 0;
+      drawProjector();
+
+      // teacher position — the animation loop eases the teacher to front or circulates
+      R.teacherCirculating = (p.teacherPosition === "circulating");
+
+      // students activity + data-entry highlight
+      R.studentsActive = !!p.sceneFlags.studentsActive;
+      const entryHot = !!p.sceneFlags.dataEntryHighlight;
+      R.students.forEach(f => {
+        const isHot = entryHot && f.userData.isEntry;
+        f.userData.body.material.emissive = new THREE.Color(PAL.digital);
+        f.userData.body.material.emissiveIntensity = isHot ? 0.55 : 0.0;
+      });
+
+      // pendulum
+      R.pendulumSwing = !!p.sceneFlags.pendulumSwing;
+
+      // emphasis
+      setEmphasis(p.emphasis);
+
+      renderInfo(p);
+      renderTimeline();
+      STATE.intraFrac = 0; STATE.playT = 0;
+    }
+
+    /* ----------------------------------------------------------------------
+       INFO PANEL + CAPTION
+    ---------------------------------------------------------------------- */
+    function renderInfo(p) {
+      const phases = phasesOf(STATE.visit);
+      document.getElementById("info-n").textContent = `Phase ${p.n} / ${phases.length}`;
+      document.getElementById("info-title").textContent = p.title;
+      document.getElementById("info-title-ja").textContent = p.titleJa || "";
+      document.getElementById("info-time").textContent = `${p.startTime}–${p.endTime}  ·  ~${p.durationMin} min`;
+      document.getElementById("info-desc").innerHTML = `<span class="jp">${escapeJP(p.description)}</span>`;
+
+      // tags
+      const tagsEl = document.getElementById("info-tags");
+      const a = D.encoding.analog, d = D.encoding.digital;
+      const mk = (t, kind, gl) => `<span class="tag ${kind}"><span class="g">${gl}</span><span class="jp">${t}</span></span>`;
+      let tags = "";
+      p.analogTools.forEach(t => tags += mk(t, "analog", a.glyph));
+      p.digitalTools.forEach(t => tags += mk(t, "digital", d.glyph));
+      tagsEl.innerHTML = tags || `<span class="tag" style="color:var(--ink-faint);border-color:var(--rule)">no tools foregrounded</span>`;
+
+      // spradley grid
+      const sp = p.spradley;
+      document.getElementById("info-spradley").innerHTML = [
+        ["DO", sp.do], ["MAKE & USE", sp.makeUse], ["SAY", sp.say], ["FEEL", sp.feel]
+      ].map(([k, v]) => `<div class="sp-cell"><div class="sp-k">${k}</div><div class="sp-v"><span class="jp">${escapeJP(v)}</span></div></div>`).join("");
+
+      // caption
+      document.getElementById("caption").innerHTML =
+        `${projLabel(p.projectorState)}<span class="sep">·</span>${teacherLabel(p.teacherPosition)}`;
+
+      // timeline head
+      document.getElementById("tl-clock").textContent = `${p.startTime}–${p.endTime}`;
+      document.getElementById("tl-now").textContent = p.title;
+    }
+
+    function escapeJP(s) { return (s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+
+    /* ----------------------------------------------------------------------
+       TIMELINE — segments ∝ duration, draggable playhead, play/pause
+    ---------------------------------------------------------------------- */
+    const trackEl = document.getElementById("tl-track");
+    let segs = [];
+
+    function buildTimeline() {
+      trackEl.querySelectorAll(".tl-seg").forEach(n => n.remove());
+      const old = trackEl.querySelector(".tl-playhead"); if (old) old.remove();
+      const phases = phasesOf(STATE.visit);
+      const total = phases.reduce((s, p) => s + p.durationMin, 0);
+      segs = [];
+      phases.forEach((p, i) => {
+        const seg = document.createElement("div");
+        seg.className = `tl-seg ${p.emphasis}`;
+        seg.style.flexGrow = String(p.durationMin);
+        seg.innerHTML = `<span class="seg-n">${p.n}</span><span class="seg-fill"></span><span class="seg-emph"></span>`;
+        seg.addEventListener("click", (e) => { e.stopPropagation(); STATE.playing = false; updatePlayBtn(); applyPhase(i); });
+        trackEl.appendChild(seg);
+        segs.push({ el: seg, fill: seg.querySelector(".seg-fill"), dur: p.durationMin, frac: p.durationMin / total });
+      });
+      const ph = document.createElement("div"); ph.className = "tl-playhead"; ph.id = "playhead"; trackEl.appendChild(ph);
+      renderTimeline();
+    }
+
+    function renderTimeline() {
+      segs.forEach((s, i) => {
+        s.el.classList.toggle("active", i === STATE.index);
+        s.fill.style.width = i < STATE.index ? "100%" : (i === STATE.index ? (STATE.intraFrac * 100) + "%" : "0%");
+      });
+      positionPlayhead();
+    }
+
+    function positionPlayhead() {
+      const ph = document.getElementById("playhead"); if (!ph) return;
+      // cumulative fraction across track using flex weights
+      const total = segs.reduce((s, x) => s + x.dur, 0);
+      let before = 0;
+      for (let i = 0; i < STATE.index; i++) before += segs[i].dur;
+      const fracStart = before / total;
+      const fracCur = (segs[STATE.index].dur / total) * STATE.intraFrac;
+      ph.style.left = `calc(${(fracStart + fracCur) * 100}% )`;
+    }
+
+    // drag playhead
+    let dragging = false;
+    function fracToPhase(frac) {
+      const total = segs.reduce((s, x) => s + x.dur, 0);
+      let acc = 0;
+      for (let i = 0; i < segs.length; i++) {
+        const w = segs[i].dur / total;
+        if (frac <= acc + w || i === segs.length - 1) return { index: i, intra: Math.max(0, Math.min(1, (frac - acc) / w)) };
+        acc += w;
+      }
+      return { index: 0, intra: 0 };
+    }
+    function pointerFrac(clientX) {
+      const r = trackEl.getBoundingClientRect();
+      return Math.max(0, Math.min(1, (clientX - r.left) / r.width));
+    }
+    function onDrag(clientX) {
+      const { index, intra } = fracToPhase(pointerFrac(clientX));
+      if (index !== STATE.index) applyPhase(index, false);
+      STATE.intraFrac = intra; renderTimeline();
+    }
+    trackEl.addEventListener("pointerdown", (e) => { dragging = true; STATE.playing = false; updatePlayBtn(); trackEl.setPointerCapture(e.pointerId); onDrag(e.clientX); });
+    trackEl.addEventListener("pointermove", (e) => { if (dragging) onDrag(e.clientX); });
+    trackEl.addEventListener("pointerup", () => { dragging = false; });
+    trackEl.addEventListener("pointercancel", () => { dragging = false; });
+
+    // play / pause
+    const playBtn = document.getElementById("play-btn");
+    function updatePlayBtn() { playBtn.textContent = STATE.playing ? "❚❚" : "▶"; }
+    playBtn.addEventListener("click", () => {
+      STATE.playing = !STATE.playing;
+      if (STATE.playing && STATE.index === phasesOf(STATE.visit).length - 1 && STATE.intraFrac >= 0.999) {
+        applyPhase(0); // restart from end
+      }
+      updatePlayBtn();
+    });
+    document.getElementById("pace").addEventListener("input", (e) => { STATE.pace = parseFloat(e.target.value); });
+
+    // keyboard
+    window.addEventListener("keydown", (e) => {
+      if (!document.body.classList.contains("entered")) return;
+      if (e.key === "ArrowRight") { STATE.playing = false; updatePlayBtn(); applyPhase(STATE.index + 1); }
+      else if (e.key === "ArrowLeft") { STATE.playing = false; updatePlayBtn(); applyPhase(STATE.index - 1); }
+      else if (e.key === " ") { e.preventDefault(); playBtn.click(); }
+    });
+
+    /* ----------------------------------------------------------------------
+       CAMERA PRESETS
+    ---------------------------------------------------------------------- */
+    const CAM = {
+      back:    { pos: [0, 3.4, 9.6], tgt: [0, 1.0, 1.0] },
+      teacher: { pos: [-1.0, 2.5, FRONT_Z + 1.0], tgt: [0, 0.85, 2.6] },
+      top:     { pos: [0.2, 14.0, 1.2], tgt: [0, 0, 1.0] }
+    };
+    function gotoCam(key) {
+      const c = CAM[key]; if (!c) return;
+      document.querySelectorAll(".cam-btn").forEach(b => b.classList.toggle("active", b.dataset.cam === key));
+      const goalPos = new THREE.Vector3(...c.pos), goalTgt = new THREE.Vector3(...c.tgt);
+      if (reduceMotion) {
+        camera.position.copy(goalPos); controls.target.copy(goalTgt); controls.update(); R.camGoal = null;
+      } else {
+        R.camGoal = { pos: goalPos, tgt: goalTgt };   // eased in the animation loop
+      }
+    }
+    document.querySelectorAll(".cam-btn").forEach(b => b.addEventListener("click", () => gotoCam(b.dataset.cam)));
+    // dragging cancels an in-progress preset move so the user keeps control
+    controls.addEventListener("start", () => { R.camGoal = null; });
+
+    /* ----------------------------------------------------------------------
+       VISIT TOGGLE (v2 wired in Phase 2)
+    ---------------------------------------------------------------------- */
+    document.querySelectorAll(".visit-btn").forEach(b => b.addEventListener("click", () => {
+      if (b.disabled) return;
+      const v = b.dataset.visit;
+      if (v === STATE.visit) return;
+      STATE.visit = v;
+      document.querySelectorAll(".visit-btn").forEach(x => x.classList.toggle("active", x.dataset.visit === v));
+      setBoardSheets(v === "v2" ? 5 : 2);
+      buildTimeline(); applyPhase(0);
+    }));
+
+    /* ----------------------------------------------------------------------
+       ANIMATION LOOP
+    ---------------------------------------------------------------------- */
+    const clock = new THREE.Clock();
+    function animate() {
+      requestAnimationFrame(animate);
+      const dt = Math.min(clock.getDelta(), 0.05);
+      const t = clock.elapsedTime;
+
+      // pendulum swing
+      if (R.pendulumPivot) {
+        const amp = R.pendulumSwing ? 0.5 : 0.0;
+        const tgt = amp * Math.sin(t * 1.5);
+        R.pendulumPivot.rotation.z += (tgt - R.pendulumPivot.rotation.z) * (reduceMotion ? 1 : 0.12);
+      }
+
+      // students subtle activity bob
+      if (R.students) {
+        R.students.forEach((f, i) => {
+          const target = (R.studentsActive && !reduceMotion) ? Math.sin(t * 2 + i) * 0.012 : 0;
+          f.position.y += ((f.userData.baseY + target) - f.position.y) * 0.1;
+        });
+      }
+
+      // teacher movement
+      if (R.teacher) {
+        if (R.teacherCirculating && R.waypoints && !reduceMotion) {
+          const seg = (t * 0.18) % R.waypoints.length;
+          const i0 = Math.floor(seg), i1 = (i0 + 1) % R.waypoints.length;
+          const f = seg - i0;
+          const a = R.waypoints[i0], b = R.waypoints[i1];
+          R.teacher.position.x += (THREE.MathUtils.lerp(a.x, b.x, f) - R.teacher.position.x) * 0.08;
+          R.teacher.position.z += (THREE.MathUtils.lerp(a.z, b.z, f) - R.teacher.position.z) * 0.08;
+          R.teacher.position.y = 0.52;
+        } else if (R.teacherFront) {
+          const k = reduceMotion ? 1 : 0.08;
+          R.teacher.position.x += (R.teacherFront.x - R.teacher.position.x) * k;
+          R.teacher.position.y += (R.teacherFront.y - R.teacher.position.y) * k;
+          R.teacher.position.z += (R.teacherFront.z - R.teacher.position.z) * k;
+          R.teacher.rotation.y += (0 - R.teacher.rotation.y) * k;
+        }
+      }
+
+      // camera preset easing
+      if (R.camGoal) {
+        const k = reduceMotion ? 1 : 0.075;
+        camera.position.lerp(R.camGoal.pos, k);
+        controls.target.lerp(R.camGoal.tgt, k);
+        if (camera.position.distanceTo(R.camGoal.pos) < 0.04 && controls.target.distanceTo(R.camGoal.tgt) < 0.04) {
+          camera.position.copy(R.camGoal.pos); controls.target.copy(R.camGoal.tgt); R.camGoal = null;
+        }
+      }
+
+      // live graph progress
+      if (R.projMode === "liveGraph" && (R.graphProgress ?? 0) < 1) {
+        const speed = STATE.playing ? 0.20 : 0.10;
+        R.graphProgress = Math.min(1, (R.graphProgress ?? 0) + dt * speed * STATE.pace);
+        drawProjector();
+      }
+
+      // auto-play advance
+      if (STATE.playing && !dragging) {
+        const p = curPhase();
+        const dwell = Math.min(9, Math.max(4.5, p.durationMin)) / STATE.pace;
+        STATE.playT += dt;
+        STATE.intraFrac = Math.min(1, STATE.playT / dwell);
+        renderTimeline();
+        if (STATE.playT >= dwell) {
+          if (STATE.index < phasesOf(STATE.visit).length - 1) applyPhase(STATE.index + 1);
+          else { STATE.playing = false; STATE.intraFrac = 1; updatePlayBtn(); renderTimeline(); }
+        }
+      }
+
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    /* ----------------------------------------------------------------------
+       RESIZE
+    ---------------------------------------------------------------------- */
+    function resize() {
+      const w = window.innerWidth, h = window.innerHeight;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h; camera.updateProjectionMatrix();
+    }
+    window.addEventListener("resize", resize);
+
+    /* ----------------------------------------------------------------------
+       INTRO WIRING + BOOT
+    ---------------------------------------------------------------------- */
+    function fillIntro() {
+      document.getElementById("intro-course").textContent = D.meta.subtitle;
+      document.getElementById("intro-q").innerHTML = D.meta.question
+        .replace("analog", '<em>analog</em>')
+        .replace("digital", '<span class="dg">digital</span>');
+      document.getElementById("intro-subs").innerHTML = D.meta.subQuestions.map(q => `<li>${escapeJP(q)}</li>`).join("");
+      document.getElementById("intro-metaline").innerHTML =
+        `<b>${escapeJP(D.meta.teacher)}</b> &nbsp;·&nbsp; ${escapeJP(D.meta.place)}`;
+    }
+
+    function enter() {
+      document.getElementById("intro").classList.add("gone");
+      document.body.classList.add("entered");
+      gotoCam("back");
+      if (!STATE.playing && !reduceMotion) { /* leave paused; user controls */ }
+    }
+
+    async function boot() {
+      fillIntro();
+      buildLab();
+      buildActors();
+      setBoardSheets(2);          // Visit 1 baseline
+      buildTimeline();
+      // ensure CJK font is ready before first projector draw
+      try { await document.fonts.load("700 25px 'Noto Sans JP'"); await document.fonts.ready; } catch (e) {}
+      applyPhase(0, false);
+      resize();
+      gotoCam("back");
+      animate();
+
+      const btn = document.getElementById("enter-btn");
+      btn.disabled = false; btn.textContent = "Enter the science lab →";
+      btn.addEventListener("click", enter);
+    }
+
+    boot();
+</script>
+</body>
+
+</html>
