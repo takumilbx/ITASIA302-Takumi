@@ -677,18 +677,22 @@
       // ---- right wall: windows + counter/sink + cabinets
       const winWall = new THREE.Group();
       const glassMat = new THREE.MeshBasicMaterial({ color: PAL.glass });
-      const mulMat = mat(0xe7eaef, { metal: 0.2, rough: 0.6 });
+      const mulMat = mat(0xeef0f3, { metal: 0.15, rough: 0.6 });
       for (let i = -1; i <= 1; i++) {
-        const pane = new THREE.Mesh(new THREE.PlaneGeometry(3.4, 1.5), glassMat);
+        const pane = new THREE.Mesh(new THREE.PlaneGeometry(3.5, 1.55), glassMat);
         pane.position.set(0, 2.0, i * 3.7); pane.rotation.y = -Math.PI / 2; winWall.add(pane);
-        const fr = box(0.07, 1.62, 3.62, mat(PAL.metal, { metal: 0.35, rough: 0.5 }), 0.03, 2.0, i * 3.7);
-        fr.rotation.y = -Math.PI / 2; winWall.add(fr);
-        const hb = box(0.05, 0.05, 3.4, mulMat, 0.04, 2.0, i * 3.7); hb.rotation.y = -Math.PI / 2; winWall.add(hb);   // horizontal mullion
-        for (let v = -1; v <= 1; v++) {                                                                              // 3 vertical mullions
-          const vb = box(0.05, 1.5, 0.05, mulMat, 0.04, 2.0, i * 3.7 + v * 1.05); vb.rotation.y = -Math.PI / 2; winWall.add(vb);
-        }
+        // window grid (border + dividers) on the interior side, clearly in front of the glass (no solid frame slab)
+        const X = -0.05;
+        [-0.78, 0, 0.78].forEach(yy => {
+          const hb = box(0.06, 0.06, 3.56, mulMat, X, 2.0 + yy, i * 3.7); hb.rotation.y = -Math.PI / 2; winWall.add(hb);
+        });
+        [-1.74, -0.87, 0, 0.87, 1.74].forEach(zz => {
+          const vb = box(0.06, 1.6, 0.06, mulMat, X, 2.0, i * 3.7 + zz); vb.rotation.y = -Math.PI / 2; winWall.add(vb);
+        });
       }
-      winWall.add(box(0.18, 0.06, ROOM.d - 1.0, mat(PAL.counter, { rough: 0.6 }), -0.06, 1.22, 0));   // window sill
+      winWall.add(box(0.2, 0.06, ROOM.d - 1.0, mat(PAL.counter, { rough: 0.6 }), -0.08, 1.2, 0));   // window sill
+      winWall.add(box(0.08, ROOM.h - 2.75, ROOM.d, mat(PAL.wallCream), 0.06, (2.75 + ROOM.h) / 2, 0));  // wall above the window band
+      winWall.add(box(0.08, 1.15, ROOM.d, mat(PAL.woodLow), 0.06, 0.575, 0));                            // wainscot below (behind counter)
       // counter + cabinets under windows
       winWall.add(box(0.7, 0.9, ROOM.d - 1.2, mat(PAL.counter), -0.35, 0.45, 0));
       winWall.add(box(0.74, 0.06, ROOM.d - 1.2, mat(PAL.counter, { rough: 0.5 }), -0.35, 0.92, 0));
