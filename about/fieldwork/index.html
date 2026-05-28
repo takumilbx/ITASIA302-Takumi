@@ -498,6 +498,7 @@
     import * as THREE from "three";
     import { OrbitControls } from "three/addons/controls/OrbitControls.js";
     import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+    import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 
     const D = window.FW_DATA;
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -595,6 +596,11 @@
       const me = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m);
       me.position.set(x, y, z); me.castShadow = true; me.receiveShadow = true; return me;
     }
+    // rounded box: soft bevelled edges instead of raw boxes (kills the "blocky" look)
+    function rbox(w, h, d, r, m, x = 0, y = 0, z = 0) {
+      const me = new THREE.Mesh(new RoundedBoxGeometry(w, h, d, 4, r), m);
+      me.position.set(x, y, z); me.castShadow = true; me.receiveShadow = true; return me;
+    }
 
     /* ----------------------------------------------------------------------
        buildLab()  - static shell + furniture, returns nothing (registers in R)
@@ -635,11 +641,15 @@
 
       // ---- blackboard (front-left), dual panels in light-wood frame
       const bb = new THREE.Group();
-      bb.add(box(4.6, 1.7, 0.12, mat(PAL.boardFrame), 0, 0, 0));           // frame
-      const boardMat = mat(PAL.board, { rough: 0.95 });
-      bb.add(box(4.3, 0.72, 0.04, boardMat, 0, 0.38, 0.07));               // upper panel
-      bb.add(box(4.3, 0.72, 0.04, boardMat, 0, -0.38, 0.07));              // lower panel
-      bb.position.set(-1.7, 1.75, FRONT_Z + 0.07);
+      bb.add(rbox(4.62, 1.74, 0.14, 0.05, mat(PAL.boardFrame, { rough: 0.6 }), 0, 0, 0));   // light-wood frame
+      const boardMat = mat(PAL.board, { rough: 0.88 });
+      bb.add(box(4.32, 0.74, 0.04, boardMat, 0, 0.39, 0.08));              // upper panel
+      bb.add(box(4.32, 0.74, 0.04, boardMat, 0, -0.39, 0.08));             // lower panel
+      bb.add(box(4.32, 0.015, 0.02, mat(0x141a17), 0, 0.0, 0.085));        // sliding-panel rail
+      bb.add(rbox(4.5, 0.07, 0.13, 0.025, mat(PAL.boardFrame, { rough: 0.6 }), 0, -0.9, 0.13));  // chalk tray
+      bb.add(box(0.42, 0.018, 0.025, mat(0xf2efe6), -1.3, -0.86, 0.2));    // chalk
+      bb.add(rbox(0.2, 0.06, 0.06, 0.02, mat(0xcc4436, { rough: 0.7 }), 1.0, -0.85, 0.2));  // eraser
+      bb.position.set(-1.7, 1.78, FRONT_Z + 0.08);
       g.add(bb);
       R.blackboard = bb;
 
@@ -652,7 +662,7 @@
       // ---- projector screen (front-right of teacher table)
       const screenW = 3.0, screenH = 1.9;
       const projGroup = new THREE.Group();
-      projGroup.add(box(screenW + 0.16, screenH + 0.16, 0.08, mat(PAL.frameDark, { metal: 0.4, rough: 0.5 })));
+      projGroup.add(rbox(screenW + 0.18, screenH + 0.18, 0.1, 0.03, mat(PAL.frameDark, { metal: 0.5, rough: 0.4 })));
       R.projCanvas = document.createElement("canvas");
       R.projCanvas.width = 768; R.projCanvas.height = 480;
       R.projTex = new THREE.CanvasTexture(R.projCanvas);
@@ -667,12 +677,18 @@
       // ---- right wall: windows + counter/sink + cabinets
       const winWall = new THREE.Group();
       const glassMat = new THREE.MeshBasicMaterial({ color: PAL.glass });
+      const mulMat = mat(0xe7eaef, { metal: 0.2, rough: 0.6 });
       for (let i = -1; i <= 1; i++) {
         const pane = new THREE.Mesh(new THREE.PlaneGeometry(3.4, 1.5), glassMat);
         pane.position.set(0, 2.0, i * 3.7); pane.rotation.y = -Math.PI / 2; winWall.add(pane);
-        const fr = box(0.06, 1.6, 3.6, mat(PAL.metal, { metal: 0.5, rough: 0.5 }), 0.02, 2.0, i * 3.7);
+        const fr = box(0.07, 1.62, 3.62, mat(PAL.metal, { metal: 0.35, rough: 0.5 }), 0.03, 2.0, i * 3.7);
         fr.rotation.y = -Math.PI / 2; winWall.add(fr);
+        const hb = box(0.05, 0.05, 3.4, mulMat, 0.04, 2.0, i * 3.7); hb.rotation.y = -Math.PI / 2; winWall.add(hb);   // horizontal mullion
+        for (let v = -1; v <= 1; v++) {                                                                              // 3 vertical mullions
+          const vb = box(0.05, 1.5, 0.05, mulMat, 0.04, 2.0, i * 3.7 + v * 1.05); vb.rotation.y = -Math.PI / 2; winWall.add(vb);
+        }
       }
+      winWall.add(box(0.18, 0.06, ROOM.d - 1.0, mat(PAL.counter, { rough: 0.6 }), -0.06, 1.22, 0));   // window sill
       // counter + cabinets under windows
       winWall.add(box(0.7, 0.9, ROOM.d - 1.2, mat(PAL.counter), -0.35, 0.45, 0));
       winWall.add(box(0.74, 0.06, ROOM.d - 1.2, mat(PAL.counter, { rough: 0.5 }), -0.35, 0.92, 0));
@@ -681,9 +697,20 @@
       winWall.position.set(RIGHT_X, 0, 0);
       g.add(winWall);
 
+      // ---- wall clock on the front wall, left of the board (authenticity touch)
+      const clock = new THREE.Group();
+      const face = new THREE.Mesh(new THREE.CylinderGeometry(0.27, 0.27, 0.05, 28), mat(0xf5f2ec, { rough: 0.5 }));
+      face.rotation.x = Math.PI / 2; clock.add(face);
+      clock.add(new THREE.Mesh(new THREE.TorusGeometry(0.27, 0.022, 8, 28), mat(0x2a2f38, { metal: 0.3, rough: 0.4 })));
+      const hourG = new THREE.Group(); hourG.add(box(0.018, 0.13, 0.012, mat(0x1a1d24), 0, 0.05, 0.035)); hourG.rotation.z = 0.7; clock.add(hourG);
+      const minG = new THREE.Group(); minG.add(box(0.012, 0.19, 0.012, mat(0x1a1d24), 0, 0.07, 0.035)); minG.rotation.z = -1.15; clock.add(minG);
+      clock.position.set(-4.7, 2.55, FRONT_Z + 0.14);
+      g.add(clock);
+
       // ---- teacher demo table (front, by the board) + pendulum
-      g.add(box(2.4, 0.72, 0.74, mat(PAL.tableBase, { rough: 0.7 }), -1.0, 0.37, FRONT_Z + 1.9));
-      R.demoTable = box(2.6, 0.08, 0.9, mat(PAL.tableTop, { rough: 0.22, metal: 0.0, envMapIntensity: 1.3 }), -1.0, 0.75, FRONT_Z + 1.9);
+      g.add(rbox(2.4, 0.72, 0.74, 0.03, mat(PAL.tableBase, { rough: 0.7 }), -1.0, 0.37, FRONT_Z + 1.9));
+      g.add(box(2.5, 0.05, 0.78, mat(PAL.tableBase, { rough: 0.7 }), -1.0, 0.715, FRONT_Z + 1.9));   // apron
+      R.demoTable = rbox(2.6, 0.07, 0.9, 0.02, mat(PAL.tableTop, { rough: 0.22, metal: 0.0, envMapIntensity: 1.3 }), -1.0, 0.75, FRONT_Z + 1.9);
       g.add(R.demoTable);
 
       buildPendulum(g);
@@ -792,18 +819,29 @@
       TABLES.forEach((t, ti) => {
         // cabinet base (cream), inset + lifted off the floor; overhanging black laminate top.
         // Sizes/offsets chosen so no faces are coplanar (avoids z-fighting).
-        studentsGroup.add(box(0.82, 0.72, BENCH.d - 0.08, mat(PAL.tableBase, { rough: 0.7 }), t.x, 0.37, t.z));
-        studentsGroup.add(box(BENCH.w, 0.07, BENCH.d, mat(PAL.tableTop, { rough: 0.22, metal: 0.0, envMapIntensity: 1.3 }), t.x, 0.75, t.z));
+        studentsGroup.add(rbox(0.82, 0.72, BENCH.d - 0.08, 0.03, mat(PAL.tableBase, { rough: 0.7 }), t.x, 0.37, t.z));
+        studentsGroup.add(box(0.86, 0.05, BENCH.d - 0.04, mat(PAL.tableBase, { rough: 0.7 }), t.x, 0.715, t.z));   // apron
+        studentsGroup.add(rbox(BENCH.w, 0.06, BENCH.d, 0.02, mat(PAL.tableTop, { rough: 0.22, metal: 0.0, envMapIntensity: 1.3 }), t.x, 0.75, t.z));
         const sideX = [-0.7, 0.7];                      // a seat each side of the bench
         const seatZ = [-1.25, -0.45, 0.45, 1.25];       // 4 seats down the length
         seatZ.forEach((cz, zi) => {
           sideX.forEach((cx, xi) => {
             const sx = t.x + cx, sz = t.z + cz;
             // stool
-            const stool = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.18, 0.07, 24), mat(PAL.stool, { rough: 0.38, envMapIntensity: 1.1 }));
-            stool.position.set(sx, 0.44, sz); stool.castShadow = true; studentsGroup.add(stool);
-            const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.42, 8), mat(PAL.metal, { metal: 0.5, rough: 0.5 }));
-            leg.position.set(sx, 0.22, sz); studentsGroup.add(leg);
+            const stoolG = new THREE.Group();
+            const seat = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.155, 0.05, 24), mat(PAL.stool, { rough: 0.4, envMapIntensity: 1.1 }));
+            seat.position.y = 0.45; seat.castShadow = true; stoolG.add(seat);
+            const stoolLegMat = mat(PAL.metal, { metal: 0.6, rough: 0.4 });
+            for (let a = 0; a < 4; a++) {
+              const ang = a * Math.PI / 2 + Math.PI / 4;
+              const slg = new THREE.Mesh(new THREE.CylinderGeometry(0.013, 0.013, 0.47, 8), stoolLegMat);
+              slg.position.set(Math.cos(ang) * 0.13, 0.22, Math.sin(ang) * 0.13);
+              slg.rotation.set(Math.sin(ang) * 0.13, 0, -Math.cos(ang) * 0.13);
+              slg.castShadow = true; stoolG.add(slg);
+            }
+            const sring = new THREE.Mesh(new THREE.TorusGeometry(0.125, 0.008, 6, 20), stoolLegMat);
+            sring.rotation.x = Math.PI / 2; sring.position.y = 0.16; stoolG.add(sring);
+            stoolG.position.set(sx, 0, sz); studentsGroup.add(stoolG);
             // 2 groups of 4 per bench: front half vs back half
             const groupId = ti * 2 + (cz > 0 ? 1 : 0);
             const isEntry = (xi === 0 && (zi === 0 || zi === 2)); // one data-entry student per group
