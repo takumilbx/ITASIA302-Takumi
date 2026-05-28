@@ -695,24 +695,33 @@
     /* ----------------------------------------------------------------------
        Pendulum on the demo table (gentle swing during experiment phases)
     ---------------------------------------------------------------------- */
-    function buildPendulum(g) {
+    // Factory: a pendulum stand + swinging pivot at any scale
+    function makePendulum(scale = 1) {
       const stand = new THREE.Group();
       const postMat = mat(0x8a6a44, { rough: 0.7 });
-      stand.add(box(0.05, 1.0, 0.05, postMat, -0.5, 0.5, 0));
-      stand.add(box(0.05, 1.0, 0.05, postMat, 0.5, 0.5, 0));
-      stand.add(box(1.1, 0.05, 0.05, postMat, 0, 1.0, 0));
-      // swinging arm pivot
+      const h = 1.0 * scale, half = 0.5 * scale;
+      stand.add(box(0.05 * scale, h, 0.05 * scale, postMat, -half, h / 2, 0));
+      stand.add(box(0.05 * scale, h, 0.05 * scale, postMat, half, h / 2, 0));
+      stand.add(box(1.1 * scale, 0.05 * scale, 0.05 * scale, postMat, 0, h, 0));
       const pivot = new THREE.Group();
-      pivot.position.set(0, 1.0, 0);
-      const string = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.006, 0.66, 6), mat(0x3a3a3a));
-      string.position.y = -0.33; pivot.add(string);
-      const bob = new THREE.Mesh(new THREE.SphereGeometry(0.07, 18, 18), mat(0xb24a3a, { metal: 0.3, rough: 0.4 }));
-      bob.position.y = -0.66; bob.castShadow = true; pivot.add(bob);
+      pivot.position.set(0, h, 0);
+      const strLen = 0.66 * scale;
+      const string = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.006, strLen, 6), mat(0x3a3a3a));
+      string.position.y = -strLen / 2; pivot.add(string);
+      const bob = new THREE.Mesh(new THREE.SphereGeometry(0.07 * scale, 18, 18), mat(0xb24a3a, { metal: 0.3, rough: 0.4 }));
+      bob.position.y = -strLen; bob.castShadow = true; pivot.add(bob);
       stand.add(pivot);
-      stand.position.set(-1.0, 0.78, FRONT_Z + 1.9);
-      g.add(stand);
-      R.pendulum = stand; R.pendulumPivot = pivot;
       analogObjs.push(string, bob);
+      return { stand, pivot };
+    }
+
+    function buildPendulum(g) {
+      R.allPivots = [];
+      const demo = makePendulum(1);          // teacher demonstration pendulum
+      demo.stand.position.set(-1.0, 0.79, FRONT_Z + 1.9);
+      g.add(demo.stand);
+      R.pendulum = demo.stand; R.pendulumPivot = demo.pivot;
+      R.allPivots.push(demo.pivot);
     }
 
     /* ----------------------------------------------------------------------
@@ -809,6 +818,13 @@
             R.students.push(fig);
             if (isEntry) R.dataEntry.push(fig);
           });
+        });
+        // a pendulum apparatus for each of the bench's two groups
+        [-0.85, 0.85].forEach(dz => {
+          const gp = makePendulum(0.55);
+          gp.stand.position.set(t.x, 0.785, t.z + dz);
+          studentsGroup.add(gp.stand);
+          R.allPivots.push(gp.pivot);
         });
       });
       scene.add(studentsGroup);
@@ -1344,11 +1360,14 @@
       const dt = Math.min(clock.getDelta(), 0.05);
       const t = clock.elapsedTime;
 
-      // pendulum swing
-      if (R.pendulumPivot) {
+      // pendulum swing (teacher demo + every group bench), de-synced
+      if (R.allPivots) {
         const amp = R.pendulumSwing ? 0.5 : 0.0;
-        const tgt = amp * Math.sin(t * 1.5);
-        R.pendulumPivot.rotation.z += (tgt - R.pendulumPivot.rotation.z) * (reduceMotion ? 1 : 0.12);
+        R.allPivots.forEach((piv, i) => {
+          const speed = 1.5 + (i % 3) * 0.2;          // varied period echoes length to period
+          const tgt = amp * Math.sin(t * speed + i * 0.8);
+          piv.rotation.z += (tgt - piv.rotation.z) * (reduceMotion ? 1 : 0.12);
+        });
       }
 
       // Newton's-Laws drop (Visit 2, Phase 7): two objects fall together, loop
@@ -1383,11 +1402,15 @@
           R.teacher.position.z += (THREE.MathUtils.lerp(a.z, b.z, f) - R.teacher.position.z) * 0.08;
           R.teacher.position.y = 0;
         } else if (R.teacherFront) {
-          const k = reduceMotion ? 1 : 0.08;
-          R.teacher.position.x += (R.teacherFront.x - R.teacher.position.x) * k;
-          R.teacher.position.y += (R.teacherFront.y - R.teacher.position.y) * k;
-          R.teacher.position.z += (R.teacherFront.z - R.teacher.position.z) * k;
-          R.teacher.rotation.y += (0 - R.teacher.rotation.y) * k;
+          // not frozen while explaining: gentle pacing + turning to address the class
+          const k = 0.06;
+          const px = reduceMotion ? 0 : Math.sin(t * 0.55) * 0.5;
+          const pz = reduceMotion ? 0 : Math.sin(t * 0.4 + 1) * 0.18;
+          R.teacher.position.x += ((R.teacherFront.x + px) - R.teacher.position.x) * k;
+          R.teacher.position.z += ((R.teacherFront.z + pz) - R.teacher.position.z) * k;
+          R.teacher.position.y = R.teacherFront.y + (reduceMotion ? 0 : Math.abs(Math.sin(t * 1.3)) * 0.02);
+          const targetRot = reduceMotion ? 0 : Math.sin(t * 0.5) * 0.32;
+          R.teacher.rotation.y += (targetRot - R.teacher.rotation.y) * 0.06;
         }
       }
 
