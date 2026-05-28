@@ -216,12 +216,200 @@ window.FW_DATA = {
           sceneFlags: { notebookPaste: true }
         }
       ]
+    },
+
+    v2: {
+      id: "v2",
+      label: "Visit 2",
+      date: "Monday, 25 May 2026",
+      timeRange: "9:30–10:15",
+      phases: [
+        {
+          id: "v2p1",
+          n: 1,
+          title: "Setup & Review-Sheet Display",
+          titleJa: "準備・復習シートの掲示",
+          startTime: "9:30",
+          endTime: "9:35",
+          durationMin: 5,
+          description:
+            "Set up the Mega (large wall sheet) + Mini (individual copies) review system, both showing Visit 1's reflection prompts.",
+          analogTools: ["Mega sheet", "Mini sheets", "Blackboard"],
+          digitalTools: [],
+          teacherPosition: "front",
+          projectorState: "off",
+          emphasis: "analog",
+          spradley: {
+            do: "Post the Mega (wall) + Mini (per-student) review sheets carrying Visit 1's reflection prompts.",
+            makeUse: "Mega wall sheet; Mini copies; blackboard.",
+            say: "Orienting students to the posted prompts.",
+            feel: "Settled, routine — familiar territory."
+          },
+          sceneFlags: { megaMini: true }
+        },
+        {
+          id: "v2p2",
+          n: 2,
+          title: "Recap of Previous Learning",
+          titleJa: "前時の復習",
+          startTime: "9:35",
+          endTime: "9:40",
+          durationMin: 5,
+          description:
+            "Blackboard-based recap; students reference the posted sheets.",
+          analogTools: ["Blackboard", "Reference sheets"],
+          digitalTools: [],
+          teacherPosition: "front",
+          projectorState: "off",
+          emphasis: "analog",
+          spradley: {
+            do: "Recap prior learning at the blackboard; students consult the posted sheets.",
+            makeUse: "Blackboard; posted reference sheets.",
+            say: "Reviewing last time's finding together.",
+            feel: "Recalling, reconnecting."
+          },
+          sceneFlags: {}
+        },
+        {
+          id: "v2p3",
+          n: 3,
+          title: "Tool Demonstration & Reflection Recap",
+          titleJa: "ツールの実演・振り返りの再確認",
+          startTime: "9:40",
+          endTime: "9:50",
+          durationMin: 10,
+          description:
+            "Teacher demos tools, reviews Visit 1 reflections, reinforces the 3-part scaffold. Students reference prior prompts unprompted (internalization evident).",
+          analogTools: ["Paper scaffold"],
+          digitalTools: ["Google Docs", "Projector"],
+          teacherPosition: "front",
+          projectorState: "docScaffold",
+          emphasis: "digital",
+          spradley: {
+            do: "Demo tools, review Visit 1 reflections, reinforce the scaffold.",
+            makeUse: "Projected Google Docs; paper scaffold.",
+            say: "Re-explaining よそく / 結果 / わかった.",
+            feel: "Familiar — students recall the routine on their own."
+          },
+          sceneFlags: {}
+        },
+        {
+          id: "v2p4",
+          n: 4,
+          title: "Instruction for a New Experimental Variable",
+          titleJa: "新しい変数の指示",
+          startTime: "9:50",
+          endTime: "10:00",
+          durationMin: 10,
+          description:
+            "New question: how does weight affect speed? Students choose their own variable (weight OR length) — agency. On-screen colour changes cue note-taking.",
+          analogTools: ["Blackboard"],
+          digitalTools: ["Projector"],
+          teacherPosition: "front",
+          projectorState: "off",
+          emphasis: "neutral",
+          spradley: {
+            do: "Pose the new question; students choose their own variable to test.",
+            makeUse: "Projector (on-screen colour cue); blackboard.",
+            say: "“Weight or length — you choose.”",
+            feel: "Agency; deciding their own inquiry."
+          },
+          sceneFlags: { variableChoice: true }
+        },
+        {
+          id: "v2p5",
+          n: 5,
+          title: "Hands-on Experiment",
+          titleJa: "実験",
+          startTime: "10:00",
+          endTime: "10:10",
+          durationMin: 10,
+          description:
+            "Chosen experiment runs; a verbal wrap-up reminder lands at the 8-minute mark. Teacher circulates.",
+          analogTools: ["Pendulum", "Paper worksheets"],
+          digitalTools: [],
+          teacherPosition: "circulating",
+          projectorState: "off",
+          emphasis: "analog",
+          spradley: {
+            do: "Run the chosen experiment (weight or length variant).",
+            makeUse: "Pendulum apparatus; worksheets.",
+            say: "Group talk; teacher circulates with brief advice.",
+            feel: "Busy, self-directed."
+          },
+          sceneFlags: { studentsActive: true, pendulumSwing: true, weightVariant: true }
+        },
+        {
+          id: "v2p6",
+          n: 6,
+          title: "Cleanup & Simultaneous Data Entry",
+          titleJa: "片付け・同時データ入力",
+          startTime: "10:10",
+          endTime: "10:13",
+          durationMin: 3,
+          description:
+            "Most students tidy up while the designated data-entry student enters measurements; the graph updates in real time. Parallel execution shows internalized roles.",
+          analogTools: [],
+          digitalTools: ["Google Sheets", "学びポケット", "Projector"],
+          teacherPosition: "front",
+          projectorState: "liveGraph",
+          emphasis: "digital",
+          spradley: {
+            do: "Tidy up while one student enters measurements; graph updates live.",
+            makeUse: "学びポケット → shared Google Sheet; projector.",
+            say: "Little instruction needed — roles run in parallel.",
+            feel: "Internalized routine; runs itself."
+          },
+          sceneFlags: { dataEntryHighlight: true }
+        },
+        {
+          id: "v2p7",
+          n: 7,
+          title: "Reflection, Closing & Forward Link",
+          titleJa: "振り返り・まとめ・次への接続",
+          startTime: "10:13",
+          endTime: "10:15",
+          durationMin: 5,
+          description:
+            "Students attempt the scaffold independently first (2–3 min) before the teacher models — a shift from Visit 1. Closing links to playground swings (ブランコ) and previews Newton's Laws: the teacher drops two objects and asks students to predict.",
+          analogTools: ["Paper scaffold", "Notebooks"],
+          digitalTools: ["Google Docs", "Projector"],
+          teacherPosition: "front",
+          projectorState: "docScaffold",
+          emphasis: "digital",
+          spradley: {
+            do: "Students self-attempt the scaffold first, then the teacher models; close with a Newton's-Laws drop demo.",
+            makeUse: "Projected Google Doc (black/red); two dropped objects for the prediction cue.",
+            say: "“Predict what happens when I drop these.” · links to swings (ブランコ).",
+            feel: "Independent, forward-looking."
+          },
+          sceneFlags: { writing: true, newtonPreview: true }
+        }
+      ]
     }
-    // v2 (Visit 2) — added in build Phase 2.
   },
 
-  // Cross-visit comparison content — populated in build Phase 2 (spec §8).
-  crossVisit: { sameAcross: [], changed: [] },
+  // Cross-visit comparison content (spec §8).
+  crossVisit: {
+    sameAcross: [
+      "Physical setting, actors, and the group-role structure",
+      "The teacher's deliberate circulation (≈10 s–1 min per group)",
+      "Google Sheets real-time shared visualization",
+      "Google Docs colour-coded (black / red) reflection modeling",
+      "The よそく・結果・わかった reflection scaffold",
+      "Apple Watch timing; a calm-but-energetic demeanor",
+      "Students' comfort with the digital tools"
+    ],
+    changed: [
+      { title: "Reflection scaffold timing", v1: "Teacher models immediately", v2: "Students attempt independently first, then the teacher models", note: "intentional progression toward autonomy" },
+      { title: "Student familiarity", v1: "Scaffold introduced for the first time", v2: "Students reference the scaffold unprompted (internalization)" },
+      { title: "Experimental agency", v1: "Fixed variable (length)", v2: "Students choose their variable (weight vs. length)" },
+      { title: "Peer norm enforcement", v1: "—", v2: "Off-task student redirected by peers, no teacher involvement" },
+      { title: "Forward linking", v1: "—", v2: "Closes with a Newton's-Laws preview (cross-unit awareness)" },
+      { title: "Observer friction", v1: "Re-introductions; class settling in", v2: "Lower — no re-introductions, sharper focus" },
+      { title: "Blackboard", v1: "Fewer reference sheets", v2: "More accumulated reference sheets" }
+    ]
+  },
 
   /* Interview hotspot layer — added in build Phase 3 (spec §3.7).
      Question + answer text lives in findings.js (window.FW_FINDINGS) so it can
