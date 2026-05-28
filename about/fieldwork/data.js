@@ -1,5 +1,5 @@
 /* =============================================================================
-   FIELDWORK DATA  —  window.FW_DATA
+   FIELDWORK DATA  -  window.FW_DATA
    Interactive 3D Fieldwork Presentation (ITASIA312 classroom study)
 
    Loaded as a CLASSIC script (not a module) so the page also opens by
@@ -7,7 +7,7 @@
    this content stays editable without touching the scene code.
 
    Content is drawn from the field-work synthesis (Visit 1: 21 May 2026;
-   Visit 2: 25 May 2026). Do NOT invent pedagogical claims — source-flagged
+   Visit 2: 25 May 2026). Do NOT invent pedagogical claims - source-flagged
    uncertainties are presented as open questions, not facts.
 
    Tool vocabulary used in analogTools[] / digitalTools[]:
@@ -34,7 +34,7 @@ window.FW_DATA = {
       "analog and digital tools in her science classroom, and what " +
       "pedagogical reasoning drives those design decisions?",
     subQuestions: [
-      "When — and why — does she reach for paper rather than the screen, and the reverse?",
+      "When - and why - does she reach for paper rather than the screen, and the reverse?",
       "How are analog techniques (e.g. blackboard chalk color-coding) translated into digital tools (the black-prompt / red-answer Google Doc)?",
       "How does the analog ⇆ digital balance shift as students grow more familiar (Visit 1 → Visit 2)?",
       "What part does each tool play in making student thinking visible?"
@@ -53,7 +53,7 @@ window.FW_DATA = {
       id: "v1",
       label: "Visit 1",
       date: "Thursday, 21 May 2026",
-      timeRange: "9:30–10:05",
+      timeRange: "9:30-10:05",
       phases: [
         {
           id: "v1p1",
@@ -74,7 +74,7 @@ window.FW_DATA = {
             do: "Settle in; observers introduce themselves to the class.",
             makeUse: "Stools, demonstration table.",
             say: "Greetings and brief self-introductions.",
-            feel: "Curious and relaxed — not anxious."
+            feel: "Curious and relaxed - not anxious."
           },
           sceneFlags: {}
         },
@@ -119,7 +119,7 @@ window.FW_DATA = {
           spradley: {
             do: "Run 3 timed pendulum trials per group; one student enters each result.",
             makeUse: "Pendulum apparatus; 学びポケット → shared Google Sheet; projector; calculators.",
-            say: "“This isn't math” — round to 1 decimal; enter half-width (半角).",
+            say: "“This isn't math” - round to 1 decimal; enter half-width (半角).",
             feel: "Busy and collaborative; the teacher moves group to group to advise."
           },
           sceneFlags: { studentsActive: true, pendulumSwing: true, dataEntryHighlight: true }
@@ -222,7 +222,7 @@ window.FW_DATA = {
       id: "v2",
       label: "Visit 2",
       date: "Monday, 25 May 2026",
-      timeRange: "9:30–10:15",
+      timeRange: "9:30-10:15",
       phases: [
         {
           id: "v2p1",
@@ -243,7 +243,7 @@ window.FW_DATA = {
             do: "Post the Mega (wall) + Mini (per-student) review sheets carrying Visit 1's reflection prompts.",
             makeUse: "Mega wall sheet; Mini copies; blackboard.",
             say: "Orienting students to the posted prompts.",
-            feel: "Settled, routine — familiar territory."
+            feel: "Settled, routine - familiar territory."
           },
           sceneFlags: { megaMini: true }
         },
@@ -289,7 +289,7 @@ window.FW_DATA = {
             do: "Demo tools, review Visit 1 reflections, reinforce the scaffold.",
             makeUse: "Projected Google Docs; paper scaffold.",
             say: "Re-explaining よそく / 結果 / わかった.",
-            feel: "Familiar — students recall the routine on their own."
+            feel: "Familiar - students recall the routine on their own."
           },
           sceneFlags: {}
         },
@@ -302,7 +302,7 @@ window.FW_DATA = {
           endTime: "10:00",
           durationMin: 10,
           description:
-            "New question: how does weight affect speed? Students choose their own variable (weight OR length) — agency. On-screen colour changes cue note-taking.",
+            "New question: how does weight affect speed? Students choose their own variable (weight OR length) - agency. On-screen colour changes cue note-taking.",
           analogTools: ["Blackboard"],
           digitalTools: ["Projector"],
           teacherPosition: "front",
@@ -311,7 +311,7 @@ window.FW_DATA = {
           spradley: {
             do: "Pose the new question; students choose their own variable to test.",
             makeUse: "Projector (on-screen colour cue); blackboard.",
-            say: "“Weight or length — you choose.”",
+            say: "“Weight or length - you choose.”",
             feel: "Agency; deciding their own inquiry."
           },
           sceneFlags: { variableChoice: true }
@@ -357,7 +357,7 @@ window.FW_DATA = {
           spradley: {
             do: "Tidy up while one student enters measurements; graph updates live.",
             makeUse: "学びポケット → shared Google Sheet; projector.",
-            say: "Little instruction needed — roles run in parallel.",
+            say: "Little instruction needed - roles run in parallel.",
             feel: "Internalized routine; runs itself."
           },
           sceneFlags: { dataEntryHighlight: true }
@@ -371,7 +371,7 @@ window.FW_DATA = {
           endTime: "10:15",
           durationMin: 5,
           description:
-            "Students attempt the scaffold independently first (2–3 min) before the teacher models — a shift from Visit 1. Closing links to playground swings (ブランコ) and previews Newton's Laws: the teacher drops two objects and asks students to predict.",
+            "Students attempt the scaffold independently first (2-3 min) before the teacher models - a shift from Visit 1. Closing links to playground swings (ブランコ) and previews Newton's Laws: the teacher drops two objects and asks students to predict.",
           analogTools: ["Paper scaffold", "Notebooks"],
           digitalTools: ["Google Docs", "Projector"],
           teacherPosition: "front",
@@ -393,7 +393,7 @@ window.FW_DATA = {
   crossVisit: {
     sameAcross: [
       "Physical setting, actors, and the group-role structure",
-      "The teacher's deliberate circulation (≈10 s–1 min per group)",
+      "The teacher's deliberate circulation (≈10 s-1 min per group)",
       "Google Sheets real-time shared visualization",
       "Google Docs colour-coded (black / red) reflection modeling",
       "The よそく・結果・わかった reflection scaffold",
@@ -404,14 +404,14 @@ window.FW_DATA = {
       { title: "Reflection scaffold timing", v1: "Teacher models immediately", v2: "Students attempt independently first, then the teacher models", note: "intentional progression toward autonomy" },
       { title: "Student familiarity", v1: "Scaffold introduced for the first time", v2: "Students reference the scaffold unprompted (internalization)" },
       { title: "Experimental agency", v1: "Fixed variable (length)", v2: "Students choose their variable (weight vs. length)" },
-      { title: "Peer norm enforcement", v1: "—", v2: "Off-task student redirected by peers, no teacher involvement" },
-      { title: "Forward linking", v1: "—", v2: "Closes with a Newton's-Laws preview (cross-unit awareness)" },
-      { title: "Observer friction", v1: "Re-introductions; class settling in", v2: "Lower — no re-introductions, sharper focus" },
+      { title: "Peer norm enforcement", v1: "-", v2: "Off-task student redirected by peers, no teacher involvement" },
+      { title: "Forward linking", v1: "-", v2: "Closes with a Newton's-Laws preview (cross-unit awareness)" },
+      { title: "Observer friction", v1: "Re-introductions; class settling in", v2: "Lower - no re-introductions, sharper focus" },
       { title: "Blackboard", v1: "Fewer reference sheets", v2: "More accumulated reference sheets" }
     ]
   },
 
-  /* Interview hotspot layer — added in build Phase 3 (spec §3.7).
+  /* Interview hotspot layer - added in build Phase 3 (spec §3.7).
      Question + answer text lives in findings.js (window.FW_FINDINGS) so it can
      be pasted in after the 29 May 2026 interview without editing scene code.
      anchorKey values will map to named objects returned by the scene builder,
@@ -419,7 +419,7 @@ window.FW_DATA = {
      "blackboard", "appleWatch", "doorway", "room". */
   hotspots: [
     { id: "teacher",    anchorKey: "teacher",    label: "Enoki-sensei",                theme: "Teacher background, beliefs & assessment",      questionIds: ["Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "Q17", "Q18"] },
-    { id: "projector",  anchorKey: "projector",  label: "Projector — Doc scaffold",     theme: "Analog → digital translation & lesson design",  questionIds: ["Q11", "Q13", "Q14"] },
+    { id: "projector",  anchorKey: "projector",  label: "Projector - Doc scaffold",     theme: "Analog → digital translation & lesson design",  questionIds: ["Q11", "Q13", "Q14"] },
     { id: "dataEntry",  anchorKey: "dataEntry",  label: "Data-entry student · Sheets",  theme: "Digital access vs. constraint",                 questionIds: ["Q12"] },
     { id: "pendulum",   anchorKey: "pendulum",   label: "Experiment · pendulum",        theme: "Student agency",                                questionIds: ["Q15"] },
     { id: "blackboard", anchorKey: "blackboard", label: "Blackboard & reference sheets", theme: "Preparation & improvement",                    questionIds: ["Q16"] },

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Inside the Science Lab — Fieldwork · ITASIA312</title>
+  <title>Inside the Science Lab - Fieldwork · ITASIA312</title>
   <meta name="description"
     content="An interactive 3D presentation of a Grade-5 science classroom: scrub the lesson timeline and watch the analog/digital boundary change. Fieldwork by Takumi Oshiyama." />
 
@@ -25,8 +25,8 @@
       --panel: rgba(11, 13, 26, 0.82);
       --panel-solid: #0c0f1c;
 
-      --analog: #e8634a;   /* warm — paper / blackboard / pendulum */
-      --digital: #5299c8;  /* cool — Sheets / Docs / projector / 学びポケット */
+      --analog: #e8634a;   /* warm - paper / blackboard / pendulum */
+      --digital: #5299c8;  /* cool - Sheets / Docs / projector / 学びポケット */
       --teal: #45a884;
       --lilac: #7272c0;
 
@@ -35,6 +35,7 @@
       --jp: "Noto Sans JP", "IBM Plex Sans", sans-serif;
       --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
       --ease: cubic-bezier(.22, .61, .36, 1);
+      --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -71,8 +72,7 @@
       position: fixed; top: 0; left: 0; right: 0; z-index: 50;
       display: flex; justify-content: space-between; align-items: baseline;
       padding: 13px 26px 11px;
-      background: linear-gradient(180deg, rgba(5,6,14,.94) 0%, rgba(5,6,14,.62) 70%, transparent 100%);
-      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+      background: linear-gradient(180deg, rgba(5,6,14,.96) 0%, rgba(5,6,14,.7) 68%, transparent 100%);
     }
     .topbar-title { font-family: var(--serif); font-weight: 300; font-size: 16px; letter-spacing: -0.015em; color: var(--ink); }
     .topbar-title em { color: var(--analog); font-style: italic; font-weight: 400; }
@@ -130,8 +130,7 @@
     body.entered .hud { opacity: 1; visibility: visible; }
 
     .panel-base {
-      background: var(--panel); border: 1px solid var(--rule); border-radius: 4px;
-      backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px);
+      background: var(--panel-solid); border: 1px solid var(--rule); border-radius: 4px;
     }
 
     /* legend (top-left) */
@@ -151,7 +150,7 @@
     .cam-btn {
       font-family: var(--mono); font-size: 11px; letter-spacing: .05em; color: var(--ink-dim);
       background: transparent; border: 1px solid var(--rule); border-radius: 3px; padding: 7px 12px; cursor: pointer; text-align: left;
-      transition: border-color .2s var(--ease), color .2s var(--ease), background .2s var(--ease);
+      transition: border-color .2s var(--ease), color .2s var(--ease), background .2s var(--ease), transform .12s var(--ease-out);
     }
     .cam-btn:hover { color: var(--ink); border-color: var(--digital); }
     .cam-btn.active { color: var(--ink); border-color: var(--digital); background: rgba(82,153,200,.12); }
@@ -181,8 +180,8 @@
     #caption {
       bottom: 118px; left: 50%; transform: translateX(-50%); z-index: 40;
       font-family: var(--mono); font-size: 12px; letter-spacing: .05em; color: var(--ink-dim);
-      background: rgba(5,6,14,.7); padding: 8px 16px; border-radius: 20px; border: 1px solid var(--rule);
-      backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); white-space: nowrap; max-width: 92vw; overflow: hidden; text-overflow: ellipsis;
+      background: rgba(8,10,18,.92); padding: 8px 16px; border-radius: 20px; border: 1px solid var(--rule);
+      white-space: nowrap; max-width: 92vw; overflow: hidden; text-overflow: ellipsis;
       opacity: 0; visibility: hidden; transition: opacity .5s var(--ease), visibility .5s var(--ease);
     }
     body.entered #caption { opacity: 1; visibility: visible; }
@@ -193,7 +192,7 @@
     .visit-btn {
       font-family: var(--mono); font-size: 11px; letter-spacing: .08em; color: var(--ink-dim);
       background: transparent; border: 1px solid transparent; border-radius: 3px; padding: 6px 14px; cursor: pointer;
-      transition: all .2s var(--ease);
+      transition: color .18s var(--ease-out), border-color .18s var(--ease-out), background .18s var(--ease-out), transform .12s var(--ease-out);
     }
     .visit-btn.active { color: var(--ink); background: rgba(82,153,200,.14); border-color: var(--digital); }
     .visit-btn:disabled { color: var(--ink-faint); cursor: not-allowed; opacity: .55; }
@@ -202,17 +201,22 @@
     .compare-btn {
       font-family: var(--mono); font-size: 11px; letter-spacing: .06em; color: var(--ink-dim);
       background: transparent; border: 1px solid var(--rule); border-radius: 3px; padding: 6px 12px; cursor: pointer;
-      transition: all .2s var(--ease);
+      transition: color .18s var(--ease-out), border-color .18s var(--ease-out), background .18s var(--ease-out), transform .12s var(--ease-out);
     }
     .compare-btn:hover { color: var(--ink); border-color: var(--analog); background: rgba(232,99,74,.1); }
+    .cam-btn:active, .visit-btn:active, .compare-btn:active, .hs-toggle:active, .tl-play:active { transform: scale(0.96); transition-duration: 80ms; }
+    button:focus-visible { outline: 2px solid var(--digital); outline-offset: 2px; }
 
     /* Cross-visit comparison overlay */
     #crossvisit {
-      position: fixed; inset: 0; z-index: 80; display: none;
+      position: fixed; inset: 0; z-index: 80; display: flex;
       align-items: center; justify-content: center; padding: 40px 20px;
-      background: rgba(5,6,14,.72); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+      background: rgba(5,6,14,.82);
+      opacity: 0; visibility: hidden; transition: opacity .22s var(--ease-out), visibility .22s var(--ease-out);
     }
-    #crossvisit.open { display: flex; }
+    #crossvisit.open { opacity: 1; visibility: visible; }
+    #crossvisit .cv-sheet { transform: scale(0.96); transition: transform .26s var(--ease-out); }
+    #crossvisit.open .cv-sheet { transform: scale(1); }
     .cv-sheet {
       position: relative; width: min(880px, 96vw); max-height: 88vh; overflow-y: auto;
       background: var(--panel-solid); border: 1px solid var(--rule); border-radius: 6px;
@@ -252,7 +256,7 @@
     .hs-toggle {
       font-family: var(--mono); font-size: 11px; letter-spacing: .05em; color: var(--ink-dim);
       background: transparent; border: 1px solid var(--rule); border-radius: 3px; padding: 8px 12px; cursor: pointer;
-      transition: all .2s var(--ease); white-space: nowrap;
+      transition: color .18s var(--ease-out), border-color .18s var(--ease-out), background .18s var(--ease-out), transform .12s var(--ease-out); white-space: nowrap;
     }
     .hs-toggle:hover { color: var(--ink); border-color: var(--analog); }
     .hs-toggle[aria-pressed="true"] { color: var(--ink); border-color: var(--analog); background: rgba(232,99,74,.14); }
@@ -275,13 +279,16 @@
     }
 
     #annotation {
-      position: fixed; inset: 0; z-index: 85; display: none; align-items: center; justify-content: center; padding: 40px 20px;
-      background: rgba(5,6,14,.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+      position: fixed; inset: 0; z-index: 85; display: flex; align-items: center; justify-content: center; padding: 40px 20px;
+      background: rgba(5,6,14,.78);
+      opacity: 0; visibility: hidden; transition: opacity .2s var(--ease-out), visibility .2s var(--ease-out);
     }
-    #annotation.open { display: flex; }
+    #annotation.open { opacity: 1; visibility: visible; }
+    #annotation .an-card { transform: scale(0.97); transition: transform .24s var(--ease-out); }
+    #annotation.open .an-card { transform: scale(1); }
     .an-card {
       position: relative; width: min(560px, 95vw); max-height: 84vh; overflow-y: auto;
-      background: var(--panel-solid); border: 1px solid var(--rule); border-left: 3px solid var(--analog); border-radius: 6px;
+      background: var(--panel-solid); border: 1px solid var(--rule); border-top: 2px solid var(--analog); border-radius: 6px;
       padding: 26px 28px 28px; box-shadow: 0 30px 90px rgba(0,0,0,.5);
     }
     .an-close { position: absolute; top: 14px; right: 16px; font-family: var(--mono); font-size: 15px; color: var(--ink-faint); background: none; border: none; cursor: pointer; }
@@ -305,7 +312,7 @@
     .tl-play {
       font-family: var(--mono); font-size: 12px; color: var(--ink); background: rgba(82,153,200,.14);
       border: 1px solid var(--digital); border-radius: 3px; width: 34px; height: 30px; cursor: pointer; flex-shrink: 0;
-      display: grid; place-items: center; transition: background .2s var(--ease);
+      display: grid; place-items: center; transition: background .2s var(--ease), transform .12s var(--ease-out);
     }
     .tl-play:hover { background: rgba(82,153,200,.26); }
     .tl-clock { font-family: var(--mono); font-size: 13px; letter-spacing: .08em; color: var(--digital); flex-shrink: 0; min-width: 92px; }
@@ -358,6 +365,9 @@
     @media (prefers-reduced-motion: reduce) {
       * { scroll-behavior: auto; }
       .tl-seg .seg-fill, .tl-playhead { transition: none; }
+      .hotspot { animation: none; }
+      #crossvisit, #annotation, #crossvisit .cv-sheet, #annotation .an-card { transition: none; }
+      .cam-btn:active, .visit-btn:active, .compare-btn:active, .hs-toggle:active, .tl-play:active { transform: none; }
     }
   </style>
 </head>
@@ -392,13 +402,11 @@
 
   <!-- HUD -->
   <div id="legend" class="hud panel-base">
-    <div class="legend-title">The boundary</div>
     <div class="legend-chip analog" id="lg-analog"><span class="swatch">✎</span><span>Analog</span><span class="ja">紙・黒板</span></div>
     <div class="legend-chip digital" id="lg-digital"><span class="swatch">⌨</span><span>Digital</span><span class="ja">画面・端末</span></div>
   </div>
 
   <div id="cam" class="hud panel-base">
-    <div class="cam-label">Camera</div>
     <button class="cam-btn" data-cam="back">Back of room</button>
     <button class="cam-btn" data-cam="teacher">Teacher's view</button>
     <button class="cam-btn" data-cam="top">Top-down</button>
@@ -420,7 +428,7 @@
 
   <aside id="info" class="hud panel-base">
     <div class="ph-n" id="info-n">Phase 1 / 7</div>
-    <div class="ph-title" id="info-title">—</div>
+    <div class="ph-title" id="info-title">-</div>
     <div class="ph-title-ja" id="info-title-ja"></div>
     <div class="ph-time" id="info-time"></div>
     <div class="ph-desc" id="info-desc"></div>
@@ -429,12 +437,12 @@
     <div class="spradley" id="info-spradley"></div>
   </aside>
 
-  <div id="caption" class="hud">—</div>
+  <div id="caption" class="hud">-</div>
 
   <div id="timeline" class="hud">
     <div class="tl-head">
       <button class="tl-play" id="play-btn" aria-label="Play / pause">▶</button>
-      <span class="tl-clock" id="tl-clock">9:30–9:31</span>
+      <span class="tl-clock" id="tl-clock">9:30-9:31</span>
       <span class="tl-now" id="tl-now">Opening &amp; Introductions</span>
       <span class="tl-pace">PACE <input type="range" id="pace" min="0.5" max="2" step="0.1" value="1" /></span>
     </div>
@@ -466,7 +474,7 @@
     <div class="an-card">
       <button class="an-close" id="an-close" aria-label="Close">✕</button>
       <div class="an-eyebrow">Interview hotspot · 29 May</div>
-      <div class="an-label" id="an-label">—</div>
+      <div class="an-label" id="an-label">-</div>
       <div class="an-theme" id="an-theme"></div>
       <div class="an-qs" id="an-qs"></div>
     </div>
@@ -495,7 +503,7 @@
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     /* ----------------------------------------------------------------------
-       PALETTE — from reference_science_lab.png
+       PALETTE - from reference_science_lab.png
     ---------------------------------------------------------------------- */
     const PAL = {
       floor:      0xb9cc3d,  // lime / chartreuse linoleum
@@ -534,7 +542,7 @@
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x0b0d1a);
 
-    // image-based lighting — soft real reflections on tabletops, metal, glass
+    // image-based lighting - soft real reflections on tabletops, metal, glass
     const pmrem = new THREE.PMREMGenerator(renderer);
     scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
 
@@ -589,7 +597,7 @@
     }
 
     /* ----------------------------------------------------------------------
-       buildLab()  — static shell + furniture, returns nothing (registers in R)
+       buildLab()  - static shell + furniture, returns nothing (registers in R)
     ---------------------------------------------------------------------- */
     function buildLab() {
       const g = new THREE.Group();
@@ -708,7 +716,7 @@
     }
 
     /* ----------------------------------------------------------------------
-       ACTORS — teacher + 24 students (6 groups) + intern + observer
+       ACTORS - teacher + 24 students (6 groups) + intern + observer
     ---------------------------------------------------------------------- */
     const SHIRT = [0x5b7fb0, 0xc25b4e, 0x5aa86a, 0xc9a23f, 0x8a6fc0, 0x4ab0a0, 0xd07a4e, 0x6b7a99, 0xb0556f, 0x4e8c6a, 0xd2b04a, 0x7088c0];
     const HAIR = [0x241c16, 0x3a2a1c, 0x14141a, 0x4a3526];
@@ -768,7 +776,7 @@
     const BENCH = { w: 0.95, d: 3.6 };   // X-width, Z-length
 
     function buildActors() {
-      // students — each table seats 8 (two rows of 4), split into 2 groups of 4
+      // students - each table seats 8 (two rows of 4), split into 2 groups of 4
       R.students = [];
       R.dataEntry = [];
       const studentsGroup = new THREE.Group();
@@ -828,7 +836,7 @@
     }
 
     /* ----------------------------------------------------------------------
-       VISIT 2 EXTRAS — Mega wall sheet + Mini per-bench sheets + Newton drop
+       VISIT 2 EXTRAS - Mega wall sheet + Mini per-bench sheets + Newton drop
     ---------------------------------------------------------------------- */
     function drawSheetTexture(title) {
       const c = document.createElement("canvas"); c.width = 256; c.height = 340;
@@ -866,7 +874,7 @@
       });
       g.visible = false; scene.add(g); R.v2Extras = g;
 
-      // Newton's-Laws preview — two objects dropped at the front (Visit 2, Phase 7)
+      // Newton's-Laws preview - two objects dropped at the front (Visit 2, Phase 7)
       const ng = new THREE.Group();
       const a = new THREE.Mesh(new THREE.SphereGeometry(0.1, 16, 16), mat(0x5299c8, { metal: 0.2, rough: 0.4 }));
       const b = new THREE.Mesh(new THREE.SphereGeometry(0.14, 16, 16), mat(0xe8634a, { metal: 0.2, rough: 0.4 }));
@@ -877,7 +885,7 @@
     }
 
     /* ----------------------------------------------------------------------
-       PROJECTOR CANVAS — off / liveGraph / completedGraph / docScaffold
+       PROJECTOR CANVAS - off / liveGraph / completedGraph / docScaffold
     ---------------------------------------------------------------------- */
     const LENGTHS = [20, 40, 60];
     const PERIODS = [1.0, 1.3, 1.6];
@@ -903,7 +911,7 @@
         ctx.fillStyle = "#1d2530";
         ctx.font = "500 22px 'Geist Mono', monospace";
         ctx.textAlign = "center";
-        ctx.fillText("— screen idle —", W / 2, H / 2);
+        ctx.fillText("- screen idle -", W / 2, H / 2);
       } else if (mode === "liveGraph" || mode === "completedGraph") {
         drawGraph(ctx, W, H, mode === "completedGraph" ? 1 : (R.graphProgress ?? 0));
       } else if (mode === "docScaffold") {
@@ -956,7 +964,7 @@
       ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, W, H);
       ctx.fillStyle = "#f0f2f5"; ctx.fillRect(0, 0, W, 46);
       ctx.fillStyle = "#5f6b7a"; ctx.font = "500 17px 'Geist Mono', monospace"; ctx.textAlign = "left";
-      ctx.fillText("Google Docs — ふりかえり", 24, 30);
+      ctx.fillText("Google Docs - ふりかえり", 24, 30);
       const rows = [
         { jp: "よそく", en: "prediction", a: "ふりこが長いほど、ゆっくりゆれると思う。" },
         { jp: "結果", en: "result", a: "20→1.0秒　40→1.3秒　60→1.6秒。" },
@@ -982,7 +990,7 @@
     }
 
     /* ----------------------------------------------------------------------
-       EMPHASIS — analog vs digital highlight
+       EMPHASIS - analog vs digital highlight
     ---------------------------------------------------------------------- */
     function setEmphasis(emph) {
       const aHot = emph === "analog", dHot = emph === "digital";
@@ -996,7 +1004,7 @@
     }
 
     /* ----------------------------------------------------------------------
-       BOARD SHEETS — count varies (more in V2)
+       BOARD SHEETS - count varies (more in V2)
     ---------------------------------------------------------------------- */
     function setBoardSheets(count) {
       R.boardSheets.clear();
@@ -1009,7 +1017,7 @@
     }
 
     /* ----------------------------------------------------------------------
-       STATE MACHINE — applyPhase(visitId, index)
+       STATE MACHINE - applyPhase(visitId, index)
     ---------------------------------------------------------------------- */
     const STATE = { visit: "v1", index: 0, playing: false, playT: 0, pace: 1, intraFrac: 0 };
 
@@ -1019,9 +1027,9 @@
     function projLabel(s) {
       return ({
         off: "Projector idle",
-        liveGraph: "Projector — scatter plot filling in real time",
-        completedGraph: "Projector — finalized graph",
-        docScaffold: "Projector — Google Doc scaffold (black prompts · red answers)"
+        liveGraph: "Projector: scatter plot filling in real time",
+        completedGraph: "Projector: finalized graph",
+        docScaffold: "Projector: Google Doc scaffold, black prompts and red answers"
       })[s] || "Projector";
     }
     function teacherLabel(p) { return p === "circulating" ? "Teacher circulating among the 6 groups" : "Teacher at the front"; }
@@ -1036,7 +1044,7 @@
       if (p.projectorState === "liveGraph") R.graphProgress = 0;
       drawProjector();
 
-      // teacher position — the animation loop eases the teacher to front or circulates
+      // teacher position - the animation loop eases the teacher to front or circulates
       R.teacherCirculating = (p.teacherPosition === "circulating");
 
       // students activity + data-entry highlight
@@ -1071,7 +1079,7 @@
       document.getElementById("info-n").textContent = `Phase ${p.n} / ${phases.length}`;
       document.getElementById("info-title").textContent = p.title;
       document.getElementById("info-title-ja").textContent = p.titleJa || "";
-      document.getElementById("info-time").textContent = `${p.startTime}–${p.endTime}  ·  ~${p.durationMin} min`;
+      document.getElementById("info-time").textContent = `${p.startTime}-${p.endTime}  ·  ~${p.durationMin} min`;
       document.getElementById("info-desc").innerHTML = `<span class="jp">${escapeJP(p.description)}</span>`;
 
       // tags
@@ -1094,14 +1102,14 @@
         `${projLabel(p.projectorState)}<span class="sep">·</span>${teacherLabel(p.teacherPosition)}`;
 
       // timeline head
-      document.getElementById("tl-clock").textContent = `${p.startTime}–${p.endTime}`;
+      document.getElementById("tl-clock").textContent = `${p.startTime}-${p.endTime}`;
       document.getElementById("tl-now").textContent = p.title;
     }
 
     function escapeJP(s) { return (s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 
     /* ----------------------------------------------------------------------
-       TIMELINE — segments ∝ duration, draggable playhead, play/pause
+       TIMELINE - segments ∝ duration, draggable playhead, play/pause
     ---------------------------------------------------------------------- */
     const trackEl = document.getElementById("tl-track");
     let segs = [];

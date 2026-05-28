@@ -1,5 +1,5 @@
 /* =============================================================================
-   INTERVIEW LAYER  —  window.FW_FINDINGS
+   INTERVIEW LAYER  -  window.FW_FINDINGS
    Interview with Enoki-sensei (榎先生) · 29 May 2026
 
    Loaded as a CLASSIC script so it works on file:// and stays editable
@@ -18,15 +18,15 @@
 
 window.FW_FINDINGS = {
   date: "29 May 2026",
-  pendingLabel: "Pending — interview 29 May 2026",
-  draftNote: "Draft English paraphrase from the spec — replace with the verbatim question after the interview.",
+  pendingLabel: "Pending: interview 29 May 2026",
+  draftNote: "Draft English paraphrase from the spec - replace with the verbatim question after the interview.",
 
   // questionId -> { en: English gloss (draft), ja: verbatim Japanese (fill in) }
   questions: {
     Q1:  { en: "Tell me about your background and how you became a science subject teacher.", ja: "" },
     Q2:  { en: "What formal training, if any, did you receive for teaching with ICT?", ja: "" },
     Q3:  { en: "When and how did you first start using ICT in your teaching?", ja: "" },
-    Q4:  { en: "What do you think ICT is good for — and not good for — in science class?", ja: "" },
+    Q4:  { en: "What do you think ICT is good for - and not good for - in science class?", ja: "" },
     Q5:  { en: "How did you learn the specific methods you use (the scaffold, the colour system, etc.)?", ja: "" },
     Q6:  { en: "How much of your ICT skill came from practice rather than formal instruction?", ja: "" },
 
@@ -36,12 +36,12 @@ window.FW_FINDINGS = {
     Q10: { en: "What is the leadership's stance on ICT in teaching?", ja: "" },
 
     Q11: { en: "Was the black-prompt / red-model-answer colour system a conscious translation of your blackboard chalk technique?", ja: "" },
-    Q12: { en: "Why fix data entry to one student per group — preventing data chaos, or managing off-task screen use?", ja: "" },
+    Q12: { en: "Why fix data entry to one student per group - preventing data chaos, or managing off-task screen use?", ja: "" },
     Q13: { en: "What is your reasoning behind the three-part reflection scaffold (よそく・結果・わかった)?", ja: "" },
     Q14: { en: "Why model the scaffold immediately in Visit 1, but let students attempt it first in Visit 2?", ja: "" },
-    Q15: { en: "Why let students choose their variable (weight vs. length) — student agency, or the need for comparable data?", ja: "" },
-    Q16: { en: "How do you prepare the reference materials — the time cost, and how they iterate between classes?", ja: "" },
-    Q17: { en: "How do you plan the timing of each phase — pre-planned or from experience? How heavy is the cognitive load?", ja: "" },
+    Q15: { en: "Why let students choose their variable (weight vs. length) - student agency, or the need for comparable data?", ja: "" },
+    Q16: { en: "How do you prepare the reference materials - the time cost, and how they iterate between classes?", ja: "" },
+    Q17: { en: "How do you plan the timing of each phase - pre-planned or from experience? How heavy is the cognitive load?", ja: "" },
     Q18: { en: "How do you know students truly understand, beyond just completing the task?", ja: "" },
 
     Q19: { en: "How do other teachers at your school use ICT?", ja: "" },
