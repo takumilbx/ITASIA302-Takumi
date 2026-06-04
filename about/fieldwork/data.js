@@ -27,10 +27,10 @@ window.FW_DATA = {
     course: "ITASIA312 · Field Work",
     subtitle: "An ethnographic study of a Grade-5 science classroom",
     place: "Public elementary school, Ota Ward, Tokyo · GIGA School program",
-    teacher: "Enoki-sensei (榎先生) · science subject teacher (教科担任)",
+    teacher: "T-sensei (T先生) · science subject teacher (教科担任)",
     observer: "Takumi (observer / researcher)",
     question:
-      "How does Enoki-sensei intentionally design the boundary between " +
+      "How does T-sensei intentionally design the boundary between " +
       "analog and digital tools in her science classroom, and what " +
       "pedagogical reasoning drives those design decisions?",
     subQuestions: [
@@ -418,7 +418,7 @@ window.FW_DATA = {
      e.g. "teacher", "projector", "dataEntryStudent", "pendulum",
      "blackboard", "appleWatch", "doorway", "room". */
   hotspots: [
-    { id: "teacher",    anchorKey: "teacher",    label: "Enoki-sensei",                theme: "Teacher background, beliefs & assessment",      questionIds: ["Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "Q17", "Q18"] },
+    { id: "teacher",    anchorKey: "teacher",    label: "T-sensei",                theme: "Teacher background, beliefs & assessment",      questionIds: ["Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "Q17", "Q18"] },
     { id: "projector",  anchorKey: "projector",  label: "Projector - Doc scaffold",     theme: "Analog → digital translation & lesson design",  questionIds: ["Q11", "Q13", "Q14"] },
     { id: "dataEntry",  anchorKey: "dataEntry",  label: "Data-entry student · Sheets",  theme: "Digital access vs. constraint",                 questionIds: ["Q12"] },
     { id: "pendulum",   anchorKey: "pendulum",   label: "Experiment · pendulum",        theme: "Student agency",                                questionIds: ["Q15"] },
