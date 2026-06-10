@@ -510,6 +510,52 @@
       letter-spacing: 0.10em;
     }
 
+    /* Tool-card progressive disclosure */
+    .tc-toggle {
+      appearance: none;
+      -webkit-appearance: none;
+      display: inline-block;
+      background: none;
+      border: 0;
+      padding: 4px 8px 4px 0;
+      margin: 0 0 8px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      cursor: pointer;
+      transition: color 180ms ease;
+    }
+
+    .tc-toggle:hover,
+    .tc-toggle:focus-visible {
+      color: var(--tool-accent, var(--coral));
+      outline: none;
+    }
+
+    .tc-detail {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 280ms ease-out;
+    }
+
+    .tc-detail.open {
+      grid-template-rows: 1fr;
+    }
+
+    .tc-detail-inner {
+      overflow: hidden;
+    }
+
+    html:not(.js) .tc-detail {
+      grid-template-rows: 1fr;
+    }
+
+    html:not(.js) .tc-toggle {
+      display: none;
+    }
+
     /* Honorable mention — the ex-BFF card */
     .honorable-mention {
       position: relative;
@@ -877,11 +923,22 @@
       .tool-card {
         transition: none !important;
       }
+
+      .tc-detail {
+        transition: none !important;
+      }
     }
     button:active, .fw-cta:active, .tab-btn:active, .visit-btn:active, .compare-btn:active, .cam-btn:active, .hs-toggle:active, .sel-btn:active, .chip:active, .viz-link:active { transform: scale(0.97); }
   html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
   .skip-link { position: absolute; left: -9999px; top: 8px; z-index: 100000; background: var(--bg-soft); color: var(--ink); padding: 10px 16px; font-family: var(--mono); font-size: 12px; letter-spacing: .08em; border: 1px solid var(--accent); border-radius: 4px; }
   .skip-link:focus { left: 8px; }
+
+  /* Cross-document view transitions: content crossfades, topbar stays put */
+  @view-transition { navigation: auto; }
+  @media (prefers-reduced-motion: reduce) {
+    @view-transition { navigation: none; }
+  }
+  .topbar { view-transition-name: topbar; }
 </style>
   <script>document.documentElement.classList.add('js');</script>
 </head>
@@ -983,11 +1040,19 @@
           <div class="tool-name"><em>Claude</em></div>
           <div class="tool-vendor">Anthropic &nbsp;&middot;&nbsp; Cowork &amp; Claude Code</div>
           <p class="tool-role">
-            The main collaborator. I use Claude through Cowork (a desktop
-            assistant) and Claude Code (a terminal agent) as a <em>thinking
-              partner</em> and an <em>implementer</em> that can read, write,
-            and run code in my workspace.
+            The main collaborator.
           </p>
+          <button class="tc-toggle" type="button" aria-expanded="false" aria-controls="tcd-claude">+ details</button>
+          <div class="tc-detail" id="tcd-claude">
+            <div class="tc-detail-inner">
+              <p class="tool-role">
+                I use Claude through Cowork (a desktop
+                assistant) and Claude Code (a terminal agent) as a <em>thinking
+                  partner</em> and an <em>implementer</em> that can read, write,
+                and run code in my workspace.
+              </p>
+            </div>
+          </div>
           <div class="tool-used-for">Used for &nbsp;<em>site build, structure, copy iteration</em></div>
         </div>
 
@@ -995,10 +1060,18 @@
           <div class="tool-name"><em>Claude Design</em></div>
           <div class="tool-vendor">Anthropic</div>
           <p class="tool-role">
-            Sits right next to Claude. Generates layout variants and
-            component concepts I can react to I use it to <em>see options</em>
-            faster than I could sketch them with my own two hands.
+            Sits right next to Claude.
           </p>
+          <button class="tc-toggle" type="button" aria-expanded="false" aria-controls="tcd-claude-design">+ details</button>
+          <div class="tc-detail" id="tcd-claude-design">
+            <div class="tc-detail-inner">
+              <p class="tool-role">
+                Generates layout variants and
+                component concepts I can react to I use it to <em>see options</em>
+                faster than I could sketch them with my own two hands.
+              </p>
+            </div>
+          </div>
           <div class="tool-used-for">Used for &nbsp;<em>page concepting, layout options</em></div>
         </div>
 
@@ -1006,13 +1079,21 @@
           <div class="tool-name"><em>NotebookLM</em></div>
           <div class="tool-vendor">Google &nbsp;&middot;&nbsp; Called via Claude's MCP server</div>
           <p class="tool-role">
-            Research synthesis across many sources at once. I load the
-            course's annotated bibliography and ask targeted questions,
-            and <em>the model can only answer from what is in the notebook</em>.
-            I do not open it as a separate app I call it through a
-            <em>NotebookLM MCP server</em> wired into Claude, so the two
-            tools sit in the same conversation.
+            Research synthesis across many sources at once.
           </p>
+          <button class="tc-toggle" type="button" aria-expanded="false" aria-controls="tcd-notebooklm">+ details</button>
+          <div class="tc-detail" id="tcd-notebooklm">
+            <div class="tc-detail-inner">
+              <p class="tool-role">
+                I load the
+                course's annotated bibliography and ask targeted questions,
+                and <em>the model can only answer from what is in the notebook</em>.
+                I do not open it as a separate app I call it through a
+                <em>NotebookLM MCP server</em> wired into Claude, so the two
+                tools sit in the same conversation.
+              </p>
+            </div>
+          </div>
           <div class="tool-used-for">Used for &nbsp;<em>Research Trends literature synthesis</em></div>
         </div>
 
@@ -1039,10 +1120,18 @@
           <div class="tool-name">Google <em>Stitch</em></div>
           <div class="tool-vendor">Google</div>
           <p class="tool-role">
-            UI generation from a brief. Produces mocks that I pull apart for
-            ideas rather than use wholesale the useful output is usually a
-            detail, not the whole screen.
+            UI generation from a brief.
           </p>
+          <button class="tc-toggle" type="button" aria-expanded="false" aria-controls="tcd-stitch">+ details</button>
+          <div class="tc-detail" id="tcd-stitch">
+            <div class="tc-detail-inner">
+              <p class="tool-role">
+                Produces mocks that I pull apart for
+                ideas rather than use wholesale the useful output is usually a
+                detail, not the whole screen.
+              </p>
+            </div>
+          </div>
           <div class="tool-used-for">Used for &nbsp;<em>UI exploration, component inspiration</em></div>
         </div>
 
@@ -1051,10 +1140,18 @@
           <div class="tool-vendor">Google &nbsp;&middot;&nbsp; Gemini 3.1 Pro</div>
           <p class="tool-role">
             A coding-focused agentic tool I use for larger code changes
-            where I want a second model's read on the same problem. Running
-            two assistants against the same task exposes <em>what is actually
-              load-bearing</em>.
+            where I want a second model's read on the same problem.
           </p>
+          <button class="tc-toggle" type="button" aria-expanded="false" aria-controls="tcd-antigravity">+ details</button>
+          <div class="tc-detail" id="tcd-antigravity">
+            <div class="tc-detail-inner">
+              <p class="tool-role">
+                Running
+                two assistants against the same task exposes <em>what is actually
+                  load-bearing</em>.
+              </p>
+            </div>
+          </div>
           <div class="tool-used-for">Used for &nbsp;<em>code review, cross-model checks</em></div>
         </div>
 
@@ -1368,8 +1465,9 @@
         }
       });
 
-      // Body text → fade-up only
+      // Body text → fade-up only (skip collapsible tool-card details: they animate via grid rows)
       document.querySelectorAll("main p, main li, main blockquote, main figcaption, main dt, main dd").forEach(el => {
+        if (el.closest(".tc-detail")) return;
         if (!el.classList.contains("reveal") && el.textContent.trim()) el.classList.add("reveal");
       });
 
@@ -1420,11 +1518,26 @@
         };
         setTimeout(tick, 200);
       }
+
+      // Tool-card progressive disclosure ("+ details" / "− less")
+      document.querySelectorAll(".tc-toggle").forEach(btn => {
+        const region = document.getElementById(btn.getAttribute("aria-controls"));
+        if (!region) return;
+        region.setAttribute("aria-hidden", "true");
+        btn.addEventListener("click", () => {
+          const isOpen = btn.getAttribute("aria-expanded") === "true";
+          btn.setAttribute("aria-expanded", String(!isOpen));
+          region.classList.toggle("open", !isOpen);
+          region.setAttribute("aria-hidden", String(isOpen));
+          btn.textContent = isOpen ? "+ details" : "− less";
+        });
+      });
     });
   </script>
 
 <script src="../rain.js" data-color="#7a60b8"></script>
 <script src="../cursor.js"></script>
+<script src="../os.js" data-path="~/itasia302/ai-statement" data-accent="#7a60b8"></script>
 </body>
 
 </html>

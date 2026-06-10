@@ -295,6 +295,7 @@
     .card.card-sky   { --card-accent: #5299c8; } /* About → Sky Blue */
     .card.card-teal  { --card-accent: #e8634a; } /* Personal Project → Orange */
     .card.card-coral { --card-accent: #7a60b8; } /* AI Statement → Purple */
+    .card.card-rose  { --card-accent: #e0607e; } /* Reading Response → Rose */
 
     .card.card-progress::before {
       background: repeating-linear-gradient(90deg,
@@ -479,6 +480,18 @@
   html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
   .skip-link { position: absolute; left: -9999px; top: 8px; z-index: 100000; background: var(--bg-soft); color: var(--ink); padding: 10px 16px; font-family: var(--mono); font-size: 12px; letter-spacing: .08em; border: 1px solid var(--accent); border-radius: 4px; }
   .skip-link:focus { left: 8px; }
+
+  /* Cross-document view transitions: content crossfades, topbar stays put */
+  @view-transition { navigation: auto; }
+  @media (prefers-reduced-motion: reduce) {
+    @view-transition { navigation: none; }
+  }
+  .topbar { view-transition-name: topbar; }
+
+  .hero-eyebrow[data-os-open] { cursor: pointer; }
+  .hero-eyebrow[data-os-open]:hover .cmd-prompt,
+  .hero-eyebrow[data-os-open]:focus-visible .cmd-prompt { color: var(--accent); }
+  .hero-eyebrow[data-os-open]:focus-visible { outline: 1px solid var(--accent); outline-offset: 4px; }
 </style>
   <script>document.documentElement.classList.add('js');</script>
 </head>
@@ -500,7 +513,8 @@
   <main id="main">
 
     <section class="hero">
-      <div class="hero-eyebrow reveal"><span class="dot"></span><span class="cmd-prompt">~/itasia302 $ </span><span id="hero-cmd"></span><span class="blink-cursor" id="hero-cursor"></span></div>
+      <div class="hero-eyebrow reveal" data-os-open role="button" tabindex="0" aria-label="Open the site shell"
+        title="click to open the shell"><span class="dot"></span><span class="cmd-prompt">~/itasia302 $ </span><span id="hero-cmd"></span><span class="blink-cursor" id="hero-cursor"></span></div>
 
       <h1 class="hero-title reveal delay-1">
         Introduction to <em>Digital Technology</em> and Society
@@ -530,7 +544,7 @@
           <span>Master's Thesis</span>
         </div>
         <div class="card-foot">
-          <span>1 subpage</span>
+          <span>1 subpage &middot; upd 05.26</span>
           <span class="card-arrow" aria-hidden="true">&rarr;</span>
         </div>
       </a>
@@ -544,7 +558,7 @@
           responses.
         </p>
         <div class="card-foot">
-          <span>2 pieces</span>
+          <span>2 pieces &middot; upd 06.26</span>
           <span class="card-arrow" aria-hidden="true">&rarr;</span>
         </div>
       </a>
@@ -568,7 +582,7 @@
           <span>Thesis Direction</span>
         </div>
         <div class="card-foot">
-          <span>In progress</span>
+          <span>In progress &middot; upd 06.26</span>
           <span class="card-arrow" aria-hidden="true">&rarr;</span>
         </div>
       </a>
@@ -583,7 +597,25 @@
           walkthrough of my AI-powered workflow, filling wherever my skill isn't there yet lol.
         </p>
         <div class="card-foot">
-          <span>Disclosure</span>
+          <span>Disclosure &middot; upd 05.26</span>
+          <span class="card-arrow" aria-hidden="true">&rarr;</span>
+        </div>
+      </a>
+
+      <a class="card card-rose reveal delay-5" href="reading-response/week-8/" style="--cli-delay:0.45s">
+        <span class="card-num">05</span>
+        <div class="card-label">Reading Response</div>
+        <div class="card-headline">The latest <em>weekly response</em></div>
+        <p class="card-blurb">
+          My newest reading response, on Jütte's history of boredom and what it says
+          about devices in GIGA classrooms. The full set lives under Class Assignments.
+        </p>
+        <div class="card-subitems">
+          <span class="sub-dash"></span>
+          <span>Week 8 &middot; Jütte (2020)</span>
+        </div>
+        <div class="card-foot">
+          <span>Latest &middot; Week 8 &middot; upd 06.26</span>
           <span class="card-arrow" aria-hidden="true">&rarr;</span>
         </div>
       </a>
@@ -629,6 +661,23 @@
       };
       setTimeout(tick, 200);
 
+      // Keyboard nav across cards: j/k always, arrows once a card has focus
+      const cards = Array.from(document.querySelectorAll(".card"));
+      const focusCard = i => {
+        const c = cards[Math.max(0, Math.min(cards.length - 1, i))];
+        if (c) c.focus();
+      };
+      document.addEventListener("keydown", e => {
+        const t = e.target;
+        if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+        if (e.metaKey || e.ctrlKey || e.altKey) return;
+        const idx = cards.indexOf(document.activeElement);
+        if (e.key === "j") { e.preventDefault(); focusCard(idx < 0 ? 0 : idx + 1); }
+        else if (e.key === "k") { e.preventDefault(); focusCard(idx < 0 ? 0 : idx - 1); }
+        else if (idx >= 0 && (e.key === "ArrowRight" || e.key === "ArrowDown")) { e.preventDefault(); focusCard(idx + 1); }
+        else if (idx >= 0 && (e.key === "ArrowLeft" || e.key === "ArrowUp")) { e.preventDefault(); focusCard(idx - 1); }
+      });
+
       if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
         document.querySelectorAll(".card").forEach(card => {
           card.addEventListener("mousemove", e => {
@@ -653,6 +702,7 @@
 
 <script src="rain.js" data-color="#4db8cc"></script>
 <script src="cursor.js"></script>
+<script src="os.js" data-path="~/itasia302" data-accent="#4db8cc"></script>
 </body>
 
 </html>

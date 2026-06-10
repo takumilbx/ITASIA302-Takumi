@@ -768,6 +768,71 @@
     .skip-link:focus {
       left: 8px;
     }
+
+    /* ========================================================================
+     Citation hover-cards
+     ======================================================================== */
+    .cite-ref {
+      cursor: help;
+      text-decoration: underline;
+      text-decoration-style: dotted;
+      text-decoration-color: rgba(224, 96, 126, .55);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+      transition: color 180ms ease, text-decoration-color 180ms ease;
+    }
+
+    .cite-ref:hover,
+    .cite-ref:focus-visible {
+      color: var(--accent);
+      text-decoration-style: solid;
+      text-decoration-color: var(--accent);
+      outline: none;
+    }
+
+    .cite-pop {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 500;
+      max-width: min(340px, calc(100vw - 16px));
+      background: var(--bg-soft);
+      border: 1px solid var(--rule);
+      border-top: 2px solid var(--accent);
+      padding: 12px 14px;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      line-height: 1.7;
+      letter-spacing: .02em;
+      color: #b8c4dc;
+      opacity: 0;
+      transform: translateY(4px);
+      pointer-events: none;
+      transition: opacity 160ms ease-out, transform 160ms ease-out;
+    }
+
+    .cite-pop.on {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .cite-pop .cite-pop-page {
+      margin-top: 6px;
+      color: var(--accent);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cite-pop {
+        transition: none;
+      }
+    }
+
+    /* Cross-document view transitions: content crossfades, topbar stays put */
+    @view-transition { navigation: auto; }
+    @media (prefers-reduced-motion: reduce) {
+      @view-transition { navigation: none; }
+    }
+    .topbar { view-transition-name: topbar; }
   </style>
   <script>document.documentElement.classList.add('js');</script>
 </head>
@@ -846,7 +911,7 @@
         Those who fell asleep or were otherwise inattentive in church were not opposed to
         God&rsquo;s word; instead, their inability to stay focused suggests significant
         shortcomings in the way that scripture was taught and expounded in church.
-        <span class="attr">J&uuml;tte 2020 &nbsp;&middot;&nbsp; p. 1163</span>
+        <span class="attr"><span class="cite-ref" tabindex="0">J&uuml;tte 2020 &nbsp;&middot;&nbsp; p. 1163</span></span>
       </blockquote>
     </section>
 
@@ -910,7 +975,7 @@
         If shorter sermons were out of the question, other concessions had to be made; it
         is no coincidence that pews and benches became a common feature of Protestant
         churches in this context.
-        <span class="attr">J&uuml;tte 2020 &nbsp;&middot;&nbsp; p. 1166</span>
+        <span class="attr"><span class="cite-ref" tabindex="0">J&uuml;tte 2020 &nbsp;&middot;&nbsp; p. 1166</span></span>
       </blockquote>
 
       <div class="body-copy reveal delay-4" style="margin-top: 40px;">
@@ -994,7 +1059,7 @@
       <blockquote class="pull-quote reveal delay-3">
         But is it always our attention that is deficient? Or does the deficiency lie in
         things that fail to capture our attention?
-        <span class="attr">J&uuml;tte 2020 &nbsp;&middot;&nbsp; p. 1174</span>
+        <span class="attr"><span class="cite-ref" tabindex="0">J&uuml;tte 2020 &nbsp;&middot;&nbsp; p. 1174</span></span>
       </blockquote>
     </section>
 
@@ -1054,7 +1119,7 @@
       </div>
 
       <footer class="footer">
-        <div>Reading Response &nbsp;&middot;&nbsp; J&uuml;tte (2020)</div>
+        <div>Reading Response &nbsp;&middot;&nbsp; <span class="cite-ref" tabindex="0">J&uuml;tte (2020)</span></div>
         <div><em>ITASIA302</em> &nbsp;&middot;&nbsp; Week 8 &nbsp;&middot;&nbsp; Takumi</div>
       </footer>
     </section>
@@ -1160,10 +1225,105 @@
         setTimeout(tick, 200);
       }
     });
+
+    /* ======================================================================
+       Citation hover-cards: one shared popover for all .cite-ref spans.
+       Bibliography text is reused from the existing .citation-block.
+       ====================================================================== */
+    (function () {
+      const refs = Array.from(document.querySelectorAll(".cite-ref"));
+      if (!refs.length) return;
+
+      function citationText() {
+        const block = document.querySelector(".citation-block");
+        if (!block) return "";
+        let out = "";
+        block.childNodes.forEach(node => {
+          if (node.nodeType === 1 && (node.classList.contains("cite-label") || node.tagName === "A" || node.tagName === "BR")) return;
+          out += node.textContent;
+        });
+        return out.replace(/\s+/g, " ").trim();
+      }
+
+      const pop = document.createElement("div");
+      pop.id = "cite-pop";
+      pop.className = "cite-pop";
+      pop.setAttribute("role", "tooltip");
+      pop.setAttribute("aria-hidden", "true");
+      const popText = document.createElement("div");
+      const popPage = document.createElement("div");
+      popPage.className = "cite-pop-page";
+      popPage.hidden = true;
+      pop.appendChild(popText);
+      pop.appendChild(popPage);
+      document.body.appendChild(pop);
+      popText.textContent = citationText();
+
+      let activeRef = null;
+      let lastTouch = 0;
+      const recentTouch = () => Date.now() - lastTouch < 700;
+
+      function position(ref) {
+        const r = ref.getBoundingClientRect();
+        const pw = pop.offsetWidth;
+        const ph = pop.offsetHeight;
+        const gap = 10;
+        const margin = 8;
+        let left = r.left + r.width / 2 - pw / 2;
+        left = Math.min(Math.max(left, margin), window.innerWidth - pw - margin);
+        let top = r.top - ph - gap;
+        if (top < 64) top = r.bottom + gap; /* flip below near the viewport top */
+        pop.style.left = left + "px";
+        pop.style.top = top + "px";
+      }
+
+      function show(ref) {
+        activeRef = ref;
+        popText.textContent = citationText();
+        const m = ref.textContent.match(/p\.\s*(\d+)/);
+        popPage.hidden = !m;
+        if (m) popPage.textContent = "· p. " + m[1];
+        position(ref);
+        pop.classList.add("on");
+        pop.setAttribute("aria-hidden", "false");
+      }
+
+      function hide() {
+        if (!activeRef) return;
+        activeRef = null;
+        pop.classList.remove("on");
+        pop.setAttribute("aria-hidden", "true");
+      }
+
+      window.addEventListener("touchstart", () => { lastTouch = Date.now(); }, { passive: true });
+
+      refs.forEach(ref => {
+        ref.setAttribute("aria-describedby", "cite-pop");
+        ref.addEventListener("mouseenter", () => { if (!recentTouch()) show(ref); });
+        ref.addEventListener("mouseleave", () => { if (!recentTouch()) hide(); });
+        ref.addEventListener("focusin", () => { if (!recentTouch()) show(ref); });
+        ref.addEventListener("focusout", () => hide());
+        ref.addEventListener("click", () => {
+          if (!recentTouch()) return; /* touch only: tap toggles */
+          if (activeRef === ref) hide(); else show(ref);
+        });
+      });
+
+      document.addEventListener("click", e => {
+        const t = e.target;
+        if (activeRef && t instanceof Element && !t.closest(".cite-ref")) hide();
+      });
+      document.addEventListener("keydown", e => {
+        if (e.key === "Escape") hide();
+      });
+      window.addEventListener("scroll", () => { if (activeRef) position(activeRef); }, { passive: true });
+      window.addEventListener("resize", () => { if (activeRef) position(activeRef); });
+    })();
   </script>
 
   <script src="../../rain.js" data-color="#e0607e"></script>
   <script src="../../cursor.js"></script>
+  <script src="../../os.js" data-path="~/itasia302/reading-response/week-8" data-accent="#e0607e"></script>
 </body>
 
 </html>

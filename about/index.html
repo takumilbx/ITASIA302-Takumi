@@ -1363,6 +1363,13 @@
   html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
   .skip-link { position: absolute; left: -9999px; top: 8px; z-index: 100000; background: var(--bg-soft); color: var(--ink); padding: 10px 16px; font-family: var(--mono); font-size: 12px; letter-spacing: .08em; border: 1px solid var(--accent); border-radius: 4px; }
   .skip-link:focus { left: 8px; }
+
+  /* Cross-document view transitions: content crossfades, topbar stays put */
+  @view-transition { navigation: auto; }
+  @media (prefers-reduced-motion: reduce) {
+    @view-transition { navigation: none; }
+  }
+  .topbar { view-transition-name: topbar; }
 </style>
   <script>document.documentElement.classList.add('js');</script>
 </head>
@@ -2060,16 +2067,15 @@
 
           const target = document.getElementById(tab.getAttribute("aria-controls"));
           if (target) target.classList.add("active");
+
+          // Sync URL hash without scroll jump (#about / #thesis / #work)
+          history.replaceState(null, "", "#" + tab.id.replace(/^tab-/, ""));
         });
       });
 
       // Support direct linking via hash (#about, #thesis, #work)
-      const hash = window.location.hash;
-      if (hash === "#thesis") {
-        document.getElementById("tab-thesis").click();
-      } else if (hash === "#work") {
-        document.getElementById("tab-work").click();
-      }
+      const hashTab = document.getElementById("tab-" + window.location.hash.slice(1));
+      if (hashTab && hashTab.classList.contains("tab-btn")) hashTab.click();
 
       // ============================================================
       // Work tab — TikTok grid: auto-scroll + click expand/collapse
@@ -2473,6 +2479,7 @@
 
 <script src="../rain.js" data-color="#5299c8"></script>
 <script src="../cursor.js"></script>
+<script src="../os.js" data-path="~/itasia302/about" data-accent="#5299c8"></script>
 </body>
 
 </html>

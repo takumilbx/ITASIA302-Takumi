@@ -649,6 +649,13 @@ body {
   @keyframes modalPop { from { opacity: 0; transform: translateY(6px) scale(.985); } to { opacity: 1; transform: none; } }
   #gap-modal-inner, #pol-modal-inner { animation: modalPop .22s var(--ease); }
   @media (prefers-reduced-motion: reduce) { #gap-modal-inner, #pol-modal-inner { animation: none; } }
+
+/* Cross-document view transitions: content crossfades, topbar stays put */
+@view-transition { navigation: auto; }
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+}
+#topbar { view-transition-name: topbar; }
 </style>
   <script>document.documentElement.classList.add('js');</script>
 </head>
@@ -1228,7 +1235,7 @@ body {
     </div>
 
     <!-- Modal -->
-    <div id="gap-modal" role="dialog" aria-modal="true" aria-label="Paper details" tabindex="-1" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(8,12,20,.88);align-items:center;justify-content:center;padding:24px 32px;">
+    <div id="gap-modal" role="dialog" aria-modal="true" aria-label="Paper details" tabindex="-1" style="display:none;position:fixed;inset:0;z-index:9500;background:rgba(8,12,20,.88);align-items:center;justify-content:center;padding:24px 32px;">
       <div id="gap-modal-inner" style="background:var(--panel);border:1px solid var(--divider);border-radius:4px;max-width:680px;width:100%;max-height:82vh;overflow-y:auto;position:relative;"></div>
     </div>
 
@@ -1385,7 +1392,7 @@ body {
     </div>
 
     <!-- Policy event modal -->
-    <div id="pol-modal" role="dialog" aria-modal="true" aria-label="Policy event details" tabindex="-1" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(8,12,20,.82);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);align-items:center;justify-content:center;" onclick="if(event.target===this)closePolicyModal()">
+    <div id="pol-modal" role="dialog" aria-modal="true" aria-label="Policy event details" tabindex="-1" style="display:none;position:fixed;inset:0;z-index:9500;background:rgba(8,12,20,.82);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);align-items:center;justify-content:center;" onclick="if(event.target===this)closePolicyModal()">
       <div id="pol-modal-inner" style="background:var(--panel);border:1px solid var(--divider);border-radius:4px;max-width:640px;width:92%;max-height:82vh;overflow-y:auto;position:relative;">
         <button onclick="closePolicyModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:var(--faint);font-family:var(--mono);font-size:11px;cursor:pointer;letter-spacing:.1em;padding:4px 8px;">✕ close</button>
         <div id="pol-modal-body" style="padding:32px 36px 28px;"></div>
@@ -3230,5 +3237,6 @@ function closePolicyModal() {
 }
 
 </script>
+<script src="../../os.js" data-path="~/itasia302/personal-project/jp-edtech-trends" data-accent="#e8634a"></script>
 </body>
 </html>

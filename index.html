@@ -879,6 +879,12 @@
       }
     }
     button:active, .fw-cta:active, .tab-btn:active, .visit-btn:active, .compare-btn:active, .cam-btn:active, .hs-toggle:active, .sel-btn:active, .chip:active, .viz-link:active { transform: scale(0.97); }
+
+    /* Cross-document view transitions: content crossfades, topbar stays put */
+    @view-transition { navigation: auto; }
+    @media (prefers-reduced-motion: reduce) {
+      @view-transition { navigation: none; }
+    }
 </style>
   <noscript><meta http-equiv="refresh" content="0; url=home.html"></noscript>
 </head>

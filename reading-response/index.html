@@ -810,6 +810,12 @@
   html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
   .skip-link { position: absolute; left: -9999px; top: 8px; z-index: 100000; background: var(--bg-soft); color: var(--ink); padding: 10px 16px; font-family: var(--mono); font-size: 12px; letter-spacing: .08em; border: 1px solid var(--accent); border-radius: 4px; }
   .skip-link:focus { left: 8px; }
+  /* Cross-document view transitions: content crossfades, topbar stays put */
+  @view-transition { navigation: auto; }
+  @media (prefers-reduced-motion: reduce) {
+    @view-transition { navigation: none; }
+  }
+  .topbar { view-transition-name: topbar; }
 </style>
   <script>document.documentElement.classList.add('js');</script>
 </head>
@@ -1189,6 +1195,7 @@
 
 <script src="../rain.js" data-color="#e0607e"></script>
 <script src="../cursor.js"></script>
+<script src="../os.js" data-path="~/itasia302/reading-response" data-accent="#e0607e"></script>
 </body>
 
 </html>
