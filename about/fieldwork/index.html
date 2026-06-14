@@ -82,6 +82,26 @@
       transition: color .18s ease, border-color .18s ease; font-family: var(--mono); font-size: 11px; letter-spacing: .08em;
     }
     .back-link:hover { color: var(--digital); border-bottom-color: var(--digital); }
+    .topbar-meta { margin-left: 10px; }
+
+    /* ---- language toggle (always visible, above intro) ---- */
+    #lang-toggle {
+      position: fixed; top: 11px; right: 24px; z-index: 70;
+      display: flex; gap: 3px; align-items: center;
+      background: rgba(8,10,18,.72); border: 1px solid var(--rule); border-radius: 4px; padding: 3px;
+      -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px);
+    }
+    .lang-btn {
+      font-family: var(--mono); font-size: 11px; letter-spacing: .04em; color: var(--ink-faint);
+      background: transparent; border: 1px solid transparent; border-radius: 3px; padding: 5px 10px; cursor: pointer;
+      transition: color .18s var(--ease-out), background .18s var(--ease-out), border-color .18s var(--ease-out), transform .12s var(--ease-out);
+    }
+    .lang-btn[data-lang="ja"] { font-family: var(--jp); }
+    .lang-btn:hover { color: var(--ink); }
+    .lang-btn[aria-pressed="true"] { color: var(--ink); background: rgba(82,153,200,.16); border-color: var(--digital); }
+    .lang-btn:active { transform: scale(.96); transition-duration: 80ms; }
+    @media (max-width: 560px) { #lang-toggle { top: 8px; right: 8px; } .lang-btn { padding: 5px 8px; font-size: 10.5px; } }
+    @media (prefers-reduced-motion: reduce) { .lang-btn:active { transform: none; } }
 
     /* ---- 3D stage ---- */
     #stage { position: fixed; inset: 0; z-index: 1; }
@@ -300,10 +320,15 @@
     .an-q-id { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; color: var(--digital); margin-bottom: 5px; }
     .an-q-en { font-family: var(--serif); font-size: 14.5px; line-height: 1.45; color: var(--ink); margin-bottom: 4px; }
     .an-q-ja { font-family: var(--jp); font-size: 13px; line-height: 1.5; color: var(--ink-dim); margin-bottom: 9px; }
+    .an-q-ja.lead { color: var(--ink); font-size: 13.5px; line-height: 1.55; margin-bottom: 9px; }
     .an-q-ja.empty { color: var(--ink-faint); font-style: italic; }
     .an-finding { font-family: var(--sans); font-size: 12.5px; line-height: 1.45; padding: 8px 11px; border-radius: 4px; background: rgba(20,22,40,.5); border: 1px dashed var(--rule); color: var(--ink-dim); }
     .an-finding .lbl { font-family: var(--mono); font-size: 8.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-faint); display: block; margin-bottom: 3px; }
     .an-finding.pending { color: var(--ink-faint); font-style: italic; }
+    .an-finding-summary { margin-bottom: 7px; }
+    .an-quote { margin-top: 8px; border-left: 2px solid var(--analog); padding-left: 10px; }
+    .an-quote-en { font-family: var(--serif); font-style: italic; font-size: 12px; line-height: 1.55; color: var(--ink); margin-bottom: 5px; }
+    .an-quote-ja { font-family: var(--jp); font-size: 11px; line-height: 1.65; color: var(--ink-dim); white-space: pre-line; }
 
     /* timeline (bottom) */
     #timeline { bottom: 0; left: 0; right: 0; z-index: 40; padding: 14px 26px 16px;
@@ -381,11 +406,17 @@
 
   <header class="topbar">
     <div class="topbar-title">
-      <a class="back-link" href="../index.html">&larr; About / Research</a>
-      &nbsp;&middot;&nbsp; Inside the <em>Science Lab</em>
+      <a class="back-link" id="back-link" href="../index.html">&larr; About / Research</a>
+      &nbsp;&middot;&nbsp; <span id="topbar-title-main">Inside the <em>Science Lab</em></span>
+      <span class="topbar-meta" id="topbar-meta">ITASIA312 · Field Work</span>
     </div>
-    <div class="topbar-meta">ITASIA312 · Field Work</div>
   </header>
+
+  <!-- language toggle (JP default) -->
+  <div id="lang-toggle" role="group" aria-label="言語 / Language">
+    <button class="lang-btn" data-lang="ja" aria-pressed="true">日本語</button>
+    <button class="lang-btn" data-lang="en" aria-pressed="false">EN</button>
+  </div>
 
   <!-- 3D stage -->
   <div id="stage"><canvas id="lab"></canvas></div>
@@ -402,8 +433,8 @@
 
   <!-- HUD -->
   <div id="legend" class="hud panel-base">
-    <div class="legend-chip analog" id="lg-analog"><span class="swatch">✎</span><span>Analog</span><span class="ja">紙・黒板</span></div>
-    <div class="legend-chip digital" id="lg-digital"><span class="swatch">⌨</span><span>Digital</span><span class="ja">画面・端末</span></div>
+    <div class="legend-chip analog" id="lg-analog"><span class="swatch">✎</span><span class="lg-label">Analog</span><span class="ja lg-sub">紙・黒板</span></div>
+    <div class="legend-chip digital" id="lg-digital"><span class="swatch">⌨</span><span class="lg-label">Digital</span><span class="ja lg-sub">画面・端末</span></div>
   </div>
 
   <div id="cam" class="hud panel-base">
@@ -433,7 +464,7 @@
     <div class="ph-time" id="info-time"></div>
     <div class="ph-desc" id="info-desc"></div>
     <div class="tags" id="info-tags"></div>
-    <div class="spradley-title">Observation grid</div>
+    <div class="spradley-title" id="spradley-title">Observation grid</div>
     <div class="spradley" id="info-spradley"></div>
   </aside>
 
@@ -444,7 +475,7 @@
       <button class="tl-play" id="play-btn" aria-label="Play / pause">▶</button>
       <span class="tl-clock" id="tl-clock">9:30-9:31</span>
       <span class="tl-now" id="tl-now">Opening &amp; Introductions</span>
-      <span class="tl-pace">PACE <input type="range" id="pace" min="0.5" max="2" step="0.1" value="1" /></span>
+      <span class="tl-pace"><span id="pace-label">PACE</span> <input type="range" id="pace" min="0.5" max="2" step="0.1" value="1" /></span>
     </div>
     <div class="tl-track" id="tl-track"></div>
   </div>
@@ -453,16 +484,16 @@
   <div id="crossvisit" aria-hidden="true">
     <div class="cv-sheet">
       <button class="cv-close" id="cv-close" aria-label="Close">✕</button>
-      <div class="cv-eyebrow">Cross-visit comparison</div>
-      <h2 class="cv-title">Visit 1 <span>→</span> Visit 2</h2>
-      <p class="cv-lede">Same teacher, same lab, four days apart. What held, and what shifted.</p>
+      <div class="cv-eyebrow" id="cv-eyebrow">Cross-visit comparison</div>
+      <h2 class="cv-title" id="cv-title">Visit 1 <span>→</span> Visit 2</h2>
+      <p class="cv-lede" id="cv-lede">Same teacher, same lab, four days apart. What held, and what shifted.</p>
       <div class="cv-cols">
         <div class="cv-col">
-          <div class="cv-col-h cv-same">Stayed the same</div>
+          <div class="cv-col-h cv-same" id="cv-col-same">Stayed the same</div>
           <ul id="cv-same"></ul>
         </div>
         <div class="cv-col">
-          <div class="cv-col-h cv-chg">Changed · V1 → V2</div>
+          <div class="cv-col-h cv-chg" id="cv-col-chg">Changed · V1 → V2</div>
           <div id="cv-changed"></div>
         </div>
       </div>
@@ -473,7 +504,7 @@
   <div id="annotation" aria-hidden="true">
     <div class="an-card">
       <button class="an-close" id="an-close" aria-label="Close">✕</button>
-      <div class="an-eyebrow">Interview hotspot · 29 May</div>
+      <div class="an-eyebrow" id="an-eyebrow">Interview hotspot · 29 May</div>
       <div class="an-label" id="an-label">-</div>
       <div class="an-theme" id="an-theme"></div>
       <div class="an-qs" id="an-qs"></div>
@@ -502,6 +533,121 @@
 
     const D = window.FW_DATA;
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /* ----------------------------------------------------------------------
+       I18N  -  Japanese is the default; English is the toggled option.
+       Static chrome lives in UI[lang]; data-driven content carries parallel
+       "...Ja" fields in data.js / findings.js (picked via pick()).
+    ---------------------------------------------------------------------- */
+    const UI = {
+      ja: {
+        docTitle: "理科室のなかで — フィールドワーク · ITASIA312",
+        back: "← もどる",
+        topTitle: "理科室の<em>なか</em>で",
+        meta: "ITASIA312 · フィールドワーク",
+        bootBtn: "3D空間を読み込み中…",
+        enterBtn: "理科室に入る →",
+        enterHint: "ゼロから作った、明るい理科室。回す・寄る・授業を再生する。",
+        analog: "アナログ", analogSub: "紙・黒板",
+        digital: "デジタル", digitalSub: "画面・端末",
+        camBack: "教室のうしろ", camTeacher: "先生の視点", camTop: "真上から",
+        interview: "❓ インタビュー",
+        visit1: "1回目", visit1d: "5月21日",
+        visit2: "2回目", visit2d: "5月25日",
+        compare: "⇄ 比較",
+        grid: "観察グリッド",
+        pace: "速さ",
+        phase: "場面",
+        min: "分",
+        spDo: "すること", spMake: "つくる・使う", spSay: "言うこと", spFeel: "感じること",
+        noTools: "前に出ている道具はなし",
+        cvEyebrow: "2回の授業の比較",
+        cvTitle: "1回目 <span>→</span> 2回目",
+        cvLede: "同じ先生、同じ理科室、4日後。変わらなかったことと、変わったこと。",
+        cvSame: "変わらなかったこと",
+        cvChanged: "変わったこと · 1回目 → 2回目",
+        cvV1: "1回目", cvV2: "2回目",
+        anEyebrow: "インタビューの注釈 · 5月29日",
+        finding: "わかったこと",
+        pending: "保留：2026年5月29日のインタビュー",
+        hsAria: "インタビューの質問：",
+        proj: {
+          off: "プロジェクター：消灯",
+          liveGraph: "プロジェクター：散布図がリアルタイムで増えていく",
+          completedGraph: "プロジェクター：完成したグラフ",
+          docScaffold: "プロジェクター：Googleドキュメントの枠組み（黒のプロンプト・赤の解答）"
+        },
+        teacherFront: "先生は教室の前", teacherCirc: "先生は6つの班を回る"
+      },
+      en: {
+        docTitle: "Inside the Science Lab — Fieldwork · ITASIA312",
+        back: "← About / Research",
+        topTitle: "Inside the <em>Science Lab</em>",
+        meta: "ITASIA312 · Field Work",
+        bootBtn: "Booting 3D scene…",
+        enterBtn: "Enter the science lab →",
+        enterHint: "A bright Japanese science lab, built from scratch. Rotate · zoom · scrub the lesson.",
+        analog: "Analog", analogSub: "paper · board",
+        digital: "Digital", digitalSub: "screen · device",
+        camBack: "Back of room", camTeacher: "Teacher's view", camTop: "Top-down",
+        interview: "❓ Interview layer",
+        visit1: "Visit 1", visit1d: "21 May",
+        visit2: "Visit 2", visit2d: "25 May",
+        compare: "⇄ Compare",
+        grid: "Observation grid",
+        pace: "PACE",
+        phase: "Phase",
+        min: "min",
+        spDo: "DO", spMake: "MAKE & USE", spSay: "SAY", spFeel: "FEEL",
+        noTools: "no tools foregrounded",
+        cvEyebrow: "Cross-visit comparison",
+        cvTitle: "Visit 1 <span>→</span> Visit 2",
+        cvLede: "Same teacher, same lab, four days apart. What held, and what shifted.",
+        cvSame: "Stayed the same",
+        cvChanged: "Changed · V1 → V2",
+        cvV1: "Visit 1", cvV2: "Visit 2",
+        anEyebrow: "Interview hotspot · 29 May",
+        finding: "Finding",
+        pending: "Pending: interview 29 May 2026",
+        hsAria: "Interview questions: ",
+        proj: {
+          off: "Projector idle",
+          liveGraph: "Projector: scatter plot filling in real time",
+          completedGraph: "Projector: finalized graph",
+          docScaffold: "Projector: Google Doc scaffold, black prompts and red answers"
+        },
+        teacherFront: "Teacher at the front", teacherCirc: "Teacher circulating among the 6 groups"
+      }
+    };
+
+    // Japanese tool labels for analogTools[] / digitalTools[] (English keys in data.js).
+    const TOOL_JA = {
+      "Blackboard": "黒板",
+      "Paper worksheets": "紙のワークシート",
+      "Pendulum": "ふりこ",
+      "Notebooks": "ノート",
+      "Reference sheets": "参照シート",
+      "Paper scaffold": "紙の枠組み",
+      "Mega sheet": "メガシート",
+      "Mini sheets": "ミニシート",
+      "Google Sheets": "Googleスプレッドシート",
+      "Google Docs": "Googleドキュメント",
+      "Projector": "プロジェクター",
+      "Chromebooks": "Chromebook",
+      "学びポケット": "学びポケット",
+      "Apple Watch": "Apple Watch"
+    };
+
+    function tl(key) {
+      const v = UI[STATE.lang] && UI[STATE.lang][key];
+      return (v !== undefined) ? v : UI.en[key];
+    }
+    // localized data field: prefer "<base>Ja" when language is Japanese
+    function pick(obj, base) {
+      if (STATE.lang === "ja") { const j = obj[base + "Ja"]; if (j !== undefined && j !== null) return j; }
+      return obj[base];
+    }
+    function toolLabel(t) { return STATE.lang === "ja" ? (TOOL_JA[t] || t) : t; }
 
     /* ----------------------------------------------------------------------
        PALETTE - from reference_science_lab.png
@@ -669,7 +815,7 @@
       R.projTex.colorSpace = THREE.SRGBColorSpace;
       const screen = new THREE.Mesh(new THREE.PlaneGeometry(screenW, screenH),
         new THREE.MeshBasicMaterial({ map: R.projTex }));
-      screen.position.z = 0.05; projGroup.add(screen);
+      screen.position.z = 0.07; projGroup.add(screen);
       projGroup.position.set(3.4, 1.8, FRONT_Z + 0.12);
       g.add(projGroup);
       R.projector = projGroup; R.screenMesh = screen; digitalObjs.push(projGroup.children[0]);
@@ -713,7 +859,7 @@
 
       // ---- teacher demo table (front, by the board) + pendulum
       g.add(rbox(2.4, 0.72, 0.74, 0.03, mat(PAL.tableBase, { rough: 0.7 }), -1.0, 0.37, FRONT_Z + 1.9));
-      g.add(box(2.5, 0.05, 0.78, mat(PAL.tableBase, { rough: 0.7 }), -1.0, 0.715, FRONT_Z + 1.9));   // apron
+      g.add(box(2.5, 0.05, 0.78, mat(PAL.tableBase, { rough: 0.7 }), -1.0, 0.685, FRONT_Z + 1.9));   // apron
       R.demoTable = rbox(2.6, 0.07, 0.9, 0.02, mat(PAL.tableTop, { rough: 0.22, metal: 0.0, envMapIntensity: 1.3 }), -1.0, 0.75, FRONT_Z + 1.9);
       g.add(R.demoTable);
 
@@ -824,7 +970,7 @@
         // cabinet base (cream), inset + lifted off the floor; overhanging black laminate top.
         // Sizes/offsets chosen so no faces are coplanar (avoids z-fighting).
         studentsGroup.add(rbox(0.82, 0.72, BENCH.d - 0.08, 0.03, mat(PAL.tableBase, { rough: 0.7 }), t.x, 0.37, t.z));
-        studentsGroup.add(box(0.86, 0.05, BENCH.d - 0.04, mat(PAL.tableBase, { rough: 0.7 }), t.x, 0.715, t.z));   // apron
+        studentsGroup.add(box(0.86, 0.05, BENCH.d - 0.04, mat(PAL.tableBase, { rough: 0.7 }), t.x, 0.685, t.z));   // apron
         studentsGroup.add(rbox(BENCH.w, 0.06, BENCH.d, 0.02, mat(PAL.tableTop, { rough: 0.22, metal: 0.0, envMapIntensity: 1.3 }), t.x, 0.75, t.z));
         const sideX = [-0.7, 0.7];                      // a seat each side of the bench
         const seatZ = [-1.25, -0.45, 0.45, 1.25];       // 4 seats down the length
@@ -1070,27 +1216,20 @@
       for (let i = 0; i < Math.min(count, R.boardSheetPositions.length); i++) {
         const [sx, sy] = R.boardSheetPositions[i];
         const s = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 0.62), sheetMat);
-        s.position.set(sx, sy, 0.1); R.boardSheets.add(s); analogObjs.push(s);
+        s.position.set(sx, sy, 0.13); R.boardSheets.add(s); analogObjs.push(s);
       }
     }
 
     /* ----------------------------------------------------------------------
        STATE MACHINE - applyPhase(visitId, index)
     ---------------------------------------------------------------------- */
-    const STATE = { visit: "v1", index: 0, playing: false, playT: 0, pace: 1, intraFrac: 0 };
+    const STATE = { visit: "v1", index: 0, playing: false, playT: 0, pace: 1, intraFrac: 0, lang: "ja" };
 
     function phasesOf(v) { return D.visits[v].phases; }
     function curPhase() { return phasesOf(STATE.visit)[STATE.index]; }
 
-    function projLabel(s) {
-      return ({
-        off: "Projector idle",
-        liveGraph: "Projector: scatter plot filling in real time",
-        completedGraph: "Projector: finalized graph",
-        docScaffold: "Projector: Google Doc scaffold, black prompts and red answers"
-      })[s] || "Projector";
-    }
-    function teacherLabel(p) { return p === "circulating" ? "Teacher circulating among the 6 groups" : "Teacher at the front"; }
+    function projLabel(s) { return tl("proj")[s] || tl("proj").off; }
+    function teacherLabel(p) { return p === "circulating" ? tl("teacherCirc") : tl("teacherFront"); }
 
     function applyPhase(idx, animate = true) {
       const phases = phasesOf(STATE.visit);
@@ -1134,25 +1273,27 @@
     ---------------------------------------------------------------------- */
     function renderInfo(p) {
       const phases = phasesOf(STATE.visit);
-      document.getElementById("info-n").textContent = `Phase ${p.n} / ${phases.length}`;
-      document.getElementById("info-title").textContent = p.title;
-      document.getElementById("info-title-ja").textContent = p.titleJa || "";
-      document.getElementById("info-time").textContent = `${p.startTime}-${p.endTime}  ·  ~${p.durationMin} min`;
-      document.getElementById("info-desc").innerHTML = `<span class="jp">${escapeJP(p.description)}</span>`;
+      const ja = STATE.lang === "ja";
+      document.getElementById("info-n").textContent = `${tl("phase")} ${p.n} / ${phases.length}`;
+      // primary title in the active language; the small secondary JA line only in EN mode
+      document.getElementById("info-title").textContent = pick(p, "title");
+      document.getElementById("info-title-ja").textContent = ja ? "" : (p.titleJa || "");
+      document.getElementById("info-time").textContent = `${p.startTime}-${p.endTime}  ·  ~${p.durationMin} ${tl("min")}`;
+      document.getElementById("info-desc").innerHTML = `<span class="jp">${escapeJP(pick(p, "description"))}</span>`;
 
       // tags
       const tagsEl = document.getElementById("info-tags");
       const a = D.encoding.analog, d = D.encoding.digital;
-      const mk = (t, kind, gl) => `<span class="tag ${kind}"><span class="g">${gl}</span><span class="jp">${t}</span></span>`;
+      const mk = (t, kind, gl) => `<span class="tag ${kind}"><span class="g">${gl}</span><span class="jp">${escapeJP(t)}</span></span>`;
       let tags = "";
-      p.analogTools.forEach(t => tags += mk(t, "analog", a.glyph));
-      p.digitalTools.forEach(t => tags += mk(t, "digital", d.glyph));
-      tagsEl.innerHTML = tags || `<span class="tag" style="color:var(--ink-faint);border-color:var(--rule)">no tools foregrounded</span>`;
+      p.analogTools.forEach(t => tags += mk(toolLabel(t), "analog", a.glyph));
+      p.digitalTools.forEach(t => tags += mk(toolLabel(t), "digital", d.glyph));
+      tagsEl.innerHTML = tags || `<span class="tag" style="color:var(--ink-faint);border-color:var(--rule)">${tl("noTools")}</span>`;
 
       // spradley grid
-      const sp = p.spradley;
+      const sp = (ja && p.spradleyJa) ? p.spradleyJa : p.spradley;
       document.getElementById("info-spradley").innerHTML = [
-        ["DO", sp.do], ["MAKE & USE", sp.makeUse], ["SAY", sp.say], ["FEEL", sp.feel]
+        [tl("spDo"), sp.do], [tl("spMake"), sp.makeUse], [tl("spSay"), sp.say], [tl("spFeel"), sp.feel]
       ].map(([k, v]) => `<div class="sp-cell"><div class="sp-k">${k}</div><div class="sp-v"><span class="jp">${escapeJP(v)}</span></div></div>`).join("");
 
       // caption
@@ -1161,7 +1302,7 @@
 
       // timeline head
       document.getElementById("tl-clock").textContent = `${p.startTime}-${p.endTime}`;
-      document.getElementById("tl-now").textContent = p.title;
+      document.getElementById("tl-now").textContent = pick(p, "title");
     }
 
     function escapeJP(s) { return (s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
@@ -1299,16 +1440,16 @@
     function renderCrossVisit() {
       const cv = D.crossVisit;
       document.getElementById("cv-same").innerHTML =
-        cv.sameAcross.map(s => `<li><span class="jp">${escapeJP(s)}</span></li>`).join("");
+        pick(cv, "sameAcross").map(s => `<li><span class="jp">${escapeJP(s)}</span></li>`).join("");
       document.getElementById("cv-changed").innerHTML = cv.changed.map(c => `
         <div class="cv-change">
-          <div class="cv-change-t"><span class="jp">${escapeJP(c.title)}</span></div>
+          <div class="cv-change-t"><span class="jp">${escapeJP(pick(c, "title"))}</span></div>
           <div class="cv-ba">
-            <div class="cv-v v1"><span class="lbl">Visit 1</span><span class="jp">${escapeJP(c.v1)}</span></div>
+            <div class="cv-v v1"><span class="lbl">${tl("cvV1")}</span><span class="jp">${escapeJP(pick(c, "v1"))}</span></div>
             <div class="cv-arrow">→</div>
-            <div class="cv-v v2"><span class="lbl">Visit 2</span><span class="jp">${escapeJP(c.v2)}</span></div>
+            <div class="cv-v v2"><span class="lbl">${tl("cvV2")}</span><span class="jp">${escapeJP(pick(c, "v2"))}</span></div>
           </div>
-          ${c.note ? `<div class="cv-note">${escapeJP(c.note)}</div>` : ""}
+          ${pick(c, "note") ? `<div class="cv-note">${escapeJP(pick(c, "note"))}</div>` : ""}
         </div>`).join("");
     }
     const cvEl = document.getElementById("crossvisit");
@@ -1344,7 +1485,7 @@
       (D.hotspots || []).forEach(hs => {
         const el = document.createElement("button");
         el.className = "hotspot"; el.textContent = "?";
-        el.title = hs.label; el.setAttribute("aria-label", "Interview questions: " + hs.label);
+        el.title = pick(hs, "label"); el.setAttribute("aria-label", tl("hsAria") + pick(hs, "label"));
         el.addEventListener("click", () => openAnnotation(hs));
         wrap.appendChild(el);
         hotspotMarkers.push({ el, hs });
@@ -1367,18 +1508,43 @@
 
     const anEl = document.getElementById("annotation");
     function openAnnotation(hs) {
-      document.getElementById("an-label").textContent = hs.label;
-      document.getElementById("an-theme").textContent = hs.theme;
+      R.currentHs = hs;
+      const ja = STATE.lang === "ja";
+      document.getElementById("an-label").textContent = pick(hs, "label");
+      document.getElementById("an-theme").textContent = pick(hs, "theme");
       document.getElementById("an-qs").innerHTML = hs.questionIds.map(qid => {
         const q = F.questions[qid] || { en: "(question text pending)", ja: "" };
         const ans = F.findings[qid];
-        const ja = q.ja
-          ? `<div class="an-q-ja">${escapeJP(q.ja)}</div>`
-          : `<div class="an-q-ja empty">日本語：インタビュー資料より（未入力）</div>`;
-        const finding = ans
-          ? `<div class="an-finding"><span class="lbl">Finding</span>${escapeJP(ans)}</div>`
-          : `<div class="an-finding pending"><span class="lbl">Finding</span>${escapeJP(F.pendingLabel)}</div>`;
-        return `<div class="an-q"><div class="an-q-id">${qid}</div><div class="an-q-en">${escapeJP(q.en)}</div>${ja}${finding}</div>`;
+
+        // question: JP mode shows the verbatim Japanese as the lead line;
+        // EN mode shows the English gloss with the Japanese underneath.
+        let qBlock;
+        if (ja) {
+          qBlock = q.ja
+            ? `<div class="an-q-ja lead">${escapeJP(q.ja)}</div>`
+            : `<div class="an-q-en">${escapeJP(q.en)}</div>`;
+        } else {
+          qBlock = `<div class="an-q-en">${escapeJP(q.en)}</div>` +
+            (q.ja ? `<div class="an-q-ja">${escapeJP(q.ja)}</div>` : "");
+        }
+
+        let finding;
+        if (!ans) {
+          finding = `<div class="an-finding pending"><span class="lbl">${tl("finding")}</span>${escapeJP(tl("pending"))}</div>`;
+        } else if (typeof ans === 'object') {
+          const sumText = ja ? (ans.summaryJa || ans.summary) : ans.summary;
+          const summary = sumText ? `<div class="an-finding-summary">${escapeJP(sumText)}</div>` : "";
+          // verbatim Japanese quote stays in both languages (primary evidence);
+          // the English quote shows only in EN mode.
+          const showEn = !ja && ans.quoteEn;
+          const quoteBlock = (showEn || ans.quoteJa)
+            ? `<div class="an-quote">${showEn ? `<div class="an-quote-en">"${escapeJP(ans.quoteEn)}"</div>` : ""}${ans.quoteJa ? `<div class="an-quote-ja">${escapeJP(ans.quoteJa)}</div>` : ""}</div>`
+            : "";
+          finding = `<div class="an-finding"><span class="lbl">${tl("finding")}</span>${summary}${quoteBlock}</div>`;
+        } else {
+          finding = `<div class="an-finding"><span class="lbl">${tl("finding")}</span>${escapeJP(ans)}</div>`;
+        }
+        return `<div class="an-q"><div class="an-q-id">${qid}</div>${qBlock}${finding}</div>`;
       }).join("");
       anEl.classList.add("open"); anEl.setAttribute("aria-hidden", "false");
     }
@@ -1505,14 +1671,89 @@
        INTRO WIRING + BOOT
     ---------------------------------------------------------------------- */
     function fillIntro() {
-      document.getElementById("intro-course").textContent = D.meta.subtitle;
-      document.getElementById("intro-q").innerHTML = D.meta.question
-        .replace("analog", '<em>analog</em>')
-        .replace("digital", '<span class="dg">digital</span>');
-      document.getElementById("intro-subs").innerHTML = D.meta.subQuestions.map(q => `<li>${escapeJP(q)}</li>`).join("");
+      const ja = STATE.lang === "ja";
+      document.getElementById("intro-course").textContent = pick(D.meta, "subtitle");
+      let q = pick(D.meta, "question");
+      q = ja
+        ? q.replace("アナログ", '<em>アナログ</em>').replace("デジタル", '<span class="dg">デジタル</span>')
+        : q.replace("analog", '<em>analog</em>').replace("digital", '<span class="dg">digital</span>');
+      document.getElementById("intro-q").innerHTML = q;
+      document.getElementById("intro-subs").innerHTML = pick(D.meta, "subQuestions").map(s => `<li>${escapeJP(s)}</li>`).join("");
       document.getElementById("intro-metaline").innerHTML =
-        `<b>${escapeJP(D.meta.teacher)}</b> &nbsp;·&nbsp; ${escapeJP(D.meta.place)}`;
+        `<b>${escapeJP(pick(D.meta, "teacher"))}</b> &nbsp;·&nbsp; ${escapeJP(pick(D.meta, "place"))}`;
     }
+
+    /* ----------------------------------------------------------------------
+       LANGUAGE - static chrome swap + re-render of dynamic content
+    ---------------------------------------------------------------------- */
+    function setText(id, s) { const e = document.getElementById(id); if (e) e.textContent = s; }
+    function setHTML(id, s) { const e = document.getElementById(id); if (e) e.innerHTML = s; }
+
+    function applyStaticUI() {
+      document.documentElement.lang = STATE.lang;
+      document.title = tl("docTitle");
+      setText("back-link", tl("back"));
+      setHTML("topbar-title-main", tl("topTitle"));
+      setText("topbar-meta", tl("meta"));
+      setText("enter-hint", tl("enterHint"));
+      const eb = document.getElementById("enter-btn");
+      if (eb) eb.textContent = eb.disabled ? tl("bootBtn") : tl("enterBtn");
+
+      // legend
+      const la = document.querySelector("#lg-analog .lg-label"); if (la) la.textContent = tl("analog");
+      const las = document.querySelector("#lg-analog .lg-sub"); if (las) las.textContent = tl("analogSub");
+      const ld = document.querySelector("#lg-digital .lg-label"); if (ld) ld.textContent = tl("digital");
+      const lds = document.querySelector("#lg-digital .lg-sub"); if (lds) lds.textContent = tl("digitalSub");
+
+      // camera presets
+      const cb = k => document.querySelector(`.cam-btn[data-cam="${k}"]`);
+      if (cb("back")) cb("back").textContent = tl("camBack");
+      if (cb("teacher")) cb("teacher").textContent = tl("camTeacher");
+      if (cb("top")) cb("top").textContent = tl("camTop");
+
+      // interview toggle (preserve its pressed state)
+      setText("interview-toggle", tl("interview"));
+
+      // visit toggle
+      const v1 = document.querySelector('.visit-btn[data-visit="v1"]');
+      const v2 = document.querySelector('.visit-btn[data-visit="v2"]');
+      if (v1) v1.innerHTML = `${tl("visit1")}<small>${tl("visit1d")}</small>`;
+      if (v2) v2.innerHTML = `${tl("visit2")}<small>${tl("visit2d")}</small>`;
+      setText("compare-btn", tl("compare"));
+
+      // info + timeline chrome
+      setText("spradley-title", tl("grid"));
+      setText("pace-label", tl("pace"));
+
+      // cross-visit overlay chrome
+      setText("cv-eyebrow", tl("cvEyebrow"));
+      setHTML("cv-title", tl("cvTitle"));
+      setText("cv-lede", tl("cvLede"));
+      setText("cv-col-same", tl("cvSame"));
+      setText("cv-col-chg", tl("cvChanged"));
+
+      // annotation chrome
+      setText("an-eyebrow", tl("anEyebrow"));
+
+      // language toggle pressed state
+      document.querySelectorAll(".lang-btn").forEach(b =>
+        b.setAttribute("aria-pressed", b.dataset.lang === STATE.lang ? "true" : "false"));
+    }
+
+    function applyLang(lang) {
+      STATE.lang = (lang === "en") ? "en" : "ja";
+      try { localStorage.setItem("fw_lang", STATE.lang); } catch (e) {}
+      applyStaticUI();
+      fillIntro();
+      if (R.root) {                       // scene built → refresh dynamic content
+        renderInfo(curPhase());
+        if (cvEl.classList.contains("open")) renderCrossVisit();
+        if (anEl.classList.contains("open") && R.currentHs) openAnnotation(R.currentHs);
+      }
+    }
+
+    document.querySelectorAll(".lang-btn").forEach(b =>
+      b.addEventListener("click", () => applyLang(b.dataset.lang)));
 
     function enter() {
       document.getElementById("intro").classList.add("gone");
@@ -1522,7 +1763,8 @@
     }
 
     async function boot() {
-      fillIntro();
+      try { STATE.lang = localStorage.getItem("fw_lang") === "en" ? "en" : "ja"; } catch (e) { STATE.lang = "ja"; }
+      applyLang(STATE.lang);          // static chrome + intro in the chosen language
       buildLab();
       buildActors();
       buildV2Extras();
@@ -1537,7 +1779,7 @@
       animate();
 
       const btn = document.getElementById("enter-btn");
-      btn.disabled = false; btn.textContent = "Enter the science lab →";
+      btn.disabled = false; btn.textContent = tl("enterBtn");
       btn.addEventListener("click", enter);
     }
 
