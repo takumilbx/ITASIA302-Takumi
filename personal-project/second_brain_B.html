@@ -212,7 +212,7 @@ h1.display{
 }
 h2.head{
   font-family:var(--serif); font-weight:360;
-  font-size:clamp(28px, 4.4vw, 54px); line-height:1.05;
+  font-size:clamp(31px, 4.7vw, 58px); line-height:1.05;
   letter-spacing:-0.01em; margin:0 0 0.4em; color:var(--ink);
   text-shadow:0 1px 2px rgba(0,0,0,0.45);
 }
@@ -221,8 +221,8 @@ h2.head{
 .ink-warm{ color:var(--amber); font-style:italic; font-weight:500; }
 .body{
   font-family:var(--serif); font-weight:400;
-  font-size:clamp(16px, 1.42vw, 19.5px);
-  line-height:1.66; color:var(--ink-2);
+  font-size:clamp(18px, 1.7vw, 23px);
+  line-height:1.62; color:var(--ink-2);
   max-width:var(--measure);
   hanging-punctuation:first last;
 }
@@ -232,7 +232,7 @@ h2.head{
 .lead{ color:var(--ink); font-weight:360; }
 blockquote.q{
   margin:0; font-family:var(--serif); font-weight:330; font-style:italic;
-  font-size:clamp(20px, 2.5vw, 30px); line-height:1.34; color:var(--ink);
+  font-size:clamp(23px, 2.9vw, 35px); line-height:1.34; color:var(--ink);
   letter-spacing:-0.006em;
 }
 blockquote.q .src{
@@ -325,9 +325,9 @@ blockquote.q .src{
 .steplegend{ position:relative; }
 .steplegend .lh{ font-family:var(--mono); font-size:10px; letter-spacing:0.18em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:14px; }
 .steplegend .stepttl{ font-size:clamp(24px,3.2vw,42px); margin:0 0 18px; letter-spacing:-0.02em; }
-.steplegend .stepintro{ font-family:var(--serif); font-weight:300; font-size:13.5px; line-height:1.6; color:var(--ink-2); max-width:34ch; margin:0 0 24px; }
+.steplegend .stepintro{ font-family:var(--serif); font-weight:300; font-size:15.5px; line-height:1.6; color:var(--ink-2); max-width:34ch; margin:0 0 24px; }
 .steplegend ol{ list-style:none; margin:0; padding:0; position:relative; }
-.steplegend li{ font-family:var(--mono); font-size:13px; letter-spacing:0.03em; color:var(--ink-ghost);
+.steplegend li{ font-family:var(--mono); font-size:14.5px; letter-spacing:0.03em; color:var(--ink-ghost);
   padding:9px 0 9px 26px; position:relative; transition:color 0.4s var(--ease-enter); }
 .steplegend li::before{ content:""; position:absolute; left:3px; top:13px; width:8px; height:8px; border-radius:50%;
   border:1px solid var(--ink-ghost); background:var(--paper); transition:all 0.4s var(--ease-enter); z-index:1; }
@@ -377,7 +377,7 @@ blockquote.q .src{
 .fc-tag{ font-family:var(--mono); font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--red); margin-bottom:14px; }
 .fc-name{ font-family:var(--serif); font-weight:300; font-size:clamp(34px,4.6vw,62px); line-height:1; letter-spacing:-0.03em; color:var(--ink); }
 .fc-rule{ height:1px; background:var(--hair); margin:18px 0; }
-.fc-role{ font-family:var(--serif); font-weight:300; font-size:clamp(14px,1.2vw,16.5px); line-height:1.62; color:var(--ink-2); max-width:46ch; }
+.fc-role{ font-family:var(--serif); font-weight:300; font-size:clamp(16px,1.35vw,19px); line-height:1.62; color:var(--ink-2); max-width:46ch; }
 @media (max-width:860px){
   .stepwrap{ grid-template-columns:1fr; gap:22px; align-content:start; }
   .focuscard{ width:100%; padding:24px; min-height:0; }
@@ -419,30 +419,30 @@ blockquote.q .src{
 .ac-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; opacity:0; }
 .ac-tag{ font-family:var(--mono); font-size:10px; letter-spacing:0.2em; color:var(--red); }
 .ac-addr{ font-family:var(--mono); font-size:10px; letter-spacing:0.1em; color:var(--ink-faint); }
-.ac-claim{ font-family:var(--serif); font-weight:300; font-size:clamp(18px,2vw,24px); line-height:1.3; color:var(--ink); letter-spacing:-0.01em; opacity:0; }
+.ac-claim{ font-family:var(--serif); font-weight:300; font-size:clamp(20px,2.2vw,27px); line-height:1.3; color:var(--ink); letter-spacing:-0.01em; opacity:0; }
 .ac-rule{ height:1px; background:var(--hair); margin:16px 0; opacity:0; }
-.ac-quote{ font-family:var(--serif); font-style:italic; font-size:14px; line-height:1.5; color:var(--ink-2); opacity:0; }
+.ac-quote{ font-family:var(--serif); font-style:italic; font-size:15.5px; line-height:1.5; color:var(--ink-2); opacity:0; }
 .ac-src{ font-family:var(--mono); font-size:10px; letter-spacing:0.08em; color:var(--ink-faint); margin-top:14px; opacity:0; }
 .ac-stamp{ position:absolute; right:22px; bottom:20px; font-family:var(--mono); font-size:9.5px; letter-spacing:0.18em;
   color:var(--red); border:1px solid var(--red); border-radius:3px; padding:4px 9px; opacity:0; transform:rotate(-6deg) scale(0.8); }
 /* molecule (beat 10) */
 .matom{ position:absolute; width:152px; padding:11px 14px; background:var(--card); border:1px solid var(--card-edge); border-top:2px solid var(--cyan);
-  border-radius:3px; box-shadow:var(--shadow-1); font-family:var(--serif); font-size:13px; line-height:1.35; color:var(--ink-2);
+  border-radius:3px; box-shadow:var(--shadow-1); font-family:var(--serif); font-size:14.5px; line-height:1.35; color:var(--ink-2);
   opacity:0; z-index:2; }
 .mhub{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) scale(0.85); text-align:center; z-index:3; opacity:0; width:186px;
   background:var(--card); border:1px solid var(--amber-deep); border-radius:4px; padding:16px 18px;
   box-shadow:var(--shadow-2), 0 0 0 1px var(--amber-lo); }
 .mhub span{ display:block; font-family:var(--mono); font-size:11px; letter-spacing:0.2em; color:var(--amber); }
-.mhub small{ display:block; font-family:var(--serif); font-style:italic; font-size:13px; color:var(--ink-2); margin-top:7px; }
+.mhub small{ display:block; font-family:var(--serif); font-style:italic; font-size:14.5px; color:var(--ink-2); margin-top:7px; }
 /* alloy (beat 11) */
 .molchip{ position:absolute; padding:14px 18px; background:var(--card); border:1px solid var(--card-edge); border-top:2px solid var(--amber-deep); border-radius:3px;
-  box-shadow:var(--shadow-2); font-family:var(--serif); font-size:15px; line-height:1.3; color:var(--ink); opacity:0; z-index:2; min-width:164px; }
+  box-shadow:var(--shadow-2); font-family:var(--serif); font-size:16.5px; line-height:1.3; color:var(--ink); opacity:0; z-index:2; min-width:164px; }
 .alloycard{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) scale(0.9); width:min(450px,90%);
   background:var(--card); border:1px solid var(--card-edge); border-radius:4px; box-shadow:var(--shadow-3); padding:32px 36px; opacity:0; z-index:4; }
 .al-layers{ position:absolute; inset:0; border-radius:4px; z-index:-1;
   box-shadow:4px 4px 0 -1px var(--card), 4px 4px 0 0 var(--card-edge), 8px 8px 0 -1px var(--card), 8px 8px 0 0 var(--card-edge); }
 .al-tag{ font-family:var(--mono); font-size:10px; letter-spacing:0.18em; color:var(--red); margin-bottom:14px; }
-.al-line{ font-family:var(--serif); font-weight:400; font-size:clamp(20px,2.2vw,28px); line-height:1.32; color:var(--ink); letter-spacing:-0.01em; opacity:0; }
+.al-line{ font-family:var(--serif); font-weight:400; font-size:clamp(22px,2.4vw,31px); line-height:1.32; color:var(--ink); letter-spacing:-0.01em; opacity:0; }
 @media (max-width:860px){
   .demowrap{ grid-template-columns:1fr; gap:22px; }
   .demo-stage{ height:340px; }
@@ -476,8 +476,8 @@ blockquote.q .src{
 .atomchip{
   position:absolute; background:var(--card); border:1px solid var(--card-edge);
   border-radius:2px; box-shadow:var(--shadow-1); padding:9px 12px;
-  font-family:var(--serif); font-size:12.5px; line-height:1.32; color:var(--ink);
-  width:228px;
+  font-family:var(--serif); font-size:14px; line-height:1.32; color:var(--ink);
+  width:236px;
 }
 .atomchip .ak{ font-family:var(--mono); font-size:9px; letter-spacing:0.12em; color:var(--ink-ghost); text-transform:uppercase; display:block; margin-bottom:4px; }
 
@@ -696,7 +696,7 @@ blockquote.q .src{
             <h1 class="display rv">Building a<br><em>Second Brain</em></h1>
             <div class="rv" style="margin:10px 0 26px;font-family:var(--mono);font-size:13px;letter-spacing:0.14em;color:var(--red);text-transform:uppercase;">( For Real This Time )</div>
             <hr class="rule rv">
-            <p class="body rv" style="font-size:16px;line-height:1.6;">The whole project in one walk-through: what Personal Knowledge Management actually is, why the hype around it should make you suspicious, what I am building, and where it goes next.</p>
+            <p class="body rv" style="font-size:18px;line-height:1.6;">The whole project in one walk-through: what Personal Knowledge Management actually is, why the hype around it should make you suspicious, what I am building, and where it goes next.</p>
             <div class="rv" style="margin-top:24px;display:flex;justify-content:space-between;align-items:flex-end;">
               <span class="meta">Zettelkasten · ITASIA302</span>
               <span class="stamp">Filed · 2026</span>
@@ -718,8 +718,8 @@ blockquote.q .src{
           <div class="card kraft" id="b1-aside" style="width:min(330px,40vw);right:0;top:50%;">
             <div class="tab rv" style="color:var(--ink-2);margin-bottom:12px;">Aside · the habit is old</div>
             <hr class="rule rv">
-            <p class="body rv" style="font-size:14.5px;line-height:1.55;color:var(--ink-2);">The term is new (Frand and Hixon coined it in a 1999 UCLA paper), but the habit is centuries deep, from Leonardo's notebooks to Luhmann's Zettelkasten, a box of over 90,000 linked cards.</p>
-            <p class="body rv" style="font-size:14.5px;line-height:1.55;color:var(--ink-2);">In 1945, Vannevar Bush imagined the Memex, a desk that stored everything you read and pulled it back along named trails <span class="citekey">(Bush, 1945)</span>. The dream was never storage. It was retrieval.</p>
+            <p class="body rv" style="font-size:17px;line-height:1.55;color:var(--ink-2);">The term is new (Frand and Hixon coined it in a 1999 UCLA paper), but the habit is centuries deep, from Leonardo's notebooks to Luhmann's Zettelkasten, a box of over 90,000 linked cards.</p>
+            <p class="body rv" style="font-size:17px;line-height:1.55;color:var(--ink-2);">In 1945, Vannevar Bush imagined the Memex, a desk that stored everything you read and pulled it back along named trails <span class="citekey">(Bush, 1945)</span>. The dream was never storage. It was retrieval.</p>
             <span class="pin" style="top:-5px;left:50%;"></span>
           </div>
         </div>
@@ -737,7 +737,7 @@ blockquote.q .src{
           <!-- tipped-in slip: the extended mind quote -->
           <div class="card" id="b2-slip" style="width:min(360px,42vw);right:0;top:50%;background:var(--kraft);">
             <div class="stamp flat rv" style="margin-bottom:14px;">Tipped-in · 1998</div>
-            <blockquote class="q rv" style="font-size:18px;line-height:1.4;">"Thinking does not only happen inside the head."
+            <blockquote class="q rv" style="font-size:21px;line-height:1.4;">"Thinking does not only happen inside the head."
               <span class="src">In "The Extended Mind", Andy Clark and David Chalmers argue that if Otto trusts his notebook and reaches for it the way you reach for memory, the notebook becomes part of his mind. Moving what you know into a system you trust is not laziness, it is cognitive extension. (Clark and Chalmers, 1998)</span>
             </blockquote>
           </div>
@@ -758,13 +758,13 @@ blockquote.q .src{
           <!-- two failure-mode stamped slips -->
           <div class="card kraft" id="b3-f1" style="width:300px;right:8%;bottom:8%;z-index:22;">
             <div class="stamp rv" style="margin-bottom:10px;">Failure · 01</div>
-            <div class="rv" style="font-family:var(--serif);font-size:15px;color:var(--ink);font-weight:400;margin-bottom:4px;">The Productivity Trap</div>
-            <p class="body rv" style="font-size:13.5px;margin:0;color:var(--ink-2);">the system needs so much upkeep you spend more time maintaining it than thinking with it.</p>
+            <div class="rv" style="font-family:var(--serif);font-size:17px;color:var(--ink);font-weight:400;margin-bottom:4px;">The Productivity Trap</div>
+            <p class="body rv" style="font-size:15.5px;margin:0;color:var(--ink-2);">the system needs so much upkeep you spend more time maintaining it than thinking with it.</p>
           </div>
           <div class="card kraft" id="b3-f2" style="width:300px;right:2%;top:10%;z-index:21;">
             <div class="stamp rv" style="margin-bottom:10px;">Failure · 02</div>
-            <div class="rv" style="font-family:var(--serif);font-size:15px;color:var(--ink);font-weight:400;margin-bottom:4px;">The Collecting Habit</div>
-            <p class="body rv" style="font-size:13.5px;margin:0;color:var(--ink-2);">saving articles you never reopen, until the second brain is just a digital attic of other people's ideas.</p>
+            <div class="rv" style="font-family:var(--serif);font-size:17px;color:var(--ink);font-weight:400;margin-bottom:4px;">The Collecting Habit</div>
+            <p class="body rv" style="font-size:15.5px;margin:0;color:var(--ink-2);">saving articles you never reopen, until the second brain is just a digital attic of other people's ideas.</p>
           </div>
         </div>
       </section>
@@ -783,7 +783,7 @@ blockquote.q .src{
           <!-- the meme quote slip, laid over the drawer -->
           <div class="card" id="b4-quote" style="width:min(560px,72vw);left:50%;top:46%;transform:translate(-50%,-50%);z-index:30;">
             <blockquote class="q rv">The people who sell you a "second brain" often cannot remember where their own <span class="ink-red">car keys</span> are.
-              <span class="src" style="font-style:italic;color:var(--ink-2);font-family:var(--serif);font-size:16px;text-transform:none;letter-spacing:0;">The partner who quietly tracks the keys, the glasses, and the appointments was the original second brain all along.</span>
+              <span class="src" style="font-style:italic;color:var(--ink-2);font-family:var(--serif);font-size:18px;text-transform:none;letter-spacing:0;">The partner who quietly tracks the keys, the glasses, and the appointments was the original second brain all along.</span>
               <span class="src">based on the "second brain" meme by @nunoei, paraphrased</span>
             </blockquote>
           </div>
@@ -998,7 +998,7 @@ blockquote.q .src{
           </div>
           <div class="b6title">
             <h2 class="head" id="b6-head" style="font-size:clamp(26px,3vw,42px);margin:0;">Where I <span class="ink-red">am</span> now</h2>
-            <p class="body" id="b6-intro" style="font-size:13px;line-height:1.5;margin-top:12px;color:var(--ink-faint);">One source, transformed by hand across seven steps. A paper enters through Zotero. It leaves as a dated chapter draft.</p>
+            <p class="body" id="b6-intro" style="font-size:14.5px;line-height:1.5;margin-top:12px;color:var(--ink-faint);">One source, transformed by hand across seven steps. A paper enters through Zotero. It leaves as a dated chapter draft.</p>
           </div>
 
           <!-- threads layer (between step cards) -->
@@ -1043,7 +1043,7 @@ blockquote.q .src{
           <div class="card stepcard" id="s6-4" data-fx="71" data-fy="40" data-rx="56" data-ry="14" style="width:244px;">
             <div class="step-no">Step 04</div>
             <div class="step-tool" style="margin:3px 0 12px;">Atoms · land in the vault</div>
-            <p class="body" style="font-size:13px;margin:0;color:var(--ink-2);">Each atom becomes its own file. The filename is the claim, written as a full sentence, so search alone can find it.</p>
+            <p class="body" style="font-size:14px;margin:0;color:var(--ink-2);">Each atom becomes its own file. The filename is the claim, written as a full sentence, so search alone can find it.</p>
             <hr class="rule red">
             <div style="display:flex;justify-content:space-between;align-items:baseline;">
               <span style="font-family:var(--serif);font-size:32px;color:var(--ink);">1,471</span>
@@ -1097,18 +1097,18 @@ blockquote.q .src{
             <div class="sourcerow">
               <div class="srccol rv">
                 <div class="meta" style="color:var(--ink-2);margin-bottom:8px;">Source 01 · Bestseller</div>
-                <div style="font-family:var(--serif);font-size:15px;color:var(--ink);line-height:1.35;">Tiago Forte, <em>Building a Second Brain</em> (2022).</div>
-                <p class="body" style="font-size:12.5px;margin-top:8px;color:var(--ink-faint);">The bestseller that made capture-first a movement. Here it is the thing being studied, not a source I lean on.</p>
+                <div style="font-family:var(--serif);font-size:16.5px;color:var(--ink);line-height:1.35;">Tiago Forte, <em>Building a Second Brain</em> (2022).</div>
+                <p class="body" style="font-size:13.5px;margin-top:8px;color:var(--ink-faint);">The bestseller that made capture-first a movement. Here it is the thing being studied, not a source I lean on.</p>
               </div>
               <div class="srccol rv">
                 <div class="meta" style="color:var(--ink-2);margin-bottom:8px;">Source 02 · Historical anchor</div>
-                <div style="font-family:var(--serif);font-size:15px;color:var(--ink);line-height:1.35;">Niklas Luhmann, "Communicating with Slip Boxes" (1981, Eng. tr.).</div>
-                <p class="body" style="font-size:12.5px;margin-top:8px;color:var(--ink-faint);">Luhmann's own account of his slip box, which he called a partner that could surprise him. Retrieval-first thinking is older than the apps now selling it.</p>
+                <div style="font-family:var(--serif);font-size:16.5px;color:var(--ink);line-height:1.35;">Niklas Luhmann, "Communicating with Slip Boxes" (1981, Eng. tr.).</div>
+                <p class="body" style="font-size:13.5px;margin-top:8px;color:var(--ink-faint);">Luhmann's own account of his slip box, which he called a partner that could surprise him. Retrieval-first thinking is older than the apps now selling it.</p>
               </div>
               <div class="srccol rv">
                 <div class="meta" style="color:var(--ink-2);margin-bottom:8px;">Source 03 · Current angle</div>
-                <div style="font-family:var(--serif);font-size:15px;color:var(--ink);line-height:1.35;">Ferreira (2026), on retrieval-first organization.</div>
-                <p class="body" style="font-size:12.5px;margin-top:8px;color:var(--ink-faint);">Names the mechanism: organize for retrieval, not for storage. The project's current angle.</p>
+                <div style="font-family:var(--serif);font-size:16.5px;color:var(--ink);line-height:1.35;">Ferreira (2026), on retrieval-first organization.</div>
+                <p class="body" style="font-size:13.5px;margin-top:8px;color:var(--ink-faint);">Names the mechanism: organize for retrieval, not for storage. The project's current angle.</p>
               </div>
             </div>
           </div>
