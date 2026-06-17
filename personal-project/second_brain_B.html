@@ -1323,7 +1323,8 @@ blockquote.q .src{
 
   function setCard(el, x, y, rot, scale, opacity, z){
     if(!el) return;
-    el.style.transform = "translate3d("+x.toFixed(2)+"px,"+y.toFixed(2)+"px,0) rotate("+rot.toFixed(2)+"deg) scale("+scale.toFixed(3)+")";
+    // main cards sit at top:50%; keep them vertically centered (-50% of own height)
+    el.style.transform = "translate3d("+x.toFixed(2)+"px,calc(-50% + "+y.toFixed(2)+"px),0) rotate("+rot.toFixed(2)+"deg) scale("+scale.toFixed(3)+")";
     if(opacity!=null) el.style.opacity = opacity;
     if(z!=null) el.style.zIndex = z;
   }
