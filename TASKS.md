@@ -49,6 +49,20 @@
 - **Created**: 2026-05-09
 - **Completed**: 2026-05-12
 
+### TASK-007: Week 11 Reading Response
+- **Status**: ✅ Done
+- **Priority**: 🔴 High
+- **Page**: `reading-response/week-11/index.html` (new)
+- **Description**: Reading response on technofascism. Main reading Coeckelbergh (2026); commentaries Gonzalez (2026) and Moellers (2025). Reading order Gonzalez → Coeckelbergh → Moellers. Field spine: GIGA School + Google for Education as Coeckelbergh's corporatist alliance / algorithmic governance in the classroom. Theory-only (no new fieldwork), measured/ambivalent tone. No em-dashes. All pull-quotes verified verbatim against PDFs via NotebookLM (NLM integration pass, 2026-07-01).
+- **Subtasks**:
+  - [x] Process 3 sources through NLM (atoms in Obsidian vault)
+  - [x] Confirm angle, fieldwork mode, stance with user
+  - [x] Build week-11 page in house "Scientific Sublime" style (amber signal accent)
+  - [x] Wire nav: os.js route + alias + latest, class-assignments card, home latest card
+  - [ ] User revises draft prose into own voice, then commit
+- **Created**: 2026-07-01
+- **Completed**: 2026-07-01 (draft; awaiting user's voice pass)
+
 ### TASK-004: Add .gitignore
 - **Status**: ⬜ Not Started
 - **Priority**: Low

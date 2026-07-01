@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control learned to be convenient &middot; Week 11 Reading Response</title>
+  <meta name="description"
+    content="ITASIA302 reading response to Coeckelbergh (2026) on technofascism, with commentaries by Gonzalez (2026) and Moellers (2025), asking whether the GIGA School cloud belongs in the same story about quiet, convenient control.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=Geist+Mono:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    /* ========================================================================
+     Design tokens "Scientific Sublime" (Week 11 signal-amber variant)
+     ======================================================================== */
+    :root {
+      --bg: #05060e;
+      --bg-soft: #0b0d1a;
+      --ink: #e0e6f0;
+      --ink-dim: #8899b8;
+      --ink-faint: #2e3a55;
+      --rule: #182030;
+      --accent: #d99a3e;
+      --accent-lo: #d99a3e14;
+      --accent-hi: #f0b968;
+      --teal: #45a884;
+      --sky: #5299c8;
+      --coral: #c98a4a;
+      --lilac: #7272c0;
+      --gold: #d99a3e;
+
+      --serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+      --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+      --ease: cubic-bezier(.22, .61, .36, 1);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      background-image:
+        linear-gradient(rgba(217, 154, 62, .022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(217, 154, 62, .022) 1px, transparent 1px);
+      background-size: 52px 52px;
+      color: var(--ink);
+      font-family: var(--serif);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* Atmospheric overlays */
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: .032;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/></filter><rect width='256' height='256' filter='url(%23n)'/></svg>");
+      background-size: 220px 220px;
+      mix-blend-mode: overlay;
+    }
+
+    .glow-tl,
+    .glow-br {
+      position: fixed;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .glow-tl {
+      top: 0;
+      left: 0;
+      width: 55vw;
+      height: 55vh;
+      background: radial-gradient(at 0% 0%, rgba(217, 154, 62, 0.07) 0%, transparent 60%);
+    }
+
+    .glow-br {
+      bottom: 0;
+      right: 0;
+      width: 50vw;
+      height: 50vh;
+      background: radial-gradient(at 100% 100%, rgba(114, 114, 192, 0.07) 0%, transparent 65%);
+    }
+
+    .edge-gradient {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      z-index: 10000;
+      background: linear-gradient(90deg, transparent 0%, var(--sky) 22%, var(--lilac) 62%, transparent 100%);
+      opacity: .55;
+      pointer-events: none;
+    }
+
+    /* ========================================================================
+     Topbar
+     ======================================================================== */
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 14px 48px 12px;
+      background: linear-gradient(180deg, rgba(5, 6, 14, 0.95) 0%, rgba(5, 6, 14, 0.70) 70%, transparent 100%);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .topbar-title {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 17px;
+      letter-spacing: -0.015em;
+      color: var(--ink);
+    }
+
+    .topbar-title em {
+      color: var(--accent);
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .topbar-meta {
+      font-family: var(--mono);
+      font-weight: 400;
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .journal-link {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px dotted var(--ink-faint);
+      transition: color 180ms ease, border-color 180ms ease;
+    }
+
+    .journal-link:hover,
+    .journal-link:focus-visible {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      outline: none;
+    }
+
+    /* ========================================================================
+     Scroll progress bar
+     ======================================================================== */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      z-index: 60;
+      background: linear-gradient(90deg, var(--accent), var(--coral));
+      width: 0%;
+      transition: width .08s linear;
+    }
+
+    /* ========================================================================
+     Scene containers
+     ======================================================================== */
+    main {
+      position: relative;
+      z-index: 1;
+    }
+
+    .scene {
+      min-height: 100dvh;
+      padding: 120px 48px 80px;
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+
+    .scene-tall {
+      min-height: 110vh;
+    }
+
+    .scene-number {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 24px;
+    }
+
+    .scene-number::before {
+      content: "";
+      display: inline-block;
+      width: 32px;
+      height: 1px;
+      background: var(--accent);
+      vertical-align: middle;
+      margin-right: 14px;
+      transform: translateY(-3px);
+    }
+
+    /* ========================================================================
+     Typography scale
+     ======================================================================== */
+    .eyebrow {
+      font-family: var(--mono);
+      font-weight: 400;
+      font-size: 12px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 18px;
+    }
+
+    .headline {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(38px, 5.2vw, 68px);
+      line-height: 1.02;
+      letter-spacing: -0.028em;
+      color: var(--ink);
+      margin-bottom: 28px;
+      max-width: 20ch;
+    }
+
+    .headline em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--accent);
+    }
+
+    .headline-sm {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(28px, 3.2vw, 42px);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 20px;
+      max-width: 24ch;
+    }
+
+    .headline-sm em {
+      color: var(--accent);
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .dek {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(17px, 1.4vw, 21px);
+      line-height: 1.55;
+      letter-spacing: -0.005em;
+      color: var(--ink-dim);
+      max-width: 62ch;
+      margin-bottom: 36px;
+    }
+
+    .dek em {
+      font-style: italic;
+      color: var(--ink);
+    }
+
+    .body-copy {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(17px, 1.35vw, 20px);
+      line-height: 1.62;
+      color: var(--ink-dim);
+      max-width: 66ch;
+    }
+
+    .body-copy em {
+      font-style: italic;
+      color: var(--ink);
+    }
+
+    .body-copy strong {
+      color: var(--ink);
+      font-weight: 400;
+    }
+
+    .body-copy p+p {
+      margin-top: 22px;
+    }
+
+    .label {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .cmd-prompt {
+      color: var(--teal);
+      font-style: normal;
+      user-select: none;
+    }
+
+    .blink-cursor {
+      display: inline-block;
+      width: 7px;
+      height: 10px;
+      background: var(--sky);
+      vertical-align: middle;
+      margin-left: 2px;
+      animation: cur-blink 1s step-end infinite;
+      border-radius: 1px;
+    }
+
+    @keyframes cur-blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
+    }
+
+    .blink-cursor.steady {
+      animation: cur-steady 3s ease-in-out infinite;
+    }
+
+    @keyframes cur-steady {
+
+      0%,
+      100% {
+        opacity: 0.5;
+      }
+
+      50% {
+        opacity: 0.15;
+      }
+    }
+
+    /* ========================================================================
+     Reveal state (IntersectionObserver adds .in-view)
+     ======================================================================== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity .45s var(--ease), transform .45s var(--ease);
+    }
+
+    .reveal.in-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal.delay-1 {
+      transition-delay: .12s;
+    }
+
+    .reveal.delay-2 {
+      transition-delay: .24s;
+    }
+
+    .reveal.delay-3 {
+      transition-delay: .36s;
+    }
+
+    .reveal.delay-4 {
+      transition-delay: .50s;
+    }
+
+    .reveal.delay-5 {
+      transition-delay: .64s;
+    }
+
+    .reveal.delay-6 {
+      transition-delay: .80s;
+    }
+
+    /* ========================================================================
+     Hero (Scene 0)
+     ======================================================================== */
+    .hero-scene {
+      min-height: 100dvh;
+      padding: 140px 48px 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      position: relative;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .hero-kicker {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 32px;
+    }
+
+    .hero-kicker .dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin: 0 12px 2px 0;
+      box-shadow: 0 0 10px var(--accent);
+      vertical-align: middle;
+    }
+
+    .hero-title {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(56px, 8.4vw, 128px);
+      line-height: 0.96;
+      letter-spacing: -0.038em;
+      color: var(--ink);
+      margin-bottom: 36px;
+      max-width: 16ch;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--accent);
+    }
+
+    .hero-dek {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(18px, 1.55vw, 24px);
+      line-height: 1.5;
+      color: var(--ink-dim);
+      max-width: 60ch;
+      margin-bottom: 56px;
+    }
+
+    .hero-dek strong {
+      color: var(--ink);
+      font-weight: 400;
+    }
+
+    .hero-dek em {
+      color: var(--ink);
+      font-style: italic;
+    }
+
+    @keyframes nudge {
+
+      0%,
+      100% {
+        transform: translateY(0);
+        opacity: .6;
+      }
+
+      50% {
+        transform: translateY(6px);
+        opacity: 1;
+      }
+    }
+
+    /* ========================================================================
+     Pull quote
+     ======================================================================== */
+    .pull-quote {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(24px, 2.4vw, 34px);
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      font-style: italic;
+      color: var(--ink);
+      max-width: 38ch;
+      border-left: 2px solid var(--accent);
+      padding-left: 28px;
+      margin: 56px 0 8px;
+    }
+
+    .pull-quote .attr {
+      display: block;
+      font-family: var(--mono);
+      font-style: normal;
+      font-size: 12px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-top: 18px;
+    }
+
+    /* ========================================================================
+     Closing / citation
+     ======================================================================== */
+    .closing-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 64px;
+      margin-top: 40px;
+    }
+
+    .citation-block {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 18px;
+      line-height: 1.7;
+      color: var(--ink);
+      max-width: 52ch;
+      border-left: 2px solid var(--accent);
+      padding: 6px 0 6px 26px;
+    }
+
+    .citation-block+.citation-block {
+      margin-top: 26px;
+    }
+
+    .citation-block .cite-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+
+    .citation-block em {
+      font-style: italic;
+      color: var(--ink);
+    }
+
+    .citation-block a {
+      color: var(--ink-dim);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--ink-faint);
+      transition: color 180ms ease, border-color 180ms ease;
+      word-break: break-word;
+    }
+
+    .citation-block a:hover,
+    .citation-block a:focus-visible {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      outline: none;
+    }
+
+    .meta-block {
+      font-family: var(--mono);
+      font-size: 11px;
+      line-height: 1.75;
+      color: var(--ink-faint);
+      letter-spacing: 0.04em;
+    }
+
+    .meta-block .meta-key {
+      color: var(--ink-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      font-size: 9.5px;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .meta-block .meta-val {
+      color: var(--ink);
+      display: block;
+      margin-bottom: 18px;
+    }
+
+    .meta-block .meta-val em {
+      color: var(--accent);
+      font-style: italic;
+    }
+
+    /* AI Statement block */
+    .ai-statement {
+      margin-top: 56px;
+      padding: 22px 26px;
+      border: 1px solid var(--rule);
+      border-left: 2px solid var(--lilac);
+      background: linear-gradient(180deg, rgba(114, 114, 192, 0.04) 0%, transparent 100%);
+      max-width: 66ch;
+    }
+
+    .ai-statement .ai-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--lilac);
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .ai-statement p {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 15px;
+      line-height: 1.62;
+      color: var(--ink-dim);
+    }
+
+    .ai-statement p+p {
+      margin-top: 14px;
+    }
+
+    footer.footer {
+      margin-top: 72px;
+      padding: 40px 0 60px;
+      border-top: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    footer.footer em {
+      color: var(--accent);
+      font-style: normal;
+      letter-spacing: 0.14em;
+    }
+
+    /* ========================================================================
+     Responsive
+     ======================================================================== */
+    @media (min-width: 1600px) {
+
+      .scene,
+      .hero-scene {
+        max-width: 1440px;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .topbar {
+        padding: 12px 24px;
+      }
+
+      .scene,
+      .hero-scene {
+        padding-left: 24px;
+        padding-right: 24px;
+      }
+
+      .closing-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .pull-quote {
+        padding-left: 18px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .topbar {
+        padding: 10px 18px;
+        flex-wrap: wrap;
+        row-gap: 4px;
+      }
+
+      .topbar-title {
+        font-size: 15px;
+        letter-spacing: -0.01em;
+      }
+
+      .topbar-meta {
+        font-size: 8px;
+      }
+
+      .scene {
+        padding: 96px 20px 64px;
+      }
+
+      .hero-scene {
+        padding: 110px 20px 64px;
+      }
+
+      .pull-quote {
+        margin: 40px 0 8px;
+        padding-left: 16px;
+      }
+
+      .citation-block {
+        padding-left: 18px;
+        font-size: 16px;
+      }
+
+      footer.footer {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal {
+        transition: none !important;
+        opacity: 1;
+        transform: none;
+      }
+
+      html {
+        scroll-behavior: auto;
+      }
+    }
+
+    button:active,
+    .fw-cta:active,
+    .tab-btn:active,
+    .visit-btn:active,
+    .compare-btn:active,
+    .cam-btn:active,
+    .hs-toggle:active,
+    .sel-btn:active,
+    .chip:active,
+    .viz-link:active {
+      transform: scale(0.97);
+    }
+
+    html:not(.js) .reveal {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 8px;
+      z-index: 100000;
+      background: var(--bg-soft);
+      color: var(--ink);
+      padding: 10px 16px;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: .08em;
+      border: 1px solid var(--accent);
+      border-radius: 4px;
+    }
+
+    .skip-link:focus {
+      left: 8px;
+    }
+
+    /* ========================================================================
+     Citation hover-cards
+     ======================================================================== */
+    .cite-ref {
+      cursor: help;
+      text-decoration: underline;
+      text-decoration-style: dotted;
+      text-decoration-color: rgba(217, 154, 62, .55);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+      transition: color 180ms ease, text-decoration-color 180ms ease;
+    }
+
+    .cite-ref:hover,
+    .cite-ref:focus-visible {
+      color: var(--accent);
+      text-decoration-style: solid;
+      text-decoration-color: var(--accent);
+      outline: none;
+    }
+
+    .cite-pop {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 500;
+      max-width: min(340px, calc(100vw - 16px));
+      background: var(--bg-soft);
+      border: 1px solid var(--rule);
+      border-top: 2px solid var(--accent);
+      padding: 12px 14px;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      line-height: 1.7;
+      letter-spacing: .02em;
+      color: #b8c4dc;
+      opacity: 0;
+      transform: translateY(4px);
+      pointer-events: none;
+      transition: opacity 160ms ease-out, transform 160ms ease-out;
+    }
+
+    .cite-pop.on {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .cite-pop .cite-pop-page {
+      margin-top: 6px;
+      color: var(--accent);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cite-pop {
+        transition: none;
+      }
+    }
+
+    /* Cross-document view transitions: content crossfades, topbar stays put */
+    @view-transition {
+      navigation: auto;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      @view-transition {
+        navigation: none;
+      }
+    }
+
+    .topbar {
+      view-transition-name: topbar;
+    }
+  </style>
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+
+<body>
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <div class="grain"></div>
+  <div class="glow-tl"></div>
+  <div class="glow-br"></div>
+  <div class="edge-gradient"></div>
+
+  <div class="scroll-progress" id="scroll-progress"></div>
+
+  <header class="topbar">
+    <div class="topbar-title"><a class="journal-link back-link" href="../../home.html">&larr; All assignments</a>
+      &nbsp;&middot;&nbsp; Reading Response <em>On technofascism</em></div>
+    <div class="topbar-meta">ITASIA302 &nbsp;&bull;&nbsp; Week 11 &nbsp;&bull;&nbsp; July 2026</div>
+  </header>
+
+  <main id="main">
+
+    <!-- ===============================================================
+       Scene 0 Hero
+       =============================================================== -->
+    <section class="hero-scene" id="scene-0">
+      <div class="hero-kicker reveal"><span class="dot"></span><span class="cmd-prompt">~/itasia302 $ </span><span
+          id="hero-cmd"></span><span class="blink-cursor" id="hero-cursor"></span></div>
+
+      <h1 class="hero-title reveal delay-1">
+        Control learned to be <em>convenient</em>.
+      </h1>
+
+      <p class="hero-dek reveal delay-2">
+        Three readings on technofascism. <strong>Gonzalez</strong> shows the visible edge, the raid and
+        the facial recognition contract. <strong>Coeckelbergh</strong>, the main reading, argues the real
+        danger is quieter, a matter of platforms and defaults rather than jackboots. <strong>Moellers</strong>
+        says stop watching Silicon Valley and look at the ordinary machinery of the state. I study a program
+        that hands every Japanese child a Google account, so I read all three with one uneasy question. When
+        control arrives as a <em>convenience</em>, would I recognise it in my own field?
+      </p>
+
+    </section>
+
+    <!-- ===============================================================
+       Scene 1 Gonzalez, the visible edge
+       =============================================================== -->
+    <section class="scene scene-tall" id="scene-1">
+      <div class="scene-number reveal">01 &nbsp;&middot;&nbsp; The visible edge</div>
+
+      <h2 class="headline reveal delay-1">
+        First, the part you can <em>photograph</em>.
+      </h2>
+
+      <div class="body-copy reveal delay-2">
+        <p>
+          Gonzalez is the short, sharp one, an opinion editorial written from fifteen miles away as ICE raids
+          turned violent in his own city. He follows the money and the hardware. Venture firms fund the
+          startups, Clearview scrapes billions of faces, Palantir builds the deportation platform, and Flock's
+          cameras read every passing plate. This is the technofascism you can point a camera at. It has a
+          helmet, a database, and a contract number.
+        </p>
+        <p>
+          The line that stays with me is his last move, that the tools built for the border are the ones most
+          ready to be turned inward on the people the state decides to call enemies. He does not want scholars
+          to keep watching politely. He wants them to choose a side.
+        </p>
+      </div>
+
+      <blockquote class="pull-quote reveal delay-3">
+        These companies&rsquo; products are likely to be unleashed not only for foreign wars, but against
+        people residing in the US who Trump refers to as &ldquo;the enemy within.&rdquo;
+        <span class="attr"><span class="cite-ref" data-cite="gonzalez" tabindex="0">Gonzalez 2026, p. 6</span></span>
+      </blockquote>
+    </section>
+
+    <!-- ===============================================================
+       Scene 2 Coeckelbergh, the quieter mechanism (MAIN)
+       =============================================================== -->
+    <section class="scene scene-tall" id="scene-2">
+      <div class="scene-number reveal">02 &nbsp;&middot;&nbsp; The quieter mechanism</div>
+
+      <h2 class="headline reveal delay-1">
+        Then the part you <em>cannot</em>.
+      </h2>
+
+      <div class="body-copy reveal delay-2">
+        <p>
+          Coeckelbergh is the main reading, and he moves the danger out of sight. Classical fascism marched and
+          shouted. Western technofascism, he argues, prefers convenience. It works through data extraction,
+          algorithmic governance, behavioural nudging, and platform monopolisation, all of it sold as
+          personalisation and ease. Nobody has to be dragged anywhere. You are simply profiled, defaulted, and
+          gently steered, and you rarely feel the hand on your back.
+        </p>
+        <p>
+          He builds this from the classic theory, Arendt and the Frankfurt School, Paxton and Eco, not to
+          replace them but as a toolbox for the present. The idea I keep circling is the banality of evil,
+          updated for the machine. It is the moment a caseworker defers to a confident automated recommendation
+          and stops asking whether it is right, because the system feels objective and the queue is long.
+        </p>
+      </div>
+
+      <blockquote class="pull-quote reveal delay-3">
+        Technofascism in the West tends to operate through quieter, more insidious mechanisms of control, such
+        as data extraction, algorithmic governance, behavioral nudging, and platform monopolization.
+        <span class="attr"><span class="cite-ref" data-cite="coeckelbergh" tabindex="0">Coeckelbergh 2026</span></span>
+      </blockquote>
+    </section>
+
+    <!-- ===============================================================
+       Scene 3 Coeckelbergh, the mechanism that names edtech
+       =============================================================== -->
+    <section class="scene scene-tall" id="scene-3">
+      <div class="scene-number reveal">03 &nbsp;&middot;&nbsp; The alliance</div>
+
+      <h2 class="headline reveal delay-1">
+        Efficiency is the whole <em>pitch</em>.
+      </h2>
+
+      <div class="body-copy reveal delay-2">
+        <p>
+          Two of Coeckelbergh's mechanisms point straight at my field. The first is the corporatist alliance.
+          Big Tech, he notes, is not really a free market outcome at all. It grows through contracts with the
+          state, and that entanglement mirrors the corporate and state alliances that were a hallmark of the
+          historical regimes. The second is the cult of efficiency, the celebration of technological power over
+          humanistic values, empathy quietly recast as a weakness that slows progress down.
+        </p>
+        <p>
+          Hold those two side by side and you have described a great deal of how education technology gets sold
+          to a ministry. A public good, delivered by a private platform, justified almost entirely by how much
+          faster and smoother it makes the work.
+        </p>
+      </div>
+
+      <blockquote class="pull-quote reveal delay-3">
+        The close entanglement of Big Tech firms with state institutions mirrors the corporate-state alliances
+        that were hallmarks of fascist regimes.
+        <span class="attr"><span class="cite-ref" data-cite="coeckelbergh" tabindex="0">Coeckelbergh 2026</span></span>
+      </blockquote>
+    </section>
+
+    <!-- ===============================================================
+       Scene 4 The field turn, GIGA + Google for Education
+       =============================================================== -->
+    <section class="scene scene-tall" id="scene-4">
+      <div class="scene-number reveal">04 &nbsp;&middot;&nbsp; The cloud in the classroom</div>
+
+      <h2 class="headline reveal delay-1">
+        My field runs on the <em>same cloud</em>.
+      </h2>
+
+      <div class="body-copy reveal delay-2">
+        <p>
+          This is where the reading stops being about somebody else. GIGA School is a national program that put
+          a device into the hands of every schoolchild in Japan, and for a large share of them the account
+          behind that device belongs to Google. A public ministry, a private cloud, one login per child. That
+          is Coeckelbergh's corporatist alliance almost to the letter, except it is wearing a school uniform and
+          nobody in the room is afraid of it. The efficiency pitch was the reason it was funded at all.
+        </p>
+        <p>
+          I want to be careful here, because I have spent my fieldwork watching what teachers actually do with
+          these tools, and it is often genuinely good. The same platform that logs a child's every document is
+          the one that lets a teacher give a drifting child a reason to stay in the lesson. The lever cuts both
+          ways. What Coeckelbergh hands me is not a verdict on GIGA. It is a vocabulary for the part of it I had
+          let myself call convenient. Data extraction. Platform monopolisation. Defaults that decide for you. I
+          reach for those tools every week and I had never once thought to call them by these names.
+        </p>
+        <p>
+          The only thing standing between the default and the child is what the teacher knows well enough to
+          override, which my field calls <strong>TPACK</strong>. And my thesis already suspects that this
+          knowledge is unevenly held and mostly picked up by chance.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===============================================================
+       Scene 5 Moellers, the ordinary machine
+       =============================================================== -->
+    <section class="scene scene-tall" id="scene-5">
+      <div class="scene-number reveal">05 &nbsp;&middot;&nbsp; The ordinary machine</div>
+
+      <h2 class="headline reveal delay-1">
+        Stop looking for the <em>villain</em>.
+      </h2>
+
+      <div class="body-copy reveal delay-2">
+        <p>
+          Moellers is the sharpest of the three, and she turns the camera around. Fixating on Silicon Valley,
+          she argues, is a distraction. What actually enables technofascism is ordinary, the normal operations
+          of the legitimate institutions of the modern state, its offices and borders and schools and forms.
+          Drawing on Toscano and the black radical tradition, she reminds us that for colonised and racialised
+          people the fascist condition was never new and never needed a smartphone.
+        </p>
+        <p>
+          I read that and felt how Western the whole conversation had been, Gonzalez and Coeckelbergh both
+          writing from and about the American and European scene. My own work is comparative, Japan and
+          Thailand, and Moellers is the one who tells me why that comparison matters. If technofascism lives in
+          the ordinary state and not only in California, then a Japanese classroom and a Bangkok pilot school
+          are not outside the story. They are exactly the kind of ordinary infrastructure she says to watch. The
+          GIGA login is not a dramatic villain. It is a normal Tuesday, and that is the entire point.
+        </p>
+      </div>
+
+      <blockquote class="pull-quote reveal delay-3">
+        Our struggle is not Silicon Valley, it is global racial capitalism supercharged by the digital
+        infrastructures of state violence.
+        <span class="attr"><span class="cite-ref" data-cite="mollers" tabindex="0">Moellers 2025, p. 254</span></span>
+      </blockquote>
+    </section>
+
+    <!-- ===============================================================
+       Scene 6 Where it leaves me
+       =============================================================== -->
+    <section class="scene scene-tall" id="scene-6">
+      <div class="scene-number reveal">06 &nbsp;&middot;&nbsp; Where it leaves me</div>
+
+      <h2 class="headline reveal delay-1">
+        I do not get to feel <em>safe</em> about it.
+      </h2>
+
+      <div class="body-copy reveal delay-2">
+        <p>
+          Read in the order I was given, the three pieces hand you down a staircase. Gonzalez shows the visible
+          edge, the raid you can photograph. Coeckelbergh shows the covert mechanism, the control that arrives
+          as convenience. Moellers shows the address where it actually lives, the ordinary machinery of the
+          state. The GIGA classroom sits on that bottom step, and I did not put it there. The readings did.
+        </p>
+        <p>
+          I am not ready to call GIGA technofascist, and I do not think any of these authors would hand me that
+          sentence for free. The device is still the thing a good teacher uses to reach a child who was
+          drifting. But I can no longer file the infrastructure under convenient and look away. The most I can
+          honestly hold is the tension. The same cloud that helps a teacher design a good lesson is a
+          corporatist alliance she did not choose and cannot leave, and the only margin of freedom in the room
+          is whatever she knows well enough to override.
+        </p>
+        <p>
+          So the question I am left with is not whether the technology is good or bad. It is quieter than that,
+          and it is pointed at me. If control has learned to arrive as a gift, and if it lives in exactly the
+          ordinary places I study, then how would I know it when I am the one handing it out?
+        </p>
+      </div>
+    </section>
+
+    <!-- ===============================================================
+       Scene 7 Sources + AI Statement
+       =============================================================== -->
+    <section class="scene" id="scene-7">
+      <div class="scene-number reveal">07 &nbsp;&middot;&nbsp; Sources</div>
+
+      <h2 class="headline reveal delay-1">
+        The <em>sources</em>.
+      </h2>
+
+      <div class="closing-grid">
+        <div>
+          <div class="citation-block reveal delay-2" data-cite="coeckelbergh">
+            <span class="cite-label">Main reading</span>
+            Coeckelbergh, M. (2026). <em>Technofascism: AI, Big Tech, and the new authoritarianism.</em> AI
+            &amp; SOCIETY, 41(5), 5163&ndash;5176.
+            <br>
+            <a href="https://doi.org/10.1007/s00146-026-02862-9" target="_blank"
+              rel="noopener noreferrer">https://doi.org/10.1007/s00146-026-02862-9</a>
+          </div>
+
+          <div class="citation-block reveal delay-2" data-cite="gonzalez">
+            <span class="cite-label">Commentary</span>
+            Gonz&aacute;lez, R. J. (2026). <em>American technofascism.</em> Human Organization, 85(1),
+            3&ndash;7.
+            <br>
+            <a href="https://doi.org/10.1080/00187259.2025.2585410" target="_blank"
+              rel="noopener noreferrer">https://doi.org/10.1080/00187259.2025.2585410</a>
+          </div>
+
+          <div class="citation-block reveal delay-2" data-cite="mollers">
+            <span class="cite-label">Commentary</span>
+            M&ouml;llers, N. (2025). <em>We have never not been fascist: Infrastructures of state violence as
+            technofascist laboratories.</em> Dialogues on Digital Society, 1(3), 252&ndash;255.
+            <br>
+            <a href="https://doi.org/10.1177/29768640251377169" target="_blank"
+              rel="noopener noreferrer">https://doi.org/10.1177/29768640251377169</a>
+          </div>
+        </div>
+
+        <div class="meta-block reveal delay-3">
+          <span class="meta-key">Course</span>
+          <span class="meta-val"><em>ITASIA302</em> Introduction to Digital Technology and Society</span>
+
+          <span class="meta-key">Response</span>
+          <span class="meta-val">Week 11 reading response</span>
+
+          <span class="meta-key">Reading order</span>
+          <span class="meta-val">Gonzalez, then <em>Coeckelbergh</em>, then Moellers</span>
+
+          <span class="meta-key">Author</span>
+          <span class="meta-val">Takumi</span>
+
+          <span class="meta-key">Date</span>
+          <span class="meta-val">July 2026</span>
+        </div>
+      </div>
+
+      <div class="ai-statement reveal delay-4">
+        <span class="ai-label">AI Statement</span>
+        <p>
+          I read the three pieces myself and chose the angle, that the GIGA School cloud belongs in the same
+          conversation, and that the honest position is an uneasy one rather than a verdict. I then used Claude
+          (Anthropic) to run each reading through NotebookLM against the PDFs in my Zotero, so every quoted
+          sentence on this page is checked word for word against its source.
+        </p>
+        <p>
+          Claude also helped me find the join between these readings and my own research on GIGA and Google for
+          Education, and set the draft into the same format as my earlier weeks. The reading of the sources is
+          faithful to them. The discomfort, and the question at the end, are mine to keep defending.
+        </p>
+      </div>
+
+      <footer class="footer">
+        <div>Reading Response &nbsp;&middot;&nbsp; <span class="cite-ref" data-cite="coeckelbergh" tabindex="0">Coeckelbergh
+            (2026)</span></div>
+        <div><em>ITASIA302</em> &nbsp;&middot;&nbsp; Week 11 &nbsp;&middot;&nbsp; Takumi</div>
+      </footer>
+    </section>
+
+  </main>
+
+  <script>
+    "use strict";
+
+    function updateScrollProgress() {
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+      document.getElementById("scroll-progress").style.width = pct + "%";
+    }
+
+    const _tq = [];
+    let _ta = false;
+    function _nextType() {
+      if (!_tq.length) { _ta = false; return; }
+      _ta = true;
+      const { el, tokens } = _tq.shift();
+      let built = '', idx = 0;
+      const tick = () => {
+        while (idx < tokens.length && tokens[idx].tag) built += tokens[idx++].tag;
+        if (idx >= tokens.length) { el.innerHTML = built; setTimeout(_nextType, 80); return; }
+        built += tokens[idx++];
+        el.innerHTML = built;
+        setTimeout(tick, 7 + Math.random() * 5);
+      };
+      tick();
+    }
+    function typeElement(el) {
+      const html = (el.dataset.html || '').trim();
+      if (!html) return;
+      const tokens = [];
+      let i = 0;
+      while (i < html.length) {
+        if (html[i] === '<') {
+          const end = html.indexOf('>', i);
+          if (end < 0) { tokens.push(html[i++]); continue; }
+          tokens.push({ tag: html.slice(i, end + 1) }); i = end + 1;
+        } else if (html[i] === '&') {
+          const end = html.indexOf(';', i);
+          if (end < 0) { tokens.push(html[i++]); continue; }
+          tokens.push(html.slice(i, end + 1)); i = end + 1;
+        } else { tokens.push(html[i++]); }
+      }
+      _tq.push({ el, tokens });
+      if (!_ta) _nextType();
+    }
+
+    function setupObservers() {
+      document.querySelectorAll("main section, main .block").forEach(el => {
+        if (el.classList.contains("reveal") && !el.classList.contains("hero") && !el.classList.contains("hero-scene")) {
+          el.classList.remove("reveal");
+        }
+      });
+
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!reduceMotion) document.querySelectorAll("main h1, main h2, main h3, main h4, main h5").forEach(el => {
+        if (!el.dataset.html && el.innerHTML.trim() && !el.querySelector('.cmd-prompt,.blink-cursor')) {
+          el.dataset.html = el.innerHTML;
+          el.innerHTML = '';
+          if (!el.classList.contains("reveal")) el.classList.add("reveal");
+        }
+      });
+
+      document.querySelectorAll("main p, main li, main blockquote, main figcaption, main dt, main dd").forEach(el => {
+        if (!el.classList.contains("reveal") && el.textContent.trim()) el.classList.add("reveal");
+      });
+
+      const observed = document.querySelectorAll(".reveal");
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add("in-view");
+            if (/^H[1-5]$/.test(e.target.tagName)) typeElement(e.target);
+          }
+        });
+      }, { threshold: 0.18, rootMargin: "0px 0px -8% 0px" });
+      observed.forEach(n => io.observe(n));
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      setupObservers();
+      updateScrollProgress();
+      window.addEventListener("scroll", updateScrollProgress, { passive: true });
+
+      const cmdEl = document.getElementById("hero-cmd");
+      const cursor = document.getElementById("hero-cursor");
+      if (cmdEl && cursor) {
+        const text = "ITASIA302 · Reading Response · Week 11";
+        let i = 0;
+        const tick = () => {
+          if (i < text.length) {
+            cmdEl.textContent += text[i++];
+            setTimeout(tick, 36 + Math.random() * 24);
+          } else {
+            cursor.classList.add("steady");
+          }
+        };
+        setTimeout(tick, 200);
+      }
+    });
+
+    /* ======================================================================
+       Citation hover-cards: one shared popover for all .cite-ref spans.
+       Each ref carries data-cite; the matching .citation-block[data-cite]
+       supplies the bibliography text.
+       ====================================================================== */
+    (function () {
+      const refs = Array.from(document.querySelectorAll(".cite-ref"));
+      if (!refs.length) return;
+
+      function citationText(key) {
+        const block = key
+          ? document.querySelector('.citation-block[data-cite="' + key + '"]')
+          : document.querySelector('.citation-block');
+        if (!block) return "";
+        let out = "";
+        block.childNodes.forEach(node => {
+          if (node.nodeType === 1 && (node.classList.contains("cite-label") || node.tagName === "A" || node.tagName === "BR")) return;
+          out += node.textContent;
+        });
+        return out.replace(/\s+/g, " ").trim();
+      }
+
+      const pop = document.createElement("div");
+      pop.id = "cite-pop";
+      pop.className = "cite-pop";
+      pop.setAttribute("role", "tooltip");
+      pop.setAttribute("aria-hidden", "true");
+      const popText = document.createElement("div");
+      const popPage = document.createElement("div");
+      popPage.className = "cite-pop-page";
+      popPage.hidden = true;
+      pop.appendChild(popText);
+      pop.appendChild(popPage);
+      document.body.appendChild(pop);
+
+      let activeRef = null;
+      let lastTouch = 0;
+      const recentTouch = () => Date.now() - lastTouch < 700;
+
+      function position(ref) {
+        const r = ref.getBoundingClientRect();
+        const pw = pop.offsetWidth;
+        const ph = pop.offsetHeight;
+        const gap = 10;
+        const margin = 8;
+        let left = r.left + r.width / 2 - pw / 2;
+        left = Math.min(Math.max(left, margin), window.innerWidth - pw - margin);
+        let top = r.top - ph - gap;
+        if (top < 64) top = r.bottom + gap; /* flip below near the viewport top */
+        pop.style.left = left + "px";
+        pop.style.top = top + "px";
+      }
+
+      function show(ref) {
+        activeRef = ref;
+        popText.textContent = citationText(ref.dataset.cite);
+        const m = ref.textContent.match(/p\.\s*(\d+)/);
+        popPage.hidden = !m;
+        if (m) popPage.textContent = "· p. " + m[1];
+        position(ref);
+        pop.classList.add("on");
+        pop.setAttribute("aria-hidden", "false");
+      }
+
+      function hide() {
+        if (!activeRef) return;
+        activeRef = null;
+        pop.classList.remove("on");
+        pop.setAttribute("aria-hidden", "true");
+      }
+
+      window.addEventListener("touchstart", () => { lastTouch = Date.now(); }, { passive: true });
+
+      refs.forEach(ref => {
+        ref.setAttribute("aria-describedby", "cite-pop");
+        ref.addEventListener("mouseenter", () => { if (!recentTouch()) show(ref); });
+        ref.addEventListener("mouseleave", () => { if (!recentTouch()) hide(); });
+        ref.addEventListener("focusin", () => { if (!recentTouch()) show(ref); });
+        ref.addEventListener("focusout", () => hide());
+        ref.addEventListener("click", () => {
+          if (!recentTouch()) return; /* touch only: tap toggles */
+          if (activeRef === ref) hide(); else show(ref);
+        });
+      });
+
+      document.addEventListener("click", e => {
+        const t = e.target;
+        if (activeRef && t instanceof Element && !t.closest(".cite-ref")) hide();
+      });
+      document.addEventListener("keydown", e => {
+        if (e.key === "Escape") hide();
+      });
+      window.addEventListener("scroll", () => { if (activeRef) position(activeRef); }, { passive: true });
+      window.addEventListener("resize", () => { if (activeRef) position(activeRef); });
+    })();
+  </script>
+
+  <script src="../../rain.js" data-color="#d99a3e"></script>
+  <script src="../../cursor.js"></script>
+  <script src="../../os.js" data-path="~/itasia302/reading-response/week-11" data-accent="#d99a3e"></script>
+</body>
+
+</html>
