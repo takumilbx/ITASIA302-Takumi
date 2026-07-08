@@ -63,6 +63,19 @@
 - **Created**: 2026-07-01
 - **Completed**: 2026-07-01 (draft; awaiting user's voice pass)
 
+### TASK-008: Week 12 Reading Response
+- **Status**: 🟡 In Progress
+- **Priority**: 🔴 High
+- **Page**: `reading-response/week-12/index.html` (new)
+- **Description**: Reading response on Hughes (2026), "The political theory of techno-colonialism" (single reading). Angle confirmed with user: the terra nullius fallacy. Hughes shows the frontier is never actually empty (UNCLOS ocean law, French Polynesia); ed-tech policy talks the same way about classrooms (pilots, sandboxes, blank canvas) while classrooms are inhabited land (teachers' existing knowledge, TPACK acquisition pathways). Field spine: GIGA rollout + BMA pilot schools; the implementation gap as the price of the fallacy. Careful nuance per Hughes's own warning against over-stretching settler-colonial theory (p.79): Bangkok is not a colony, comparison is non-deficit, asymmetry is a condition not a verdict. Amber accent kept from Week 11 (continuity: same cast, Thiel). No em-dashes. All pull-quotes verified verbatim against PDF via NotebookLM (NLM integration pass, 2026-07-08).
+- **Subtasks**:
+  - [x] Process HUGHES2026 through NLM (16 atoms in Obsidian vault, 2026-07-08)
+  - [x] Confirm angle + accent with user (terra nullius; amber)
+  - [x] Build week-12 page in house "Scientific Sublime" style
+  - [x] Wire nav: os.js route + alias + latest, class-assignments card, home latest card
+  - [ ] User revises draft prose into own voice, then commit
+- **Created**: 2026-07-08
+
 ### TASK-004: Add .gitignore
 - **Status**: ⬜ Not Started
 - **Priority**: Low

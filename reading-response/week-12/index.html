@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The frontier was never empty &middot; Week 12 Reading Response</title>
+  <meta name="description"
+    content="ITASIA302 reading response to Hughes (2026) on techno-colonialism, Seasteading, and the terra nullius fallacy, asking whether education technology policy treats classrooms as the same kind of empty frontier.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=Geist+Mono:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    /* ========================================================================
+     Design tokens "Scientific Sublime" (Week 12 signal-amber variant)
+     ======================================================================== */
+    :root {
+      --bg: #05060e;
+      --bg-soft: #0b0d1a;
+      --ink: #e0e6f0;
+      --ink-dim: #8899b8;
+      --ink-faint: #2e3a55;
+      --rule: #182030;
+      --accent: #d99a3e;
+      --accent-lo: #d99a3e14;
+      --accent-hi: #f0b968;
+      --teal: #45a884;
+      --sky: #5299c8;
+      --coral: #c98a4a;
+      --lilac: #7272c0;
+      --gold: #d99a3e;
+
+      --serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+      --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+      --ease: cubic-bezier(.22, .61, .36, 1);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      background-image:
+        linear-gradient(rgba(217, 154, 62, .022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(217, 154, 62, .022) 1px, transparent 1px);
+      background-size: 52px 52px;
+      color: var(--ink);
+      font-family: var(--serif);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* Atmospheric overlays */
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: .032;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/></filter><rect width='256' height='256' filter='url(%23n)'/></svg>");
+      background-size: 220px 220px;
+      mix-blend-mode: overlay;
+    }
+
+    .glow-tl,
+    .glow-br {
+      position: fixed;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .glow-tl {
+      top: 0;
+      left: 0;
+      width: 55vw;
+      height: 55vh;
+      background: radial-gradient(at 0% 0%, rgba(217, 154, 62, 0.07) 0%, transparent 60%);
+    }
+
+    .glow-br {
+      bottom: 0;
+      right: 0;
+      width: 50vw;
+      height: 50vh;
+      background: radial-gradient(at 100% 100%, rgba(114, 114, 192, 0.07) 0%, transparent 65%);
+    }
+
+    .edge-gradient {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      z-index: 10000;
+      background: linear-gradient(90deg, transparent 0%, var(--sky) 22%, var(--lilac) 62%, transparent 100%);
+      opacity: .55;
+      pointer-events: none;
+    }
+
+    /* ========================================================================
+     Topbar
+     ======================================================================== */
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 14px 48px 12px;
+      background: linear-gradient(180deg, rgba(5, 6, 14, 0.95) 0%, rgba(5, 6, 14, 0.70) 70%, transparent 100%);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .topbar-title {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 17px;
+      letter-spacing: -0.015em;
+      color: var(--ink);
+    }
+
+    .topbar-title em {
+      color: var(--accent);
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .topbar-meta {
+      font-family: var(--mono);
+      font-weight: 400;
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .journal-link {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px dotted var(--ink-faint);
+      transition: color 180ms ease, border-color 180ms ease;
+    }
+
+    .journal-link:hover,
+    .journal-link:focus-visible {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      outline: none;
+    }
+
+    /* ========================================================================
+     Scroll progress bar
+     ======================================================================== */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      z-index: 60;
+      background: linear-gradient(90deg, var(--accent), var(--coral));
+      width: 0%;
+      transition: width .08s linear;
+    }
+
+    /* ========================================================================
+     Scene containers
+     ======================================================================== */
+    main {
+      position: relative;
+      z-index: 1;
+    }
+
+    .scene {
+      min-height: 100dvh;
+      padding: 120px 48px 80px;
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+
+    .scene-tall {
+      min-height: 110vh;
+    }
+
+    .scene-number {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 24px;
+    }
+
+    .scene-number::before {
+      content: "";
+      display: inline-block;
+      width: 32px;
+      height: 1px;
+      background: var(--accent);
+      vertical-align: middle;
+      margin-right: 14px;
+      transform: translateY(-3px);
+    }
+
+    /* ========================================================================
+     Typography scale
+     ======================================================================== */
+    .eyebrow {
+      font-family: var(--mono);
+      font-weight: 400;
+      font-size: 12px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 18px;
+    }
+
+    .headline {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(38px, 5.2vw, 68px);
+      line-height: 1.02;
+      letter-spacing: -0.028em;
+      color: var(--ink);
+      margin-bottom: 28px;
+      max-width: 20ch;
+    }
+
+    .headline em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--accent);
+    }
+
+    .headline-sm {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(28px, 3.2vw, 42px);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 20px;
+      max-width: 24ch;
+    }
+
+    .headline-sm em {
+      color: var(--accent);
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .dek {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(17px, 1.4vw, 21px);
+      line-height: 1.55;
+      letter-spacing: -0.005em;
+      color: var(--ink-dim);
+      max-width: 62ch;
+      margin-bottom: 36px;
+    }
+
+    .dek em {
+      font-style: italic;
+      color: var(--ink);
+    }
+
+    .body-copy {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(17px, 1.35vw, 20px);
+      line-height: 1.62;
+      color: var(--ink-dim);
+      max-width: 66ch;
+    }
+
+    .body-copy em {
+      font-style: italic;
+      color: var(--ink);
+    }
+
+    .body-copy strong {
+      color: var(--ink);
+      font-weight: 400;
+    }
+
+    .body-copy p+p {
+      margin-top: 22px;
+    }
+
+    .label {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .cmd-prompt {
+      color: var(--teal);
+      font-style: normal;
+      user-select: none;
+    }
+
+    .blink-cursor {
+      display: inline-block;
+      width: 7px;
+      height: 10px;
+      background: var(--sky);
+      vertical-align: middle;
+      margin-left: 2px;
+      animation: cur-blink 1s step-end infinite;
+      border-radius: 1px;
+    }
+
+    @keyframes cur-blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
+    }
+
+    .blink-cursor.steady {
+      animation: cur-steady 3s ease-in-out infinite;
+    }
+
+    @keyframes cur-steady {
+
+      0%,
+      100% {
+        opacity: 0.5;
+      }
+
+      50% {
+        opacity: 0.15;
+      }
+    }
+
+    /* ========================================================================
+     Reveal state (IntersectionObserver adds .in-view)
+     ======================================================================== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity .45s var(--ease), transform .45s var(--ease);
+    }
+
+    .reveal.in-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal.delay-1 {
+      transition-delay: .12s;
+    }
+
+    .reveal.delay-2 {
+      transition-delay: .24s;
+    }
+
+    .reveal.delay-3 {
+      transition-delay: .36s;
+    }
+
+    .reveal.delay-4 {
+      transition-delay: .50s;
+    }
+
+    .reveal.delay-5 {
+      transition-delay: .64s;
+    }
+
+    .reveal.delay-6 {
+      transition-delay: .80s;
+    }
+
+    /* ========================================================================
+     Hero (Scene 0)
+     ======================================================================== */
+    .hero-scene {
+      min-height: 100dvh;
+      padding: 140px 48px 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      position: relative;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .hero-kicker {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 32px;
+    }
+
+    .hero-kicker .dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin: 0 12px 2px 0;
+      box-shadow: 0 0 10px var(--accent);
+      vertical-align: middle;
+    }
+
+    .hero-title {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(56px, 8.4vw, 128px);
+      line-height: 0.96;
+      letter-spacing: -0.038em;
+      color: var(--ink);
+      margin-bottom: 36px;
+      max-width: 16ch;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--accent);
+    }
+
+    .hero-dek {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(18px, 1.55vw, 24px);
+      line-height: 1.5;
+      color: var(--ink-dim);
+      max-width: 60ch;
+      margin-bottom: 56px;
+    }
+
+    .hero-dek strong {
+      color: var(--ink);
+      font-weight: 400;
+    }
+
+    .hero-dek em {
+      color: var(--ink);
+      font-style: italic;
+    }
+
+    @keyframes nudge {
+
+      0%,
+      100% {
+        transform: translateY(0);
+        opacity: .6;
+      }
+
+      50% {
+        transform: translateY(6px);
+        opacity: 1;
+      }
+    }
+
+    /* ========================================================================
+     Pull quote
+     ======================================================================== */
+    .pull-quote {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(24px, 2.4vw, 34px);
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      font-style: italic;
+      color: var(--ink);
+      max-width: 38ch;
+      border-left: 2px solid var(--accent);
+      padding-left: 28px;
+      margin: 56px 0 8px;
+    }
+
+    .pull-quote .attr {
+      display: block;
+      font-family: var(--mono);
+      font-style: normal;
+      font-size: 12px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-top: 18px;
+    }
+
+    /* ========================================================================
+     Closing / citation
+     ======================================================================== */
+    .closing-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 64px;
+      margin-top: 40px;
+    }
+
+    .citation-block {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 18px;
+      line-height: 1.7;
+      color: var(--ink);
+      max-width: 52ch;
+      border-left: 2px solid var(--accent);
+      padding: 6px 0 6px 26px;
+    }
+
+    .citation-block+.citation-block {
+      margin-top: 26px;
+    }
+
+    .citation-block .cite-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+
+    .citation-block em {
+      font-style: italic;
+      color: var(--ink);
+    }
+
+    .citation-block a {
+      color: var(--ink-dim);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--ink-faint);
+      transition: color 180ms ease, border-color 180ms ease;
+      word-break: break-word;
+    }
+
+    .citation-block a:hover,
+    .citation-block a:focus-visible {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      outline: none;
+    }
+
+    .meta-block {
+      font-family: var(--mono);
+      font-size: 11px;
+      line-height: 1.75;
+      color: var(--ink-faint);
+      letter-spacing: 0.04em;
+    }
+
+    .meta-block .meta-key {
+      color: var(--ink-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      font-size: 9.5px;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .meta-block .meta-val {
+      color: var(--ink);
+      display: block;
+      margin-bottom: 18px;
+    }
+
+    .meta-block .meta-val em {
+      color: var(--accent);
+      font-style: italic;
+    }
+
+    /* AI Statement block */
+    .ai-statement {
+      margin-top: 56px;
+      padding: 22px 26px;
+      border: 1px solid var(--rule);
+      border-left: 2px solid var(--lilac);
+      background: linear-gradient(180deg, rgba(114, 114, 192, 0.04) 0%, transparent 100%);
+      max-width: 66ch;
+    }
+
+    .ai-statement .ai-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--lilac);
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .ai-statement p {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 15px;
+      line-height: 1.62;
+      color: var(--ink-dim);
+    }
+
+    .ai-statement p+p {
+      margin-top: 14px;
+    }
+
+    footer.footer {
+      margin-top: 72px;
+      padding: 40px 0 60px;
+      border-top: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    footer.footer em {
+      color: var(--accent);
+      font-style: normal;
+      letter-spacing: 0.14em;
+    }
+
+    /* ========================================================================
+     Responsive
+     ======================================================================== */
+    @media (min-width: 1600px) {
+
+      .scene,
+      .hero-scene {
+        max-width: 1440px;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .topbar {
+        padding: 12px 24px;
+      }
+
+      .scene,
+      .hero-scene {
+        padding-left: 24px;
+        padding-right: 24px;
+      }
+
+      .closing-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .pull-quote {
+        padding-left: 18px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .topbar {
+        padding: 10px 18px;
+        flex-wrap: wrap;
+        row-gap: 4px;
+      }
+
+      .topbar-title {
+        font-size: 15px;
+        letter-spacing: -0.01em;
+      }
+
+      .topbar-meta {
+        font-size: 8px;
+      }
+
+      .scene {
+        padding: 96px 20px 64px;
+      }
+
+      .hero-scene {
+        padding: 110px 20px 64px;
+      }
+
+      .pull-quote {
+        margin: 40px 0 8px;
+        padding-left: 16px;
+      }
+
+      .citation-block {
+        padding-left: 18px;
+        font-size: 16px;
+      }
+
+      footer.footer {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal {
+        transition: none !important;
+        opacity: 1;
+        transform: none;
+      }
+
+      html {
+        scroll-behavior: auto;
+      }
+    }
+
+    button:active,
+    .fw-cta:active,
+    .tab-btn:active,
+    .visit-btn:active,
+    .compare-btn:active,
+    .cam-btn:active,
+    .hs-toggle:active,
+    .sel-btn:active,
+    .chip:active,
+    .viz-link:active {
+      transform: scale(0.97);
+    }
+
+    html:not(.js) .reveal {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 8px;
+      z-index: 100000;
+      background: var(--bg-soft);
+      color: var(--ink);
+      padding: 10px 16px;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: .08em;
+      border: 1px solid var(--accent);
+      border-radius: 4px;
+    }
+
+    .skip-link:focus {
+      left: 8px;
+    }
+
+    /* ========================================================================
+     Citation hover-cards
+     ======================================================================== */
+    .cite-ref {
+      cursor: help;
+      text-decoration: underline;
+      text-decoration-style: dotted;
+      text-decoration-color: rgba(217, 154, 62, .55);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+      transition: color 180ms ease, text-decoration-color 180ms ease;
+    }
+
+    .cite-ref:hover,
+    .cite-ref:focus-visible {
+      color: var(--accent);
+      text-decoration-style: solid;
+      text-decoration-color: var(--accent);
+      outline: none;
+    }
+
+    .cite-pop {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 500;
+      max-width: min(340px, calc(100vw - 16px));
+      background: var(--bg-soft);
+      border: 1px solid var(--rule);
+      border-top: 2px solid var(--accent);
+      padding: 12px 14px;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      line-height: 1.7;
+      letter-spacing: .02em;
+      color: #b8c4dc;
+      opacity: 0;
+      transform: translateY(4px);
+      pointer-events: none;
+      transition: opacity 160ms ease-out, transform 160ms ease-out;
+    }
+
+    .cite-pop.on {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .cite-pop .cite-pop-page {
+      margin-top: 6px;
+      color: var(--accent);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cite-pop {
+        transition: none;
+      }
+    }
+
+    /* Cross-document view transitions: content crossfades, topbar stays put */
+    @view-transition {
+      navigation: auto;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      @view-transition {
+        navigation: none;
+      }
+    }
+
+    .topbar {
+      view-transition-name: topbar;
+    }
+  </style>
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+
+<body>
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <div class="grain"></div>
+  <div class="glow-tl"></div>
+  <div class="glow-br"></div>
+  <div class="edge-gradient"></div>
+
+  <div class="scroll-progress" id="scroll-progress"></div>
+
+  <header class="topbar">
+    <div class="topbar-title"><a class="journal-link back-link" href="../../home.html">&larr; All assignments</a>
+      &nbsp;&middot;&nbsp; Reading Response <em>On techno-colonialism</em></div>
+    <div class="topbar-meta">ITASIA302 &nbsp;&bull;&nbsp; Week 12 &nbsp;&bull;&nbsp; July 2026</div>
+  </header>
+
+  <main id="main">
+
+    <!-- ===============================================================
+       Scene 0 Hero
+       =============================================================== -->
+    <section class="hero-scene" id="scene-0">
+      <div class="hero-kicker reveal"><span class="dot"></span><span class="cmd-prompt">~/itasia302 $ </span><span
+          id="hero-cmd"></span><span class="blink-cursor" id="hero-cursor"></span></div>
+
+      <h1 class="hero-title reveal delay-1">
+        The frontier was never <em>empty</em>.
+      </h1>
+
+      <p class="hero-dek reveal delay-2">
+        One reading this week, <strong>Hughes</strong> on what he calls techno-colonialism, four figures who
+        decided democracy was hopeless and tried to build floating cities on the ocean instead. Some of the
+        same names came up in last week's technofascism readings so this felt like a prequel to that.
+      </p>
+
+    </section>
+
+    <!-- ===============================================================
+       Scene 1 After reading
+       =============================================================== -->
+    <section class="scene scene-tall" id="scene-1">
+      <div class="scene-number reveal">01 &nbsp;&middot;&nbsp; After reading</div>
+
+      <h2 class="headline reveal delay-1">
+        After I <em>read</em> it.
+      </h2>
+
+      <div class="body-copy reveal delay-2">
+        <p>
+          The short version: Land, Yarvin, Thiel, and Friedman gave up on democracy and tried to build
+          floating city-states on the ocean, because the ocean looked like the last empty place on earth. It
+          was not, legally UNCLOS regulates basically all of it, and when the plan met reality they ended up
+          negotiating with French Polynesia, a former colony threatened by rising seas, which is the opposite
+          of finding land with nobody on it.
+        </p>
+        <p>
+          What I felt after finishing was mostly discomfort about one word, empty. The whole project runs on
+          calling a place empty, and Hughes spends the paper showing that empty was never a fact about the
+          ocean, it was just the word that made settling it feel harmless.
+        </p>
+      </div>
+
+      <blockquote class="pull-quote reveal delay-3">
+        We need a new frontier &ndash; a blank canvas on which social or constitutional entrepreneurs can create
+        their products and test them in reality by seeing if they can attract citizens.
+        <span class="attr"><span class="cite-ref" data-cite="hughes" tabindex="0">Friedman and Taylor, quoted in Hughes 2026, p. 83</span></span>
+      </blockquote>
+    </section>
+
+    <!-- ===============================================================
+       Scene 2 My context
+       =============================================================== -->
+    <section class="scene scene-tall" id="scene-2">
+      <div class="scene-number reveal">02 &nbsp;&middot;&nbsp; My context</div>
+
+      <h2 class="headline reveal delay-1">
+        It connects to my <em>field</em>.
+      </h2>
+
+      <div class="body-copy reveal delay-2">
+        <p>
+          It connects to my context of GIGA School and the Bangkok pilot schools, because ed-tech policy talks
+          the same way, pilot schools, sandboxes, rollouts, as if the classroom were empty ground where a new
+          system just lands and works the way it did in the presentation slides. But teachers are already
+          there, with their own practice and judgment about when a tool helps and when it gets in the way,
+          which is the knowledge my field calls <strong>TPACK</strong> and my thesis is about where it comes
+          from.
+        </p>
+        <p>
+          The French Polynesia part also sits uncomfortably close to Bangkok, one of the fastest sinking
+          capitals in the world, whose pilot schools borrow models and platforms from richer systems,
+          including Japan's program and Google's cloud, which is exactly the borrowing I study. I do not think
+          it is the same thing, Hughes himself warns against calling every experiment settler colonialism and
+          French Polynesia had the power to say no and used it, but the similarity bothered me more than I
+          expected.
+        </p>
+      </div>
+
+      <blockquote class="pull-quote reveal delay-3">
+        To this extent, there is an attempt to exploit an asymmetry of power within the international state
+        system.
+        <span class="attr"><span class="cite-ref" data-cite="hughes" tabindex="0">Hughes 2026, p. 85</span></span>
+      </blockquote>
+    </section>
+
+    <!-- ===============================================================
+       Scene 3 The question
+       =============================================================== -->
+    <section class="scene scene-tall" id="scene-3">
+      <div class="scene-number reveal">03 &nbsp;&middot;&nbsp; Still asking</div>
+
+      <h2 class="headline reveal delay-1">
+        What I still <em>ask</em>.
+      </h2>
+
+      <div class="body-copy reveal delay-2">
+        <p>
+          I am still left with the same question at two scales. When a vulnerable system borrows technology,
+          who sets the defaults and who can realistically say no. And for myself, when I go into a Bangkok
+          classroom with my interview guide, whether I am mapping what is already there or acting like it is
+          empty.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===============================================================
+       Scene 4 Sources + AI Statement
+       =============================================================== -->
+    <section class="scene" id="scene-4">
+      <div class="scene-number reveal">04 &nbsp;&middot;&nbsp; Sources</div>
+
+      <h2 class="headline reveal delay-1">
+        The <em>source</em>.
+      </h2>
+
+      <div class="closing-grid">
+        <div>
+          <div class="citation-block reveal delay-2" data-cite="hughes">
+            <span class="cite-label">Main reading</span>
+            Hughes, T. (2026). <em>The political theory of techno-colonialism.</em> European Journal of
+            Political Theory, 25(1), 70&ndash;93.
+            <br>
+            <a href="https://doi.org/10.1177/14748851241249819" target="_blank"
+              rel="noopener noreferrer">https://doi.org/10.1177/14748851241249819</a>
+          </div>
+        </div>
+
+        <div class="meta-block reveal delay-3">
+          <span class="meta-key">Course</span>
+          <span class="meta-val"><em>ITASIA302</em> Introduction to Digital Technology and Society</span>
+
+          <span class="meta-key">Response</span>
+          <span class="meta-val">Week 12 reading response</span>
+
+          <span class="meta-key">Reading</span>
+          <span class="meta-val">Hughes (2026), single reading</span>
+
+          <span class="meta-key">Author</span>
+          <span class="meta-val">Takumi</span>
+
+          <span class="meta-key">Date</span>
+          <span class="meta-val">July 2026</span>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <div>Reading Response &nbsp;&middot;&nbsp; <span class="cite-ref" data-cite="hughes" tabindex="0">Hughes
+            (2026)</span></div>
+        <div><em>ITASIA302</em> &nbsp;&middot;&nbsp; Week 12 &nbsp;&middot;&nbsp; Takumi</div>
+      </footer>
+    </section>
+
+  </main>
+
+  <script>
+    "use strict";
+
+    function updateScrollProgress() {
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+      document.getElementById("scroll-progress").style.width = pct + "%";
+    }
+
+    const _tq = [];
+    let _ta = false;
+    function _nextType() {
+      if (!_tq.length) { _ta = false; return; }
+      _ta = true;
+      const { el, tokens } = _tq.shift();
+      let built = '', idx = 0;
+      const tick = () => {
+        while (idx < tokens.length && tokens[idx].tag) built += tokens[idx++].tag;
+        if (idx >= tokens.length) { el.innerHTML = built; setTimeout(_nextType, 80); return; }
+        built += tokens[idx++];
+        el.innerHTML = built;
+        setTimeout(tick, 7 + Math.random() * 5);
+      };
+      tick();
+    }
+    function typeElement(el) {
+      const html = (el.dataset.html || '').trim();
+      if (!html) return;
+      const tokens = [];
+      let i = 0;
+      while (i < html.length) {
+        if (html[i] === '<') {
+          const end = html.indexOf('>', i);
+          if (end < 0) { tokens.push(html[i++]); continue; }
+          tokens.push({ tag: html.slice(i, end + 1) }); i = end + 1;
+        } else if (html[i] === '&') {
+          const end = html.indexOf(';', i);
+          if (end < 0) { tokens.push(html[i++]); continue; }
+          tokens.push(html.slice(i, end + 1)); i = end + 1;
+        } else { tokens.push(html[i++]); }
+      }
+      _tq.push({ el, tokens });
+      if (!_ta) _nextType();
+    }
+
+    function setupObservers() {
+      document.querySelectorAll("main section, main .block").forEach(el => {
+        if (el.classList.contains("reveal") && !el.classList.contains("hero") && !el.classList.contains("hero-scene")) {
+          el.classList.remove("reveal");
+        }
+      });
+
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!reduceMotion) document.querySelectorAll("main h1, main h2, main h3, main h4, main h5").forEach(el => {
+        if (!el.dataset.html && el.innerHTML.trim() && !el.querySelector('.cmd-prompt,.blink-cursor')) {
+          el.dataset.html = el.innerHTML;
+          el.innerHTML = '';
+          if (!el.classList.contains("reveal")) el.classList.add("reveal");
+        }
+      });
+
+      document.querySelectorAll("main p, main li, main blockquote, main figcaption, main dt, main dd").forEach(el => {
+        if (!el.classList.contains("reveal") && el.textContent.trim()) el.classList.add("reveal");
+      });
+
+      const observed = document.querySelectorAll(".reveal");
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add("in-view");
+            if (/^H[1-5]$/.test(e.target.tagName)) typeElement(e.target);
+          }
+        });
+      }, { threshold: 0.18, rootMargin: "0px 0px -8% 0px" });
+      observed.forEach(n => io.observe(n));
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      setupObservers();
+      updateScrollProgress();
+      window.addEventListener("scroll", updateScrollProgress, { passive: true });
+
+      const cmdEl = document.getElementById("hero-cmd");
+      const cursor = document.getElementById("hero-cursor");
+      if (cmdEl && cursor) {
+        const text = "ITASIA302 · Reading Response · Week 12";
+        let i = 0;
+        const tick = () => {
+          if (i < text.length) {
+            cmdEl.textContent += text[i++];
+            setTimeout(tick, 36 + Math.random() * 24);
+          } else {
+            cursor.classList.add("steady");
+          }
+        };
+        setTimeout(tick, 200);
+      }
+    });
+
+    /* ======================================================================
+       Citation hover-cards: one shared popover for all .cite-ref spans.
+       Each ref carries data-cite; the matching .citation-block[data-cite]
+       supplies the bibliography text.
+       ====================================================================== */
+    (function () {
+      const refs = Array.from(document.querySelectorAll(".cite-ref"));
+      if (!refs.length) return;
+
+      function citationText(key) {
+        const block = key
+          ? document.querySelector('.citation-block[data-cite="' + key + '"]')
+          : document.querySelector('.citation-block');
+        if (!block) return "";
+        let out = "";
+        block.childNodes.forEach(node => {
+          if (node.nodeType === 1 && (node.classList.contains("cite-label") || node.tagName === "A" || node.tagName === "BR")) return;
+          out += node.textContent;
+        });
+        return out.replace(/\s+/g, " ").trim();
+      }
+
+      const pop = document.createElement("div");
+      pop.id = "cite-pop";
+      pop.className = "cite-pop";
+      pop.setAttribute("role", "tooltip");
+      pop.setAttribute("aria-hidden", "true");
+      const popText = document.createElement("div");
+      const popPage = document.createElement("div");
+      popPage.className = "cite-pop-page";
+      popPage.hidden = true;
+      pop.appendChild(popText);
+      pop.appendChild(popPage);
+      document.body.appendChild(pop);
+
+      let activeRef = null;
+      let lastTouch = 0;
+      const recentTouch = () => Date.now() - lastTouch < 700;
+
+      function position(ref) {
+        const r = ref.getBoundingClientRect();
+        const pw = pop.offsetWidth;
+        const ph = pop.offsetHeight;
+        const gap = 10;
+        const margin = 8;
+        let left = r.left + r.width / 2 - pw / 2;
+        left = Math.min(Math.max(left, margin), window.innerWidth - pw - margin);
+        let top = r.top - ph - gap;
+        if (top < 64) top = r.bottom + gap; /* flip below near the viewport top */
+        pop.style.left = left + "px";
+        pop.style.top = top + "px";
+      }
+
+      function show(ref) {
+        activeRef = ref;
+        popText.textContent = citationText(ref.dataset.cite);
+        const m = ref.textContent.match(/p\.\s*(\d+)/);
+        popPage.hidden = !m;
+        if (m) popPage.textContent = "· p. " + m[1];
+        position(ref);
+        pop.classList.add("on");
+        pop.setAttribute("aria-hidden", "false");
+      }
+
+      function hide() {
+        if (!activeRef) return;
+        activeRef = null;
+        pop.classList.remove("on");
+        pop.setAttribute("aria-hidden", "true");
+      }
+
+      window.addEventListener("touchstart", () => { lastTouch = Date.now(); }, { passive: true });
+
+      refs.forEach(ref => {
+        ref.setAttribute("aria-describedby", "cite-pop");
+        ref.addEventListener("mouseenter", () => { if (!recentTouch()) show(ref); });
+        ref.addEventListener("mouseleave", () => { if (!recentTouch()) hide(); });
+        ref.addEventListener("focusin", () => { if (!recentTouch()) show(ref); });
+        ref.addEventListener("focusout", () => hide());
+        ref.addEventListener("click", () => {
+          if (!recentTouch()) return; /* touch only: tap toggles */
+          if (activeRef === ref) hide(); else show(ref);
+        });
+      });
+
+      document.addEventListener("click", e => {
+        const t = e.target;
+        if (activeRef && t instanceof Element && !t.closest(".cite-ref")) hide();
+      });
+      document.addEventListener("keydown", e => {
+        if (e.key === "Escape") hide();
+      });
+      window.addEventListener("scroll", () => { if (activeRef) position(activeRef); }, { passive: true });
+      window.addEventListener("resize", () => { if (activeRef) position(activeRef); });
+    })();
+  </script>
+
+  <script src="../../rain.js" data-color="#d99a3e"></script>
+  <script src="../../cursor.js"></script>
+  <script src="../../os.js" data-path="~/itasia302/reading-response/week-12" data-accent="#d99a3e"></script>
+</body>
+
+</html>
