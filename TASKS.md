@@ -76,6 +76,20 @@
   - [ ] User revises draft prose into own voice, then commit
 - **Created**: 2026-07-08
 
+### TASK-009: Personal Project — Develop Against Course Rubric
+- **Status**: 🟡 In Progress
+- **Priority**: 🔴 High
+- **Page**: `personal-project/index.html`
+- **Description**: Develop the second-brain personal project site against the ITASIA302 assessment criteria (course-theme connection, course-content connection, academic rigor, sources, genre expectations, feedback incorporation). Course uses history as anchor discipline.
+- **Subtasks**:
+  - [x] Historical anchor section: new section 01 with interactive 5-station timeline (commonplace books → card index → memex → Luhmann → PKM+AI); sections renumbered 01–08; refs added (Blair 2010, Krajewski 2011, Bush 1945, Luhmann 1981) (2026-07-26)
+  - [ ] User revises section 01 draft prose into own voice
+  - [ ] Course-cluster bridge: connect intro/synthesis to Attention + AI-and-Culture clusters (deepen @nunoei cognitive-labor thread)
+  - [ ] Critical AI reflection: section on where the pipeline failed (rejected atoms, hallucinated claims caught in verification) — learning goal 5
+  - [ ] Incorporate instructor/peer feedback once received (rubric criterion)
+  - [ ] Housekeeping: archive 5 legacy `second_brain_*.html` drafts (or move to `/archive/`)
+- **Created**: 2026-07-26
+
 ### TASK-004: Add .gitignore
 - **Status**: ⬜ Not Started
 - **Priority**: Low

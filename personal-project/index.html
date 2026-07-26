@@ -839,6 +839,87 @@
       @view-transition { navigation: none; }
     }
     .topbar { view-transition-name: topbar; }
+    /* ── History timeline (hx-) ── */
+    .hx-rail {
+      display: flex; align-items: flex-start; gap: 0;
+      margin: 38px 0 30px; position: relative;
+      list-style: none;
+    }
+    .hx-rail::before {
+      content: ""; position: absolute; left: 0; right: 0; top: 5px;
+      height: 1px; background: var(--rule);
+    }
+    .hx-stop {
+      position: relative; flex: 1; background: none; border: 0; cursor: pointer;
+      text-align: left; padding: 0 12px 0 0;
+      font-family: var(--mono); color: var(--ink-faint);
+      transition: color 180ms ease;
+    }
+    .hx-stop::before {
+      content: ""; display: block; width: 9px; height: 9px; border-radius: 50%;
+      border: 1.5px solid var(--ink-faint); background: var(--bg);
+      margin-bottom: 14px; transition: border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
+    }
+    .hx-stop .hx-year { font-size: 10px; letter-spacing: 0.18em; display: block; margin-bottom: 5px; }
+    .hx-stop .hx-name {
+      font-family: var(--serif); font-weight: 300; font-size: 13.5px;
+      color: var(--ink-dim); line-height: 1.35; display: block; max-width: 15ch;
+      transition: color 180ms ease;
+    }
+    .hx-stop:hover { color: var(--ink-dim); }
+    .hx-stop:hover .hx-name { color: var(--ink); }
+    .hx-stop[aria-selected="true"] { color: var(--amber); }
+    .hx-stop[aria-selected="true"]::before {
+      border-color: var(--amber); background: var(--amber);
+      box-shadow: 0 0 14px rgba(232, 99, 74, 0.45);
+    }
+    .hx-stop[aria-selected="true"] .hx-name { color: var(--ink); }
+    .hx-stop:focus-visible { outline: 1px dashed var(--ink-faint); outline-offset: 4px; }
+    .hx-card {
+      border: 1px solid var(--rule); border-left: 3px solid var(--amber);
+      background: var(--bg-soft); padding: 28px 30px; max-width: 74ch;
+      opacity: 1; transform: none;
+      transition: opacity 240ms var(--ease), transform 240ms var(--ease);
+    }
+    .hx-card.switching { opacity: 0; transform: translateY(8px); }
+    .hx-card-era {
+      font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.24em;
+      text-transform: uppercase; color: var(--amber); margin-bottom: 10px;
+    }
+    .hx-card-title {
+      font-family: var(--serif); font-weight: 400;
+      font-size: clamp(18px, 1.6vw, 22px); color: var(--ink);
+      margin-bottom: 14px; line-height: 1.35;
+    }
+    .hx-card-body {
+      font-family: var(--serif); font-weight: 300; font-size: 15px;
+      line-height: 1.7; color: var(--ink-dim); margin-bottom: 18px;
+    }
+    .hx-card-body em { color: var(--ink); font-style: italic; }
+    .hx-fact { display: flex; gap: 14px; padding: 11px 0; border-top: 1px solid var(--rule); }
+    .hx-fact-label {
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--ink-faint);
+      min-width: 118px; flex-shrink: 0; padding-top: 3px;
+    }
+    .hx-fact-text {
+      font-family: var(--serif); font-weight: 300; font-size: 13.5px;
+      line-height: 1.6; color: var(--ink-dim);
+    }
+    .hx-fact-text em { color: var(--ink); font-style: italic; }
+    .hx-cite {
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--lilac); margin-top: 16px;
+    }
+    @media (max-width: 720px) {
+      .hx-rail { flex-direction: column; gap: 18px; }
+      .hx-rail::before { left: 4px; right: auto; top: 2px; bottom: 2px; width: 1px; height: auto; }
+      .hx-stop { padding: 0 0 0 24px; }
+      .hx-stop::before { position: absolute; left: 0; top: 3px; margin: 0; }
+      .hx-stop .hx-name { max-width: none; }
+      .hx-card { padding: 22px 20px; }
+      .hx-fact { flex-direction: column; gap: 4px; }
+    }
   </style>
 </head>
 <body>
@@ -855,6 +936,7 @@
   <nav aria-label="Section navigation">
     <ul class="topbar-nav">
       <li><a href="#intro">Intro</a></li>
+      <li><a href="#history">History</a></li>
       <li><a href="#pipeline">Pipeline</a></li>
       <li><a href="#viz">Visualizations</a></li>
       <li><a href="#pkm">Framework</a></li>
@@ -917,9 +999,68 @@
 
   <div class="section-rule reveal"></div>
 
+  <!-- ─── SECTION 1: HISTORICAL ANCHOR ─── -->
+  <section id="history" class="essay-section">
+    <div class="section-tag reveal"><em>01</em> &nbsp;&middot;&nbsp; The historical anchor</div>
+    <h2 class="section-heading reveal d1">The second brain is <em>five hundred years old</em></h2>
+
+    <p class="body-text reveal d2">
+      Every claim in the second brain hype cycle has a date attached, and the date is much older than the discourse admits. In 1545 the Swiss naturalist Conrad Gessner set out to catalog every book in existence and warned his readers about the "confusing and harmful abundance of books." Ann Blair's history of early modern information management shows that the feeling my generation attributes to the internet, the sense of drowning in more material than one life can process, was already a standard scholarly complaint before the printing press was a century old. That reframes the whole project. If the overload is nearly five hundred years old, the interesting question is not how to finally capture everything. It is what each generation's capture technology did to the people who used it.
+    </p>
+
+    <p class="body-text reveal d3">
+      Read in that light, my Obsidian vault stops looking like a product of the 2020s and starts looking like the newest layer of a very long sediment. The commonplace book becomes the card index, which Markus Krajewski calls a "paper machine" and reads as a discrete processing machine three centuries before the computer. The card index becomes Vannevar Bush's imagined memex, the memex becomes hypertext, and hypertext becomes the bidirectional link I now take for granted. Niklas Luhmann sits in the middle of that chain, not at its origin. The timeline below walks through five stations. Each one names the problem it solved and the part of it that survives, unchanged, inside my own system.
+    </p>
+
+    <div class="reveal d4">
+      <div class="hx-rail" role="tablist" aria-label="History of knowledge management systems">
+        <button class="hx-stop" role="tab" id="hx-tab-0" aria-selected="true" aria-controls="hx-card">
+          <span class="hx-year">1545&ndash;1706</span>
+          <span class="hx-name">The commonplace book</span>
+        </button>
+        <button class="hx-stop" role="tab" id="hx-tab-1" aria-selected="false" aria-controls="hx-card">
+          <span class="hx-year">1548&ndash;1929</span>
+          <span class="hx-name">The card index</span>
+        </button>
+        <button class="hx-stop" role="tab" id="hx-tab-2" aria-selected="false" aria-controls="hx-card">
+          <span class="hx-year">1945</span>
+          <span class="hx-name">The memex</span>
+        </button>
+        <button class="hx-stop" role="tab" id="hx-tab-3" aria-selected="false" aria-controls="hx-card">
+          <span class="hx-year">1951&ndash;1997</span>
+          <span class="hx-name">Luhmann's slip box</span>
+        </button>
+        <button class="hx-stop" role="tab" id="hx-tab-4" aria-selected="false" aria-controls="hx-card">
+          <span class="hx-year">2020s</span>
+          <span class="hx-name">PKM meets AI</span>
+        </button>
+      </div>
+      <div class="hx-card" id="hx-card" role="tabpanel" aria-live="polite">
+        <div class="hx-card-era" id="hx-card-era"></div>
+        <h3 class="hx-card-title" id="hx-card-title"></h3>
+        <p class="hx-card-body" id="hx-card-body"></p>
+        <div class="hx-fact">
+          <div class="hx-fact-label">What it solved</div>
+          <div class="hx-fact-text" id="hx-card-solved"></div>
+        </div>
+        <div class="hx-fact">
+          <div class="hx-fact-label">What survives in my vault</div>
+          <div class="hx-fact-text" id="hx-card-survives"></div>
+        </div>
+        <div class="hx-cite" id="hx-card-cite"></div>
+      </div>
+    </div>
+
+    <p class="body-text reveal" style="margin-top: 28px;">
+      Three things stay constant across all five stations: notes are kept small, notes are given addresses, and notes are connected to other notes. Atomicity, addressing, linking. What changes at each station is who performs the synthesis, the step where separate notes become a new thought. For four hundred and eighty years the answer was always the same: the human does, and the tool only holds the pieces still long enough for the human to see the pattern. The fifth station is the first one where that answer wavers, because a language model can now draft the synthesis itself. That is the genuinely new thing, and it is exactly the step I refused to automate. The pipeline in the next section delegates capture, extraction, and retrieval to machines, but every atom passes through manual verification, and every alloy is written by me. Not because the model cannot draft it, but because the four previous stations suggest that the drafting <em>is</em> the thinking.
+    </p>
+  </section>
+
+  <div class="section-rule reveal"></div>
+
   <!-- ─── SECTION 1: PIPELINE ─── -->
   <section id="pipeline" class="essay-section pl-section">
-    <div class="section-tag reveal"><em>01</em> &nbsp;&middot;&nbsp; The workflow</div>
+    <div class="section-tag reveal"><em>02</em> &nbsp;&middot;&nbsp; The workflow</div>
     <h2 class="section-heading reveal d1">How the system <em>actually works</em></h2>
 
     <p class="body-text reveal d2">
@@ -1155,7 +1296,7 @@
 
   <!-- ─── SECTION 2: VISUALIZATIONS ─── -->
   <section id="viz" class="essay-section">
-    <div class="section-tag reveal"><em>02</em> &nbsp;&middot;&nbsp; What the system produced</div>
+    <div class="section-tag reveal"><em>03</em> &nbsp;&middot;&nbsp; What the system produced</div>
     <h2 class="section-heading reveal d1">What the system <em>produced</em></h2>
 
     <p class="body-text reveal d2">
@@ -1250,7 +1391,7 @@
 
   <!-- ─── SECTION 2: PKM FRAMEWORK ─── -->
   <section id="pkm" class="essay-section">
-    <div class="section-tag reveal"><em>03</em> &nbsp;&middot;&nbsp; The framework</div>
+    <div class="section-tag reveal"><em>04</em> &nbsp;&middot;&nbsp; The framework</div>
     <h2 class="section-heading reveal d1">The framework, and <em>its failure modes</em></h2>
 
     <p class="body-text reveal d2">
@@ -1331,7 +1472,7 @@
 
   <!-- ─── SECTION 3: SYNTHESIS ─── -->
   <section id="synthesis" class="essay-section">
-    <div class="section-tag reveal"><em>04</em> &nbsp;&middot;&nbsp; Synthesis</div>
+    <div class="section-tag reveal"><em>05</em> &nbsp;&middot;&nbsp; Synthesis</div>
     <h2 class="section-heading reveal d1">Cross-visualization <em>synthesis</em></h2>
 
     <p class="body-text reveal d2">What the four datasets say when they're in the same room together.</p>
@@ -1348,7 +1489,7 @@
 
   <!-- ─── SECTION 4: THESIS ─── -->
   <section id="thesis" class="essay-section">
-    <div class="section-tag reveal"><em>05</em> &nbsp;&middot;&nbsp; Thesis direction</div>
+    <div class="section-tag reveal"><em>06</em> &nbsp;&middot;&nbsp; Thesis direction</div>
     <h2 class="section-heading reveal d1">Where <em>this is pointing</em></h2>
 
     <p class="body-text reveal d2">
@@ -1370,7 +1511,7 @@
 
   <!-- ─── SECTION 5: PERSONAL SYSTEM ─── -->
   <section id="system" class="essay-section">
-    <div class="section-tag reveal"><em>06</em> &nbsp;&middot;&nbsp; Personal system design</div>
+    <div class="section-tag reveal"><em>07</em> &nbsp;&middot;&nbsp; Personal system design</div>
     <h2 class="section-heading reveal d1">What I'm <em>actually going to do</em></h2>
 
     <p class="body-text reveal d2">
@@ -1435,10 +1576,26 @@
 
   <!-- ─── SECTION 6: REFERENCES ─── -->
   <section id="refs" class="essay-section">
-    <div class="section-tag reveal"><em>07</em> &nbsp;&middot;&nbsp; References</div>
+    <div class="section-tag reveal"><em>08</em> &nbsp;&middot;&nbsp; References</div>
     <h2 class="section-heading reveal d1">References</h2>
 
     <ul class="ref-list reveal d2">
+      <li>
+        <div class="ref-key">@BLAIR2010</div>
+        Blair, Ann M. <em>Too Much to Know: Managing Scholarly Information before the Modern Age.</em> Yale University Press, 2010.
+      </li>
+      <li>
+        <div class="ref-key">@BUSH1945</div>
+        Bush, Vannevar. "As We May Think." <em>The Atlantic Monthly</em> 176, no. 1 (July 1945): 101&ndash;108.
+      </li>
+      <li>
+        <div class="ref-key">@KRAJEWSKI2011</div>
+        Krajewski, Markus. <em>Paper Machines: About Cards &amp; Catalogs, 1548&ndash;1929.</em> Translated by Peter Krapp. MIT Press, 2011.
+      </li>
+      <li>
+        <div class="ref-key">@LUHMANN1981</div>
+        Luhmann, Niklas. "Kommunikation mit Zettelk&auml;sten: Ein Erfahrungsbericht." In <em>&Ouml;ffentliche Meinung und sozialer Wandel,</em> edited by Horst Baier, Hans Mathias Kepplinger, and Kurt Reumann. Westdeutscher Verlag, 1981, pp. 222&ndash;228.
+      </li>
       <li>
         <div class="ref-key">@FORTE2022</div>
         Forte, Tiago. <em>Building a Second Brain: A Proven Method to Organise Your Digital Life and Unlock Your Creative Potential.</em> Profile Books Ltd, 2022.
@@ -1872,6 +2029,103 @@ document.addEventListener("DOMContentLoaded", () => {
       runPipelineStep(step);
     });
   });
+});
+
+// ── History timeline ──
+document.addEventListener("DOMContentLoaded", () => {
+  const HX_ERAS = [
+    {
+      era: "1545–1706 · Early modern Europe",
+      title: "The commonplace book and the note closet",
+      body: "Renaissance scholars answered the flood of print with the commonplace book: excerpts copied out by hand and filed under topical headings, a personal database built one quotation at a time. Gessner's <em>Bibliotheca Universalis</em> (1545) tried to index every known book while complaining about their abundance. John Locke published a full indexing method for commonplace books, and Vincent Placcius (1689) described a purpose-built note cabinet, slips of paper hung on labeled hooks inside a closet, an apparatus Leibniz is believed to have used. Blair's point is that none of this was marginal: excerpting, sorting, and retrieving were treated as core scholarly skills, taught and argued over.",
+      solved: "Retrieval from more text than one memory can hold. The heading and the index made a personal archive searchable centuries before search.",
+      survives: "The capture habit and the inbox. My Zotero intake, where every source lands before processing, is a commonplace routine with the copying automated.",
+      cite: "@BLAIR2010"
+    },
+    {
+      era: "1548–1929 · The paper machine",
+      title: "The card index makes notes atomic and mobile",
+      body: "The decisive move was breaking the bound page into loose, uniform cards. Krajewski traces the card index from Gessner's cut-up slips to the library card catalog, standardized in the nineteenth century and industrialized by the early twentieth, when the same cabinets migrated from libraries into business filing. A card holds one entry, carries one address, and can be endlessly reshuffled without rewriting anything. Krajewski reads the catalog as a <em>paper machine</em>, a discrete processing system with storage, addressing, and transfer, long before those words belonged to computing.",
+      solved: "Scale and recombination. Fixed pages force one order forever; cards let the same collection be reordered for every new question.",
+      survives: "The atomic note itself. One claim per file in my /Atoms/ folder is the index card, unchanged except for the material.",
+      cite: "@KRAJEWSKI2011"
+    },
+    {
+      era: "1945 · The Atlantic Monthly",
+      title: "Bush's memex replaces filing with association",
+      body: "At the end of the war, Vannevar Bush published \"As We May Think,\" proposing the memex: a desk-sized device storing a personal library on microfilm, where the user ties any two documents together into named <em>associative trails</em> that can be saved, followed, and shared. His argument was that alphabetical and hierarchical filing fight how minds actually work, which is by association, one item snapping to the next. The memex was never built, but Engelbart and Nelson both credited it, and the hyperlink is its direct descendant.",
+      solved: "Retrieval by association rather than by category. The link, not the folder, becomes the unit of organization.",
+      survives: "Every [[wikilink]] in my vault. The graph view I navigate is a memex trail map rendered in software.",
+      cite: "@BUSH1945"
+    },
+    {
+      era: "1951–1997 · Bielefeld",
+      title: "Luhmann's slip box becomes a communication partner",
+      body: "The sociologist Niklas Luhmann kept roughly 90,000 numbered slips across four decades and credited the box for a publication record of over seventy books. His addresses branch (21/3d7 sits between 21/3d and 21/3e), so any thought can be extended infinitely without reorganizing, and cross-references jump between distant branches. In his 1981 essay he insists the box is not an archive but a <em>communication partner</em>: query it and it returns combinations you never deliberately stored, surprising its own author. The value is not memory but conversation.",
+      solved: "Not storage but generativity. A note system that produces new thoughts instead of merely returning old ones.",
+      survives: "The whole architecture. Atoms, Molecules, and Alloys are a renamed Zettelkasten: atomic claims, connection notes, and syntheses that can only be built from what is already linked.",
+      cite: "@LUHMANN1981"
+    },
+    {
+      era: "2020s · Everywhere at once",
+      title: "Digital PKM revives the chain, then AI bends it",
+      body: "Roam and Obsidian brought the bidirectional link to a mass audience, Forte's <em>Building a Second Brain</em> turned note-making into a bestselling method, and researchers now study how people actually use these vaults. Then language models arrived and changed the one variable that had held constant since Gessner: retrieval cost fell toward zero, and for the first time the synthesis itself, the writing of the new thought from the stored pieces, can be delegated to a machine. Nothing else at this station is new. The overload is old, the atomic note is old, the link is old. The delegated synthesis is not.",
+      solved: "Retrieval friction, almost completely. Semantic search finds notes I forgot I wrote, phrased in words I never used.",
+      survives: "An open question rather than a feature. My rule that atoms are machine-suggested but human-verified, and alloys are human-written, is a bet that the previous four stations were right about where the thinking lives.",
+      cite: "@FORTE2022 · @FERREIRA2026"
+    }
+  ];
+
+  const hxTabs = Array.from(document.querySelectorAll(".hx-stop"));
+  const hxCard = document.getElementById("hx-card");
+  if (!hxTabs.length || !hxCard) return;
+  const hxEls = {
+    era: document.getElementById("hx-card-era"),
+    title: document.getElementById("hx-card-title"),
+    body: document.getElementById("hx-card-body"),
+    solved: document.getElementById("hx-card-solved"),
+    survives: document.getElementById("hx-card-survives"),
+    cite: document.getElementById("hx-card-cite")
+  };
+
+  function hxRender(i) {
+    const e = HX_ERAS[i];
+    hxEls.era.textContent = e.era;
+    hxEls.title.textContent = e.title;
+    hxEls.body.innerHTML = e.body;
+    hxEls.solved.innerHTML = e.solved;
+    hxEls.survives.innerHTML = e.survives;
+    hxEls.cite.textContent = e.cite;
+  }
+
+  let hxCurrent = 0;
+  function hxSelect(i, focus) {
+    if (i === hxCurrent && hxCard.dataset.init) return;
+    hxCurrent = i;
+    hxCard.dataset.init = "1";
+    hxTabs.forEach((t, ti) => t.setAttribute("aria-selected", ti === i ? "true" : "false"));
+    hxCard.classList.add("switching");
+    setTimeout(() => {
+      hxRender(i);
+      hxCard.classList.remove("switching");
+    }, 240);
+    if (focus) hxTabs[i].focus();
+  }
+
+  hxTabs.forEach((tab, i) => {
+    tab.addEventListener("click", () => hxSelect(i, false));
+    tab.addEventListener("keydown", (ev) => {
+      if (ev.key === "ArrowRight" || ev.key === "ArrowDown") {
+        ev.preventDefault();
+        hxSelect((i + 1) % hxTabs.length, true);
+      } else if (ev.key === "ArrowLeft" || ev.key === "ArrowUp") {
+        ev.preventDefault();
+        hxSelect((i - 1 + hxTabs.length) % hxTabs.length, true);
+      }
+    });
+  });
+
+  hxRender(0);
 });
 </script>
 
