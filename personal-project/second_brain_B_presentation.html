@@ -230,7 +230,7 @@ h2.head{
 .body .ink-red{ color:var(--red); }
 .drop{ color:var(--ink); }
 .lead{ color:var(--ink); font-weight:360; }
-/* presentation bullet list — accent dash marker, adapts warm/cool per beat scope */
+/* presentation bullet list: accent dash marker, adapts warm/cool per beat scope */
 .blist{ list-style:none; margin:0; padding:0; max-width:var(--measure); }
 .blist li{ position:relative; padding-left:28px; margin:0 0 0.74em;
   font-family:var(--serif); font-weight:400; font-size:clamp(17px,1.55vw,22px);
@@ -685,7 +685,7 @@ blockquote.q .src{
 
 <div id="bgfield"><div id="bgfield-space"></div></div>
 <div id="rail"><div id="rail-fill"></div></div>
-<div id="folio"><span id="folio-no">00</span> / 15 &nbsp; <b id="folio-name">HERO</b></div>
+<div id="folio"><span id="folio-no">00</span> / 17 &nbsp; <b id="folio-name">HERO</b></div>
 
 <div id="scene">
   <div id="sticky">
@@ -717,11 +717,38 @@ blockquote.q .src{
         </div>
       </section>
 
+      <!-- ============ BEAT 16 (NEW) : CONTEXT / WHERE I AM COMING FROM ============ -->
+      <section class="beat" id="b16" data-beat="16">
+        <div class="wrap" style="display:flex;align-items:center;">
+          <div class="card" id="b16-main" style="width:min(640px,62vw);left:0;top:50%;transform:translateY(-50%);">
+            <div class="meta rv" style="margin-bottom:18px;">01 · Context <span style="color:var(--ink-ghost);">/ where I am coming from</span></div>
+            <h2 class="head rv">This is not a <em>hobby system</em></h2>
+            <ul class="blist">
+              <li class="rv">I am writing a master's thesis: how teachers acquire <em>TPACK</em>, comparing Japan's GIGA School Program with Bangkok's BMA pilot schools.</li>
+              <li class="rv">Fieldwork is underway: classroom observation and retrospective interviews in a one-to-one device classroom.</li>
+              <li class="rv">That means <em>112 literature notes</em>, two research sites, and arguments that must hold for two years.</li>
+              <li class="rv">My old notes could not carry that load. This project is the system that <span class="ink-red">does</span>.</li>
+            </ul>
+          </div>
+          <div class="card kraft" id="b16-aside" style="width:min(330px,40vw);right:0;top:50%;transform:translateY(-50%);">
+            <div class="tab rv" style="color:var(--ink-2);margin-bottom:12px;">The vault · today</div>
+            <hr class="rule rv">
+            <ul class="blist" style="margin-top:4px;">
+              <li class="rv"><strong>2,163</strong> atoms, one claim each.</li>
+              <li class="rv"><strong>112</strong> processed literature notes.</li>
+              <li class="rv"><strong>6</strong> molecules, first alloy forming.</li>
+              <li class="rv"><strong>16,526</strong> links between notes.</li>
+            </ul>
+            <span class="pin" style="top:-5px;left:50%;"></span>
+          </div>
+        </div>
+      </section>
+
       <!-- ============ BEAT 1 : PKM ============ -->
       <section class="beat" id="b1" data-beat="1">
         <div class="wrap" style="display:flex;align-items:center;">
           <div class="card" id="b1-main" style="width:min(620px,62vw);left:0;top:50%;transform:translateY(-50%);">
-            <div class="meta rv" style="margin-bottom:18px;">01 · Personal Knowledge Management <span style="color:var(--ink-ghost);">/ definition</span></div>
+            <div class="meta rv" style="margin-bottom:18px;">02 · Personal Knowledge Management <span style="color:var(--ink-ghost);">/ definition</span></div>
             <h2 class="head rv">What is <em>Personal Knowledge Management</em>?</h2>
             <ul class="blist">
               <li class="rv">A real system for your own knowledge: collect, store, <em>retrieve</em>.</li>
@@ -746,7 +773,7 @@ blockquote.q .src{
       <section class="beat" id="b2" data-beat="2">
         <div class="wrap" style="display:flex;align-items:center;">
           <div class="card" id="b2-main" style="width:min(600px,60vw);left:0;top:50%;transform:translateY(-50%);">
-            <div class="meta rv" style="margin-bottom:18px;">02 · Second Brain</div>
+            <div class="meta rv" style="margin-bottom:18px;">03 · Second Brain</div>
             <h2 class="head rv">And a <em>second brain</em>?</h2>
             <ul class="blist">
               <li class="rv">The famous version of the idea: a digital place for everything you collect.</li>
@@ -769,7 +796,7 @@ blockquote.q .src{
       <section class="beat" id="b3" data-beat="3">
         <div class="wrap" style="display:flex;align-items:center;">
           <div class="card" id="b3-main" style="width:min(560px,56vw);left:0;top:50%;transform:translateY(-50%);z-index:20;">
-            <div class="meta rv" style="margin-bottom:18px;">03 · The Hype</div>
+            <div class="meta rv" style="margin-bottom:18px;">04 · The Hype</div>
             <h2 class="head rv">Everyone is <span class="ink-red">selling</span> a brain</h2>
             <ul class="blist">
               <li class="rv">Everyone sells a brain: bestseller books, a creator economy demoing setups.</li>
@@ -798,7 +825,7 @@ blockquote.q .src{
         <div class="wrap" style="display:flex;align-items:center;justify-content:center;">
           <div class="drawer" id="b4-drawer">
             <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px;">
-              <span class="tab" style="color:var(--ink-2);">04 · The Meme</span>
+              <span class="tab" style="color:var(--ink-2);">05 · The Meme</span>
               <span class="tab rv" id="b4-label" style="color:var(--ink-faint);">A beautifully tagged graveyard</span>
             </div>
             <div class="grid" id="b4-grid"></div>
@@ -818,6 +845,7 @@ blockquote.q .src{
               <li class="rv">I came to this through failure, not theory.</li>
               <li class="rv">Organizing was always a job for <em>Future Me</em>, who never showed up. A beautifully tagged graveyard.</li>
               <li class="rv">The industry's answer is always the next template, the next app.</li>
+              <li class="rv">Now the stakes are real: a master's thesis does not fit in one head.</li>
               <li class="rv">So: is the failure mine, or the <span class="ink-red">method's</span>?</li>
             </ul>
           </div>
@@ -833,7 +861,7 @@ blockquote.q .src{
           <div class="card" id="b5-c3" style="width:124px;height:84px;left:13%;bottom:18%;"></div>
           <div class="card" id="b5-c4" style="width:128px;height:82px;right:9%;bottom:22%;"></div>
           <div class="card" id="b5-main" style="width:min(660px,66vw);">
-            <div class="meta rv" style="margin-bottom:18px;">05 · What I am building</div>
+            <div class="meta rv" style="margin-bottom:18px;">06 · What I am building</div>
             <h2 class="head rv">A second brain that actually <span class="ink-red">helps me think</span></h2>
             <ul class="blist">
               <li class="rv">Not a fancier filing cabinet.</li>
@@ -850,7 +878,7 @@ blockquote.q .src{
       <section class="beat" id="b9" data-beat="9">
         <div class="wrap stepwrap">
           <div class="steplegend">
-            <div class="lh">06 · The Stack</div>
+            <div class="lh">07 · The Stack</div>
             <h2 class="head stepttl">The <span class="ink-red">tools</span> I use</h2>
             <p class="stepintro">Five tools, in the order work moves through them. A source enters left, exits as a note you can find.</p>
             <ol id="b9-legend">
@@ -902,7 +930,7 @@ blockquote.q .src{
       <section class="beat" id="b11" data-beat="11">
         <div class="wrap zwrap">
           <div class="z-text">
-            <div class="meta rv" style="margin-bottom:16px;">07 · Zettelkasten</div>
+            <div class="meta rv" style="margin-bottom:16px;">08 · Zettelkasten</div>
             <h2 class="head rv">The <span class="ink-red">slip-box</span></h2>
             <ul class="blist">
               <li class="rv">Luhmann fed a wooden slip-box for 30+ years, past <em>90,000 cards</em>.</li>
@@ -932,7 +960,7 @@ blockquote.q .src{
       <section class="beat" id="b10" data-beat="10">
         <div class="wrap stepwrap">
           <div class="steplegend">
-            <div class="lh">08 · The Method</div>
+            <div class="lh">09 · The Method</div>
             <h2 class="head stepttl">The <span class="ink-red">framework</span> I apply</h2>
             <p class="stepintro">A Zettelkasten built retrieval-first, not capture-first. Knowledge climbs three tiers; nothing moves up until the tier below holds.</p>
             <ol id="b10-legend">
@@ -945,7 +973,7 @@ blockquote.q .src{
               <div class="fc-tag" id="b10-tag">Tier 01 / 03 · Literature note</div>
               <div class="fc-name" id="b10-name">Atom</div>
               <div class="fc-rule"></div>
-              <div class="fc-role" id="b10-role">One idea, one exact quote, one source. The filename is the claim written as a full declarative sentence, so search alone can find it. The vault holds 1,471 of these.</div>
+              <div class="fc-role" id="b10-role">One idea, one exact quote, one source. The filename is the claim written as a full declarative sentence, so search alone can find it. The vault holds 2,163 of these.</div>
             </div>
           </div>
         </div>
@@ -955,7 +983,7 @@ blockquote.q .src{
       <section class="beat" id="b12" data-beat="12">
         <div class="wrap demowrap">
           <div class="demo-cap">
-            <div class="meta rv" style="margin-bottom:16px;">09 · Atom</div>
+            <div class="meta rv" style="margin-bottom:16px;">10 · Atom</div>
             <h2 class="head rv">Capture <span class="ink-red">one idea</span></h2>
             <ul class="blist">
               <li class="rv">One claim, in my words. Exact quote and source underneath.</li>
@@ -980,7 +1008,7 @@ blockquote.q .src{
       <section class="beat" id="b13" data-beat="13">
         <div class="wrap demowrap">
           <div class="demo-cap">
-            <div class="meta rv" style="margin-bottom:16px;">10 · Molecule</div>
+            <div class="meta rv" style="margin-bottom:16px;">11 · Molecule</div>
             <h2 class="head rv">Link into a <span class="ink-red">molecule</span></h2>
             <ul class="blist">
               <li class="rv">2–5 atoms on a shared theme, linked into one note.</li>
@@ -1005,7 +1033,7 @@ blockquote.q .src{
       <section class="beat" id="b14" data-beat="14">
         <div class="wrap demowrap">
           <div class="demo-cap">
-            <div class="meta rv" style="margin-bottom:16px;">11 · Alloy</div>
+            <div class="meta rv" style="margin-bottom:16px;">12 · Alloy</div>
             <h2 class="head rv">Fuse into an <span class="ink-red">alloy</span></h2>
             <ul class="blist">
               <li class="rv">Molecules fuse into a thesis-grade synthesis no single source could hand me.</li>
@@ -1028,6 +1056,45 @@ blockquote.q .src{
         </div>
       </section>
 
+      <!-- ============ BEAT 17 (NEW) : CASE STUDY, THE METHOD ON A REAL THESIS PROBLEM ============ -->
+      <section class="beat" id="b17" data-beat="17">
+        <div class="wrap" style="display:flex;align-items:center;justify-content:center;">
+          <div class="card" id="b17-card" style="width:min(920px,94vw);padding:40px 48px;">
+            <div class="meta rv" style="margin-bottom:8px;">13 · Case Study</div>
+            <h2 class="head rv" style="margin-bottom:6px;">The method on a <span class="ink-red">real thesis problem</span></h2>
+            <p class="body rv" style="font-size:15px;color:var(--ink-faint);margin:0 0 24px;">Not a demo. These are live notes from my fieldwork, exactly as they sit in the vault tonight.</p>
+            <div class="sourcerow">
+              <div class="srccol rv">
+                <div class="meta" style="color:var(--ink-2);margin-bottom:8px;">Atom · fieldwork</div>
+                <div style="font-family:var(--serif);font-size:15px;color:var(--ink);line-height:1.4;">Teacher A frames science and ICT as well matched because the subject centers on observation and recording.</div>
+              </div>
+              <div class="srccol rv">
+                <div class="meta" style="color:var(--ink-2);margin-bottom:8px;">Atom · fieldwork</div>
+                <div style="font-family:var(--serif);font-size:15px;color:var(--ink);line-height:1.4;">Teacher A can state criteria for choosing analog over digital, but grounds the preference in tacit sensory judgment.</div>
+              </div>
+              <div class="srccol rv">
+                <div class="meta" style="color:var(--ink-2);margin-bottom:8px;">Atom · fieldwork</div>
+                <div style="font-family:var(--serif);font-size:15px;color:var(--ink);line-height:1.4;">A teaching move the observer read as deliberate pedagogy, Teacher A describes as not consciously intended.</div>
+              </div>
+            </div>
+            <hr class="rule rv" style="margin:26px 0 22px;">
+            <div class="rv" style="display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap;">
+              <div style="flex:1.4;min-width:300px;">
+                <div class="meta" style="color:var(--ink-2);margin-bottom:8px;">Molecule · the three atoms connect</div>
+                <div style="font-family:var(--serif);font-size:19px;color:var(--ink);line-height:1.35;">Selective <span class="ink-red">non-use</span> of ICT is an advanced, partly tacit form of TPACK.</div>
+                <p class="body" style="font-size:13.5px;margin-top:8px;color:var(--ink-faint);">The tension it exposes: if the competence is tacit, it is invisible to surveys and to formal training design. Yagisawa (2019) finds fully integrated TPACK in about 1 percent of observed lessons.</p>
+              </div>
+              <div style="flex:1;min-width:260px;">
+                <div class="meta" style="color:var(--ink-2);margin-bottom:8px;">Alloy · forming now</div>
+                <div class="stamp flat" style="margin-bottom:10px;">IN PROGRESS</div>
+                <div style="font-family:var(--serif);font-style:italic;font-size:17px;color:var(--ink);line-height:1.4;">Knowing when <em>not</em> to use ICT as the mark of integrated TPACK.</div>
+                <p class="body" style="font-size:13px;margin-top:8px;color:var(--ink-faint);">A chapter-grade argument the system surfaced. No single source contains it.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- ============ BEAT 12 : THE PIPELINE (CENTERPIECE) ============ -->
       <section class="beat" id="b6" data-beat="6">
         <div class="wrap">
@@ -1036,7 +1103,7 @@ blockquote.q .src{
 
           <!-- legend -->
           <div class="legend">
-            <div class="lh">12 · Current State</div>
+            <div class="lh">14 · Current State</div>
             <ol id="b6-legend">
               <li data-s="0">01 Zotero</li>
               <li data-s="1">02 Obsidian</li>
@@ -1097,8 +1164,8 @@ blockquote.q .src{
             <p class="body" style="font-size:14px;margin:0;color:var(--ink-2);">Each atom becomes its own file. The filename is the claim, written as a full sentence, so search alone can find it.</p>
             <hr class="rule red">
             <div style="display:flex;justify-content:space-between;align-items:baseline;">
-              <span style="font-family:var(--serif);font-size:32px;color:var(--ink);">1,471</span>
-              <span class="meta" style="font-size:9.5px;">notes / 4,247 links</span>
+              <span style="font-family:var(--serif);font-size:32px;color:var(--ink);">2,163</span>
+              <span class="meta" style="font-size:9.5px;">notes / 16,526 links</span>
             </div>
           </div>
 
@@ -1139,7 +1206,7 @@ blockquote.q .src{
       <section class="beat" id="b7" data-beat="7">
         <div class="wrap" style="display:flex;flex-direction:column;align-items:center;justify-content:center;">
           <div class="card" id="b7-manu" style="width:min(880px,90vw);padding:46px 50px;">
-            <div class="meta rv center" style="margin-bottom:8px;">13 · Working Thesis</div>
+            <div class="meta rv center" style="margin-bottom:8px;">15 · Working Thesis</div>
             <div class="stamp rv center" style="display:block;margin:0 auto 26px;width:max-content;">Bound</div>
             <blockquote class="q rv center" style="font-size:clamp(22px,3vw,36px);line-height:1.28;text-align:center;border:0;">
               Retrieval-first organization explains why generic Personal Knowledge Management templates <span class="ink-red">fail</span> in domain-expert workflows.
@@ -1178,7 +1245,7 @@ blockquote.q .src{
             <span class="reg" style="top:16px;right:16px;"></span>
             <span class="reg" style="bottom:16px;left:16px;"></span>
             <span class="reg" style="bottom:16px;right:16px;"></span>
-            <div class="meta rv" style="margin-bottom:24px;">14 · End</div>
+            <div class="meta rv" style="margin-bottom:24px;">16 · End</div>
             <div class="stamp rv" style="display:inline-block;margin-bottom:30px;">Archive Closed</div>
             <div class="rv" style="font-family:var(--serif);font-style:italic;font-size:clamp(22px,2.4vw,30px);color:var(--ink);line-height:1.28;margin-bottom:28px;">The box stays open, and it answers back.</div>
             <hr class="rule rv">
@@ -1192,17 +1259,21 @@ blockquote.q .src{
       <section class="beat" id="b15" data-beat="15">
         <div class="wrap" style="display:flex;align-items:center;justify-content:center;">
           <div class="card" id="b15-card" style="width:min(820px,92vw);padding:38px 48px;">
-            <div class="meta rv" style="margin-bottom:8px;">15 · Works Cited</div>
+            <div class="meta rv" style="margin-bottom:8px;">17 · Works Cited</div>
             <h2 class="head rv" style="font-size:clamp(24px,3vw,38px);margin:0 0 22px;">References</h2>
             <ol class="refs">
               <li class="ref rv">Aal, K. and Rüller, S. (2025). <em>From Personal Knowledge Management to the Second Brain to the Personal AI Companion.</em> GROUP Companion '25, ACM.</li>
+              <li class="ref rv">Archambault, L. M. and Barnett, J. H. (2010). Revisiting technological pedagogical content knowledge. <em>Computers &amp; Education</em>, 55(4).</li>
               <li class="ref rv">Bush, V. (1945). As We May Think. <em>The Atlantic Monthly</em>, 176(1).</li>
               <li class="ref rv">Clark, A. and Chalmers, D. (1998). The Extended Mind. <em>Analysis</em>, 58(1), 7-19.</li>
               <li class="ref rv">Ferreira (2026). On retrieval-first organization. <span class="tbc">(full reference to be confirmed)</span></li>
               <li class="ref rv">Forte, T. (2022). <em>Building a Second Brain.</em> Atria Books.</li>
               <li class="ref rv">Frand, J. and Hixon, C. (1999). Personal Knowledge Management: Who, What, Why, When, Where, How? Working paper, UCLA Anderson.</li>
+              <li class="ref rv">Graham, C. R. (2011). Theoretical considerations for understanding technological pedagogical content knowledge. <em>Computers &amp; Education</em>, 57(3).</li>
               <li class="ref rv">Luhmann, N. (1981). Communicating with Slip Boxes. (Trans. M. Kuehn.)</li>
+              <li class="ref rv">Mishra, P. and Koehler, M. J. (2006). Technological Pedagogical Content Knowledge: A Framework for Teacher Knowledge. <em>Teachers College Record</em>, 108(6).</li>
               <li class="ref rv">Roediger, H. L. and Karpicke, J. D. (2006). Test-Enhanced Learning. <em>Psychological Science</em>, 17(3), 249-255.</li>
+              <li class="ref rv">Yagisawa, F. (2019). TPACK typology in one-to-one device classrooms.</li>
             </ol>
             <p class="ref-note rv">The "second brain" meme in section 04 is paraphrased from @nunoei.</p>
           </div>
@@ -1221,7 +1292,7 @@ blockquote.q .src{
 
   // ---- beat layout: each beat owns a slice of global progress [in,out].
   // beat 6 gets ~9x a normal beat. We allocate weights.
-  var WEIGHTS = [1, 1, 1, 1, 1.2, 1, 2.4, 1.4, 1.8, 1.4, 1.5, 1.6, 6.5, 1.4, 0.8, 1.2]; // Pipeline@12 still longest but ~6.5 not 9; middle tightened
+  var WEIGHTS = [1, 1.2, 1, 1, 1, 1.2, 1, 2.4, 1.4, 1.8, 1.4, 1.5, 1.6, 2.0, 6.5, 1.4, 0.8, 1.2]; // Context@1 and CaseStudy@13 inserted; Pipeline@14 still longest
   var total = WEIGHTS.reduce(function(a,b){return a+b;},0);
   var BEATS = [];
   (function(){
@@ -1234,11 +1305,11 @@ blockquote.q .src{
   })();
 
   var els = {};
-  for (var i=0;i<16;i++){ els["b"+i] = document.getElementById("b"+i); }
+  for (var i=0;i<18;i++){ els["b"+i] = document.getElementById("b"+i); }
   var folioNo = document.getElementById("folio-no");
   var folioName = document.getElementById("folio-name");
   var railFill = document.getElementById("rail-fill");
-  var BEAT_NAMES = ["HERO","PERSONAL KNOWLEDGE MANAGEMENT","SECOND BRAIN","THE HYPE","THE MEME","BUILDING","THE STACK","ZETTELKASTEN","THE METHOD","ATOM","MOLECULE","ALLOY","PIPELINE","THESIS","END","WORKS CITED"];
+  var BEAT_NAMES = ["HERO","CONTEXT","PERSONAL KNOWLEDGE MANAGEMENT","SECOND BRAIN","THE HYPE","THE MEME","BUILDING","THE STACK","ZETTELKASTEN","THE METHOD","ATOM","MOLECULE","ALLOY","CASE STUDY","PIPELINE","THESIS","END","WORKS CITED"];
 
   function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
   function map(v,a,b,c,d){ if(b===a) return c; var t=clamp((v-a)/(b-a),0,1); return c+(d-c)*t; }
@@ -1248,7 +1319,7 @@ blockquote.q .src{
 
   // ---------- 3D SLIP-FIELD: a depth of index cards the reader flies through ----------
   var FIELD = [], FIELD_RANGE = 3600, FIELD_NEAR = 220, FIELD_CYCLES = 5;
-  var FIELD_ADDR = ["21/3a","9/8b","21/3a1","@ferreira2026","@forte2022","@luhmann1981","ATOM·1471","11/2","9/8g2","@clark1998","21/3d","ZK·09","@bush1945","NOTE·1207","21/3a7","4,247 LINKS","@roediger2006","9/8","@aal2025","21/3b"];
+  var FIELD_ADDR = ["21/3a","9/8b","21/3a1","@ferreira2026","@forte2022","@luhmann1981","ATOM·2163","11/2","9/8g2","@clark1998","21/3d","ZK·09","@bush1945","NOTE·1207","21/3a7","16,526 LINKS","@roediger2006","9/8","@aal2025","21/3b"];
   function buildField(){
     var host = document.getElementById("bgfield-space");
     if(!host || FIELD.length) return;
@@ -1351,7 +1422,7 @@ blockquote.q .src{
 
   // collect reveal lines per beat for staggering
   function rvs(beat){ return Array.prototype.slice.call(els["b"+beat].querySelectorAll(".rv")); }
-  var RV = {}; for (var b=0;b<16;b++){ RV[b]=rvs(b); }
+  var RV = {}; for (var b=0;b<18;b++){ RV[b]=rvs(b); }
 
   // ---------- per-beat END-STATE renderers (used by SEEK + scroll) ----------
   // each takes (lt) local 0..1 progress for its beat and a boolean "active"
@@ -1977,11 +2048,13 @@ blockquote.q .src{
     line.style.opacity=ease(clamp(map(lt,0.68,0.92,0,1),0,1)).toFixed(3);
   }
 
-  // scroll position -> render fn (new Tools&Method beat sits at position 6)
+  // scroll position -> render fn (new Tools&Method beat sits at position 7)
   function beatRefs(lt){ applyReveal(15, lt); }
-  var RENDER = [beat0,beat1,beat2,beat3,beat4,beat5,beatStack,beatZettel,beatMethod,beatAtom,beatMolecule,beatAlloy,beat6,beat7,beat8,beatRefs];
-  // scroll position -> element id number (Stack b9, Zettel b11, Method b10, Atom b12, Molecule b13, Alloy b14, Works Cited b15)
-  var ORDER  = [0,1,2,3,4,5,9,11,10,12,13,14,6,7,8,15];
+  function beatContext(lt){ applyReveal(16, lt); }
+  function beatCase(lt){ applyReveal(17, lt); }
+  var RENDER = [beat0,beatContext,beat1,beat2,beat3,beat4,beat5,beatStack,beatZettel,beatMethod,beatAtom,beatMolecule,beatAlloy,beatCase,beat6,beat7,beat8,beatRefs];
+  // scroll position -> element id number (Context b16, Stack b9, Zettel b11, Method b10, Atom b12, Molecule b13, Alloy b14, Case b17, Works Cited b15)
+  var ORDER  = [0,16,1,2,3,4,5,9,11,10,12,13,14,17,6,7,8,15];
 
   // ---------- master apply for a global progress p ----------
   // Strict mutual exclusion: exactly one beat is "active" and at full opacity,
@@ -1993,10 +2066,10 @@ blockquote.q .src{
     p = clamp(p,0,1);
     // determine active beat (the one whose [in,out) contains p)
     var active = 0;
-    for (var i=0;i<16;i++){ if (p>=BEATS[i].in) active=i; }
+    for (var i=0;i<ORDER.length;i++){ if (p>=BEATS[i].in) active=i; }
 
     // opacity for the active beat and (only) its outgoing neighbor near the boundary
-    var op = new Array(16).fill(0);
+    var op = new Array(ORDER.length).fill(0);
     var inB = BEATS[active].in;
     var distFromStart = p - inB; // >=0
     if (distFromStart < XFADE && active > 0){
@@ -2008,7 +2081,7 @@ blockquote.q .src{
       op[active] = 1;
     }
 
-    for (var b=0;b<16;b++){
+    for (var b=0;b<ORDER.length;b++){
       var el = els["b"+ORDER[b]];
       var o = op[b];
       var isActive = (b===active);
@@ -2043,7 +2116,7 @@ blockquote.q .src{
   // also allow seeking by beat index for convenience
   window.__SEEK_BEAT = function(idx, frac){
     frac = (frac==null?0.6:frac);
-    var b = BEATS[clamp(idx,0,15)];
+    var b = BEATS[clamp(idx,0,ORDER.length-1)];
     return window.__SEEK(b.in + (b.out-b.in)*frac);
   };
 
