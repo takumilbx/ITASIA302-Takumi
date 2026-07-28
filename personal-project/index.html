@@ -71,7 +71,7 @@
     .topbar-nav a {
       font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em;
       text-transform: uppercase; color: var(--ink-faint); text-decoration: none;
-      padding: 6px 12px; transition: color 150ms ease;
+      padding: 6px 12px; transition: color 150ms ease; white-space: nowrap;
     }
     .topbar-nav a:hover { color: var(--amber); }
     .topbar-nav a.active { color: var(--ink); }
@@ -317,6 +317,16 @@
     footer.footer em { color: var(--amber); font-style: normal; letter-spacing: 0.14em; }
 
     /* Responsive */
+    /* The nav carries eight section anchors plus two cross-page links. As it narrows the
+       anchors go first, since you can still scroll to them, while the page links stay:
+       nothing else in the bar reaches those. Below 720 the bar has no room for either,
+       and the final-essay card under the hero is the way through. */
+    @media (max-width: 1120px) {
+      .topbar-nav a { padding: 6px 8px; letter-spacing: 0.14em; }
+    }
+    @media (max-width: 940px) {
+      .topbar-nav li:not(.nav-page) { display: none; }
+    }
     @media (max-width: 720px) {
       .topbar { padding: 0 22px; }
       .topbar-nav { display: none; }
@@ -862,7 +872,8 @@
       <li><a href="#thesis">Thesis</a></li>
       <li><a href="#system">System</a></li>
       <li><a href="#refs">References</a></li>
-      <li><a href="second_brain_galaxy.html" style="color: var(--teal);">3D Graph</a></li>
+      <li class="nav-page"><a href="second_brain_final.html" style="color: var(--amber);">Final Essay</a></li>
+      <li class="nav-page"><a href="second_brain_galaxy.html" style="color: var(--teal);">3D Graph</a></li>
     </ul>
   </nav>
 </header>
@@ -885,6 +896,25 @@
       Takumi &nbsp;&middot;&nbsp; ITASIA302, University of Tokyo &nbsp;&middot;&nbsp; <em>May 2026</em>
     </div>
   </section>
+
+  <!-- ─── FINAL ESSAY ─── -->
+  <section class="essay-section">
+    <div class="viz-card available reveal">
+      <div class="viz-tag">Final &nbsp;&middot;&nbsp; ITASIA302 submission <span class="badge">Live</span></div>
+      <div class="viz-title">Building a Second Brain: the <em>final essay</em></div>
+      <p class="viz-desc">
+        The finished piece, and the place to start. Eighteen scroll beats over a WebGL field
+        driven by the live vault: 3,066 notes and 9,121 links, reforming as the argument moves
+        from atom to molecule to alloy. Every factual claim was checked against the source PDF,
+        with twenty-four APA references at the end.
+      </p>
+      <a class="viz-link" href="second_brain_final.html">
+        Read the final essay <span class="arrow">&rarr;</span>
+      </a>
+    </div>
+  </section>
+
+  <div class="section-rule reveal"></div>
 
   <!-- ─── SECTION 0: INTRODUCTION ─── -->
   <section id="intro" class="essay-section">

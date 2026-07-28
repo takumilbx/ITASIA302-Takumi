@@ -6,27 +6,46 @@
 <title>Building a Second Brain · ITASIA302</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=IBM+Plex+Sans:wght@400;500;600&family=Geist+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <style>
   :root {
-    /* Near-black tinted surface, near-white ink, one amber accent. OKLCH, never pure black or white. */
-    --bg:      oklch(0.145 0.018 264);
-    --bg-deep: oklch(0.105 0.020 264);
-    --ink:     oklch(0.95 0.008 250);
-    --ink-2:   oklch(0.73 0.022 254);
-    --ink-3:   oklch(0.52 0.028 258);
-    --faint:   oklch(0.40 0.030 260);
-    --line:    oklch(0.30 0.022 262);
-    --amber:   oklch(0.78 0.142 66);
+    /* Shared ITASIA302 tokens. Identical ground, ink and accent as personal-project/index.html
+       so this page reads as the same publication, not a second site. */
+    --bg:        #05060e;
+    --bg-deep:   #05060e;
+    --bg-soft:   #0b0d1a;
+    --slip:      #0f1322;   /* archival slip ground */
+    --ink:       #e0e6f0;
+    --ink-2:     #b8c4dc;
+    --ink-3:     #8e9bb8;
+    --faint:     #7c8aa8;
+    --ghost:     #5d6a86;
+    --line:      #182030;
+    --line-soft: #10151f;
 
-    --sans: "Inter Tight", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-    --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --amber:     #e8634a;   /* personal-project section accent */
+    --amber-hi:  #ff8a63;
+    --amber-lo:  #e8634a14;
+    --sky:       #5299c8;
+    --teal:      #45a884;
+    --lilac:     #7272c0;
+
+    --serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+    --sans:  "IBM Plex Sans", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --mono:  "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
     --e-out:   cubic-bezier(0.23, 1, 0.32, 1);
     --e-inout: cubic-bezier(0.77, 0, 0.175, 1);
+
+    --topbar-h: 52px;
+
+    /* Contact shadow for type sitting on the field. Per glyph, so it separates the letters
+       without drawing a box around the paragraph. Tight and dark: a shadow, never a glow. */
+    --lift:    0 1px 2px rgba(5, 6, 14, 0.95), 0 0 9px rgba(5, 6, 14, 0.85);
+    --lift-lg: 0 2px 6px rgba(5, 6, 14, 0.95), 0 0 28px rgba(5, 6, 14, 0.80);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -45,26 +64,74 @@
   #scrim {
     position: fixed; inset: 0; z-index: 1; pointer-events: none;
     background:
-      radial-gradient(125% 95% at 50% 48%, transparent 40%, oklch(0.105 0.020 264 / 0.58) 100%),
-      linear-gradient(to bottom, oklch(0.105 0.020 264 / 0.40) 0%, transparent 18%, transparent 82%, oklch(0.105 0.020 264 / 0.48) 100%);
+      radial-gradient(125% 95% at 50% 48%, transparent 38%, rgba(5, 6, 14, 0.62) 100%),
+      linear-gradient(to bottom, rgba(5, 6, 14, 0.55) 0%, transparent 16%, transparent 78%, rgba(5, 6, 14, 0.62) 100%);
   }
+
+  /* Site survey grid, same 52px module as every other ITASIA302 page. Masked out of the
+     centre so it never competes with the field or the prose: it only frames the edges. */
+  #grid {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.9;
+    background-image:
+      linear-gradient(rgba(232, 99, 74, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232, 99, 74, 0.05) 1px, transparent 1px);
+    background-size: 52px 52px;
+    -webkit-mask-image: radial-gradient(120% 100% at 50% 50%, transparent 34%, #000 88%);
+    mask-image: radial-gradient(120% 100% at 50% 50%, transparent 34%, #000 88%);
+  }
+
+  /* Atmospheric film, verbatim from the sibling pages. */
+  .grain {
+    position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: 0.03;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/></filter><rect width='256' height='256' filter='url(%23n)'/></svg>");
+    background-size: 220px 220px; mix-blend-mode: overlay;
+  }
+  .edge-gradient {
+    position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 10000; pointer-events: none;
+    background: linear-gradient(90deg, transparent 0%, var(--sky) 22%, var(--lilac) 62%, transparent 100%);
+    opacity: 0.5;
+  }
+
+  /* ---- topbar: same shell as personal-project/index.html, wired to beat seeks ---- */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    display: flex; justify-content: space-between; align-items: center; gap: 24px;
+    height: var(--topbar-h); padding: 0 clamp(18px, 3vw, 48px);
+    background: linear-gradient(180deg, rgba(5, 6, 14, 0.97) 0%, rgba(5, 6, 14, 0.80) 70%, transparent 100%);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  }
+  .topbar-title {
+    font-family: var(--serif); font-weight: 300; font-size: 15px;
+    letter-spacing: -0.01em; color: var(--ink); white-space: nowrap;
+  }
+  .topbar-title em { color: var(--amber); font-style: italic; }
+  .topbar-title a { color: inherit; text-decoration: none; border-bottom: 1px dotted var(--faint); }
+  .topbar-title a:hover { color: var(--amber); border-bottom-color: var(--amber); }
+  .topbar-nav { display: flex; gap: 0; list-style: none; }
+  .topbar-nav button {
+    font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--faint); background: none; border: 0; padding: 6px 11px; cursor: pointer;
+    transition: color 150ms ease;
+  }
+  .topbar-nav button:hover, .topbar-nav button:focus-visible { color: var(--amber); outline: none; }
+  .topbar-nav button[aria-current="true"] { color: var(--ink); }
 
   /* Progress rail: printed scale along the bottom edge, per-beat ticks. */
   #rail {
     position: fixed; left: 0; right: 0; bottom: 0; z-index: 6;
-    height: 3px; background: oklch(0.22 0.02 262 / 0.8);
+    height: 2px; background: var(--line);
   }
   #rail-fill {
     position: absolute; left: 0; top: 0; bottom: 0; width: 0%;
-    background: var(--amber); opacity: 0.9;
-    box-shadow: 0 0 10px oklch(0.78 0.142 66 / 0.55);
+    background: linear-gradient(90deg, var(--amber) 0%, var(--amber-hi) 100%);
+    box-shadow: 0 0 10px rgba(232, 99, 74, 0.5);
   }
   #rail .rtick { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--line); }
 
   /* Folio: NN / 17 + beat name */
   #folio {
-    position: fixed; right: clamp(18px, 3vw, 48px); bottom: 16px; z-index: 6;
-    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.16em;
+    position: fixed; right: clamp(18px, 3vw, 48px); bottom: 14px; z-index: 6;
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.22em;
     color: var(--faint); text-transform: uppercase; pointer-events: none;
   }
   #folio b { color: var(--amber); font-weight: 500; }
@@ -72,57 +139,87 @@
 
   /* Left readout: quiet field-state line */
   #readout {
-    position: fixed; left: clamp(18px, 3vw, 48px); bottom: 16px; z-index: 6;
-    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.16em;
+    position: fixed; left: clamp(18px, 3vw, 48px); bottom: 14px; z-index: 6;
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.22em;
     color: var(--faint); text-transform: uppercase; pointer-events: none;
     display: flex; align-items: center; gap: 10px;
   }
   #readout .dot { width: 5px; height: 5px; background: var(--amber); border-radius: 50%;
-    box-shadow: 0 0 8px oklch(0.78 0.142 66 / 0.7); }
+    box-shadow: 0 0 8px rgba(232, 99, 74, 0.7); }
 
   /* Beat panels: fixed, mutually exclusive, opacity driven by JS (crossfade band). */
   .panel {
     position: fixed; inset: 0; z-index: 3;
-    display: flex; align-items: center; padding: clamp(26px, 6vw, 112px);
+    display: flex; align-items: center; padding: clamp(24px, 5vw, 96px);
     opacity: 0; visibility: hidden; pointer-events: none;
-    padding-bottom: clamp(60px, 10vh, 140px);
+    padding-top: calc(var(--topbar-h) + clamp(16px, 3vh, 40px));
+    padding-bottom: clamp(52px, 8vh, 96px);
   }
   .panel.live { visibility: visible; }
   .side-l { justify-content: flex-start; }
   .side-r { justify-content: flex-end; }
   .side-c { justify-content: center; text-align: center; }
 
-  /* Placeholder text block. Edge-anchored, feathered dark scrim behind it so type never
-     floats on raw particles. Soft radial, not a box, not glass. */
-  .ph { position: relative; max-width: 48ch; }
-  .ph::before {
-    content: ""; position: absolute; z-index: -1; inset: -18% -15%;
-    background: radial-gradient(ellipse at 46% 50%,
-      oklch(0.105 0.020 264 / 0.88) 0%, oklch(0.105 0.020 264 / 0.62) 48%,
-      oklch(0.105 0.020 264 / 0.24) 68%, transparent 82%);
+  /* Text block. Edge-anchored, feathered dark scrim behind it so type never floats on raw
+     particles. Soft radial, not a box, not glass. Height is capped to the panel so long
+     beats can never bleed past the rail. */
+  .ph {
+    position: relative; max-width: 50ch;
+    max-height: 100%; display: flex; flex-direction: column; min-height: 0;
   }
-  .side-c .ph::before { inset: -22% -22%; }
+  /* The field itself opens up behind the prose (see uHole in the point and edge shaders),
+     so this is only a whisper of extra separation, not the dark plate it used to be.
+     Peak alpha stays low and the falloff is long, so no edge is ever findable. */
+  .ph::before {
+    content: ""; position: absolute; z-index: -1; inset: -30% -26%;
+    background: radial-gradient(ellipse at 48% 50%,
+      rgba(5, 6, 14, 0.34) 0%, rgba(5, 6, 14, 0.27) 34%,
+      rgba(5, 6, 14, 0.14) 58%, rgba(5, 6, 14, 0.05) 76%, transparent 92%);
+  }
+  /* centred beats put type on the densest part of the field, so they carry a little more */
+  .side-c .ph::before {
+    inset: -34% -30%;
+    background: radial-gradient(ellipse at 48% 50%,
+      rgba(5, 6, 14, 0.46) 0%, rgba(5, 6, 14, 0.38) 34%,
+      rgba(5, 6, 14, 0.20) 58%, rgba(5, 6, 14, 0.07) 76%, transparent 92%);
+  }
+  /* every text element on the field carries its own contact shadow */
+  .kick, .note, .ghost, .body, .blist li, .cite, .essay,
+  blockquote.q, .lrow .lk, .lrow .lc, .refs li, .refnote,
+  .acard .ak, .acard .aclaim { text-shadow: var(--lift); }
+  .ph h2 { text-shadow: var(--lift-lg); }
 
   .kick {
-    font-family: var(--mono); font-weight: 400; font-size: 11px;
-    letter-spacing: 0.30em; text-transform: uppercase; color: var(--faint);
-    margin-bottom: 22px;
+    font-family: var(--mono); font-weight: 400; font-size: 9.5px;
+    letter-spacing: 0.28em; text-transform: uppercase; color: var(--faint);
+    margin-bottom: 16px; flex: none;
   }
   .kick i { color: var(--amber); font-style: normal; }
+
+  /* Serif display, matching the section headings on every sibling page.
+     Argument beats sit calmer than the hero and turn beats: that contrast is the rhythm. */
   .ph h2 {
-    font-family: var(--sans); font-weight: 300; letter-spacing: -0.035em;
-    line-height: 1.03; color: var(--ink); font-size: clamp(38px, 5.6vw, 76px);
+    font-family: var(--serif); font-weight: 300; letter-spacing: -0.028em;
+    line-height: 1.06; color: var(--ink);
+    font-size: clamp(30px, 3.9vw, 50px); flex: none;
   }
+  .side-c .ph h2 { font-size: clamp(38px, 5.6vw, 76px); line-height: 1.02; }
   .ph h2 .sig { font-style: italic; font-weight: 400; color: var(--amber); }
   .note {
-    font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em;
-    color: var(--ink-3); text-transform: uppercase; margin-top: 20px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em;
+    color: var(--faint); text-transform: uppercase; margin-top: 18px; flex: none;
   }
   .ghost {
-    font-family: var(--sans); font-weight: 300; font-size: clamp(14px, 1.2vw, 17px);
-    line-height: 1.55; color: var(--ink-3); margin-top: 14px; max-width: 44ch;
+    font-family: var(--serif); font-weight: 300; font-size: clamp(14.5px, 1.2vw, 17.5px);
+    line-height: 1.65; color: var(--ink-2); margin-top: 16px; max-width: 52ch; flex: none;
   }
   .side-c .ghost { margin-left: auto; margin-right: auto; }
+  /* Centred beats keep a centred head and pull quote, but running prose reads left-aligned:
+     a ragged left edge on six lines of argument is a legibility tax, not a flourish. */
+  .side-c .body, .side-c .blist, .side-c .essay {
+    text-align: left; margin-left: auto; margin-right: auto;
+  }
+  .side-c .flow { align-items: center; }
 
   /* Staggered child reveal on the active beat. */
   .panel .ph > * {
@@ -134,93 +231,225 @@
   .panel.on .ph > *:nth-child(2) { transition-delay: 140ms; }
   .panel.on .ph > *:nth-child(3) { transition-delay: 230ms; }
   .panel.on .ph > *:nth-child(4) { transition-delay: 320ms; }
+  /* the flow wrapper reveals as one, so its own children carry the stagger inward */
+  .panel .flow > * {
+    opacity: 0; transform: translateY(10px);
+    transition: opacity 620ms var(--e-out), transform 620ms var(--e-out);
+  }
+  .panel.on .flow > * { opacity: 1; transform: none; }
+  .panel.on .flow > *:nth-child(1) { transition-delay: 250ms; }
+  .panel.on .flow > *:nth-child(2) { transition-delay: 330ms; }
+  .panel.on .flow > *:nth-child(3) { transition-delay: 400ms; }
+  .panel.on .flow > *:nth-child(n+4) { transition-delay: 460ms; }
 
   /* ---- baked content styles ---- */
   .body {
-    font-family: var(--sans); font-weight: 300; font-size: clamp(14.5px, 1.2vw, 17px);
-    line-height: 1.62; color: var(--ink); margin-top: 14px; max-width: 46ch;
+    font-family: var(--serif); font-weight: 300; font-size: clamp(14px, 1.15vw, 16.5px);
+    line-height: 1.68; color: var(--ink-2); margin-top: 14px; max-width: 54ch; flex: none;
   }
-  .blist { list-style: none; margin-top: 14px; padding: 0; }
+  .body em { color: var(--ink); }
+
+  /* Argument list. A hairline rule per item instead of a bullet: the same quiet
+     register as the rules on the sibling pages, and it survives long wrapped lines. */
+  .blist { list-style: none; margin-top: 16px; padding: 0; flex: 1 1 auto; min-height: 0; }
   .blist li {
-    position: relative; padding-left: 18px; margin: 9px 0;
-    font-family: var(--sans); font-weight: 300; font-size: clamp(14px, 1.15vw, 16.5px);
-    line-height: 1.55; color: var(--ink);
+    position: relative; padding-left: 22px; margin: 11px 0;
+    font-family: var(--serif); font-weight: 300; font-size: clamp(13.5px, 1.1vw, 16px);
+    line-height: 1.62; color: var(--ink-2);
   }
   .blist li::before {
-    content: ""; position: absolute; left: 0; top: 0.72em; width: 9px; height: 1px;
-    background: var(--amber);
+    content: ""; position: absolute; left: 0; top: 0.78em; width: 12px; height: 1px;
+    background: var(--amber); opacity: 0.85;
   }
+  .blist li:last-child { margin-bottom: 0; }
   .blist li em, .body em, .q em { font-style: italic; }
+  .blist li em { color: var(--ink); }
   .cite {
-    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.02em;
-    color: var(--faint);
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.01em;
+    color: var(--ghost); white-space: nowrap;
   }
+
+  /* Author's aside. Hanging mono label plus a top hairline, no side stripe. */
   .essay {
-    margin-top: 20px; padding-left: 16px;
-    border-left: 1px solid oklch(0.75 0.14 75 / 0.55);
-    font-family: var(--sans); font-weight: 300; font-size: clamp(13.5px, 1.1vw, 16px);
-    line-height: 1.62; color: var(--ink-3); max-width: 44ch;
+    margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--line);
+    font-family: var(--serif); font-weight: 300; font-size: clamp(13px, 1.05vw, 15px);
+    line-height: 1.66; color: var(--ink-3); max-width: 50ch; flex: none;
   }
+
+  /* Two-column beat. The field note is an aside, so it takes the margin rather than
+     eating the argument's vertical space. Below the breakpoint it stacks back under. */
+  .ph.split {
+    display: grid; max-width: none;
+    grid-template-columns: minmax(0, 40ch) minmax(0, 26ch);
+    grid-template-rows: auto auto minmax(0, 1fr);
+    column-gap: clamp(24px, 2.6vw, 44px);
+  }
+  .ph.split > .kick { grid-area: 1 / 1; }
+  .ph.split > h2    { grid-area: 2 / 1; }
+  .ph.split > .flow, .ph.split > .scrollbox { grid-area: 3 / 1; }
+  .tall .ph.split { max-width: none; grid-template-columns: minmax(0, 54ch) minmax(0, 26ch); }
+  .ph.split > .essay {
+    grid-area: 3 / 2; align-self: start; margin-top: 6px;
+    max-width: none; max-height: 100%; min-height: 0; overflow-y: auto;
+  }
+  .flow { display: flex; flex-direction: column; min-height: 0; overflow-y: auto; }
+  /* .flow is the only scroll region in a beat, so nothing inside it shrinks or scrolls itself */
+  .flow > * { flex: none; }
+  .flow > .blist, .flow > .ledger, .flow > .refs { overflow: visible; padding-right: 0; }
   .essay .elabel {
-    display: block; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.28em;
+    display: block; font-family: var(--mono); font-size: 9px; letter-spacing: 0.28em;
     text-transform: uppercase; color: var(--amber); margin-bottom: 8px;
   }
   blockquote.q {
-    margin: 16px 0 0; font-family: var(--sans); font-weight: 300; font-style: italic;
-    font-size: clamp(16px, 1.5vw, 20px); line-height: 1.45; color: var(--ink);
+    margin: 18px 0 0; font-family: var(--serif); font-weight: 300; font-style: italic;
+    font-size: clamp(16px, 1.5vw, 21px); line-height: 1.5; color: var(--ink); flex: none;
   }
   blockquote.q .qsrc {
     display: block; margin-top: 10px; font-style: normal; font-family: var(--mono);
-    font-size: 10px; letter-spacing: 0.06em; color: var(--faint);
+    font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--faint);
   }
+
+  /* A single slip, used once, where the page is literally showing you one index card. */
   .acard {
-    margin-top: 12px; padding: 11px 14px;
-    border: 1px solid oklch(0.35 0.02 264 / 0.7); border-radius: 2px;
-    background: oklch(0.13 0.018 264 / 0.55);
+    margin-top: 18px; padding: 14px 16px 15px; flex: none;
+    border: 1px solid var(--line); border-top: 1px solid rgba(232, 99, 74, 0.45);
+    background: linear-gradient(180deg, rgba(15, 19, 34, 0.86) 0%, rgba(11, 13, 26, 0.62) 100%);
   }
   .acard .ak {
     display: block; font-family: var(--mono); font-size: 9px; letter-spacing: 0.24em;
-    text-transform: uppercase; color: var(--faint); margin-bottom: 6px;
+    text-transform: uppercase; color: var(--faint); margin-bottom: 8px;
   }
   .acard .ak b { color: var(--amber); font-weight: 400; }
   .acard .aclaim {
-    font-family: var(--sans); font-weight: 300; font-size: clamp(13px, 1.05vw, 15.5px);
-    line-height: 1.45; color: var(--ink);
+    font-family: var(--serif); font-weight: 300; font-size: clamp(13px, 1.05vw, 15.5px);
+    line-height: 1.55; color: var(--ink);
   }
-  .refs { list-style: none; margin-top: 16px; padding: 0; }
+
+  /* Case-study ledger. The vault's own index, not a deck of identical cards:
+     mono address in a fixed left column, claim in serif, one hairline between rows. */
+  .ledger { flex: 1 1 auto; min-height: 0; margin-top: 18px; }
+  .lrow {
+    display: grid; grid-template-columns: 8.5em 1fr; gap: 0 18px; align-items: baseline;
+    padding: 10px 0; border-top: 1px solid var(--line);
+  }
+  .lrow:first-child { border-top: 1px solid var(--rule-lit, var(--line)); }
+  .lrow .lk {
+    font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--faint); padding-top: 0.35em;
+  }
+  .lrow .lc {
+    font-family: var(--serif); font-weight: 300; font-size: clamp(12.5px, 1.02vw, 15px);
+    line-height: 1.58; color: var(--ink-2);
+  }
+  .lrow.lit .lk { color: var(--sky); }
+  .lrow.out {
+    margin-top: 4px; border-top: 1px solid rgba(232, 99, 74, 0.5);
+    background: linear-gradient(180deg, rgba(232, 99, 74, 0.07) 0%, transparent 100%);
+    padding: 13px 14px 14px; margin-left: -14px; margin-right: -14px;
+    grid-template-columns: 8.5em 1fr;
+  }
+  .lrow.out .lk { color: var(--amber); }
+  .lrow.out .lc { color: var(--ink); font-style: italic; font-size: clamp(13.5px, 1.12vw, 16.5px); }
+  .lrow.out .lc small {
+    display: block; margin-top: 6px; font-style: normal; font-size: 12px;
+    line-height: 1.55; color: var(--ink-3);
+  }
+
+  /* References. Two columns where there is room, so all twenty-four are readable at once. */
+  .refs {
+    list-style: none; margin-top: 18px; padding: 0; flex: 1 1 auto; min-height: 0;
+    columns: 2; column-gap: 44px; column-rule: 1px solid var(--line);
+  }
   .refs li {
-    font-family: var(--sans); font-weight: 300; font-size: clamp(12px, 1vw, 14px);
-    line-height: 1.5; color: var(--ink); margin: 8px 0;
-    padding-left: 1.6em; text-indent: -1.6em;
+    font-family: var(--serif); font-weight: 300; font-size: clamp(11px, 0.85vw, 12.5px);
+    line-height: 1.5; color: var(--ink-2); margin: 0 0 10px;
+    padding-left: 1.5em; text-indent: -1.5em;
+    break-inside: avoid; -webkit-column-break-inside: avoid;
   }
-  .refs li i { font-style: italic; }
+  .refs li i { font-style: italic; color: var(--ink); }
   .refnote {
-    font-family: var(--mono); font-size: 10px; letter-spacing: 0.05em;
-    line-height: 1.6; color: var(--faint); margin-top: 14px;
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.06em;
+    line-height: 1.7; color: var(--faint); margin-top: 16px;
+    padding-top: 12px; border-top: 1px solid var(--line); flex: none;
   }
-  .tall .ph { max-width: 64ch; }
-  .tall .ph .scrollbox { max-height: 66vh; overflow-y: auto; padding-right: 10px; }
+  .tall .ph { max-width: 62ch; }
+  #b17 .ph { max-width: 94ch; }   /* two reference columns need the width */
+
+  /* Any region that can outrun the viewport scrolls in place. Pointer events are handed
+     to it only while its beat is live, so the page scroll is never hijacked. */
+  .blist, .ledger, .refs, .scrollbox, .flow, .ph.split > .essay {
+    overflow-y: auto; scrollbar-width: thin;
+    scrollbar-color: var(--line) transparent; padding-right: 4px;
+  }
+  .scrollbox { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+  /* One scroll region per beat: anything already inside a scrollbox lays out at full height. */
+  .scrollbox .blist, .scrollbox .ledger, .scrollbox .refs {
+    flex: none; overflow: visible; min-height: auto; padding-right: 0;
+  }
+  .panel.on .blist, .panel.on .ledger, .panel.on .refs,
+  .panel.on .scrollbox, .panel.on .flow, .panel.on .essay { pointer-events: auto; }
+  .can-scroll {
+    -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 40px), transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 calc(100% - 40px), transparent 100%);
+  }
+  .can-scroll.at-end { -webkit-mask-image: none; mask-image: none; }
+  .ph.has-overflow::after {
+    content: "scroll this column";
+    flex: none; margin-top: 8px; font-family: var(--mono); font-size: 8.5px;
+    letter-spacing: 0.24em; text-transform: uppercase; color: var(--ghost);
+  }
+  .side-r .ph.has-overflow::after { text-align: right; }
+  .ph.split.has-overflow::after { grid-row: 4; grid-column: 1; text-align: left; }
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 2px; }
   .panel.on .ph > *:nth-child(5) { transition-delay: 400ms; }
   .panel.on .ph > *:nth-child(6) { transition-delay: 470ms; }
   .panel.on .ph > *:nth-child(7) { transition-delay: 540ms; }
   .panel.on .ph > *:nth-child(8) { transition-delay: 600ms; }
 
-  #hint { position: fixed; bottom: clamp(48px, 8vh, 70px); left: 50%; transform: translateX(-50%);
-    z-index: 6; font-family: var(--mono); font-size: 10px; letter-spacing: 0.34em; text-transform: uppercase;
+  #hint { position: fixed; bottom: clamp(44px, 7vh, 66px); left: 50%; transform: translateX(-50%);
+    z-index: 6; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.34em; text-transform: uppercase;
     color: var(--faint); pointer-events: none; transition: opacity 600ms var(--e-out); }
   #hint::after { content: ""; display: block; width: 1px; height: 26px; margin: 12px auto 0;
     background: linear-gradient(to bottom, var(--faint), transparent); }
 
   #scroll-root { position: relative; width: 100%; }
 
+  @media (max-width: 1180px) {
+    .ph.split, .tall .ph.split {
+      display: flex; flex-direction: column; max-width: 54ch;
+      grid-template-columns: none; grid-template-rows: none;
+    }
+    .ph.split > .essay { margin-top: 22px; max-width: none; overflow: visible; }
+    #b17 .ph { max-width: 62ch; }
+  }
+
+  @media (max-width: 1180px) {
+    .refs { columns: 1; column-rule: none; }
+    .refs li { font-size: 12px; }
+  }
+
   @media (max-width: 860px) {
-    .panel { padding: 22px; padding-bottom: 90px; }
+    .panel { padding: 20px; padding-top: calc(var(--topbar-h) + 16px); padding-bottom: 76px; }
     .side-l, .side-r { justify-content: flex-start; }
-    .ph { max-width: none; }
+    .ph, .tall .ph { max-width: none; }
+    .topbar-nav { display: none; }
+    #grid { display: none; }
+    .lrow, .lrow.out { grid-template-columns: 1fr; gap: 4px 0; }
+    .lrow .lk { padding-top: 0; }
+    .cite { white-space: normal; }
+    /* a phone column is nearly the whole viewport, so the shader void cannot open far
+       enough around it: the scrim carries more of the load here */
+    .ph::before, .side-c .ph::before {
+      inset: -8% -18%;   /* bleeds past both edges, so the band never shows a vertical seam */
+      background: linear-gradient(180deg,
+        transparent 0%, rgba(5, 6, 14, 0.74) 8%, rgba(5, 6, 14, 0.74) 92%, transparent 100%);
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .panel .ph > * { transition-duration: 1ms; filter: none; transform: none; }
+    .panel .ph > *, .panel .flow > * { transition-duration: 1ms; filter: none; transform: none; }
   }
 </style>
 </head>
@@ -228,6 +457,15 @@
 
 <canvas id="viz"></canvas>
 <div id="scrim"></div>
+<div id="grid"></div>
+<div class="grain"></div>
+<div class="edge-gradient"></div>
+
+<header class="topbar">
+  <div class="topbar-title"><a href="index.html">&larr; Personal Project</a> &nbsp;·&nbsp; Final <em>Essay</em></div>
+  <nav><ul class="topbar-nav" id="beatnav"></ul></nav>
+</header>
+
 <div id="rail"><div id="rail-fill"></div></div>
 <div id="folio"><b id="folio-no">00</b> / 17 <i id="folio-name">HERO</i></div>
 <div id="readout"><span class="dot"></span><span id="rstate">field · drift</span></div>
@@ -394,15 +632,19 @@
     <h2>The method on a <span class="sig">real thesis problem</span></h2>
     <div class="scrollbox">
     <p class="body">Not a demo. These are live notes from my fieldwork, exactly as they sit in the vault.</p>
-    <div class="acard"><span class="ak">atom · fieldwork</span><p class="aclaim">Teacher A frames science and ICT as well matched because the subject centers on observation and recording.</p></div>
-    <div class="acard"><span class="ak">atom · fieldwork</span><p class="aclaim">Teacher A can state criteria for choosing analog over digital, but ultimately grounds the preference in tacit sensory judgment.</p></div>
-    <div class="acard"><span class="ak">atom · fieldwork</span><p class="aclaim">A teaching move the observer read as deliberate pedagogy, Teacher A describes as not consciously intended.</p></div>
-    <div class="acard"><span class="ak">atom · literature</span><p class="aclaim">Expert teachers in one-to-one classrooms give clear reasons for when not to use ICT; novices barely can <span class="cite">(Yagisawa &amp; Horita, 2017, p. 87)</span>.</p></div>
-    <div class="acard"><span class="ak">atom · literature</span><p class="aclaim">Japanese experts apply a "harmonious attitude" (調和的態度): switching between traditional and ICT-based instruction as a mature strategy <span class="cite">(Yagisawa &amp; Horita, 2017)</span>.</p></div>
-    <div class="acard"><span class="ak">atom · literature</span><p class="aclaim">Novices and veterans alike treat classroom discipline as the prerequisite for ICT integration <span class="cite">(Yagisawa &amp; Horita, 2017)</span>.</p></div>
+    <div class="ledger">
+      <div class="lrow"><span class="lk">atom · field</span><p class="lc">Teacher A frames science and ICT as well matched because the subject centers on observation and recording.</p></div>
+      <div class="lrow"><span class="lk">atom · field</span><p class="lc">Teacher A can state criteria for choosing analog over digital, but ultimately grounds the preference in tacit sensory judgment.</p></div>
+      <div class="lrow"><span class="lk">atom · field</span><p class="lc">A teaching move the observer read as deliberate pedagogy, Teacher A describes as not consciously intended.</p></div>
+      <div class="lrow lit"><span class="lk">atom · lit</span><p class="lc">Expert teachers in one-to-one classrooms give clear reasons for when not to use ICT; novices barely can <span class="cite">(Yagisawa &amp; Horita, 2017, p. 87)</span>.</p></div>
+      <div class="lrow lit"><span class="lk">atom · lit</span><p class="lc">Japanese experts apply a "harmonious attitude" (調和的態度): switching between traditional and ICT-based instruction as a mature strategy <span class="cite">(Yagisawa &amp; Horita, 2017)</span>.</p></div>
+      <div class="lrow lit"><span class="lk">atom · lit</span><p class="lc">Novices and veterans alike treat classroom discipline as the prerequisite for ICT integration <span class="cite">(Yagisawa &amp; Horita, 2017)</span>.</p></div>
+    </div>
     <p class="body" style="margin-top:18px;"><em>The molecule they form:</em> selective non-use of ICT is an advanced, partly tacit form of TPACK. Teacher A enacts the discrimination without naming it; Yagisawa's veterans name it but ground it in the same situational judgment. Two levels of articulacy, one competence. The tension: "a large part of any culture consists of tacit knowledge" <span class="cite">(Spradley, 1979/2016, p. 9)</span>, so this competence may be invisible to surveys and to formal training design. And the discipline finding sharpens the claim: part of "when not to use" is baseline craft shared by novices, so only the situational discernment layer counts as advanced.</p>
     <p class="body">The literature says this gap is real. Observed lessons run 64.1 percent technological-pedagogical knowledge, while fully integrated TPCK appears in about 1 percent <span class="cite">(Yagisawa &amp; Horita, 2019, p. 36)</span>. Experience-linked differences in ICT awareness persist into the GIGA era <span class="cite">(Sakakibara et al., 2025, pp. 51-52)</span>. The framework itself blurs in practice, packaged "much too big" and "too small" at once <span class="cite">(Brantley-Dias &amp; Ertmer, 2013, p. 104)</span>; empirically, only the technology domain separates cleanly <span class="cite">(Archambault &amp; Barnett, 2010, p. 1659)</span>; and "very little theoretical development of the model has occurred" <span class="cite">(Graham, 2011, p. 1954)</span>. My molecule sits exactly in that gap.</p>
-    <div class="acard" style="border-color:oklch(0.75 0.14 75 / 0.5);"><span class="ak"><b>alloy · forming now</b></span><p class="aclaim" style="font-style:italic;">Knowing when not to use ICT as the mark of integrated TPACK.</p><p class="aclaim" style="font-size:12.5px;color:var(--ink-3);margin-top:6px;">A chapter-grade argument the system surfaced. No single source contains it.</p></div>
+    <div class="ledger" style="flex:none;margin-top:6px;">
+      <div class="lrow out"><span class="lk">alloy · forming</span><p class="lc">Knowing when not to use ICT as the mark of integrated TPACK.<small>A chapter-grade argument the system surfaced. No single source contains it.</small></p></div>
+    </div>
     <div class="essay"><span class="elabel">Field note</span>This section is the reason the project exists. I watched Teacher A run a science lesson with the tablets closed, and my first note called it a limitation. The interview corrected me: she could name her criteria for going analog, then admitted the real reason was sensory, something she could feel and not fully say. Six atoms, one molecule, and a forming alloy later, that moment is becoming a thesis chapter about expertise the surveys cannot see. The vault did not just store the observation. It kept pushing it against the literature until it became an argument.</div>
     </div>
   </div></section>
@@ -674,10 +916,10 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
   function dprCap() { return Math.min(window.devicePixelRatio || 1, vw() < 900 ? 1.5 : 2); }
   renderer.setPixelRatio(dprCap());
   renderer.setSize(vw(), vh());
-  var BGC = new THREE.Color(0x111626);
+  var BGC = new THREE.Color(0x080a16);   // site ground, one step up from #05060e so the vignette still reads
   renderer.setClearColor(BGC, 1);
   var scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x111626, 0.0042);
+  scene.fog = new THREE.FogExp2(0x080a16, 0.0042);
   var camera = new THREE.PerspectiveCamera(54, vw() / vh(), 0.1, 900);
 
   // particle attributes: near-white with subtle luminance variation by degree.
@@ -705,8 +947,8 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
   geo.setAttribute("aFocA", new THREE.BufferAttribute(aFocA, 1));
   geo.setAttribute("aFocB", new THREE.BufferAttribute(aFocB, 1));
 
-  var INK = new THREE.Color(0xe9eef8);
-  var AMBER = new THREE.Color(0xffb049);
+  var INK = new THREE.Color(0xe0e6f0);   // --ink
+  var AMBER = new THREE.Color(0xff8a63); // --amber-hi: the section accent, lifted for emissive points
   var mat = new THREE.ShaderMaterial({
     uniforms: {
       uScale:  { value: vh() * 0.5 },
@@ -716,18 +958,24 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
       uFocSel: { value: 0.0 },   // 0 = atom set, 1 = molecule set
       uInk:    { value: new THREE.Vector3(INK.r, INK.g, INK.b) },
       uAmberC: { value: new THREE.Vector3(AMBER.r, AMBER.g, AMBER.b) },
+      // the text void: the field thins where the prose sits, instead of a plate sitting on it
+      uHole:   { value: new THREE.Vector4(0, 0, 0, 0) },  // centre.xy, half-extent.xy, in NDC
+      uHoleAmt:{ value: 0.0 },
+      uAspect: { value: vw() / Math.max(1, vh()) },
     },
     vertexShader: [
       "attribute float aSize; attribute float aLum; attribute float aHot;",
       "attribute float aFocA; attribute float aFocB;",
       "uniform float uScale; uniform float uAmber; uniform float uFocus; uniform float uFocSel;",
       "varying float vLum; varying float vHot; varying float vFoc; varying float vFocA;",
+      "varying vec2 vNdc;",
       "void main(){",
       "  vLum = aLum; vHot = aHot;",
       "  vFoc = mix(aFocA, aFocB, uFocSel);",
       "  vFocA = aFocA * (1.0 - uFocSel);",
       "  vec4 mv = modelViewMatrix * vec4(position, 1.0);",
       "  gl_Position = projectionMatrix * mv;",
+      "  vNdc = gl_Position.xy / max(0.0001, gl_Position.w);",
       "  float boost = 1.0 + aHot * uAmber * 0.8 + vFocA * uFocus * 2.6;",
       "  gl_PointSize = clamp(aSize * boost * uScale / max(1.0, -mv.z), 1.5, 30.0);",
       "}"].join("\n"),
@@ -735,7 +983,14 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
       "precision highp float;",
       "uniform float uOpac; uniform float uAmber; uniform float uFocus;",
       "uniform vec3 uInk; uniform vec3 uAmberC;",
+      "uniform vec4 uHole; uniform float uHoleAmt; uniform float uAspect;",
       "varying float vLum; varying float vHot; varying float vFoc; varying float vFocA;",
+      "varying vec2 vNdc;",
+      // rounded-box signed distance in aspect-corrected NDC: negative inside, positive outside
+      "float holeSDF(vec2 p){",
+      "  vec2 q = abs((p - uHole.xy) * vec2(uAspect, 1.0)) - uHole.zw * vec2(uAspect, 1.0);",
+      "  return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0);",
+      "}",
       "void main(){",
       "  vec2 d = abs(gl_PointCoord - 0.5);",
       "  float m = max(d.x, d.y);",
@@ -744,7 +999,8 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
       "  vec3 col = uInk * vLum;",
       "  col = mix(col, uAmberC, clamp(vHot * uAmber + vFocA * uFocus, 0.0, 1.0));",
       "  float dim = 1.0 - uFocus * (1.0 - vFoc) * 0.92;",   // non-focus nodes drop to 8%
-      "  gl_FragColor = vec4(col, a * uOpac * dim);",
+      "  float k = 1.0 - smoothstep(-0.10, 0.52, holeSDF(vNdc));",   // 1 under the prose, 0 well clear of it
+      "  gl_FragColor = vec4(col, a * uOpac * dim * (1.0 - uHoleAmt * k));",
       "}"].join("\n"),
     transparent: true, depthWrite: false, depthTest: false, blending: THREE.NormalBlending,
   });
@@ -759,22 +1015,33 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
         uPulse: { value: 0.0 },
         uTime:  { value: 0.0 },
         uMix:   { value: 0.0 }, // thesis amber tint
-        uCol:   { value: new THREE.Vector3(0.29, 0.365, 0.5) },
+        uCol:   { value: new THREE.Vector3(0.244, 0.408, 0.545) },  // --sky #5299c8, damped
         uAmberC:{ value: new THREE.Vector3(AMBER.r, AMBER.g, AMBER.b) },
+        uHole:   { value: new THREE.Vector4(0, 0, 0, 0) },
+        uHoleAmt:{ value: 0.0 },
+        uAspect: { value: vw() / Math.max(1, vh()) },
       },
       vertexShader: [
-        "attribute float aPhase; varying float vPhase;",
-        "void main(){ vPhase = aPhase; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }"].join("\n"),
+        "attribute float aPhase; varying float vPhase; varying vec2 vNdc;",
+        "void main(){",
+        "  vPhase = aPhase;",
+        "  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);",
+        "  vNdc = gl_Position.xy / max(0.0001, gl_Position.w);",
+        "}"].join("\n"),
       fragmentShader: [
         "precision highp float;",
         "uniform float uOpac; uniform float uPulse; uniform float uTime; uniform float uMix;",
         "uniform vec3 uCol; uniform vec3 uAmberC;",
-        "varying float vPhase;",
+        "uniform vec4 uHole; uniform float uHoleAmt; uniform float uAspect;",
+        "varying float vPhase; varying vec2 vNdc;",
         "void main(){",
         "  float pulse = 0.35 + 0.65 * (0.5 + 0.5 * sin(vPhase * 6.2831 + uTime * 2.2));",
         "  float a = uOpac * mix(1.0, pulse, uPulse);",
         "  vec3 col = mix(uCol, uAmberC, uMix * 0.45);",
-        "  gl_FragColor = vec4(col, a);",
+        "  vec2 q = abs((vNdc - uHole.xy) * vec2(uAspect, 1.0)) - uHole.zw * vec2(uAspect, 1.0);",
+        "  float s = length(max(q, 0.0)) + min(max(q.x, q.y), 0.0);",
+        "  float k = 1.0 - smoothstep(-0.10, 0.52, s);",
+        "  gl_FragColor = vec4(col, a * (1.0 - uHoleAmt * k));",
         "}"].join("\n"),
       transparent: true, depthWrite: false, depthTest: false, blending: THREE.NormalBlending,
     });
@@ -1024,8 +1291,44 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
       rstate.textContent = "field · " + STATE_LABEL[beat];
       if (hintEl) hintEl.style.opacity = beat === 0 ? "0.75" : "0";
       lastActive = beat;
+      markNav(beat);
+      measureHole(beat);
+      requestAnimationFrame(function () { markOverflow(beat); measureHole(beat); });
     }
     railFill.style.width = (p * 100).toFixed(2) + "%";
+  }
+
+  // ---- the text void ---------------------------------------------------------
+  // The prose does not sit on a plate. The field itself thins where the prose is, measured
+  // from the live .ph box and eased so the void travels with the beat instead of cutting in.
+  var holeT = [0, 0, 0, 0], holeC = [0, 0, 0, 0];
+  var holeAmtT = 0, holeAmtC = 0, holeReady = false;
+  function measureHole(beat) {
+    var el = panelEls[beat]; if (!el) return;
+    var box = el.querySelector(".ph"); if (!box) return;
+    var r = box.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    var W = vw(), H = vh();
+    holeT[0] = (r.left + r.width * 0.5) / W * 2 - 1;
+    holeT[1] = 1 - (r.top + r.height * 0.5) / H * 2;
+    holeT[2] = (r.width / W) * 0.88;
+    holeT[3] = (r.height / H) * 0.86;
+    // centred beats are the airy turns: there the field steps back rather than clearing out
+    holeAmtT = el.classList.contains("side-c") ? 0.76 : 0.88;
+    if (!holeReady) {
+      holeC[0] = holeT[0]; holeC[1] = holeT[1]; holeC[2] = holeT[2]; holeC[3] = holeT[3];
+      holeAmtC = holeAmtT; holeReady = true;
+    }
+  }
+  function writeHole(dt, snap) {
+    var e = snap ? 1 : Math.min(1, dt * 6.5);
+    for (var i = 0; i < 4; i++) holeC[i] += (holeT[i] - holeC[i]) * e;
+    holeAmtC += (holeAmtT - holeAmtC) * e;
+    var m = [mat, eMat, mMat];
+    for (var j = 0; j < 3; j++) {
+      m[j].uniforms.uHole.value.set(holeC[0], holeC[1], holeC[2], holeC[3]);
+      m[j].uniforms.uHoleAmt.value = holeAmtC;
+    }
   }
 
   // ---- master apply: one function drives everything from global progress ----
@@ -1041,6 +1344,7 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     if (molOp > 0.001) syncMolEdges();
     applyCam(beat, frac, dt, seeking);
     applyPanels(p, beat);
+    writeHole(dt, seeking);
     renderer.render(scene, camera);
   }
 
@@ -1096,6 +1400,12 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     renderer.setSize(vw(), vh());
     camera.aspect = vw() / vh(); camera.updateProjectionMatrix();
     mat.uniforms.uScale.value = vh() * 0.5;
+    var asp = vw() / Math.max(1, vh());
+    mat.uniforms.uAspect.value = asp;
+    eMat.uniforms.uAspect.value = asp;
+    mMat.uniforms.uAspect.value = asp;
+    syncTallAsides();
+    if (lastActive >= 0) { markOverflow(lastActive); measureHole(lastActive); }
     sizeScroll();
     if (window.ScrollTrigger) ScrollTrigger.refresh();
   }
@@ -1108,6 +1418,109 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     else if (!raf) { last = (typeof performance !== "undefined" ? performance.now() : 0); raf = requestAnimationFrame(tick); }
   });
 
+  // ---- one flow column per beat ---------------------------------------------
+  // Everything under the heading is collected into a single scrolling column, and the
+  // field note is lifted out beside it. Done here rather than in the markup so all
+  // eighteen beats stay editable as flat prose.
+  var SPLIT_MIN = 1181;              // matches the .ph.split collapse breakpoint in CSS
+  var TALL_ASIDES = [];
+  function syncTallAsides() {
+    var wide = vw() >= SPLIT_MIN;
+    for (var i = 0; i < TALL_ASIDES.length; i++) {
+      var t = TALL_ASIDES[i], inBox = t.aside.parentNode === t.box;
+      if (wide && inBox) { t.ph.appendChild(t.aside); t.ph.classList.add("split"); }
+      else if (!wide && !inBox) { t.box.appendChild(t.aside); t.ph.classList.remove("split"); }
+    }
+  }
+  (function buildFlow() {
+    for (var i = 0; i < panelEls.length; i++) {
+      var ph = panelEls[i] && panelEls[i].querySelector(".ph");
+      if (!ph) continue;
+      var box = ph.querySelector(":scope > .scrollbox");
+      if (box) {
+        // tall beats already own their scroll: only lift the field note out beside it,
+        // and only while there is width for two columns (see syncTallAsides)
+        var inner = box.querySelector(".essay");
+        if (inner) TALL_ASIDES.push({ ph: ph, box: box, aside: inner });
+        continue;
+      }
+      var kids = [].slice.call(ph.children);
+      var head = 0;
+      while (head < kids.length && (kids[head].classList.contains("kick") || kids[head].tagName === "H2")) head++;
+      var aside = ph.querySelector(":scope > .essay");
+      var flow = document.createElement("div");
+      flow.className = "flow";
+      for (var k = head; k < kids.length; k++) { if (kids[k] !== aside) flow.appendChild(kids[k]); }
+      // centred beats are the turns: they stay one airy column, never a two-column spread,
+      // so their field note joins the flow rather than competing with it for height
+      if (aside && !panelEls[i].classList.contains("side-c")) {
+        ph.insertBefore(flow, aside); ph.classList.add("split");
+      } else {
+        if (aside) flow.appendChild(aside);
+        ph.appendChild(flow);
+      }
+    }
+    syncTallAsides();
+  })();
+
+  // ---- topbar beat index ----------------------------------------------------
+  // Seven landmarks. An eighteen-beat scroll piece with no way in but the wheel is a trap;
+  // these seek the document, not the engine, so the scroll position stays truthful.
+  var NAV = [
+    { b: 1,  t: "Context" }, { b: 2,  t: "PKM" },   { b: 4,  t: "Hype" },
+    { b: 9,  t: "Method" },  { b: 13, t: "Case" },  { b: 15, t: "Thesis" }, { b: 17, t: "Refs" },
+  ];
+  var navBtns = [];
+  (function buildNav() {
+    var ul = document.getElementById("beatnav");
+    if (!ul) return;
+    for (var i = 0; i < NAV.length; i++) {
+      (function (n) {
+        var li = document.createElement("li");
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.textContent = n.t;
+        btn.addEventListener("click", function () { scrollToBeat(n.b); });
+        li.appendChild(btn); ul.appendChild(li); navBtns.push(btn);
+      })(NAV[i]);
+    }
+  })();
+  function scrollToBeat(idx) {
+    var b = BEATS[Math.max(0, Math.min(NB - 1, idx | 0))];
+    var p = b.in + (Math.min(b.out, 1) - b.in) * 0.5;
+    var m = document.documentElement.scrollHeight - vh();
+    if (m <= 0) return;
+    window.scrollTo({ top: Math.round(p * m), behavior: RM ? "auto" : "smooth" });
+  }
+  function markNav(beat) {
+    for (var i = 0; i < navBtns.length; i++) {
+      var next = (i + 1 < NAV.length) ? NAV[i + 1].b : NB;
+      navBtns[i].setAttribute("aria-current", (beat >= NAV[i].b && beat < next) ? "true" : "false");
+    }
+  }
+
+  // ---- overflow affordance ---------------------------------------------------
+  // A column that outruns the panel gets a bottom fade, a cue, and working wheel scroll.
+  // Without this the references beat silently swallowed fifteen of its twenty-four entries.
+  function onRegionScroll(e) {
+    var r = e.currentTarget;
+    r.classList.toggle("at-end", r.scrollTop + r.clientHeight >= r.scrollHeight - 4);
+  }
+  function markOverflow(beat) {
+    var el = panelEls[beat]; if (!el) return;
+    var ph = el.querySelector(".ph");
+    var regions = el.querySelectorAll(".flow, .scrollbox, .ph.split > .essay");
+    var any = false;
+    for (var i = 0; i < regions.length; i++) {
+      var r = regions[i];
+      var over = (r.scrollHeight - r.clientHeight) > 12;   // above sub-pixel and trailing-margin noise
+      if (over) any = true;
+      r.classList.toggle("can-scroll", over);
+      r.classList.toggle("at-end", false);
+      if (over && !r.__wired) { r.__wired = true; r.addEventListener("scroll", onRegionScroll, { passive: true }); }
+    }
+    if (ph) ph.classList.toggle("has-overflow", any);
+  }
   applyAll(0, 0.05);
   raf = requestAnimationFrame(tick);
 
@@ -1135,5 +1548,7 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
   };
 })();
 </script>
+<!-- Site shell. Status bar off: this page already owns the bottom edge (rail, folio, readout). -->
+<script src="../os.js" data-path="~/itasia302/personal-project/final" data-accent="#e8634a" data-statusbar="off"></script>
 </body>
 </html>

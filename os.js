@@ -37,6 +37,7 @@
     { id: "week-11",           url: "reading-response/week-11/",            desc: "reading response · week 11" },
     { id: "week-12",           url: "reading-response/week-12/",            desc: "reading response · week 12 (latest)" },
     { id: "personal-project",  url: "personal-project/",                    desc: "second brain · PKM build" },
+    { id: "final-essay",       url: "personal-project/second_brain_final.html", desc: "second brain · final scroll essay" },
     { id: "jp-edtech",         url: "personal-project/jp-edtech-trends/",   desc: "japan edtech trends" },
     { id: "ai-statement",      url: "ai-statement/",                        desc: "how these pages were made" },
     { id: "research-trends",   url: "research-trends/",                     desc: "5-year AI & society journal" },
@@ -49,6 +50,7 @@
     week4: "week-4", week5: "week-5", week6: "week-6", week8: "week-8", week9: "week-9", week11: "week-11",
     week12: "week-12", latest: "week-12", project: "personal-project", pkm: "personal-project",
     brain: "personal-project", edtech: "jp-edtech", giga: "jp-edtech",
+    final: "final-essay", essay: "final-essay", secondbrain: "final-essay", zettelkasten: "final-essay",
     ai: "ai-statement", statement: "ai-statement", disclosure: "ai-statement",
     trends: "research-trends", journal: "research-trends",
   };
