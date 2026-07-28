@@ -1,0 +1,63 @@
+{
+  "citekey": "forte2022",
+  "apa": "Forte, T. (2022). Building a second brain: A proven method to organize your digital life and unlock your creative potential. Profile Books.",
+  "apa_note": "Profile Books Ltd (London) UK edition, ISBN 978-1-80081-221-5. NOTE: the PDF's own title page spells the subtitle 'Organize' (not 'organise' as in the Zotero record); APA follows the title page. The PDF is a reflowed ebook (283 PDF pages, no printed folios); all page numbers below are print-edition pages derived from the book's own index and chapter positions, so PDF page numbers differ.",
+  "claims": [
+    {
+      "id": "FORTE-01",
+      "status": "unsupported",
+      "quote": "it is a digital archive of your most valuable memories, ideas, and knowledge",
+      "page": "4",
+      "inline": "(Forte, 2022, p. 4)",
+      "note": "The quoted sentence 'expands our memory and our intellect using the modern tools of technology and networks' appears NOWHERE in the book (checked 'intellect', 'networks', 'modern tools', cross-line). It is from Forte's fortelabs.com blog definition of BASB, not the 2022 book. If a verbatim book quote is needed, use the replacement given here: the Introduction's definition, '... it is a digital archive of your most valuable memories, ideas, and knowledge to help you do your job, run your business, and manage your life without having to keep every detail in your head' (index: 'Second Brain, defined, 4'). Either recite the blog with its own reference or swap in this book quote."
+    },
+    {
+      "id": "FORTE-02",
+      "status": "verified",
+      "quote": "the four steps of the CODE Method—Capture, Organize, Distill, and Express",
+      "page": "44",
+      "inline": "(Forte, 2022, pp. 42–49, 87–111)",
+      "note": "CODE introduced in Ch. 3, 'Introducing The CODE Method' (index: CODE Method, 33, 42–49); preview sentence at ~p. 44. PARA verbatim: 'These four categories—Projects, Areas, Resources, and Archives—make up the four categories of PARA' in Ch. 5 (index: PARA, 87–111; 'how it works, 90–95'). Capture-first orientation is accurate: Capture is the first step and Ch. 4 opens the method. Both are Forte's own frameworks."
+    },
+    {
+      "id": "FORTE-03",
+      "status": "verified",
+      "quote": "it is our responsibility and right to choose our information diet",
+      "page": "54",
+      "inline": "(Forte, 2022, p. 54)",
+      "note": "Ch. 4 opening. Same passage introduces 'planting your own \"knowledge garden\"' and seeding it 'with only the most interesting, insightful, useful ideas' (index: knowledge garden, 54; 'information stream filtered by, 53–54'). The atom is a fair compression of this passage; 'actively filtering' matches the curator framing."
+    },
+    {
+      "id": "FORTE-04",
+      "status": "verified",
+      "quote": "if all we ever do is diverge, then we never arrive anywhere",
+      "page": "179",
+      "inline": "(Forte, 2022, p. 179)",
+      "note": "Ch. 8: 'As powerful and necessary as divergence is, if all we ever do is diverge, then we never arrive anywhere.' Followed by the Coppola example and the point that you never get the completion of hitting 'send' or 'publish'. Page from index (convergence, 'features of, 178–80') plus chapter position; could sit on 178–180."
+    },
+    {
+      "id": "FORTE-05",
+      "status": "verified",
+      "quote": "The first two steps of CODE, Capture and Organize, make up divergence.",
+      "page": "180",
+      "inline": "(Forte, 2022, p. 180)",
+      "note": "Ch. 8, CODE overlaid on the divergence/convergence model; continues 'The final two steps, Distill and Express, are about convergence.' Book says 'make up divergence', not 'the divergent phase' — fine as paraphrase, adjust if quoting. Page anchored by index entries 'Capture ... divergence and, 180' and 'CODE Method ... 180'."
+    },
+    {
+      "id": "FORTE-06",
+      "status": "verified",
+      "quote": "self-expression is a fundamental human need. Self-expression is as vital to our survival as food or shelter.",
+      "page": "236",
+      "inline": "(Forte, 2022, p. 236)",
+      "note": "Ch. 10, immediately after the meditation/blogging story, just before 'Your Turn: The Courage to Share'. Verbatim match to the atom. Index: 'self-expression, fundamental need for, 234–36'; 'writing in public, 235–36' — sentence falls at the end of that span, p. 235 or 236."
+    },
+    {
+      "id": "FORTE-07",
+      "status": "unsupported",
+      "quote": "",
+      "page": "",
+      "inline": "",
+      "note": "The book itself makes no bestseller claim: this first-edition Profile Books PDF has no praise pages, no 'bestselling author' tagline, and the only bestseller mention in the text is about Octavia Butler's Parable of the Sower. The book did reach bestseller lists (NYT, WSJ) after its 2022 publication, but that cannot be cited to forte2022 — it needs an external source (e.g., the NYT list or publisher page) or should be softened to 'widely read/popular'."
+    }
+  ]
+}

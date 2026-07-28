@@ -1,0 +1,46 @@
+{
+  "citekey": "japanese_sources",
+  "refs": {
+    "yagisawa2017": "Yagisawa, F., & Horita, T. (2017). Ichinin ichidai tanmatsu no kankyo ni okeru wakate kyoshi to beteran kyoshi no ICT katsuyo ni taisuru ishiki hikaku [Comparison of teachers' awareness for ICT use between novices and experts in 1:1 elementary education]. Kyoiku Media Kenkyu [Educational Media Research], 23(2), 83-94. https://doi.org/10.24458/jaems.23.2_83 [In Japanese]",
+    "yagisawa2019": "Yagisawa, F., & Horita, T. (2019). Jido ga joho tanmatsu o katsuyo suru jugyo ni oite mochiirareru kyoshi no chishiki: Gijutsu to kakawaru kyoikuteki naiyo chishiki (TPACK) ni yoru ruikeika to saibunka [The teachers' knowledge of 1-to-1 elementary education: The typing and subdivision by Technological Pedagogical Content Knowledge (TPACK)]. Kyoiku Media Kenkyu [Educational Media Research], 25(2), 29-43. https://doi.org/10.24458/jaems.25.2_29 [In Japanese]",
+    "sakakibara2025": "Sakakibara, N., Abe, M., Sekihara, M., Oshima, T., Kiryu, T., & Mizuochi, Y. (2025). GIGA sukuru koso no shinchoku ni okeru seika ya kadai ni kansuru kyoshoku keiken ni motozuku kyoin no ishiki [Teachers' perceptions based on teaching experience regarding the achievements and challenges in the progress of the GIGA School Initiative]. Nihon Kyoiku Kogakkai Ronbunshi [Japanese Journal of Educational Technology], 49(1), 43-54. https://doi.org/10.15077/jjet.48089 [In Japanese]"
+  },
+  "claims": [
+    {
+      "id": "YAGI-01",
+      "status": "verified",
+      "quote": "七つの知識のうち，一番数が多かったのはTPKの394個で全体の64.1％を占めた",
+      "gloss": "Of the seven knowledge types, TPK was the most frequent at 394 items, accounting for 64.1% of the total.",
+      "page": "36 (615-item total stated p. 35; distribution shown in Figure 2, p. 35)",
+      "inline": "(Yagisawa & Horita, 2019, p. 36)",
+      "note": "Exact figure confirmed: 394 of 615 knowledge-coded data units = 64.1%. Second largest was TCK at 160 items (26.0%). The claim's number is accurate as stated."
+    },
+    {
+      "id": "YAGI-02",
+      "status": "verified",
+      "quote": "PK，CK，PCK，TPCKに関する知識はいずれも…1%以下しか見られなかった",
+      "gloss": "Knowledge relating to PK, CK, PCK, and TPCK each appeared at 1% or less.",
+      "page": "36",
+      "inline": "(Yagisawa & Horita, 2019, p. 36)",
+      "note": "Integrated TPACK (written 'TPCK' in the paper for the individual knowledge type) = exactly 6 of 615 items = 1.0%. Full breakdown on p. 36: PK 3 (0.5%), CK 0 (0%), PCK 1 (0.2%), TPCK 6 (1%); these four were dropped from further analysis for being at or under 1%. 'About 1 percent' is accurate; 'near-absent' is a fair characterization."
+    },
+    {
+      "id": "YAGI-03",
+      "status": "verified",
+      "quote": "若手教師群とベテラン教師群の間で，ICTに関わる技能そのものに大きな違いは見られなかった",
+      "gloss": "Between the novice-teacher group and the veteran-teacher group, no large difference was seen in ICT skills themselves.",
+      "page": "91 (gap closing); 87 (veteran non-use judgment)",
+      "inline": "(Yagisawa & Horita, 2017, pp. 87, 91)",
+      "note": "Both parts hold, with one nuance. (1) Gap closing: p. 91 attributes the absence of a skill gap to school-wide sustained 1:1 practice: 教職経験年数と関係なく技能が身に付いたからではないか (skills were acquired regardless of years of experience). Context: School F, 4 years of 1:1 practice, 2 novice + 3 veteran teachers, interviews 2014. (2) When-not-to-use: p. 87 reports that all veteran answers about non-use carried clear reasons: 「○○をさせたいから」「○○ができないから」といったICTを使わない明確な理由があった, whereas novices gave vague answers (「デジタルを使っていない」という程度の回答). Nuance: the paper presents this as a distinguishing feature of veterans, not a formal definition of veteran status (veterans are defined by 20+ years experience). Small-n qualitative study; phrase claims as 'in this case study' rather than as a general law."
+    },
+    {
+      "id": "SAKA-01",
+      "status": "corrected",
+      "quote": "ベテラン群は自身の情報活用能力の不足についての記述が見られた",
+      "gloss": "The veteran group showed descriptions of their own lack of information-utilization ability.",
+      "page": "43 (abstract); 47 (per-question means); 51-52 (free-text analysis and non-significance note)",
+      "inline": "(Sakakibara et al., 2025, pp. 51-52)",
+      "note": "Actual findings from the paper (n=289 public school teachers, grouped young <=10 yrs / mid-career 11-20 / veteran 21+): per-question means show veterans rating GIGA achievements highest and mid-career teachers rating challenges highest (p. 47), but choice-item differences were NOT statistically significant across the three groups (p. 52). Text mining of free responses: mid-career teachers felt tablet use broadened learning methods, young teachers flagged information-morals problems, and veterans described their OWN lack of information-utilization ability (pp. 51-52). CORRECTION: this paper supports the weaker claim that experience-based differences in ICT awareness persist into the GIGA era; it does NOT support veterans having superior when-not-to-use judgment, and partially cuts against it, since veterans self-report ICT skill deficits. Do not cite Sakakibara 2025 as 'recent support' for the Yagisawa 2017 veteran-judgment finding; cite it for experience-stratified differences in GIGA-era teacher awareness, or reframe as a complication."
+    }
+  ]
+}

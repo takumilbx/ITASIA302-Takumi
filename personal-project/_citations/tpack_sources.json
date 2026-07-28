@@ -1,0 +1,42 @@
+{
+  "citekey": "tpack_sources",
+  "refs": {
+    "mishra2006": "Mishra, P., & Koehler, M. J. (2006). Technological pedagogical content knowledge: A framework for teacher knowledge. Teachers College Record, 108(6), 1017-1054. https://doi.org/10.1111/j.1467-9620.2006.00684.x",
+    "archambault2010": "Archambault, L. M., & Barnett, J. H. (2010). Revisiting technological pedagogical content knowledge: Exploring the TPACK framework. Computers & Education, 55(4), 1656-1662. https://doi.org/10.1016/j.compedu.2010.07.009",
+    "brantleydias2013": "Brantley-Dias, L., & Ertmer, P. A. (2013). Goldilocks and TPACK: Is the construct \"just right?\" Journal of Research on Technology in Education, 46(2), 103-128. https://doi.org/10.1080/15391523.2013.10782615"
+  },
+  "claims": [
+    {
+      "id": "TPACK-01",
+      "status": "verified",
+      "quote": "Technological pedagogical content knowledge (TPCK) is an emergent form of knowledge that goes beyond all three components (content, pedagogy, and technology).",
+      "page": "1028",
+      "inline": "(Mishra & Koehler, 2006, p. 1028)",
+      "note": "Definition quote verified on p. 1028 of the PDF. Shulman-PCK lineage is explicit in the abstract, p. 1017: 'we propose a conceptual framework for educational technology by building on Shulman's formulation of pedagogical content knowledge and extend it to the phenomenon of teachers integrating technology into their pedagogy.' Caution: the 2006 article uses the acronym TPCK, not TPACK (the acronym was renamed later); if the page renders the 2006 quote verbatim it must keep TPCK. Journal details confirmed from the PDF front matter: Teachers College Record, Volume 108, Number 6, June 2006, pp. 1017-1054."
+    },
+    {
+      "id": "TPACK-02",
+      "status": "verified",
+      "quote": "TPACK takes the concept of technology integration and packages it as a framework that is much too big (i.e., one that embodies seven distinct knowledge types) while simultaneously making it too small by dividing the \"package\" into so many pieces that they have become impossible to distinguish from one another (e.g., TK vs. TCK).",
+      "page": "104",
+      "inline": "(Brantley-Dias & Ertmer, 2013, p. 104)",
+      "note": "Verified. Two accuracy cautions: (1) the article's term is the 'Goldilocks Principle', which it attributes to Katz and Raths (cited in Kagan, 1990); 'Goldilocks problem' as used in the vault molecule is a paraphrase, not the article's phrase. (2) On domain blurring the article also states, p. 115: 'domains may not even exist (Archambault & Barnett, 2010; Koh, Chai, & Tsai, 2010), or at the very least ... the boundaries between them are fuzzy' -- a usable alternate quote for the blur claim specifically."
+    },
+    {
+      "id": "TPACK-03",
+      "status": "verified",
+      "quote": "The fact that three major factors become evident is noteworthy, but rather than being comprised of pedagogy, content, and technology, the only clear domain that distinguishes itself is that of technology.",
+      "page": "1659",
+      "inline": "(Archambault & Barnett, 2010, p. 1659)",
+      "note": "Verified on p. 1659 (Discussion). Supporting finding, p. 1659: 'respondents did separate the technological knowledge items, where no reference to content or pedagogy was used' while pedagogy and content items 'loaded together with no clear separation.' Nuance for the prose: factor analysis of 596 K-12 online teachers yielded three factors (pedagogical content knowledge, technological-curricular content knowledge, technological knowledge), so the accurate rendering is 'only the technology domain clearly separates; pedagogy and content are indistinguishable from each other,' not 'all other six domains were tested and failed individually.' The vault phrasing 'only TK separates; other domains indistinguishable' is a fair summary."
+    },
+    {
+      "id": "TPACK-04",
+      "status": "verified",
+      "quote": "",
+      "page": "",
+      "inline": "(fieldwork vault: Molecules/selective-non-use-as-advanced-tpack.md + 3 atoms)",
+      "note": "Case-study beat in second_brain_B_presentation.html (beat 13, section id b17) checked against the vault. All three atom claims match the atom filenames: (1) 'Teacher A frames science and ICT as well matched because the subject centers on observation and recording' -- exact; (2) rendering drops the word 'ultimately' from 'ultimately grounds the preference in tacit sensory judgment' -- meaning preserved, negligible; (3) 'A teaching move the observer read as deliberate pedagogy, Teacher A describes as not consciously intended' -- exact. Molecule title 'Selective non-use of ICT is an advanced, partly tacit form of TPACK' and alloy line 'Knowing when not to use ICT as the mark of integrated TPACK' both match the molecule verbatim. One real drift: the molecule's tension says the competence 'may be invisible to surveys and to formal training design'; the rendering hardens this to 'it is invisible to surveys and to formal training design.' Recommend restoring the hedge ('may be invisible') in the final build. Note the vault file is status: draft, layer: molecule; all three atoms are status: verified with transcript section citations (Transcript sections 3, 16, 8 of @JPT1-2026a)."
+    }
+  ]
+}

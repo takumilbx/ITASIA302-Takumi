@@ -1,0 +1,40 @@
+{
+  "citekey": "luhmann1981",
+  "apa": "Luhmann, N. (1981). Kommunikation mit Zettelkästen: Ein Erfahrungsbericht. In H. Baier, H. M. Kepplinger, & K. Reumann (Eds.), Öffentliche Meinung und sozialer Wandel / Public opinion and social change (pp. 222–228). Westdeutscher Verlag. https://doi.org/10.1007/978-3-322-87749-9_19",
+  "apa_translation": "Luhmann, N. (n.d.). Communicating with slip boxes: An empirical account (M. Kuehn, Trans.). https://luhmann.surge.sh/communicating-with-slip-boxes (Original work published 1981)",
+  "apa_secondary": "Schmidt, J. F. K. (2016). Niklas Luhmann's card index: Thinking tool, communication partner, publication machine. In A. Cevolini (Ed.), Forgetting machines: Knowledge management evolution in early modern Europe (pp. 289–311). Brill. https://doi.org/10.1163/9789004325258_014",
+  "claims": [
+    {
+      "id": "LUHM-01",
+      "status": "corrected",
+      "quote": "Luhmann's card index consists of approximately 90,000 handwritten cards",
+      "page": "Schmidt 2018, p. 54 (open-access version of Schmidt 2016)",
+      "inline": "(Schmidt, 2016)",
+      "note": "Confirmed: NO card count of any kind appears in Luhmann (1981); checked against the full text of pp. 222-228. The 90,000 figure comes from Johannes F. K. Schmidt's archive work at Bielefeld (Niklas Luhmann-Archiv): two collections, ca. 23,000 cards (1951-1962) plus ca. 67,000 cards (1963-1997). Cite Schmidt 2016 (apa_secondary above) or the open-access revision: Schmidt, J. F. K. (2018). Niklas Luhmann's card index: The fabrication of serendipity. Sociologica, 12(1), 53-60. https://doi.org/10.6092/issn.1971-8853/8350 (figure verified verbatim at p. 54). Do not attach this number to Luhmann 1981."
+    },
+    {
+      "id": "LUHM-02",
+      "status": "corrected",
+      "quote": "nach nunmehr 26 Jahren erfolgreicher, nur gelegentlich schwieriger Zusammenarbeit",
+      "page": "223",
+      "inline": "(Luhmann, 1981, p. 223)",
+      "note": "Gloss: 'after now 26 years of successful, only occasionally difficult collaboration.' The essay itself supports 26 years as of 1981, not 'over thirty.' 'Over thirty years' is true of the whole lifespan (first collection begun 1951, kept until 1996/97 per Schmidt 2016/2018) but then must cite Schmidt, not Luhmann. Either reword to '26 years by the time he wrote about it' citing Luhmann 1981 p. 223, or keep 30+ and cite Schmidt."
+    },
+    {
+      "id": "LUHM-03",
+      "status": "corrected",
+      "quote": "daß man jedem Zettel eine Nummer gibt, sie gut sichtbar (bei uns links oben) anbringt und diese Nummer und damit den Standort niemals ändert",
+      "page": "224",
+      "inline": "(Luhmann, 1981, pp. 223-225)",
+      "note": "Gloss: 'that one gives every slip a number, affixes it clearly visible (top left, in our case), and never changes that number and thus its position.' Three of the four claim elements are verified: (a) fixed addresses - quote above, p. 224; (b) against topic filing - 'gegen eine systematische Ordnung nach Themen und Unterthemen und statt dessen für eine feste Stellordnung' (against a systematic order by themes and subthemes, in favor of a fixed placement order), pp. 223-224; (c) emergent structure and value-from-links - 'Unordnung mit nichtbeliebiger interner Struktur' (disorder with a non-arbitrary internal structure) and 'Jede Notiz ist nur ein Element, das seine Qualität erst aus dem Netz der Verweisungen und Rückverweisungen im System erhält' (each note is only an element that gains its quality from the network of references and back-references), both p. 225. CAVEAT: 'one idea per card, own words' is NOT in this essay - it is later PKM lore (e.g., Ahrens 2017); the essay specifies only octavo-format slips written on one side (p. 223). Drop or re-attribute that element if the beat cites Luhmann alone."
+    },
+    {
+      "id": "LUHM-04",
+      "status": "verified",
+      "quote": "Für Kommunikation ist eine der elementaren Voraussetzungen, daß die Partner sich wechselseitig überraschen können.",
+      "page": "222",
+      "inline": "(Luhmann, 1981, p. 222)",
+      "note": "Gloss: 'For communication, one of the elementary preconditions is that the partners can surprise each other mutually.' Fully supported. Also p. 222: 'Daß Zettelkästen als Kommunikationspartner empfohlen werden können' (that slip-boxes can be recommended as communication partners); and p. 225: 'eine Art Zweitgedächtnis, ein alter Ego, mit dem man laufend kommunizieren kann' (a kind of second memory, an alter ego, with which one can communicate continually). Kuehn translation hosting verified live at luhmann.surge.sh (successor to Kuehn's 'Taking Note' blog on scriptogr.am, now offline); a PDF mirror also circulates at luhmann.ir."
+    }
+  ]
+}

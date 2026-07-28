@@ -1,0 +1,113 @@
+{
+  "citekey": "web_sources",
+  "refs": {
+    "bush1945": "Bush, V. (1945, July). As we may think. The Atlantic Monthly, 176(1), 101-108. https://www.theatlantic.com/magazine/archive/1945/07/as-we-may-think/303881/",
+    "clark1998": "Clark, A., & Chalmers, D. (1998). The extended mind. Analysis, 58(1), 7-19. https://doi.org/10.1093/analys/58.1.7",
+    "roediger2006": "Roediger, H. L., III, & Karpicke, J. D. (2006). Test-enhanced learning: Taking memory tests improves long-term retention. Psychological Science, 17(3), 249-255. https://doi.org/10.1111/j.1467-9280.2006.01693.x",
+    "jones2007": "Jones, W. (2010). No knowledge but through information. First Monday, 15(9). https://doi.org/10.5210/fm.v15i9.3062",
+    "aal2025": "Aal, K., & Rüller, S. (2025). From personal knowledge management to the second brain to the personal AI companian [sic]. In Companion Proceedings of the 2025 ACM International Conference on Supporting Group Work (GROUP '25 Companion) (pp. 90-93). ACM. https://doi.org/10.1145/3688828.3699647",
+    "frand1999": "Frand, J. L., & Hixson, C. G. (1998, October 15). Personal knowledge management: Who? What? Why? When? Where? How? [Paper presentation]. EDUCOM '98, Orlando, FL, United States. https://digitalcommons.usf.edu/former-pub/246/",
+    "drucker": "Drucker, P. F. (1959). Landmarks of tomorrow. Harper & Brothers.",
+    "callister": "Callister, W. D., Jr., & Rethwisch, D. G. (2018). Materials science and engineering: An introduction (10th ed.). Wiley.",
+    "graham2011": "Graham, C. R. (2011). Theoretical considerations for understanding technological pedagogical content knowledge (TPACK). Computers & Education, 57(3), 1953-1960. https://doi.org/10.1016/j.compedu.2011.04.010",
+    "leonardo": "Isaacson, W. (2017). Leonardo da Vinci. Simon & Schuster."
+  },
+  "claims": [
+    {
+      "id": "WEB-01",
+      "status": "verified",
+      "quote": "A memex is a device in which an individual stores all his books, records, and communications",
+      "locator": "sect. 6, para. 4",
+      "inline": "(Bush, 1945, sect. 6)",
+      "note": "Verified against the full text (Duchier electronic edition of the Atlantic Monthly article, July 1945). Retrieval-not-storage framing is explicit: 'Selection by association, rather than by indexing, may yet be mechanized' (sect. 6, para. 3) and associative indexing/trails as 'the essential feature of the memex' (sect. 7, para. 1). Online editions are unpaginated, so cite by section; print original is 176(1), 101-108."
+    },
+    {
+      "id": "WEB-02",
+      "status": "verified",
+      "quote": "For Otto, his notebook plays the role usually played by a biological memory.",
+      "locator": "sect. 4 ('From Cognition to Mind'), para. 2; p. 12-13 of print run",
+      "inline": "(Clark & Chalmers, 1998, p. 12)",
+      "note": "Verified against the consc.net full text. Bibliographic facts confirmed via Oxford Academic (academic.oup.com/analysis/article-abstract/58/1/7): Analysis, 58(1), 7-19, 1998 — the 7-19 range in the manifest is correct. The exact print page of the Otto quote could not be confirmed from the unpaginated HTML; if a page number is needed use the paginated PDF, otherwise cite without page or as (1998, sect. 4). Offloading-as-extension-not-laziness is a fair paraphrase of the active externalism argument."
+    },
+    {
+      "id": "WEB-03",
+      "status": "verified",
+      "quote": "",
+      "locator": "abstract",
+      "inline": "(Roediger & Karpicke, 2006)",
+      "note": "Bibliographic facts verified via PubMed (PMID 16507066): Psychological Science, 17(3), 249-255, 2006, DOI 10.1111/j.1467-9280.2006.01693.x. Finding confirmed: repeated studying helped on immediate tests, but on 2-day and 1-week delayed tests prior testing (retrieval practice) produced substantially better retention than restudying. Quote omitted (optional per instructions; abstract wording was paraphrased by the fetch tool, so no verbatim quote is asserted)."
+    },
+    {
+      "id": "WEB-04",
+      "status": "corrected",
+      "quote": "Knowledge can be managed only indirectly, through the management of information.",
+      "locator": "Abstract",
+      "inline": "(Jones, 2010, Abstract)",
+      "note": "CORRECTION: the cleanly verifiable source for 'you can only manage information, not knowledge' is Jones, W. (2010), 'No knowledge but through information', First Monday 15(9) — open access, quote verified verbatim from the abstract, which also states 'Information is a thing to be handled and controlled; knowledge is not.' The two 2007 candidates both exist (Jones, 'Keeping Found Things Found', Morgan Kaufmann, 2007; Jones & Teevan (Eds.), 'Personal Information Management', University of Washington Press, 2007) and the KFTF book makes a related argument, but I could not verify the exact claim in either without the PDFs. Recommend changing the essay's inline citation from 'Jones, 2007' to 'Jones, 2010' and using the refs entry above (keyed jones2007 for compatibility)."
+    },
+    {
+      "id": "WEB-05",
+      "status": "verified",
+      "quote": "the concept of a 'second brain' has emerged, exemplified by tools like Evernote and Notion",
+      "locator": "Abstract",
+      "inline": "(Aal & Rüller, 2025, Abstract)",
+      "note": "Verified via ACM DL search result and Semantic Scholar record (DOI 10.1145/3688828.3699647). Abstract (verbatim) traces PKM -> second brain -> 'the integration of AI promises to transform this concept into an active personal companion.' GROUP '25 Companion, Hilton Head, SC, Jan 12-15 2025, pp. 90-93. NOTE: the published title really does spell 'Companian' (ACM DL and Semantic Scholar agree); keep the [sic] or reproduce as published."
+    },
+    {
+      "id": "WEB-06",
+      "status": "corrected",
+      "quote": "",
+      "locator": "n/a",
+      "inline": "(Frand & Hixson, 1998)",
+      "note": "CORRECTIONS: (1) the second author is Carol G. HIXSON, not Hixon (verified via USF Digital Commons record, digitalcommons.usf.edu/former-pub/246); (2) the work was presented at the EDUCOM '98 conference, Orlando, October 15, 1998 (Frand: UCLA Anderson; Hixson: UCLA Young Research Library); the commonly cited '1999' refers to the later UCLA Anderson working-paper version. Widely credited (e.g., Forte Labs 'The Origins of Personal Knowledge Management', Wikipedia PKM article) as an early formulation that popularized the term PKM. If the essay says '1999 UCLA working paper', either keep 1999 and add '(presented 1998)' or cite as 1998 per the APA above."
+    },
+    {
+      "id": "WEB-07",
+      "status": "corrected",
+      "quote": "",
+      "locator": "n/a",
+      "inline": "(Drucker, 1959)",
+      "note": "The concept originates in 'The Landmarks of Tomorrow' (1959, Harper & Brothers) — multiple sources (Wikipedia 'Knowledge worker' and 'The Landmarks of Tomorrow') identify it as the source of the knowledge work/knowledge worker concept; some sources say the exact term 'knowledge worker' was formalized later in 'The Effective Executive' (1966), and 'The Age of Discontinuity' (1969) popularized the knowledge economy. SAFE WORDING: 'Drucker introduced the idea of knowledge work in 1959' citing Drucker (1959); avoid the bare word 'coined' unless hedged ('is usually credited with coining')."
+    },
+    {
+      "id": "WEB-08",
+      "status": "verified",
+      "quote": "",
+      "locator": "Chapter 7, sect. 7.9 (Solid-Solution Strengthening)",
+      "inline": "(Callister & Rethwisch, 2018, sect. 7.9)",
+      "note": "Solid-solution strengthening — impurity atoms of different size impose lattice strains that impede dislocation motion and harden/strengthen the alloy — is standard textbook content, covered in Section 7.9 of Chapter 7 ('Mechanisms of strengthening in metals') of Callister & Rethwisch. Edition verified as 10th ed., Wiley, 2018 (Wiley instructor companion site, zyBooks 10e listing); Wiley's own product page for a possible 11th ed. was not reachable (403), so the safely verifiable 10th ed. is cited. No local PDF, so no verbatim quote — the paraphrase kind only needs a source. The metaphor use in the essay is fine as-is with this citation."
+    },
+    {
+      "id": "WEB-09",
+      "status": "unsupported",
+      "quote": "The discussion emphasizes the importance of maintaining user autonomy and critical thinking skills while leveraging AI capabilities.",
+      "locator": "Aal & Rüller 2025, Abstract",
+      "inline": "(Jones, 2010; Aal & Rüller, 2025)",
+      "note": "SOFTEN. Neither source explicitly states 'little empirical evidence that PKM/second-brain systems improve thinking.' Jones (2010) argues knowledge can only be managed indirectly (a conceptual, not empirical, point); Aal & Rüller (2025) is a 4-page visionary/position paper, not an evidence review — its abstract raises concerns (autonomy, critical thinking) but makes no evidence-base claim. Honest reframe: 'the second-brain movement is largely practitioner-driven; the academic literature treats it as information management (Jones, 2010) or as speculative design discussion (Aal & Rüller, 2025), rather than offering measured evidence that such systems improve thinking.' Do not keep the flat 'little empirical evidence' sentence with these citations."
+    },
+    {
+      "id": "WEB-10",
+      "status": "verified",
+      "quote": "",
+      "locator": "n/a",
+      "inline": "(Isaacson, 2017)",
+      "note": "Citable source found: Walter Isaacson, 'Leonardo da Vinci' (Simon & Schuster, 2017), built on Leonardo's ~7,200 surviving notebook pages; publisher and Wikipedia record confirm the book and the notebooks framing. Safe wording: 'Leonardo's more than 7,000 pages of surviving notebooks mixed anatomy, engineering, and art in one place (Isaacson, 2017).' No page number available without the book — keep the claim general (whole-book support) rather than page-specific."
+    },
+    {
+      "id": "WEB-11",
+      "status": "verified",
+      "quote": "while hundreds of studies claim TPACK as theoretical framing, very little theoretical development of the model has occurred",
+      "locator": "sect. 1 (Introduction), para. 2; article pp. 1953-1960",
+      "inline": "(Graham, 2011, p. 1954)",
+      "note": "Verified against the local Zotero HTML snapshot (/Users/takumyii/Zotero/storage/8JLBNI69/S0360131511000911.html). Abstract also verbatim: 'considerable theoretical work needs to be done if TPACK research is to cohere.' The 'maps states rather than explains development' reading is supported: the paper applies Whetten's (1989) theory-building criteria and faults the framework's construct definitions and 'fuzzy boundaries' (citing Cox's 89 definitions of TPCK). Exact print page of the quote not visible in the HTML snapshot; it falls on p. 1953-1954 — verify the page against the paginated PDF or cite as (Graham, 2011, Introduction). DOI confirmed in snapshot: 10.1016/j.compedu.2011.04.010."
+    },
+    {
+      "id": "WEB-12",
+      "status": "unsupported",
+      "quote": "",
+      "locator": "n/a",
+      "inline": "paraphrased from a widely shared meme",
+      "note": "No @nunoei handle or attributable post could be found via web search (Twitter/X, Instagram, TikTok, meme aggregators). RECOMMENDATION: drop the handle attribution entirely and keep the existing 'paraphrased from a widely shared meme' framing with no username — attributing to an unverifiable handle is worse than an anonymous-meme framing."
+    }
+  ]
+}

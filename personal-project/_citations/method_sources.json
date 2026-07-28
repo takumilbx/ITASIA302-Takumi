@@ -1,0 +1,41 @@
+{
+  "citekey": "method_sources",
+  "refs": {
+    "spradley1980": "Spradley, J. P. (1980). Participant observation. Holt, Rinehart and Winston.",
+    "spradley2016": "Spradley, J. P. (2016). The ethnographic interview. Waveland Press. (Original work published 1979)"
+  },
+  "refs_note": "Checked against the PDF front matter. The task brief said 'Routledge reissues' but neither PDF is Routledge. The Ethnographic Interview PDF states 'Copyright 1979 by James P. Spradley. Reissued 2016 by Waveland Press, Inc.' (ISBN 978-1-4786-3207-8), so it takes APA reprint format and the inline form (Spradley, 1979/2016). The Participant Observation PDF is the ORIGINAL 1980 Holt, Rinehart and Winston edition ('Copyright 1980 by Holt, Rinehart and Winston', ISBN 0-03-044501-9), not a reissue, so it is cited plainly as 1980 with no reprint format. If the bibliography currently lists Routledge for either volume, correct it.",
+  "claims": [
+    {
+      "id": "SPRA-01",
+      "status": "verified",
+      "quote": "a large part of any culture consists of tacit knowledge. We all know things that we cannot talk about or express in direct ways",
+      "page": "9",
+      "inline": "(Spradley, 1979/2016, p. 9)",
+      "note": "Exact wording verified in the 2016 Waveland PDF, printed p. 9 (sentence opens 'However, a large part...'; quote starts after 'However,'). This volume (The Ethnographic Interview) states the claim best. Spradley immediately quotes Malinowski on why informants cannot state their own premises and the ethnographer must infer them. Supporting passage, same volume p. 92: informants' cultural knowledge is organized but 'remains tacit, outside their awareness.' This directly supports the essay's 'tacit sensory judgment' framing: the fieldwork atom 'Teacher A can state criteria for choosing analog over digital but ultimately grounds the preference in tacit sensory judgment' is a textbook instance."
+    },
+    {
+      "id": "SPRA-02",
+      "status": "corrected",
+      "quote": "present at the scene of action but does not participate or interact with other people to any great extent",
+      "page": "59",
+      "inline": "(Spradley, 1980, pp. 58-59)",
+      "note": "The project phrase 'classroom observation and retrospective interviews' is descriptively accurate but not Spradley's terminology. What the fieldwork notes actually describe: two (later three) lesson observations in which Takumi was physically present in the science room watching Teacher A teach (pendulum unit; Grade-6 human-body unit), each paired with a retrospective semi-structured interview. In Spradley (1980, pp. 58-59) this sits on his five-level participation continuum as participant observation at the PASSIVE PARTICIPATION level: the researcher is present at the scene but does not join the activity. It is NOT 'nonparticipation' (his term for observing with no presence at all, e.g. watching television) and not plain 'nonparticipant observation' (not a Spradley term). The interviews are ethnographic interviews in Spradley's (1979/2016) sense: retrospective, semi-structured, informant-centered, conducted in Japanese. Recommended wording: 'participant observation at Spradley's passive-participation level, paired with retrospective ethnographic interviews' with inline cites (Spradley, 1980, pp. 58-59; Spradley, 1979/2016)."
+    }
+  ],
+  "fieldwork_details": [
+    {
+      "detail": "The staffroom runs its own analog second brain: a shared card box through which teachers circulate reusable lesson materials. Teacher A estimates roughly 90 percent of her ICT teaching competence came from colleagues and classroom practice, not formal training; she says she uses none of her pre-service university training in actual practice.",
+      "from": "@JPT1-2026a"
+    },
+    {
+      "detail": "During the pendulum experiments, Teacher A ignores the Google Sheets dashboard and monitors the room by walking and watching, predicting which groups will struggle from the pupils' social composition rather than from data. A teaching move the observer read as deliberate pedagogy she later described as not consciously intended - tacit knowledge visible in action.",
+      "from": "@JPT1-2026a"
+    },
+    {
+      "detail": "Her analog/digital line is functional, not ideological: digital for heavy-rewriting tasks because easy erasure protects pupils' motivation; paper where records must accumulate for at-a-glance review, because a tablet needs an extra step to open. She embeds videos as QR codes on paper worksheets so lessons stay self-contained and reusable year on year, and teaches AI fallibility by deliberately prompting a question she knows the AI will answer wrongly.",
+      "from": "@JPT1-2026b"
+    }
+  ],
+  "anonymization_note": "All details use 'Teacher A' per the corpus pseudonym key. Real names, the ward name, and audio/transcript filenames containing real names were deliberately excluded. Direct verbatim Teacher A quotes live in the reconciled transcript files, not in the @JPT1 source notes read here, so details above are faithful paraphrases of the extracted atoms; no quotes were invented."
+}

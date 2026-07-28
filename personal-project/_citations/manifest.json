@@ -1,0 +1,366 @@
+{
+ "claims": {
+  "FERR-01": {
+   "id": "FERR-01",
+   "status": "verified",
+   "quote": "",
+   "page": "72",
+   "inline": "(Ferreira et al., 2026)",
+   "note": "Front matter confirmed from PDF: authors Juliana Jansen Ferreira, Vinícius Segura, Joana Gabriela Souza, Joao Henrique Gallas Brasil; IBM Research Brazil / PUC Minas. Proceedings line: 'C. Ardito et al. (Eds.): INTERACT 2025, LNCS 16111, pp. 72–76, 2026', DOI 10.1007/978-3-032-05008-3_15, IFIP/Springer Nature Switzerland. Editor list beyond Ardito taken from the vault lit note @FERREIRA2026.md (Zotero metadata). Original title has no colon before 'a Case Study' (typo in the published title); the APA above adds one for readability.",
+   "citekey": "ferreira2026"
+  },
+  "FERR-02": {
+   "id": "FERR-02",
+   "status": "unsupported",
+   "quote": "",
+   "page": "",
+   "inline": "",
+   "note": "INVENTED ATTRIBUTION. The paper is only 5 pages (pp. 72–76), so 'p.14' cannot exist. Full-text search finds zero hits for 'friction', 'resistance', 'judgment', 'moral', or 'agency'. The quote 'The resistance of the medium is where judgment is trained.' appears NOWHERE in the paper and nowhere in the vault either; it is fabricated demo copy. HOWEVER, the claim sentence itself IS a real vault atom: Atoms/'Friction is feedback that generates moral awareness and preserves human agency.md', sourced to @SELSBAEK-REITZ2026, p. 91, ch. 6 'The Duty to Disagree', with real quote: 'Friction isn't failure. Friction is feedback. When we face an obstacle, it reveals information about our current situation and what still matters to us.' Correct fix: either re-attribute the atom to (Selsbæk-Reitz, 2026, p. 91) with that quote, or swap in a real Ferreira atom. Real Ferreira candidate quotes for a demo atom: (1) 'participants' knowledge retrieval strategies significantly influence their content organization and maintenance' (p. 72, abstract); (2) 'the strategy participants use to create and organize their knowledge is strongly related to their intended retrieval strategy' (p. 74); (3) participant P5: 'I use search… And I use the tags for future me. I try to be nice to him' (p. 74).",
+   "citekey": "ferreira2026"
+  },
+  "FERR-03": {
+   "id": "FERR-03",
+   "status": "corrected",
+   "quote": "Since retrieval tasks significantly influence the creation and organization strategies",
+   "page": "74",
+   "inline": "(Ferreira et al., 2026, p. 74)",
+   "note": "Retrieval-drives-organization is well supported: also 'planned retrieval methods strongly influence how PKBs are built and used' (p. 73). But the 'template failure' half is NOT supported; the paper argues the opposite direction: it recommends templates, noting 'starting from a “blank page” might be overwhelming for some users' (p. 74) and proposing to 'Connect creation/organization strategy with retrieval strategy from the start' via 'examples or templates of organization strategies associated with retrieval strategies' (p. 75). Reframe: templates fail when they encode someone else's retrieval strategy; Ferreira supports the retrieval-first mechanism, not template failure per se.",
+   "citekey": "ferreira2026"
+  },
+  "FERR-04": {
+   "id": "FERR-04",
+   "status": "corrected",
+   "quote": "participants' knowledge retrieval strategies significantly influence their content organization and maintenance",
+   "page": "72",
+   "inline": "(Ferreira et al., 2026, p. 72)",
+   "note": "Directionally supported but slightly overstated. The paper shows retrieval strategy shapes how PKBs are built and maintained ('planned retrieval methods strongly influence how PKBs are built and used', p. 73; four retrieval strategies detailed p. 74), and participant P5 frames value as future usefulness: 'you build information, but how did you concatenate it to be useful to you in the future' (p. 74). It does NOT evaluate whether systems 'work' or fail. Soften to: retrieval intent, not capture volume, is what shapes a working PKB (per Ferreira's findings).",
+   "citekey": "ferreira2026"
+  },
+  "FORTE-01": {
+   "id": "FORTE-01",
+   "status": "unsupported",
+   "quote": "it is a digital archive of your most valuable memories, ideas, and knowledge",
+   "page": "4",
+   "inline": "(Forte, 2022, p. 4)",
+   "note": "The quoted sentence 'expands our memory and our intellect using the modern tools of technology and networks' appears NOWHERE in the book (checked 'intellect', 'networks', 'modern tools', cross-line). It is from Forte's fortelabs.com blog definition of BASB, not the 2022 book. If a verbatim book quote is needed, use the replacement given here: the Introduction's definition, '... it is a digital archive of your most valuable memories, ideas, and knowledge to help you do your job, run your business, and manage your life without having to keep every detail in your head' (index: 'Second Brain, defined, 4'). Either recite the blog with its own reference or swap in this book quote.",
+   "citekey": "forte2022"
+  },
+  "FORTE-02": {
+   "id": "FORTE-02",
+   "status": "verified",
+   "quote": "the four steps of the CODE Method—Capture, Organize, Distill, and Express",
+   "page": "44",
+   "inline": "(Forte, 2022, pp. 42–49, 87–111)",
+   "note": "CODE introduced in Ch. 3, 'Introducing The CODE Method' (index: CODE Method, 33, 42–49); preview sentence at ~p. 44. PARA verbatim: 'These four categories—Projects, Areas, Resources, and Archives—make up the four categories of PARA' in Ch. 5 (index: PARA, 87–111; 'how it works, 90–95'). Capture-first orientation is accurate: Capture is the first step and Ch. 4 opens the method. Both are Forte's own frameworks.",
+   "citekey": "forte2022"
+  },
+  "FORTE-03": {
+   "id": "FORTE-03",
+   "status": "verified",
+   "quote": "it is our responsibility and right to choose our information diet",
+   "page": "54",
+   "inline": "(Forte, 2022, p. 54)",
+   "note": "Ch. 4 opening. Same passage introduces 'planting your own \"knowledge garden\"' and seeding it 'with only the most interesting, insightful, useful ideas' (index: knowledge garden, 54; 'information stream filtered by, 53–54'). The atom is a fair compression of this passage; 'actively filtering' matches the curator framing.",
+   "citekey": "forte2022"
+  },
+  "FORTE-04": {
+   "id": "FORTE-04",
+   "status": "verified",
+   "quote": "if all we ever do is diverge, then we never arrive anywhere",
+   "page": "179",
+   "inline": "(Forte, 2022, p. 179)",
+   "note": "Ch. 8: 'As powerful and necessary as divergence is, if all we ever do is diverge, then we never arrive anywhere.' Followed by the Coppola example and the point that you never get the completion of hitting 'send' or 'publish'. Page from index (convergence, 'features of, 178–80') plus chapter position; could sit on 178–180.",
+   "citekey": "forte2022"
+  },
+  "FORTE-05": {
+   "id": "FORTE-05",
+   "status": "verified",
+   "quote": "The first two steps of CODE, Capture and Organize, make up divergence.",
+   "page": "180",
+   "inline": "(Forte, 2022, p. 180)",
+   "note": "Ch. 8, CODE overlaid on the divergence/convergence model; continues 'The final two steps, Distill and Express, are about convergence.' Book says 'make up divergence', not 'the divergent phase' — fine as paraphrase, adjust if quoting. Page anchored by index entries 'Capture ... divergence and, 180' and 'CODE Method ... 180'.",
+   "citekey": "forte2022"
+  },
+  "FORTE-06": {
+   "id": "FORTE-06",
+   "status": "verified",
+   "quote": "self-expression is a fundamental human need. Self-expression is as vital to our survival as food or shelter.",
+   "page": "236",
+   "inline": "(Forte, 2022, p. 236)",
+   "note": "Ch. 10, immediately after the meditation/blogging story, just before 'Your Turn: The Courage to Share'. Verbatim match to the atom. Index: 'self-expression, fundamental need for, 234–36'; 'writing in public, 235–36' — sentence falls at the end of that span, p. 235 or 236.",
+   "citekey": "forte2022"
+  },
+  "FORTE-07": {
+   "id": "FORTE-07",
+   "status": "unsupported",
+   "quote": "",
+   "page": "",
+   "inline": "",
+   "note": "The book itself makes no bestseller claim: this first-edition Profile Books PDF has no praise pages, no 'bestselling author' tagline, and the only bestseller mention in the text is about Octavia Butler's Parable of the Sower. The book did reach bestseller lists (NYT, WSJ) after its 2022 publication, but that cannot be cited to forte2022 — it needs an external source (e.g., the NYT list or publisher page) or should be softened to 'widely read/popular'.",
+   "citekey": "forte2022"
+  },
+  "YAGI-01": {
+   "id": "YAGI-01",
+   "status": "verified",
+   "quote": "七つの知識のうち，一番数が多かったのはTPKの394個で全体の64.1％を占めた",
+   "gloss": "Of the seven knowledge types, TPK was the most frequent at 394 items, accounting for 64.1% of the total.",
+   "page": "36 (615-item total stated p. 35; distribution shown in Figure 2, p. 35)",
+   "inline": "(Yagisawa & Horita, 2019, p. 36)",
+   "note": "Exact figure confirmed: 394 of 615 knowledge-coded data units = 64.1%. Second largest was TCK at 160 items (26.0%). The claim's number is accurate as stated.",
+   "citekey": "japanese_sources"
+  },
+  "YAGI-02": {
+   "id": "YAGI-02",
+   "status": "verified",
+   "quote": "PK，CK，PCK，TPCKに関する知識はいずれも…1%以下しか見られなかった",
+   "gloss": "Knowledge relating to PK, CK, PCK, and TPCK each appeared at 1% or less.",
+   "page": "36",
+   "inline": "(Yagisawa & Horita, 2019, p. 36)",
+   "note": "Integrated TPACK (written 'TPCK' in the paper for the individual knowledge type) = exactly 6 of 615 items = 1.0%. Full breakdown on p. 36: PK 3 (0.5%), CK 0 (0%), PCK 1 (0.2%), TPCK 6 (1%); these four were dropped from further analysis for being at or under 1%. 'About 1 percent' is accurate; 'near-absent' is a fair characterization.",
+   "citekey": "japanese_sources"
+  },
+  "YAGI-03": {
+   "id": "YAGI-03",
+   "status": "verified",
+   "quote": "若手教師群とベテラン教師群の間で，ICTに関わる技能そのものに大きな違いは見られなかった",
+   "gloss": "Between the novice-teacher group and the veteran-teacher group, no large difference was seen in ICT skills themselves.",
+   "page": "91 (gap closing); 87 (veteran non-use judgment)",
+   "inline": "(Yagisawa & Horita, 2017, pp. 87, 91)",
+   "note": "Both parts hold, with one nuance. (1) Gap closing: p. 91 attributes the absence of a skill gap to school-wide sustained 1:1 practice: 教職経験年数と関係なく技能が身に付いたからではないか (skills were acquired regardless of years of experience). Context: School F, 4 years of 1:1 practice, 2 novice + 3 veteran teachers, interviews 2014. (2) When-not-to-use: p. 87 reports that all veteran answers about non-use carried clear reasons: 「○○をさせたいから」「○○ができないから」といったICTを使わない明確な理由があった, whereas novices gave vague answers (「デジタルを使っていない」という程度の回答). Nuance: the paper presents this as a distinguishing feature of veterans, not a formal definition of veteran status (veterans are defined by 20+ years experience). Small-n qualitative study; phrase claims as 'in this case study' rather than as a general law.",
+   "citekey": "japanese_sources"
+  },
+  "SAKA-01": {
+   "id": "SAKA-01",
+   "status": "corrected",
+   "quote": "ベテラン群は自身の情報活用能力の不足についての記述が見られた",
+   "gloss": "The veteran group showed descriptions of their own lack of information-utilization ability.",
+   "page": "43 (abstract); 47 (per-question means); 51-52 (free-text analysis and non-significance note)",
+   "inline": "(Sakakibara et al., 2025, pp. 51-52)",
+   "note": "Actual findings from the paper (n=289 public school teachers, grouped young <=10 yrs / mid-career 11-20 / veteran 21+): per-question means show veterans rating GIGA achievements highest and mid-career teachers rating challenges highest (p. 47), but choice-item differences were NOT statistically significant across the three groups (p. 52). Text mining of free responses: mid-career teachers felt tablet use broadened learning methods, young teachers flagged information-morals problems, and veterans described their OWN lack of information-utilization ability (pp. 51-52). CORRECTION: this paper supports the weaker claim that experience-based differences in ICT awareness persist into the GIGA era; it does NOT support veterans having superior when-not-to-use judgment, and partially cuts against it, since veterans self-report ICT skill deficits. Do not cite Sakakibara 2025 as 'recent support' for the Yagisawa 2017 veteran-judgment finding; cite it for experience-stratified differences in GIGA-era teacher awareness, or reframe as a complication.",
+   "citekey": "japanese_sources"
+  },
+  "LUHM-01": {
+   "id": "LUHM-01",
+   "status": "corrected",
+   "quote": "Luhmann's card index consists of approximately 90,000 handwritten cards",
+   "page": "Schmidt 2018, p. 54 (open-access version of Schmidt 2016)",
+   "inline": "(Schmidt, 2016)",
+   "note": "Confirmed: NO card count of any kind appears in Luhmann (1981); checked against the full text of pp. 222-228. The 90,000 figure comes from Johannes F. K. Schmidt's archive work at Bielefeld (Niklas Luhmann-Archiv): two collections, ca. 23,000 cards (1951-1962) plus ca. 67,000 cards (1963-1997). Cite Schmidt 2016 (apa_secondary above) or the open-access revision: Schmidt, J. F. K. (2018). Niklas Luhmann's card index: The fabrication of serendipity. Sociologica, 12(1), 53-60. https://doi.org/10.6092/issn.1971-8853/8350 (figure verified verbatim at p. 54). Do not attach this number to Luhmann 1981.",
+   "citekey": "luhmann1981"
+  },
+  "LUHM-02": {
+   "id": "LUHM-02",
+   "status": "corrected",
+   "quote": "nach nunmehr 26 Jahren erfolgreicher, nur gelegentlich schwieriger Zusammenarbeit",
+   "page": "223",
+   "inline": "(Luhmann, 1981, p. 223)",
+   "note": "Gloss: 'after now 26 years of successful, only occasionally difficult collaboration.' The essay itself supports 26 years as of 1981, not 'over thirty.' 'Over thirty years' is true of the whole lifespan (first collection begun 1951, kept until 1996/97 per Schmidt 2016/2018) but then must cite Schmidt, not Luhmann. Either reword to '26 years by the time he wrote about it' citing Luhmann 1981 p. 223, or keep 30+ and cite Schmidt.",
+   "citekey": "luhmann1981"
+  },
+  "LUHM-03": {
+   "id": "LUHM-03",
+   "status": "corrected",
+   "quote": "daß man jedem Zettel eine Nummer gibt, sie gut sichtbar (bei uns links oben) anbringt und diese Nummer und damit den Standort niemals ändert",
+   "page": "224",
+   "inline": "(Luhmann, 1981, pp. 223-225)",
+   "note": "Gloss: 'that one gives every slip a number, affixes it clearly visible (top left, in our case), and never changes that number and thus its position.' Three of the four claim elements are verified: (a) fixed addresses - quote above, p. 224; (b) against topic filing - 'gegen eine systematische Ordnung nach Themen und Unterthemen und statt dessen für eine feste Stellordnung' (against a systematic order by themes and subthemes, in favor of a fixed placement order), pp. 223-224; (c) emergent structure and value-from-links - 'Unordnung mit nichtbeliebiger interner Struktur' (disorder with a non-arbitrary internal structure) and 'Jede Notiz ist nur ein Element, das seine Qualität erst aus dem Netz der Verweisungen und Rückverweisungen im System erhält' (each note is only an element that gains its quality from the network of references and back-references), both p. 225. CAVEAT: 'one idea per card, own words' is NOT in this essay - it is later PKM lore (e.g., Ahrens 2017); the essay specifies only octavo-format slips written on one side (p. 223). Drop or re-attribute that element if the beat cites Luhmann alone.",
+   "citekey": "luhmann1981"
+  },
+  "LUHM-04": {
+   "id": "LUHM-04",
+   "status": "verified",
+   "quote": "Für Kommunikation ist eine der elementaren Voraussetzungen, daß die Partner sich wechselseitig überraschen können.",
+   "page": "222",
+   "inline": "(Luhmann, 1981, p. 222)",
+   "note": "Gloss: 'For communication, one of the elementary preconditions is that the partners can surprise each other mutually.' Fully supported. Also p. 222: 'Daß Zettelkästen als Kommunikationspartner empfohlen werden können' (that slip-boxes can be recommended as communication partners); and p. 225: 'eine Art Zweitgedächtnis, ein alter Ego, mit dem man laufend kommunizieren kann' (a kind of second memory, an alter ego, with which one can communicate continually). Kuehn translation hosting verified live at luhmann.surge.sh (successor to Kuehn's 'Taking Note' blog on scriptogr.am, now offline); a PDF mirror also circulates at luhmann.ir.",
+   "citekey": "luhmann1981"
+  },
+  "SPRA-01": {
+   "id": "SPRA-01",
+   "status": "verified",
+   "quote": "a large part of any culture consists of tacit knowledge. We all know things that we cannot talk about or express in direct ways",
+   "page": "9",
+   "inline": "(Spradley, 1979/2016, p. 9)",
+   "note": "Exact wording verified in the 2016 Waveland PDF, printed p. 9 (sentence opens 'However, a large part...'; quote starts after 'However,'). This volume (The Ethnographic Interview) states the claim best. Spradley immediately quotes Malinowski on why informants cannot state their own premises and the ethnographer must infer them. Supporting passage, same volume p. 92: informants' cultural knowledge is organized but 'remains tacit, outside their awareness.' This directly supports the essay's 'tacit sensory judgment' framing: the fieldwork atom 'Teacher A can state criteria for choosing analog over digital but ultimately grounds the preference in tacit sensory judgment' is a textbook instance.",
+   "citekey": "method_sources"
+  },
+  "SPRA-02": {
+   "id": "SPRA-02",
+   "status": "corrected",
+   "quote": "present at the scene of action but does not participate or interact with other people to any great extent",
+   "page": "59",
+   "inline": "(Spradley, 1980, pp. 58-59)",
+   "note": "The project phrase 'classroom observation and retrospective interviews' is descriptively accurate but not Spradley's terminology. What the fieldwork notes actually describe: two (later three) lesson observations in which Takumi was physically present in the science room watching Teacher A teach (pendulum unit; Grade-6 human-body unit), each paired with a retrospective semi-structured interview. In Spradley (1980, pp. 58-59) this sits on his five-level participation continuum as participant observation at the PASSIVE PARTICIPATION level: the researcher is present at the scene but does not join the activity. It is NOT 'nonparticipation' (his term for observing with no presence at all, e.g. watching television) and not plain 'nonparticipant observation' (not a Spradley term). The interviews are ethnographic interviews in Spradley's (1979/2016) sense: retrospective, semi-structured, informant-centered, conducted in Japanese. Recommended wording: 'participant observation at Spradley's passive-participation level, paired with retrospective ethnographic interviews' with inline cites (Spradley, 1980, pp. 58-59; Spradley, 1979/2016).",
+   "citekey": "method_sources"
+  },
+  "TPACK-01": {
+   "id": "TPACK-01",
+   "status": "verified",
+   "quote": "Technological pedagogical content knowledge (TPCK) is an emergent form of knowledge that goes beyond all three components (content, pedagogy, and technology).",
+   "page": "1028",
+   "inline": "(Mishra & Koehler, 2006, p. 1028)",
+   "note": "Definition quote verified on p. 1028 of the PDF. Shulman-PCK lineage is explicit in the abstract, p. 1017: 'we propose a conceptual framework for educational technology by building on Shulman's formulation of pedagogical content knowledge and extend it to the phenomenon of teachers integrating technology into their pedagogy.' Caution: the 2006 article uses the acronym TPCK, not TPACK (the acronym was renamed later); if the page renders the 2006 quote verbatim it must keep TPCK. Journal details confirmed from the PDF front matter: Teachers College Record, Volume 108, Number 6, June 2006, pp. 1017-1054.",
+   "citekey": "tpack_sources"
+  },
+  "TPACK-02": {
+   "id": "TPACK-02",
+   "status": "verified",
+   "quote": "TPACK takes the concept of technology integration and packages it as a framework that is much too big (i.e., one that embodies seven distinct knowledge types) while simultaneously making it too small by dividing the \"package\" into so many pieces that they have become impossible to distinguish from one another (e.g., TK vs. TCK).",
+   "page": "104",
+   "inline": "(Brantley-Dias & Ertmer, 2013, p. 104)",
+   "note": "Verified. Two accuracy cautions: (1) the article's term is the 'Goldilocks Principle', which it attributes to Katz and Raths (cited in Kagan, 1990); 'Goldilocks problem' as used in the vault molecule is a paraphrase, not the article's phrase. (2) On domain blurring the article also states, p. 115: 'domains may not even exist (Archambault & Barnett, 2010; Koh, Chai, & Tsai, 2010), or at the very least ... the boundaries between them are fuzzy' -- a usable alternate quote for the blur claim specifically.",
+   "citekey": "tpack_sources"
+  },
+  "TPACK-03": {
+   "id": "TPACK-03",
+   "status": "verified",
+   "quote": "The fact that three major factors become evident is noteworthy, but rather than being comprised of pedagogy, content, and technology, the only clear domain that distinguishes itself is that of technology.",
+   "page": "1659",
+   "inline": "(Archambault & Barnett, 2010, p. 1659)",
+   "note": "Verified on p. 1659 (Discussion). Supporting finding, p. 1659: 'respondents did separate the technological knowledge items, where no reference to content or pedagogy was used' while pedagogy and content items 'loaded together with no clear separation.' Nuance for the prose: factor analysis of 596 K-12 online teachers yielded three factors (pedagogical content knowledge, technological-curricular content knowledge, technological knowledge), so the accurate rendering is 'only the technology domain clearly separates; pedagogy and content are indistinguishable from each other,' not 'all other six domains were tested and failed individually.' The vault phrasing 'only TK separates; other domains indistinguishable' is a fair summary.",
+   "citekey": "tpack_sources"
+  },
+  "TPACK-04": {
+   "id": "TPACK-04",
+   "status": "verified",
+   "quote": "",
+   "page": "",
+   "inline": "(fieldwork vault: Molecules/selective-non-use-as-advanced-tpack.md + 3 atoms)",
+   "note": "Case-study beat in second_brain_B_presentation.html (beat 13, section id b17) checked against the vault. All three atom claims match the atom filenames: (1) 'Teacher A frames science and ICT as well matched because the subject centers on observation and recording' -- exact; (2) rendering drops the word 'ultimately' from 'ultimately grounds the preference in tacit sensory judgment' -- meaning preserved, negligible; (3) 'A teaching move the observer read as deliberate pedagogy, Teacher A describes as not consciously intended' -- exact. Molecule title 'Selective non-use of ICT is an advanced, partly tacit form of TPACK' and alloy line 'Knowing when not to use ICT as the mark of integrated TPACK' both match the molecule verbatim. One real drift: the molecule's tension says the competence 'may be invisible to surveys and to formal training design'; the rendering hardens this to 'it is invisible to surveys and to formal training design.' Recommend restoring the hedge ('may be invisible') in the final build. Note the vault file is status: draft, layer: molecule; all three atoms are status: verified with transcript section citations (Transcript sections 3, 16, 8 of @JPT1-2026a).",
+   "citekey": "tpack_sources"
+  },
+  "WEB-01": {
+   "id": "WEB-01",
+   "status": "verified",
+   "quote": "A memex is a device in which an individual stores all his books, records, and communications",
+   "locator": "sect. 6, para. 4",
+   "inline": "(Bush, 1945, sect. 6)",
+   "note": "Verified against the full text (Duchier electronic edition of the Atlantic Monthly article, July 1945). Retrieval-not-storage framing is explicit: 'Selection by association, rather than by indexing, may yet be mechanized' (sect. 6, para. 3) and associative indexing/trails as 'the essential feature of the memex' (sect. 7, para. 1). Online editions are unpaginated, so cite by section; print original is 176(1), 101-108.",
+   "citekey": "web_sources"
+  },
+  "WEB-02": {
+   "id": "WEB-02",
+   "status": "verified",
+   "quote": "For Otto, his notebook plays the role usually played by a biological memory.",
+   "locator": "sect. 4 ('From Cognition to Mind'), para. 2; p. 12-13 of print run",
+   "inline": "(Clark & Chalmers, 1998, p. 12)",
+   "note": "Verified against the consc.net full text. Bibliographic facts confirmed via Oxford Academic (academic.oup.com/analysis/article-abstract/58/1/7): Analysis, 58(1), 7-19, 1998 — the 7-19 range in the manifest is correct. The exact print page of the Otto quote could not be confirmed from the unpaginated HTML; if a page number is needed use the paginated PDF, otherwise cite without page or as (1998, sect. 4). Offloading-as-extension-not-laziness is a fair paraphrase of the active externalism argument.",
+   "citekey": "web_sources"
+  },
+  "WEB-03": {
+   "id": "WEB-03",
+   "status": "verified",
+   "quote": "",
+   "locator": "abstract",
+   "inline": "(Roediger & Karpicke, 2006)",
+   "note": "Bibliographic facts verified via PubMed (PMID 16507066): Psychological Science, 17(3), 249-255, 2006, DOI 10.1111/j.1467-9280.2006.01693.x. Finding confirmed: repeated studying helped on immediate tests, but on 2-day and 1-week delayed tests prior testing (retrieval practice) produced substantially better retention than restudying. Quote omitted (optional per instructions; abstract wording was paraphrased by the fetch tool, so no verbatim quote is asserted).",
+   "citekey": "web_sources"
+  },
+  "WEB-04": {
+   "id": "WEB-04",
+   "status": "corrected",
+   "quote": "Knowledge can be managed only indirectly, through the management of information.",
+   "locator": "Abstract",
+   "inline": "(Jones, 2010, Abstract)",
+   "note": "CORRECTION: the cleanly verifiable source for 'you can only manage information, not knowledge' is Jones, W. (2010), 'No knowledge but through information', First Monday 15(9) — open access, quote verified verbatim from the abstract, which also states 'Information is a thing to be handled and controlled; knowledge is not.' The two 2007 candidates both exist (Jones, 'Keeping Found Things Found', Morgan Kaufmann, 2007; Jones & Teevan (Eds.), 'Personal Information Management', University of Washington Press, 2007) and the KFTF book makes a related argument, but I could not verify the exact claim in either without the PDFs. Recommend changing the essay's inline citation from 'Jones, 2007' to 'Jones, 2010' and using the refs entry above (keyed jones2007 for compatibility).",
+   "citekey": "web_sources"
+  },
+  "WEB-05": {
+   "id": "WEB-05",
+   "status": "verified",
+   "quote": "the concept of a 'second brain' has emerged, exemplified by tools like Evernote and Notion",
+   "locator": "Abstract",
+   "inline": "(Aal & Rüller, 2025, Abstract)",
+   "note": "Verified via ACM DL search result and Semantic Scholar record (DOI 10.1145/3688828.3699647). Abstract (verbatim) traces PKM -> second brain -> 'the integration of AI promises to transform this concept into an active personal companion.' GROUP '25 Companion, Hilton Head, SC, Jan 12-15 2025, pp. 90-93. NOTE: the published title really does spell 'Companian' (ACM DL and Semantic Scholar agree); keep the [sic] or reproduce as published.",
+   "citekey": "web_sources"
+  },
+  "WEB-06": {
+   "id": "WEB-06",
+   "status": "corrected",
+   "quote": "",
+   "locator": "n/a",
+   "inline": "(Frand & Hixson, 1998)",
+   "note": "CORRECTIONS: (1) the second author is Carol G. HIXSON, not Hixon (verified via USF Digital Commons record, digitalcommons.usf.edu/former-pub/246); (2) the work was presented at the EDUCOM '98 conference, Orlando, October 15, 1998 (Frand: UCLA Anderson; Hixson: UCLA Young Research Library); the commonly cited '1999' refers to the later UCLA Anderson working-paper version. Widely credited (e.g., Forte Labs 'The Origins of Personal Knowledge Management', Wikipedia PKM article) as an early formulation that popularized the term PKM. If the essay says '1999 UCLA working paper', either keep 1999 and add '(presented 1998)' or cite as 1998 per the APA above.",
+   "citekey": "web_sources"
+  },
+  "WEB-07": {
+   "id": "WEB-07",
+   "status": "corrected",
+   "quote": "",
+   "locator": "n/a",
+   "inline": "(Drucker, 1959)",
+   "note": "The concept originates in 'The Landmarks of Tomorrow' (1959, Harper & Brothers) — multiple sources (Wikipedia 'Knowledge worker' and 'The Landmarks of Tomorrow') identify it as the source of the knowledge work/knowledge worker concept; some sources say the exact term 'knowledge worker' was formalized later in 'The Effective Executive' (1966), and 'The Age of Discontinuity' (1969) popularized the knowledge economy. SAFE WORDING: 'Drucker introduced the idea of knowledge work in 1959' citing Drucker (1959); avoid the bare word 'coined' unless hedged ('is usually credited with coining').",
+   "citekey": "web_sources"
+  },
+  "WEB-08": {
+   "id": "WEB-08",
+   "status": "verified",
+   "quote": "",
+   "locator": "Chapter 7, sect. 7.9 (Solid-Solution Strengthening)",
+   "inline": "(Callister & Rethwisch, 2018, sect. 7.9)",
+   "note": "Solid-solution strengthening — impurity atoms of different size impose lattice strains that impede dislocation motion and harden/strengthen the alloy — is standard textbook content, covered in Section 7.9 of Chapter 7 ('Mechanisms of strengthening in metals') of Callister & Rethwisch. Edition verified as 10th ed., Wiley, 2018 (Wiley instructor companion site, zyBooks 10e listing); Wiley's own product page for a possible 11th ed. was not reachable (403), so the safely verifiable 10th ed. is cited. No local PDF, so no verbatim quote — the paraphrase kind only needs a source. The metaphor use in the essay is fine as-is with this citation.",
+   "citekey": "web_sources"
+  },
+  "WEB-09": {
+   "id": "WEB-09",
+   "status": "unsupported",
+   "quote": "The discussion emphasizes the importance of maintaining user autonomy and critical thinking skills while leveraging AI capabilities.",
+   "locator": "Aal & Rüller 2025, Abstract",
+   "inline": "(Jones, 2010; Aal & Rüller, 2025)",
+   "note": "SOFTEN. Neither source explicitly states 'little empirical evidence that PKM/second-brain systems improve thinking.' Jones (2010) argues knowledge can only be managed indirectly (a conceptual, not empirical, point); Aal & Rüller (2025) is a 4-page visionary/position paper, not an evidence review — its abstract raises concerns (autonomy, critical thinking) but makes no evidence-base claim. Honest reframe: 'the second-brain movement is largely practitioner-driven; the academic literature treats it as information management (Jones, 2010) or as speculative design discussion (Aal & Rüller, 2025), rather than offering measured evidence that such systems improve thinking.' Do not keep the flat 'little empirical evidence' sentence with these citations.",
+   "citekey": "web_sources"
+  },
+  "WEB-10": {
+   "id": "WEB-10",
+   "status": "verified",
+   "quote": "",
+   "locator": "n/a",
+   "inline": "(Isaacson, 2017)",
+   "note": "Citable source found: Walter Isaacson, 'Leonardo da Vinci' (Simon & Schuster, 2017), built on Leonardo's ~7,200 surviving notebook pages; publisher and Wikipedia record confirm the book and the notebooks framing. Safe wording: 'Leonardo's more than 7,000 pages of surviving notebooks mixed anatomy, engineering, and art in one place (Isaacson, 2017).' No page number available without the book — keep the claim general (whole-book support) rather than page-specific.",
+   "citekey": "web_sources"
+  },
+  "WEB-11": {
+   "id": "WEB-11",
+   "status": "verified",
+   "quote": "while hundreds of studies claim TPACK as theoretical framing, very little theoretical development of the model has occurred",
+   "locator": "sect. 1 (Introduction), para. 2; article pp. 1953-1960",
+   "inline": "(Graham, 2011, p. 1954)",
+   "note": "Verified against the local Zotero HTML snapshot (/Users/takumyii/Zotero/storage/8JLBNI69/S0360131511000911.html). Abstract also verbatim: 'considerable theoretical work needs to be done if TPACK research is to cohere.' The 'maps states rather than explains development' reading is supported: the paper applies Whetten's (1989) theory-building criteria and faults the framework's construct definitions and 'fuzzy boundaries' (citing Cox's 89 definitions of TPCK). Exact print page of the quote not visible in the HTML snapshot; it falls on p. 1953-1954 — verify the page against the paginated PDF or cite as (Graham, 2011, Introduction). DOI confirmed in snapshot: 10.1016/j.compedu.2011.04.010.",
+   "citekey": "web_sources"
+  },
+  "WEB-12": {
+   "id": "WEB-12",
+   "status": "unsupported",
+   "quote": "",
+   "locator": "n/a",
+   "inline": "paraphrased from a widely shared meme",
+   "note": "No @nunoei handle or attributable post could be found via web search (Twitter/X, Instagram, TikTok, meme aggregators). RECOMMENDATION: drop the handle attribution entirely and keep the existing 'paraphrased from a widely shared meme' framing with no username — attributing to an unverifiable handle is worse than an anonymous-meme framing.",
+   "citekey": "web_sources"
+  }
+ },
+ "refs": {
+  "ferreira2026": "Ferreira, J. J., Segura, V., Souza, J. G., & Brasil, J. H. G. (2026). How people manage knowledge in their “second brains”: A case study with industry researchers using Obsidian. In C. Ardito, S. D. J. Barbosa, T. Conte, A. Freire, I. Gasparini, P. Palanque, & R. Prates (Eds.), Human-computer interaction – INTERACT 2025 (Lecture Notes in Computer Science, Vol. 16111, pp. 72–76). Springer. https://doi.org/10.1007/978-3-032-05008-3_15",
+  "forte2022": "Forte, T. (2022). Building a second brain: A proven method to organize your digital life and unlock your creative potential. Profile Books.",
+  "yagisawa2017": "Yagisawa, F., & Horita, T. (2017). Ichinin ichidai tanmatsu no kankyo ni okeru wakate kyoshi to beteran kyoshi no ICT katsuyo ni taisuru ishiki hikaku [Comparison of teachers' awareness for ICT use between novices and experts in 1:1 elementary education]. Kyoiku Media Kenkyu [Educational Media Research], 23(2), 83-94. https://doi.org/10.24458/jaems.23.2_83 [In Japanese]",
+  "yagisawa2019": "Yagisawa, F., & Horita, T. (2019). Jido ga joho tanmatsu o katsuyo suru jugyo ni oite mochiirareru kyoshi no chishiki: Gijutsu to kakawaru kyoikuteki naiyo chishiki (TPACK) ni yoru ruikeika to saibunka [The teachers' knowledge of 1-to-1 elementary education: The typing and subdivision by Technological Pedagogical Content Knowledge (TPACK)]. Kyoiku Media Kenkyu [Educational Media Research], 25(2), 29-43. https://doi.org/10.24458/jaems.25.2_29 [In Japanese]",
+  "sakakibara2025": "Sakakibara, N., Abe, M., Sekihara, M., Oshima, T., Kiryu, T., & Mizuochi, Y. (2025). GIGA sukuru koso no shinchoku ni okeru seika ya kadai ni kansuru kyoshoku keiken ni motozuku kyoin no ishiki [Teachers' perceptions based on teaching experience regarding the achievements and challenges in the progress of the GIGA School Initiative]. Nihon Kyoiku Kogakkai Ronbunshi [Japanese Journal of Educational Technology], 49(1), 43-54. https://doi.org/10.15077/jjet.48089 [In Japanese]",
+  "luhmann1981": "Luhmann, N. (1981). Kommunikation mit Zettelkästen: Ein Erfahrungsbericht. In H. Baier, H. M. Kepplinger, & K. Reumann (Eds.), Öffentliche Meinung und sozialer Wandel / Public opinion and social change (pp. 222–228). Westdeutscher Verlag. https://doi.org/10.1007/978-3-322-87749-9_19",
+  "luhmann1981:apa_translation": "Luhmann, N. (n.d.). Communicating with slip boxes: An empirical account (M. Kuehn, Trans.). https://luhmann.surge.sh/communicating-with-slip-boxes (Original work published 1981)",
+  "luhmann1981:apa_secondary": "Schmidt, J. F. K. (2016). Niklas Luhmann's card index: Thinking tool, communication partner, publication machine. In A. Cevolini (Ed.), Forgetting machines: Knowledge management evolution in early modern Europe (pp. 289–311). Brill. https://doi.org/10.1163/9789004325258_014",
+  "spradley1980": "Spradley, J. P. (1980). Participant observation. Holt, Rinehart and Winston.",
+  "spradley2016": "Spradley, J. P. (2016). The ethnographic interview. Waveland Press. (Original work published 1979)",
+  "mishra2006": "Mishra, P., & Koehler, M. J. (2006). Technological pedagogical content knowledge: A framework for teacher knowledge. Teachers College Record, 108(6), 1017-1054. https://doi.org/10.1111/j.1467-9620.2006.00684.x",
+  "archambault2010": "Archambault, L. M., & Barnett, J. H. (2010). Revisiting technological pedagogical content knowledge: Exploring the TPACK framework. Computers & Education, 55(4), 1656-1662. https://doi.org/10.1016/j.compedu.2010.07.009",
+  "brantleydias2013": "Brantley-Dias, L., & Ertmer, P. A. (2013). Goldilocks and TPACK: Is the construct \"just right?\" Journal of Research on Technology in Education, 46(2), 103-128. https://doi.org/10.1080/15391523.2013.10782615",
+  "bush1945": "Bush, V. (1945, July). As we may think. The Atlantic Monthly, 176(1), 101-108. https://www.theatlantic.com/magazine/archive/1945/07/as-we-may-think/303881/",
+  "clark1998": "Clark, A., & Chalmers, D. (1998). The extended mind. Analysis, 58(1), 7-19. https://doi.org/10.1093/analys/58.1.7",
+  "roediger2006": "Roediger, H. L., III, & Karpicke, J. D. (2006). Test-enhanced learning: Taking memory tests improves long-term retention. Psychological Science, 17(3), 249-255. https://doi.org/10.1111/j.1467-9280.2006.01693.x",
+  "jones2007": "Jones, W. (2010). No knowledge but through information. First Monday, 15(9). https://doi.org/10.5210/fm.v15i9.3062",
+  "aal2025": "Aal, K., & Rüller, S. (2025). From personal knowledge management to the second brain to the personal AI companian [sic]. In Companion Proceedings of the 2025 ACM International Conference on Supporting Group Work (GROUP '25 Companion) (pp. 90-93). ACM. https://doi.org/10.1145/3688828.3699647",
+  "frand1999": "Frand, J. L., & Hixson, C. G. (1998, October 15). Personal knowledge management: Who? What? Why? When? Where? How? [Paper presentation]. EDUCOM '98, Orlando, FL, United States. https://digitalcommons.usf.edu/former-pub/246/",
+  "drucker": "Drucker, P. F. (1959). Landmarks of tomorrow. Harper & Brothers.",
+  "callister": "Callister, W. D., Jr., & Rethwisch, D. G. (2018). Materials science and engineering: An introduction (10th ed.). Wiley.",
+  "graham2011": "Graham, C. R. (2011). Theoretical considerations for understanding technological pedagogical content knowledge (TPACK). Computers & Education, 57(3), 1953-1960. https://doi.org/10.1016/j.compedu.2011.04.010",
+  "leonardo": "Isaacson, W. (2017). Leonardo da Vinci. Simon & Schuster."
+ }
+}

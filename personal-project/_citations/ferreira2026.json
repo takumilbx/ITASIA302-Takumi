@@ -1,0 +1,38 @@
+{
+  "citekey": "ferreira2026",
+  "apa": "Ferreira, J. J., Segura, V., Souza, J. G., & Brasil, J. H. G. (2026). How people manage knowledge in their “second brains”: A case study with industry researchers using Obsidian. In C. Ardito, S. D. J. Barbosa, T. Conte, A. Freire, I. Gasparini, P. Palanque, & R. Prates (Eds.), Human-computer interaction – INTERACT 2025 (Lecture Notes in Computer Science, Vol. 16111, pp. 72–76). Springer. https://doi.org/10.1007/978-3-032-05008-3_15",
+  "claims": [
+    {
+      "id": "FERR-01",
+      "status": "verified",
+      "quote": "",
+      "page": "72",
+      "inline": "(Ferreira et al., 2026)",
+      "note": "Front matter confirmed from PDF: authors Juliana Jansen Ferreira, Vinícius Segura, Joana Gabriela Souza, Joao Henrique Gallas Brasil; IBM Research Brazil / PUC Minas. Proceedings line: 'C. Ardito et al. (Eds.): INTERACT 2025, LNCS 16111, pp. 72–76, 2026', DOI 10.1007/978-3-032-05008-3_15, IFIP/Springer Nature Switzerland. Editor list beyond Ardito taken from the vault lit note @FERREIRA2026.md (Zotero metadata). Original title has no colon before 'a Case Study' (typo in the published title); the APA above adds one for readability."
+    },
+    {
+      "id": "FERR-02",
+      "status": "unsupported",
+      "quote": "",
+      "page": "",
+      "inline": "",
+      "note": "INVENTED ATTRIBUTION. The paper is only 5 pages (pp. 72–76), so 'p.14' cannot exist. Full-text search finds zero hits for 'friction', 'resistance', 'judgment', 'moral', or 'agency'. The quote 'The resistance of the medium is where judgment is trained.' appears NOWHERE in the paper and nowhere in the vault either; it is fabricated demo copy. HOWEVER, the claim sentence itself IS a real vault atom: Atoms/'Friction is feedback that generates moral awareness and preserves human agency.md', sourced to @SELSBAEK-REITZ2026, p. 91, ch. 6 'The Duty to Disagree', with real quote: 'Friction isn't failure. Friction is feedback. When we face an obstacle, it reveals information about our current situation and what still matters to us.' Correct fix: either re-attribute the atom to (Selsbæk-Reitz, 2026, p. 91) with that quote, or swap in a real Ferreira atom. Real Ferreira candidate quotes for a demo atom: (1) 'participants' knowledge retrieval strategies significantly influence their content organization and maintenance' (p. 72, abstract); (2) 'the strategy participants use to create and organize their knowledge is strongly related to their intended retrieval strategy' (p. 74); (3) participant P5: 'I use search… And I use the tags for future me. I try to be nice to him' (p. 74)."
+    },
+    {
+      "id": "FERR-03",
+      "status": "corrected",
+      "quote": "Since retrieval tasks significantly influence the creation and organization strategies",
+      "page": "74",
+      "inline": "(Ferreira et al., 2026, p. 74)",
+      "note": "Retrieval-drives-organization is well supported: also 'planned retrieval methods strongly influence how PKBs are built and used' (p. 73). But the 'template failure' half is NOT supported; the paper argues the opposite direction: it recommends templates, noting 'starting from a “blank page” might be overwhelming for some users' (p. 74) and proposing to 'Connect creation/organization strategy with retrieval strategy from the start' via 'examples or templates of organization strategies associated with retrieval strategies' (p. 75). Reframe: templates fail when they encode someone else's retrieval strategy; Ferreira supports the retrieval-first mechanism, not template failure per se."
+    },
+    {
+      "id": "FERR-04",
+      "status": "corrected",
+      "quote": "participants' knowledge retrieval strategies significantly influence their content organization and maintenance",
+      "page": "72",
+      "inline": "(Ferreira et al., 2026, p. 72)",
+      "note": "Directionally supported but slightly overstated. The paper shows retrieval strategy shapes how PKBs are built and maintained ('planned retrieval methods strongly influence how PKBs are built and used', p. 73; four retrieval strategies detailed p. 74), and participant P5 frames value as future usefulness: 'you build information, but how did you concatenate it to be useful to you in the future' (p. 74). It does NOT evaluate whether systems 'work' or fail. Soften to: retrieval intent, not capture volume, is what shapes a working PKB (per Ferreira's findings)."
+    }
+  ]
+}
