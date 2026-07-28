@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Second Brain · final · engine skeleton</title>
+<title>Building a Second Brain · ITASIA302</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -135,6 +135,76 @@
   .panel.on .ph > *:nth-child(3) { transition-delay: 230ms; }
   .panel.on .ph > *:nth-child(4) { transition-delay: 320ms; }
 
+  /* ---- baked content styles ---- */
+  .body {
+    font-family: var(--sans); font-weight: 300; font-size: clamp(14.5px, 1.2vw, 17px);
+    line-height: 1.62; color: var(--ink); margin-top: 14px; max-width: 46ch;
+  }
+  .blist { list-style: none; margin-top: 14px; padding: 0; }
+  .blist li {
+    position: relative; padding-left: 18px; margin: 9px 0;
+    font-family: var(--sans); font-weight: 300; font-size: clamp(14px, 1.15vw, 16.5px);
+    line-height: 1.55; color: var(--ink);
+  }
+  .blist li::before {
+    content: ""; position: absolute; left: 0; top: 0.72em; width: 9px; height: 1px;
+    background: var(--amber);
+  }
+  .blist li em, .body em, .q em { font-style: italic; }
+  .cite {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.02em;
+    color: var(--faint);
+  }
+  .essay {
+    margin-top: 20px; padding-left: 16px;
+    border-left: 1px solid oklch(0.75 0.14 75 / 0.55);
+    font-family: var(--sans); font-weight: 300; font-size: clamp(13.5px, 1.1vw, 16px);
+    line-height: 1.62; color: var(--ink-3); max-width: 44ch;
+  }
+  .essay .elabel {
+    display: block; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.28em;
+    text-transform: uppercase; color: var(--amber); margin-bottom: 8px;
+  }
+  blockquote.q {
+    margin: 16px 0 0; font-family: var(--sans); font-weight: 300; font-style: italic;
+    font-size: clamp(16px, 1.5vw, 20px); line-height: 1.45; color: var(--ink);
+  }
+  blockquote.q .qsrc {
+    display: block; margin-top: 10px; font-style: normal; font-family: var(--mono);
+    font-size: 10px; letter-spacing: 0.06em; color: var(--faint);
+  }
+  .acard {
+    margin-top: 12px; padding: 11px 14px;
+    border: 1px solid oklch(0.35 0.02 264 / 0.7); border-radius: 2px;
+    background: oklch(0.13 0.018 264 / 0.55);
+  }
+  .acard .ak {
+    display: block; font-family: var(--mono); font-size: 9px; letter-spacing: 0.24em;
+    text-transform: uppercase; color: var(--faint); margin-bottom: 6px;
+  }
+  .acard .ak b { color: var(--amber); font-weight: 400; }
+  .acard .aclaim {
+    font-family: var(--sans); font-weight: 300; font-size: clamp(13px, 1.05vw, 15.5px);
+    line-height: 1.45; color: var(--ink);
+  }
+  .refs { list-style: none; margin-top: 16px; padding: 0; }
+  .refs li {
+    font-family: var(--sans); font-weight: 300; font-size: clamp(12px, 1vw, 14px);
+    line-height: 1.5; color: var(--ink); margin: 8px 0;
+    padding-left: 1.6em; text-indent: -1.6em;
+  }
+  .refs li i { font-style: italic; }
+  .refnote {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.05em;
+    line-height: 1.6; color: var(--faint); margin-top: 14px;
+  }
+  .tall .ph { max-width: 64ch; }
+  .tall .ph .scrollbox { max-height: 66vh; overflow-y: auto; padding-right: 10px; }
+  .panel.on .ph > *:nth-child(5) { transition-delay: 400ms; }
+  .panel.on .ph > *:nth-child(6) { transition-delay: 470ms; }
+  .panel.on .ph > *:nth-child(7) { transition-delay: 540ms; }
+  .panel.on .ph > *:nth-child(8) { transition-delay: 600ms; }
+
   #hint { position: fixed; bottom: clamp(48px, 8vh, 70px); left: 50%; transform: translateX(-50%);
     z-index: 6; font-family: var(--mono); font-size: 10px; letter-spacing: 0.34em; text-transform: uppercase;
     color: var(--faint); pointer-events: none; transition: opacity 600ms var(--e-out); }
@@ -166,95 +236,232 @@
 <main id="panels">
   <!-- 18 placeholder beat panels, narrative order = index order. Prose lands in a later phase. -->
   <section class="panel side-c" id="b0" data-beat="0"><div class="ph">
-    <p class="kick">Beat 00 / 17 <i>·</i> Hero</p>
-    <h2>HERO</h2>
-    <p class="note">formation: drift, calm ambient cloud</p>
-    <p class="ghost">Placeholder panel. Final prose is baked in the copy phase.</p>
+    <p class="kick">Second Brain <i>·</i> Final Essay</p>
+    <h2>Building a<br><span class="sig">Second Brain</span></h2>
+    <p class="note">( for real this time )</p>
+    <p class="ghost">One system, tested against a real master's thesis. What personal knowledge management is, why the hype deserves suspicion, what I built instead, and what the vault looks like tonight.</p>
+    <p class="note">Zettelkasten · ITASIA302 · filed August 2026</p>
   </div></section>
   <section class="panel side-l" id="b1" data-beat="1"><div class="ph">
-    <p class="kick">Beat 01 / 17 <i>·</i> Context</p>
-    <h2>CONTEXT</h2>
-    <p class="note">formation: drift tightened, slow push-in</p>
+    <p class="kick">01 / 17 <i>·</i> Context</p>
+    <h2>Not a <span class="sig">hobby system</span></h2>
+    <ul class="blist">
+      <li>I am writing a master's thesis: how teachers acquire TPACK, the knowledge that folds technology into real teaching <span class="cite">(Mishra &amp; Koehler, 2006)</span>. Japan's GIGA School Program, compared with Bangkok's BMA pilot classrooms.</li>
+      <li>Fieldwork is underway: participant observation at Spradley's passive-participation level, with retrospective ethnographic interviews <span class="cite">(Spradley, 1980, pp. 58-59)</span>.</li>
+      <li>That means 112 processed literature notes, two research sites, two languages, and arguments that must hold together for two years.</li>
+      <li>The vault tonight: 2,163 atoms · 58 molecules · 9,121 links.</li>
+    </ul>
+    <div class="essay"><span class="elabel">Field note</span>I did not start this project because I love note apps. I started it because my thesis reading list stopped fitting in my head. A paper I read in March has to survive until a chapter I write in November, and "I will remember it" has already failed me twice. Watching T-sensei teach in a classroom full of tablets gave me the same lesson from the other side: expertise is not how much you hold, it is what you can reach for at the right moment. So I stopped collecting and started building for reach.</div>
   </div></section>
   <section class="panel side-r" id="b2" data-beat="2"><div class="ph">
-    <p class="kick">Beat 02 / 17 <i>·</i> PKM</p>
-    <h2>PKM</h2>
-    <p class="note">formation: core shell, inward convergence</p>
+    <p class="kick">02 / 17 <i>·</i> Personal Knowledge Management</p>
+    <h2>What is <span class="sig">PKM</span>?</h2>
+    <ul class="blist">
+      <li>A real system for your own knowledge: collect, store, <em>retrieve</em>. The point is custody. You run it, not a company.</li>
+      <li>The term is young: it traces to Frand and Hixson's paper at EDUCOM '98 <span class="cite">(Frand &amp; Hixson, 1998)</span>. The habit is centuries old: Leonardo left more than 7,000 notebook pages mixing anatomy, engineering, and art <span class="cite">(Isaacson, 2017)</span>; Luhmann's slip-box grew to some 90,000 cards <span class="cite">(Schmidt, 2016)</span>.</li>
+      <li>In 1945 Vannevar Bush imagined the Memex: a desk that stored everything you read and pulled it back along associative trails. The dream was never storage. It was retrieval <span class="cite">(Bush, 1945, sect. 6)</span>.</li>
+      <li>Once Drucker introduced the idea of knowledge work, managing what you know stopped being optional <span class="cite">(Drucker, 1959)</span>.</li>
+    </ul>
+    <div class="essay"><span class="elabel">Field note</span>The library-versus-pile image is the one that finally landed for me. Both hold all your books. Only one gives you the right book before a deadline. For most of my degree I owned a pile and called it a library. The difference is not effort or discipline. It is whether the system is built for putting things in or for getting things back out.</div>
   </div></section>
   <section class="panel side-l" id="b3" data-beat="3"><div class="ph">
-    <p class="kick">Beat 03 / 17 <i>·</i> Second Brain</p>
-    <h2>SECOND BRAIN</h2>
-    <p class="note">formation: core, orbiting satellite ring</p>
+    <p class="kick">03 / 17 <i>·</i> Second Brain</p>
+    <h2>And a <span class="sig">second brain</span>?</h2>
+    <ul class="blist">
+      <li>The famous version of the idea. Forte defines it as "a digital archive of your most valuable memories, ideas, and knowledge" <span class="cite">(Forte, 2022, p. 4)</span>.</li>
+      <li>But storage is not the point. A folder of saved articles is a digital attic. It is supposed to be a <em>thinking partner</em>.</li>
+    </ul>
+    <blockquote class="q">"For Otto, his notebook plays the role usually played by a biological memory."
+      <span class="qsrc">Clark &amp; Chalmers, 1998, p. 12 · The Extended Mind</span>
+    </blockquote>
+    <p class="body">If Otto trusts his notebook and reaches for it the way you reach for memory, the notebook becomes part of his mind. Moving what you know into a system you trust is not laziness. It is cognitive extension <span class="cite">(Clark &amp; Chalmers, 1998)</span>.</p>
+    <div class="essay"><span class="elabel">Field note</span>The extended mind argument is the philosophical permission slip I needed. I used to feel vaguely guilty about looking things up in my own notes, as if real understanding meant holding everything in my skull. The question is not whether the knowledge sits in my head or in the vault. The question is whether I trust the vault enough to reach for it without thinking. That trust has to be earned by the system, and most systems never earn it.</div>
   </div></section>
   <section class="panel side-r" id="b4" data-beat="4"><div class="ph">
-    <p class="kick">Beat 04 / 17 <i>·</i> Hype</p>
-    <h2>HYPE</h2>
-    <p class="note">formation: storm, turbulence ramp</p>
+    <p class="kick">04 / 17 <i>·</i> The Hype</p>
+    <h2>Everyone is <span class="sig">selling</span> a brain</h2>
+    <ul class="blist">
+      <li>Forte's book is widely read, and a creator economy now demos note-taking systems with skincare-routine energy.</li>
+      <li>The newest promise: AI makes it effortless. Research already maps the path from PKM to second brain to "personal AI companion" <span class="cite">(Aal &amp; Rüller, 2025)</span>.</li>
+      <li>Whether any of it makes you think <em>better</em> is a quieter question. The movement is practitioner-driven; the academic literature treats it as information management <span class="cite">(Jones, 2010)</span> or as speculative design <span class="cite">(Aal &amp; Rüller, 2025)</span>, not as measured evidence.</li>
+      <li>Jones states the deeper problem: "Knowledge can be managed only indirectly, through the management of information" <span class="cite">(Jones, 2010, Abstract)</span>. The knowing itself stays in a mind.</li>
+      <li>Two failure modes I know personally: the Productivity Trap, where upkeep eats the thinking, and the Collecting Habit, where the brain becomes an attic of other people's ideas.</li>
+    </ul>
+    <div class="essay"><span class="elabel">Field note</span>I am not writing this from above the hype. I bought in. I watched the setup videos, downloaded the templates, and rebuilt my vault three times to match other people's screenshots. Each rebuild felt like progress and produced nothing. The industry does not need the systems to work. It needs them to feel like they are about to. My project starts from the question the marketing never answers: where is the proof?</div>
   </div></section>
   <section class="panel side-c" id="b5" data-beat="5"><div class="ph">
-    <p class="kick">Beat 05 / 17 <i>·</i> Meme</p>
-    <h2>MEME</h2>
-    <p class="note">formation: grid drop, graveyard collapse</p>
+    <p class="kick">05 / 17 <i>·</i> The Meme</p>
+    <h2>A beautifully tagged <span class="sig">graveyard</span></h2>
+    <blockquote class="q">The people who sell you a "second brain" often cannot remember where their own car keys are. The partner who quietly tracks the keys, the glasses, and the appointments was the original second brain all along.
+      <span class="qsrc">paraphrased from a widely shared meme; original author unidentified</span>
+    </blockquote>
+    <ul class="blist">
+      <li>I came to this through failure, not theory. Organizing was always a job for <em>Future Me</em>, who never showed up.</li>
+      <li>The industry's answer is always the next template, the next app.</li>
+      <li>Now the stakes are real: a master's thesis does not fit in one head.</li>
+      <li>So: is the failure mine, or the <em>method's</em>?</li>
+    </ul>
+    <div class="essay"><span class="elabel">Field note</span>My vault had beautiful tags and dead notes. Nothing came back out. When I laughed at the car-keys meme I recognized myself in it, and that recognition is the honest starting point of this project. Either I am undisciplined, which is what the industry quietly implies with every new fix, or the capture-first method itself points the wrong way. A thesis is a good laboratory for that question, because a thesis punishes hoarding and rewards retrieval every single week.</div>
   </div></section>
   <section class="panel side-l" id="b6" data-beat="6"><div class="ph">
-    <p class="kick">Beat 06 / 17 <i>·</i> Building</p>
-    <h2>BUILDING</h2>
-    <p class="note">formation: lattice rising row by row</p>
+    <p class="kick">06 / 17 <i>·</i> What I Am Building</p>
+    <h2>A brain that <span class="sig">helps me think</span></h2>
+    <ul class="blist">
+      <li>Not a fancier filing cabinet. Small single-idea notes that connect into <em>arguments</em>.</li>
+      <li>Most advice obsesses over capture. But how people plan to retrieve is what shapes how their knowledge bases get built and used <span class="cite">(Ferreira et al., 2026, p. 72)</span>.</li>
+      <li>The memory research agrees: retrieval practice beats re-reading for long-term retention <span class="cite">(Roediger &amp; Karpicke, 2006)</span>.</li>
+      <li>So: retrieval first, then test the claim honestly.</li>
+    </ul>
+    <div class="essay"><span class="elabel">Field note</span>Retrieval-first is a design constraint, not a slogan. It changes small decisions. A note's filename becomes a full sentence, because future-me searches in sentences, not keywords. A note holds one idea, because two ideas in one file means one of them is unfindable. Every rule in my system exists to answer a single question: when I am writing at eleven at night, does the right idea come back?</div>
   </div></section>
   <section class="panel side-r" id="b7" data-beat="7"><div class="ph">
-    <p class="kick">Beat 07 / 17 <i>·</i> Stack</p>
-    <h2>STACK</h2>
-    <p class="note">formation: strata, five layers, camera dolly</p>
+    <p class="kick">07 / 17 <i>·</i> The Stack</p>
+    <h2>The <span class="sig">tools</span> I use</h2>
+    <p class="body">Five tools, in the order work moves through them. A source enters left, exits as a note you can find.</p>
+    <ul class="blist">
+      <li><em>Zotero</em> · capture. Every source enters with its PDF, metadata, and citekey; a structured import note drops into the vault inbox.</li>
+      <li><em>Obsidian</em> · the vault. Plain-text notes linked into a graph, reached by search and backlink, not folders.</li>
+      <li><em>Claude Code</em> · the operator. Reads the literature note, opens the PDF, runs extraction, verifies every candidate against the source.</li>
+      <li><em>NotebookLM</em> · the extractor. Focused queries that can only answer from the given source, so claims stay honest.</li>
+      <li><em>Notion</em> · the calendar. Chapters, milestones, deadlines, linked back by citekey. Obsidian is the brain. Notion is the calendar.</li>
+    </ul>
+    <div class="essay"><span class="elabel">Field note</span>The stack looks like tool clutter until you notice each tool holds a different kind of trust. Zotero I trust with provenance. Obsidian I trust with meaning. The AI layer I deliberately do not trust: everything it extracts gets checked against the source page before it becomes an atom. That distrust is a feature. An assistant that can only answer from the paper in front of it cannot invent my thesis for me.</div>
   </div></section>
   <section class="panel side-l" id="b8" data-beat="8"><div class="ph">
-    <p class="kick">Beat 08 / 17 <i>·</i> Zettelkasten</p>
-    <h2>ZETTELKASTEN</h2>
-    <p class="note">formation: cabinet, card slots deep in z</p>
+    <p class="kick">08 / 17 <i>·</i> Zettelkasten</p>
+    <h2>The <span class="sig">slip-box</span></h2>
+    <ul class="blist">
+      <li>By the time Luhmann wrote about his slip-box, he had worked with it for 26 years <span class="cite">(Luhmann, 1981, p. 223)</span>. Over its full life, 1951 to 1997, it grew to roughly 90,000 cards <span class="cite">(Schmidt, 2016)</span>.</li>
+      <li>Every slip carries a fixed number that never changes, and the filing deliberately runs against topical order <span class="cite">(Luhmann, 1981, pp. 223-224)</span>.</li>
+      <li>Each note "gains its quality from the network of references and back-references." Structure <em>emerges</em>. It is never imposed <span class="cite">(Luhmann, 1981, p. 225)</span>.</li>
+      <li>His precondition for communication: "the partners can surprise each other mutually." The box is a partner, a second memory <span class="cite">(Luhmann, 1981, pp. 222, 225)</span>.</li>
+      <li>Atom, molecule, alloy: my plain-text rebuild of that idea, with one rule Luhmann never wrote down: one idea per note.</li>
+    </ul>
+    <div class="essay"><span class="elabel">Field note</span>What convinced me was not the ninety thousand cards. It was that Luhmann treated the box as something worth talking to. A system you only feed is a diary. A system that talks back is a partner. My vault started talking back around the thousandth atom, when searches began returning notes I had honestly forgotten writing, connected in ways I had not planned. That moment is the entire sales pitch of the method, and no template can shortcut you to it.</div>
   </div></section>
   <section class="panel side-r" id="b9" data-beat="9"><div class="ph">
-    <p class="kick">Beat 09 / 17 <i>·</i> Method</p>
-    <h2>METHOD</h2>
-    <p class="note">formation: tiers, three horizontal bands</p>
+    <p class="kick">09 / 17 <i>·</i> The Method</p>
+    <h2>The <span class="sig">framework</span> I apply</h2>
+    <p class="body">A Zettelkasten built retrieval-first, not capture-first like Forte's CODE and PARA <span class="cite">(Forte, 2022, pp. 42-49, 87-111)</span>. Knowledge climbs three tiers. Nothing moves up until the tier below holds.</p>
+    <ul class="blist">
+      <li><em>Atom</em>. One idea, one exact quote, one source. The filename is the claim as a full sentence, so search alone can find it. The vault holds 2,163.</li>
+      <li><em>Molecule</em>. Two to five atoms on a shared theme. No new claims, only the relations between existing ones.</li>
+      <li><em>Alloy</em>. An original, thesis-grade synthesis. It can never be drafted directly from a source.</li>
+    </ul>
+    <div class="essay"><span class="elabel">Field note</span>Forte's CODE moves material toward expression, and PARA sorts it by actionability. Both are capture-first at heart: they optimize the inbox. My tiers optimize the exit. The rule that nothing moves up until the tier below holds sounds bureaucratic, but it is the honesty mechanism of the whole system. An alloy built on unverified atoms is just an opinion with footnotes.</div>
   </div></section>
   <section class="panel side-l" id="b10" data-beat="10"><div class="ph">
-    <p class="kick">Beat 10 / 17 <i>·</i> Atom</p>
-    <h2><span class="sig">ATOM</span></h2>
-    <p class="note">formation: collapse, one amber node</p>
+    <p class="kick">10 / 17 <i>·</i> Atom</p>
+    <h2>Capture <span class="sig">one idea</span></h2>
+    <ul class="blist">
+      <li>One claim, in my words. The exact quote and source sit underneath.</li>
+      <li>If it fits a clean filename, it is atomic. If not, it is two ideas wearing one coat.</li>
+      <li>The filename <em>is</em> the claim, so search finds the thought, not the book.</li>
+    </ul>
+    <div class="acard">
+      <span class="ak">atom · verified · <b>live from the vault</b></span>
+      <p class="aclaim">Friction is feedback that generates moral awareness and preserves human agency.</p>
+      <blockquote class="q" style="font-size:15px;margin-top:8px;">"Friction isn't failure. Friction is feedback."
+        <span class="qsrc">Selsbæk-Reitz, 2026, p. 91</span>
+      </blockquote>
+    </div>
+    <div class="essay"><span class="elabel">Field note</span>Atomicity is the discipline I resisted longest and need most. My old notes were summaries: five ideas braided together, none of them findable. Splitting feels wasteful in the moment, like using five envelopes for five sentences. Then the payoff arrives months later, when one of those sentences is exactly the missing piece of an argument, and its filename walks it straight into my search results. This atom on screen earned its stamp the honest way: an earlier draft of this essay mislabeled its source, and the verification pass caught it.</div>
   </div></section>
   <section class="panel side-r" id="b11" data-beat="11"><div class="ph">
-    <p class="kick">Beat 11 / 17 <i>·</i> Molecule</p>
-    <h2>MOLECULE</h2>
-    <p class="note">formation: real cluster, edges draw in</p>
+    <p class="kick">11 / 17 <i>·</i> Molecule</p>
+    <h2>Link into a <span class="sig">molecule</span></h2>
+    <ul class="blist">
+      <li>Two to five atoms on a shared theme, linked into one note.</li>
+      <li>It adds no new claims, only the <em>relations</em>.</li>
+      <li>Never filed under a folder I chose. The grouping emerges, the way Luhmann described a note gaining its quality from the network around it <span class="cite">(Luhmann, 1981, p. 225)</span>.</li>
+      <li>Pattern recognition stops being a feeling and becomes a thing I can <em>open</em>.</li>
+    </ul>
+    <div class="essay"><span class="elabel">Field note</span>A molecule is the note I write when I catch myself thinking "these three papers are secretly about the same thing." Before this system, that thought evaporated by morning. Now it becomes a file with three links and a name. The no-new-claims rule matters: a molecule that smuggles in its own assertions is an essay in disguise, and essays belong one tier up, where they must earn their evidence.</div>
   </div></section>
   <section class="panel side-l" id="b12" data-beat="12"><div class="ph">
-    <p class="kick">Beat 12 / 17 <i>·</i> Alloy</p>
-    <h2>ALLOY</h2>
-    <p class="note">formation: two clusters merge, amber hubs</p>
+    <p class="kick">12 / 17 <i>·</i> Alloy</p>
+    <h2>Fuse into an <span class="sig">alloy</span></h2>
+    <ul class="blist">
+      <li>Molecules fuse into a thesis-grade synthesis no single source could hand me.</li>
+      <li>The metaphor is metallurgy: solute atoms of a different size strain the lattice, and the alloy comes out harder than either pure metal <span class="cite">(Callister &amp; Rethwisch, 2018, sect. 7.9)</span>.</li>
+      <li>The argument holds <em>because</em> unlike ideas were forced together.</li>
+      <li>This is where the research output lives.</li>
+    </ul>
+    <div class="essay"><span class="elabel">Field note</span>I chose the metallurgy metaphor over the usual gardening one on purpose. Gardens grow if you water them. Alloys require heat and pressure and unlike materials, which is what synthesis actually feels like. The arguments I trust most in my thesis are the ones where a Japanese survey, a Bangkok observation, and a twenty-year-old framework paper all push against each other and something harder than any of them comes out.</div>
   </div></section>
-  <section class="panel side-r" id="b13" data-beat="13"><div class="ph">
-    <p class="kick">Beat 13 / 17 <i>·</i> Case Study</p>
-    <h2>CASE STUDY</h2>
-    <p class="note">formation: real layout, framed close</p>
+  <section class="panel side-r tall" id="b13" data-beat="13"><div class="ph">
+    <p class="kick">13 / 17 <i>·</i> Case Study</p>
+    <h2>The method on a <span class="sig">real thesis problem</span></h2>
+    <div class="scrollbox">
+    <p class="body">Not a demo. These are live notes from my fieldwork, exactly as they sit in the vault.</p>
+    <div class="acard"><span class="ak">atom · fieldwork</span><p class="aclaim">Teacher A frames science and ICT as well matched because the subject centers on observation and recording.</p></div>
+    <div class="acard"><span class="ak">atom · fieldwork</span><p class="aclaim">Teacher A can state criteria for choosing analog over digital, but ultimately grounds the preference in tacit sensory judgment.</p></div>
+    <div class="acard"><span class="ak">atom · fieldwork</span><p class="aclaim">A teaching move the observer read as deliberate pedagogy, Teacher A describes as not consciously intended.</p></div>
+    <div class="acard"><span class="ak">atom · literature</span><p class="aclaim">Expert teachers in one-to-one classrooms give clear reasons for when not to use ICT; novices barely can <span class="cite">(Yagisawa &amp; Horita, 2017, p. 87)</span>.</p></div>
+    <div class="acard"><span class="ak">atom · literature</span><p class="aclaim">Japanese experts apply a "harmonious attitude" (調和的態度): switching between traditional and ICT-based instruction as a mature strategy <span class="cite">(Yagisawa &amp; Horita, 2017)</span>.</p></div>
+    <div class="acard"><span class="ak">atom · literature</span><p class="aclaim">Novices and veterans alike treat classroom discipline as the prerequisite for ICT integration <span class="cite">(Yagisawa &amp; Horita, 2017)</span>.</p></div>
+    <p class="body" style="margin-top:18px;"><em>The molecule they form:</em> selective non-use of ICT is an advanced, partly tacit form of TPACK. Teacher A enacts the discrimination without naming it; Yagisawa's veterans name it but ground it in the same situational judgment. Two levels of articulacy, one competence. The tension: "a large part of any culture consists of tacit knowledge" <span class="cite">(Spradley, 1979/2016, p. 9)</span>, so this competence may be invisible to surveys and to formal training design. And the discipline finding sharpens the claim: part of "when not to use" is baseline craft shared by novices, so only the situational discernment layer counts as advanced.</p>
+    <p class="body">The literature says this gap is real. Observed lessons run 64.1 percent technological-pedagogical knowledge, while fully integrated TPCK appears in about 1 percent <span class="cite">(Yagisawa &amp; Horita, 2019, p. 36)</span>. Experience-linked differences in ICT awareness persist into the GIGA era <span class="cite">(Sakakibara et al., 2025, pp. 51-52)</span>. The framework itself blurs in practice, packaged "much too big" and "too small" at once <span class="cite">(Brantley-Dias &amp; Ertmer, 2013, p. 104)</span>; empirically, only the technology domain separates cleanly <span class="cite">(Archambault &amp; Barnett, 2010, p. 1659)</span>; and "very little theoretical development of the model has occurred" <span class="cite">(Graham, 2011, p. 1954)</span>. My molecule sits exactly in that gap.</p>
+    <div class="acard" style="border-color:oklch(0.75 0.14 75 / 0.5);"><span class="ak"><b>alloy · forming now</b></span><p class="aclaim" style="font-style:italic;">Knowing when not to use ICT as the mark of integrated TPACK.</p><p class="aclaim" style="font-size:12.5px;color:var(--ink-3);margin-top:6px;">A chapter-grade argument the system surfaced. No single source contains it.</p></div>
+    <div class="essay"><span class="elabel">Field note</span>This section is the reason the project exists. I watched Teacher A run a science lesson with the tablets closed, and my first note called it a limitation. The interview corrected me: she could name her criteria for going analog, then admitted the real reason was sensory, something she could feel and not fully say. Six atoms, one molecule, and a forming alloy later, that moment is becoming a thesis chapter about expertise the surveys cannot see. The vault did not just store the observation. It kept pushing it against the literature until it became an argument.</div>
+    </div>
   </div></section>
   <section class="panel side-l" id="b14" data-beat="14"><div class="ph">
-    <p class="kick">Beat 14 / 17 <i>·</i> Pipeline</p>
-    <h2>PIPELINE</h2>
-    <p class="note">formation: real, edge pulse traveling</p>
+    <p class="kick">14 / 17 <i>·</i> Current State</p>
+    <h2>Where I <span class="sig">am</span> now</h2>
+    <p class="body">One source, transformed by hand across seven steps: Zotero capture, Obsidian literature note, extraction with verification against the source page, atoms, molecules, alloys, Notion. A paper enters as a PDF. It leaves as a dated chapter draft.</p>
+    <ul class="blist">
+      <li>A typical run: candidates 7, verified 5, rejected 2. The rejections are the point.</li>
+      <li>The atoms on screen behind this text are real, including the four distilled from the book this project studies <span class="cite">(Forte, 2022, pp. 54, 179, 180, 236)</span>.</li>
+      <li>The vault tonight: 3,066 linked notes, 9,121 links. Counts computed 2026-07-28 by the project's own parse script over the live vault.</li>
+    </ul>
+    <div class="essay"><span class="elabel">Field note</span>The pipeline is where I use AI, and where I learned to bound it. NotebookLM answers only from the paper it is given. Claude proposes, but the accept-reject decision runs against the source page. An extraction pipeline without a rejection step is a rumor mill. The seven steps look slow. They are the reason this essay can cite its own claims down to the page.</div>
   </div></section>
   <section class="panel side-c" id="b15" data-beat="15"><div class="ph">
-    <p class="kick">Beat 15 / 17 <i>·</i> Thesis</p>
-    <h2>THE <span class="sig">VAULT</span></h2>
-    <p class="note">formation: full real graph, edges lit, slow rotate</p>
+    <p class="kick">15 / 17 <i>·</i> Working Thesis</p>
+    <h2>The <span class="sig">vault</span>, and its claim</h2>
+    <blockquote class="q">Retrieval-first organization explains why capture-first Personal Knowledge Management templates keep failing their users. My thesis is the test case.</blockquote>
+    <p class="body">Three sources carry it. Forte (2022): the book that made capture-first a movement, studied here rather than leaned on. Luhmann (1981): the slip-box as a partner that surprises, proof the retrieval-first idea is older than the apps. Ferreira et al. (2026): field evidence that "the strategy participants use to create and organize their knowledge is strongly related to their intended retrieval strategy" <span class="cite">(p. 74)</span>. Templates fail when they encode someone else's retrieval strategy.</p>
+    <div class="essay"><span class="elabel">Field note</span>The thesis sentence changed while writing this essay, and I want to show that rather than hide it. The verification pass caught my earlier wording claiming more than Ferreira's study supports. The corrected sentence is smaller and stronger: it claims what the sources actually carry, and it names my own thesis as the experiment. A system that makes your claims shrink toward what you can prove is a system that is working.</div>
   </div></section>
   <section class="panel side-c" id="b16" data-beat="16"><div class="ph">
-    <p class="kick">Beat 16 / 17 <i>·</i> End</p>
-    <h2>END</h2>
-    <p class="note">formation: dissolve back to drift</p>
+    <p class="kick">16 / 17 <i>·</i> End</p>
+    <h2>The box stays <span class="sig">open</span></h2>
+    <p class="ghost">and it answers back.</p>
+    <p class="note">ITASIA302 · personal project · August 2026</p>
   </div></section>
-  <section class="panel side-l" id="b17" data-beat="17"><div class="ph">
-    <p class="kick">Beat 17 / 17 <i>·</i> Works Cited</p>
-    <h2>WORKS CITED</h2>
-    <p class="note">formation: near-static dim backdrop</p>
+  <section class="panel side-l tall" id="b17" data-beat="17"><div class="ph">
+    <p class="kick">17 / 17 <i>·</i> Works Cited</p>
+    <h2>References</h2>
+    <div class="scrollbox">
+    <ol class="refs">
+      <li>Aal, K., &amp; Rüller, S. (2025). From personal knowledge management to the second brain to the personal AI companian [sic]. In <i>Companion Proceedings of the 2025 ACM International Conference on Supporting Group Work (GROUP '25 Companion)</i> (pp. 90-93). ACM. https://doi.org/10.1145/3688828.3699647</li>
+      <li>Archambault, L. M., &amp; Barnett, J. H. (2010). Revisiting technological pedagogical content knowledge: Exploring the TPACK framework. <i>Computers &amp; Education, 55</i>(4), 1656-1662. https://doi.org/10.1016/j.compedu.2010.07.009</li>
+      <li>Brantley-Dias, L., &amp; Ertmer, P. A. (2013). Goldilocks and TPACK: Is the construct "just right?" <i>Journal of Research on Technology in Education, 46</i>(2), 103-128. https://doi.org/10.1080/15391523.2013.10782615</li>
+      <li>Bush, V. (1945, July). As we may think. <i>The Atlantic Monthly, 176</i>(1), 101-108.</li>
+      <li>Callister, W. D., Jr., &amp; Rethwisch, D. G. (2018). <i>Materials science and engineering: An introduction</i> (10th ed.). Wiley.</li>
+      <li>Clark, A., &amp; Chalmers, D. (1998). The extended mind. <i>Analysis, 58</i>(1), 7-19. https://doi.org/10.1093/analys/58.1.7</li>
+      <li>Drucker, P. F. (1959). <i>Landmarks of tomorrow.</i> Harper &amp; Brothers.</li>
+      <li>Ferreira, J. J., Segura, V., Souza, J. G., &amp; Brasil, J. H. G. (2026). How people manage knowledge in their "second brains": A case study with industry researchers using Obsidian. In C. Ardito et al. (Eds.), <i>Human-computer interaction: INTERACT 2025</i> (LNCS Vol. 16111, pp. 72-76). Springer. https://doi.org/10.1007/978-3-032-05008-3_15</li>
+      <li>Forte, T. (2022). <i>Building a second brain: A proven method to organize your digital life and unlock your creative potential.</i> Profile Books.</li>
+      <li>Frand, J. L., &amp; Hixson, C. G. (1998, October 15). <i>Personal knowledge management: Who? What? Why? When? Where? How?</i> [Paper presentation]. EDUCOM '98, Orlando, FL, United States.</li>
+      <li>Graham, C. R. (2011). Theoretical considerations for understanding technological pedagogical content knowledge (TPACK). <i>Computers &amp; Education, 57</i>(3), 1953-1960. https://doi.org/10.1016/j.compedu.2011.04.010</li>
+      <li>Isaacson, W. (2017). <i>Leonardo da Vinci.</i> Simon &amp; Schuster.</li>
+      <li>Jones, W. (2010). No knowledge but through information. <i>First Monday, 15</i>(9). https://doi.org/10.5210/fm.v15i9.3062</li>
+      <li>Luhmann, N. (1981). Kommunikation mit Zettelkästen: Ein Erfahrungsbericht [Communicating with slip boxes: An empirical account]. In H. Baier, H. M. Kepplinger, &amp; K. Reumann (Eds.), <i>Öffentliche Meinung und sozialer Wandel</i> (pp. 222-228). Westdeutscher Verlag. [In German]</li>
+      <li>Luhmann, N. (n.d.). <i>Communicating with slip boxes: An empirical account</i> (M. Kuehn, Trans.). https://luhmann.surge.sh/communicating-with-slip-boxes (Original work published 1981)</li>
+      <li>Mishra, P., &amp; Koehler, M. J. (2006). Technological pedagogical content knowledge: A framework for teacher knowledge. <i>Teachers College Record, 108</i>(6), 1017-1054. https://doi.org/10.1111/j.1467-9620.2006.00684.x</li>
+      <li>Roediger, H. L., III, &amp; Karpicke, J. D. (2006). Test-enhanced learning: Taking memory tests improves long-term retention. <i>Psychological Science, 17</i>(3), 249-255. https://doi.org/10.1111/j.1467-9280.2006.01693.x</li>
+      <li>Sakakibara, N., Abe, M., Sekihara, M., Oshima, T., Kiryu, T., &amp; Mizuochi, Y. (2025). GIGA sukuru koso no shinchoku ni okeru seika ya kadai ni kansuru kyoshoku keiken ni motozuku kyoin no ishiki [Teachers' perceptions based on teaching experience regarding the achievements and challenges in the progress of the GIGA School Initiative]. <i>Nihon Kyoiku Kogakkai Ronbunshi, 49</i>(1), 43-54. https://doi.org/10.15077/jjet.48089 [In Japanese]</li>
+      <li>Schmidt, J. F. K. (2016). Niklas Luhmann's card index: Thinking tool, communication partner, publication machine. In A. Cevolini (Ed.), <i>Forgetting machines: Knowledge management evolution in early modern Europe</i> (pp. 289-311). Brill. https://doi.org/10.1163/9789004325258_014</li>
+      <li>Selsbæk-Reitz, S. (2026). <i>Promptism: Fluent machines, forgotten questions, and the fight for meaning in the age of AI.</i> [Publisher not identified]</li>
+      <li>Spradley, J. P. (1980). <i>Participant observation.</i> Holt, Rinehart and Winston.</li>
+      <li>Spradley, J. P. (2016). <i>The ethnographic interview.</i> Waveland Press. (Original work published 1979)</li>
+      <li>Yagisawa, F., &amp; Horita, T. (2017). Ichinin ichidai tanmatsu no kankyo ni okeru wakate kyoshi to beteran kyoshi no ICT katsuyo ni taisuru ishiki hikaku [Comparison of teachers' awareness for ICT use between novices and experts in 1:1 elementary education]. <i>Kyoiku Media Kenkyu, 23</i>(2), 83-94. https://doi.org/10.24458/jaems.23.2_83 [In Japanese]</li>
+      <li>Yagisawa, F., &amp; Horita, T. (2019). Jido ga joho tanmatsu o katsuyo suru jugyo ni oite mochiirareru kyoshi no chishiki [The teachers' knowledge of 1-to-1 elementary education: The typing and subdivision by TPACK]. <i>Kyoiku Media Kenkyu, 25</i>(2), 29-43. https://doi.org/10.24458/jaems.25.2_29 [In Japanese]</li>
+    </ol>
+    <p class="refnote">The car-keys meme in section 05 is paraphrased from a widely shared internet meme; the original author could not be identified. Vault statistics were computed on 2026-07-28 by parse_vault.py over the live Obsidian vault. Claims in this essay were verified against the cited sources; where a figure lives in secondary literature (the 90,000-card count) the secondary source is cited.</p>
+    </div>
   </div></section>
 </main>
 
