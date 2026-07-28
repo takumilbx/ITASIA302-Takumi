@@ -8,7 +8,7 @@
   1. Zotero · capture: PDF attaches, metadata pulls, citekey generates as authorYEAR. A structured import note drops into the vault inbox.
   2. Obsidian · process: the import becomes @FERREIRA2026.md with four fixed sections: Main Argument, Methodology, Key Findings, Atoms Extracted. Everything downstream reads from this one file.
   3. Claude + NotebookLM · extract: terminal run, candidates proposed, each verified against the source page before acceptance. candidates: 7, verified: 5, rejected: 2.
-  4. Atoms · land: each verified claim becomes its own file, filename as full sentence. Stat card: 3,011 notes / 8,781 links [cite:VAULT-01].
+  4. Atoms · land: each verified claim becomes its own file, filename as full sentence. Stat card: 3,066 notes / 9,121 links [cite:VAULT-01].
   5. Molecule · cluster: two to five atoms sharing a theme pull into a connection note. No new claims, only relations.
   6. Alloy · fuse: a synthesis that can never be drafted directly from one source.
   7. Notion · surface: each alloy shows up as a chapter draft, a fieldwork milestone, or an argument that needs one more source. Brain versus calendar.

@@ -38,6 +38,6 @@
     {"id": "WEB-10", "beat": 2, "claim": "Leonardo da Vinci's notebooks as historical PKM precedent; find a citable source or soften to common-knowledge framing", "source": "tbd", "kind": "paraphrase", "needs_page": false, "status": "pending"},
     {"id": "WEB-11", "beat": 13, "claim": "Graham 2011: TPACK described as needing stronger theoretical development; it maps states rather than explaining how integrated judgment develops. Verify against local HTML snapshot", "source": "graham2011", "kind": "paraphrase", "needs_page": false, "status": "pending"},
     {"id": "WEB-12", "beat": 5, "claim": "The car-keys 'second brain' meme attribution to @nunoei; verify handle exists / keep 'paraphrased from' framing", "source": "nunoei-meme", "kind": "attribution", "needs_page": false, "status": "pending"},
-    {"id": "VAULT-01", "beat": 14, "claim": "Vault statistics: 3,011 linked notes, 2,163 atoms, 112 literature notes, 6 molecules, 8,781 unique links, as of 2026-07-28, computed by parse_vault.py + compact_vault.py. Needs provenance line only, no external source", "source": "self", "kind": "number", "needs_page": false, "status": "verified"}
+    {"id": "VAULT-01", "beat": 14, "claim": "Vault statistics: 3,066 linked notes, 2,163 atoms, 112 literature notes, 58 molecules, 9,121 unique links, as of 2026-07-28, computed by parse_vault.py + compact_vault.py. Needs provenance line only, no external source", "source": "self", "kind": "number", "needs_page": false, "status": "verified"}
   ]
 }

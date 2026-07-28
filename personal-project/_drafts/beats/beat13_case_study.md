@@ -4,11 +4,16 @@
 - Meta: 13 · Case Study
 - Headline: The method on a *real thesis problem*
 - Intro: Not a demo. These are live notes from my fieldwork, exactly as they sit in the vault.
-- Three atom cards (atom · fieldwork):
+- Atom cards, two rows (molecule now holds 6 atoms; show 3 fieldwork + 3 literature):
+  Row 1 · atom · fieldwork:
   1. Teacher A frames science and ICT as well matched because the subject centers on observation and recording. [cite:TPACK-04]
   2. Teacher A can state criteria for choosing analog over digital, but grounds the preference in tacit sensory judgment. [cite:TPACK-04]
   3. A teaching move the observer read as deliberate pedagogy, Teacher A describes as not consciously intended. [cite:TPACK-04]
-- Molecule block: Selective *non-use* of ICT is an advanced, partly tacit form of TPACK. The tension it exposes: if the competence is tacit, it may be invisible to surveys and to formal training design [cite:SPRA-01]. Yagisawa finds technological-pedagogical knowledge dominant in 64.1 percent of observed cases, and fully integrated TPACK in about 1 percent [cite:YAGI-01] [cite:YAGI-02]. In one sustained one-to-one classroom study, veterans were distinguished less by how they used ICT than by their judgment of when not to [cite:YAGI-03, small-n case study, keep hedged]. Experience-linked differences persist into the GIGA era [cite:SAKA-01, corrected scope: differences persist, NOT veteran-judgment support].
+  Row 2 · atom · literature:
+  4. Expert teachers in one-to-one classrooms deliberately choose when not to use ICT: intentional pedagogical discernment. [cite:YAGI-03]
+  5. Expert teachers in Japan apply a "harmonious attitude" (調和的態度), switching between traditional and ICT-based instruction as a mature TPACK strategy. [cite:YAGI-03]
+  6. Novices and veterans alike treat classroom discipline as the prerequisite for ICT integration. [cite:YAGI-03]
+- Molecule block: Selective *non-use* of ICT is an advanced, partly tacit form of TPACK. Teacher A enacts the discrimination without naming it; Yagisawa's veterans name it as "harmonious attitude" but ground it in the same situational judgment. Two levels of articulacy, one competence. The tension: if the competence is tacit, it may be invisible to surveys and to formal training design [cite:SPRA-01]. And the discipline finding sharpens the claim: part of "when not to use ICT" is baseline craft shared by novices, so only the situational discernment layer counts as advanced. Yagisawa finds technological-pedagogical knowledge dominant in 64.1 percent of observed cases, and fully integrated TPACK in about 1 percent [cite:YAGI-01] [cite:YAGI-02]. Experience-linked differences persist into the GIGA era [cite:SAKA-01, corrected scope].
 - Literature friction row: TPACK itself is contested ground. Its domains blur in practice, the "Goldilocks problem" [cite:TPACK-02]. Empirically, only the technology domain separates cleanly [cite:TPACK-03]. And the framework maps states rather than explaining how integrated judgment develops [cite:WEB-11]. My molecule sits exactly in that gap.
 - Alloy block (IN PROGRESS): Knowing when *not* to use ICT as the mark of integrated TPACK. A chapter-grade argument the system surfaced. No single source contains it.
 
