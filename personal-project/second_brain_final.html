@@ -724,23 +724,57 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
   function vw() { return (window.visualViewport && window.visualViewport.width) || window.innerWidth || 1280; }
   function vh() { return (window.visualViewport && window.visualViewport.height) || window.innerHeight || 800; }
 
-  // ---- beat layout: 18 beats, narrative order = array order, weighted slices ----
-  var WEIGHTS = [1, 1.2, 1, 1, 1, 1.2, 1, 1.6, 1.4, 1.4, 1.2, 1.3, 1.4, 2.2, 2.6, 1.6, 0.8, 1.4];
-  var NB = WEIGHTS.length;
-  var totalW = 0; for (var wi = 0; wi < NB; wi++) totalW += WEIGHTS[wi];
-  var BEATS = [];
-  (function () { var acc = 0; for (var i = 0; i < NB; i++) { var seg = WEIGHTS[i] / totalW; BEATS.push({ in: acc, out: acc + seg }); acc += seg; } BEATS[NB - 1].out = 1.0000001; })();
-  var BEAT_NAMES = ["HERO","CONTEXT","PKM","SECOND BRAIN","HYPE","MEME","BUILDING","STACK","ZETTELKASTEN","METHOD","ATOM","MOLECULE","ALLOY","CASE STUDY","PIPELINE","THESIS","END","WORKS CITED"];
-  var STATE_LABEL = ["drift","drift","converge","orbit","storm","graveyard","lattice","strata","cabinet","tiers","atom","molecule","alloy","case","pipeline","the vault","dissolve","archive"];
-
   // ---- easings: entrances outQuart, on-screen moves inOutCubic. Never ease-in alone
-  // (the one sanctioned exception: the beat 5 gravity drop uses inCubic by spec). ----
+  // (the one sanctioned exception: the meme beat's gravity drop uses inCubic by spec). ----
   function clamp01(t) { return t < 0 ? 0 : t > 1 ? 1 : t; }
   var outQuart = function (t) { return 1 - Math.pow(1 - t, 4); };
   var inOutCubic = function (t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
   var inCubic = function (t) { return t * t * t; };
   var outExpo = function (t) { return t >= 1 ? 1 : 1 - Math.pow(2, -10 * t); };
   var outBack = function (t) { var c1 = 1.20158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
+
+  // ---- the beat table -------------------------------------------------------------
+  // One row per beat, narrative order = array order. Everything the engine needs per
+  // beat lives here, and every beat is addressed by NAME (B.thesis, B.atom) rather than
+  // by a bare number, so inserting a beat is a one-row edit plus one <section> in the
+  // markup. `mol` scales the camera's look-at toward the demonstrated molecule; it is
+  // resolved once the real graph positions exist.
+  //
+  //   id            name            state         form      w    trans ease         rad  phi   theta lookY lookZ pan    hold  mol
+  var BEATS_DEF = [
+    ["hero",        "HERO",         "drift",      "DRIFT",   1,   1,    outQuart,    128, 1.45, 0.00,  0,    0,    0,     0.55, 0],
+    ["context",     "CONTEXT",      "drift",      "DRIFT2",  1.2, 0.5,  inOutCubic,  108, 1.42, 0.18,  0,    0,    0.16,  0.05, 0],
+    ["pkm",         "PKM",          "converge",   "SHELL",   1,   0.5,  outQuart,     82, 1.36, 0.38,  0,    0,   -0.18,  0.55, 0],
+    ["secondbrain", "SECOND BRAIN", "orbit",      "SHELL",   1,   0.4,  outQuart,     88, 1.30, 0.72,  0,    0,    0.10,  0.55, 0],
+    ["hype",        "HYPE",         "storm",      "STORM",   1,   0.5,  outQuart,    152, 1.52, 1.02,  0,    0,    0,     0.5,  0],
+    ["meme",        "MEME",         "graveyard",  "GRID",    1.2, 0.45, inCubic,     132, 0.66, 0.85, -26,   0,    0.05,  0.55, 0],
+    ["building",    "BUILDING",     "lattice",    "LATTICE", 1,   0.9,  outExpo,     122, 1.12, 1.35,  -4,   0,    0.18,  0.5,  0],
+    ["stack",       "STACK",        "strata",     "STRATA",  1.6, 0.5,  inOutCubic,   96, 1.48, 1.70,  0,    0,    0.22,  0.08, 0],
+    ["zettelkasten","ZETTELKASTEN", "cabinet",    "CABINET", 1.4, 0.5,  outBack,      74, 1.46, 2.35,  0,  -46,    0.12,  0.55, 0],
+    ["method",      "METHOD",       "tiers",      "TIERS",   1.4, 0.5,  outQuart,    118, 1.24, 2.85,  0,    0,   -0.14,  0.5,  0],
+    ["atom",        "ATOM",         "atom",       "ATOMC",   1.2, 0.45, outQuart,     42, 1.48, 3.10,  0,    0,    0.16,  0.62, 0],
+    ["molecule",    "MOLECULE",     "molecule",   "REAL",    1.3, 0.5,  outQuart,     34, 1.38, 3.30,  0,    0,   -0.18,  0.62, 1],
+    ["alloy",       "ALLOY",        "alloy",      "ALLOYM",  1.4, 0.4,  outQuart,     72, 1.42, 3.55,  0,    0,    0.14,  0.55, 0],
+    ["casestudy",   "CASE STUDY",   "case",       "REAL",    2.2, 0.45, inOutCubic,   58, 1.34, 3.80,  0,    0,   -0.16,  0.55, 0.5],
+    ["pipeline",    "PIPELINE",     "pipeline",   "REAL",    2.6, 0.4,  inOutCubic,   92, 1.30, 4.05,  2,    0,    0.16,  0.5,  0],
+    ["thesis",      "THESIS",       "the vault",  "REAL",    1.6, 0.35, outQuart,    150, 1.38, 4.40,  2,    0,    0,     0.6,  0],
+    ["end",         "END",          "dissolve",   "DRIFT",   0.8, 0.75, inOutCubic,  132, 1.44, 4.75,  0,    0,    0,     0.3,  0],
+    ["works",       "WORKS CITED",  "archive",    "DRIFT",   1.4, 0.4,  outQuart,    142, 1.46, 4.85,  0,    0,    0,     0.9,  0],
+  ];
+  var NB = BEATS_DEF.length;
+  var B = {};                       // B.thesis === 15, and stays right if a beat is inserted
+  for (var bi = 0; bi < NB; bi++) B[BEATS_DEF[bi][0]] = bi;
+  var col = function (i) { return BEATS_DEF.map(function (r) { return r[i]; }); };
+  var BEAT_NAMES  = col(1);
+  var STATE_LABEL = col(2);
+  var BEAT_FORM   = col(3);
+  var WEIGHTS     = col(4);
+  var TRANS       = col(5);
+  var MEASE       = col(6);
+
+  var totalW = 0; for (var wi = 0; wi < NB; wi++) totalW += WEIGHTS[wi];
+  var BEATS = [];
+  (function () { var acc = 0; for (var i = 0; i < NB; i++) { var seg = WEIGHTS[i] / totalW; BEATS.push({ in: acc, out: acc + seg }); acc += seg; } BEATS[NB - 1].out = 1.0000001; })();
   function lerp(a, b, t) { return a + (b - a) * t; }
 
   // resolved beat state, reused every frame (zero per-frame allocation)
@@ -906,9 +940,12 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
   var RINGSTEP = 16; // every 16th node joins the satellite ring on beat 3
 
   // formation per beat + morph-in window (fraction of the beat spent morphing)
-  var BEAT_FORM = ["DRIFT","DRIFT2","SHELL","SHELL","STORM","GRID","LATTICE","STRATA","CABINET","TIERS","ATOMC","REAL","ALLOYM","REAL","REAL","REAL","DRIFT","DRIFT"];
-  var TRANS = [1, 0.5, 0.5, 0.4, 0.5, 0.45, 0.9, 0.5, 0.5, 0.5, 0.45, 0.5, 0.4, 0.45, 0.4, 0.35, 0.75, 0.4];
-  var MEASE = [outQuart, inOutCubic, outQuart, outQuart, outQuart, inCubic, outExpo, inOutCubic, outBack, outQuart, outQuart, outQuart, outQuart, inOutCubic, inOutCubic, outQuart, inOutCubic, outQuart];
+  // BEAT_FORM / TRANS / MEASE are columns of BEATS_DEF, derived above.
+  (function checkForms() {
+    for (var i = 0; i < NB; i++) {
+      if (!F[BEAT_FORM[i]]) throw new Error("beat " + i + " (" + BEATS_DEF[i][0] + ") names an unknown formation: " + BEAT_FORM[i]);
+    }
+  })();
 
   // ---- THREE setup ----
   var canvas = document.getElementById("viz");
@@ -1098,18 +1135,28 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
 
   // ---- camera keyframes per beat (interpolated beat -> beat+1 by eased frac) ----
   var molCx = real[molIdx * 3], molCy = real[molIdx * 3 + 1], molCz = real[molIdx * 3 + 2];
+  // Camera keys are columns 7..14 of BEATS_DEF. `mol` (column 14) resolves here, now that
+  // the real graph positions exist: a non-zero value aims the look-at at the demonstrated
+  // molecule, scaled, which is how the molecule and case-study beats frame it.
+  // `hold` is the fraction of the beat the camera keeps its own frame before easing to the
+  // next key; low values create intra-beat moves (the context push-in, the stack dolly).
   var CAM = {
-    rad:   [128, 108, 82, 88, 152, 132, 122, 96, 74, 118, 42, 34, 72, 58, 92, 150, 132, 142],
-    phi:   [1.45, 1.42, 1.36, 1.30, 1.52, 0.66, 1.12, 1.48, 1.46, 1.24, 1.48, 1.38, 1.42, 1.34, 1.30, 1.38, 1.44, 1.46],
-    theta: [0.0, 0.18, 0.38, 0.72, 1.02, 0.85, 1.35, 1.70, 2.35, 2.85, 3.10, 3.30, 3.55, 3.80, 4.05, 4.40, 4.75, 4.85],
-    lookY: [0, 0, 0, 0, 0, -26, -4, 0, 0, 0, 0, molCy, 0, molCy * 0.5, 2, 2, 0, 0],
-    lookX: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, molCx, 0, molCx * 0.5, 0, 0, 0, 0],
-    lookZ: [0, 0, 0, 0, 0, 0, 0, 0, -46, 0, 0, molCz, 0, molCz * 0.5, 0, 0, 0, 0],
-    pan:   [0, 0.16, -0.18, 0.10, 0, 0.05, 0.18, 0.22, 0.12, -0.14, 0.16, -0.18, 0.14, -0.16, 0.16, 0, 0, 0],
-    // fraction of the beat the camera HOLDS its own frame before easing to the next key.
-    // Low values create intra-beat moves (beat 1 push-in, beat 7 strata dolly).
-    hold:  [0.55, 0.05, 0.55, 0.55, 0.5, 0.55, 0.5, 0.08, 0.55, 0.5, 0.62, 0.62, 0.55, 0.55, 0.5, 0.6, 0.3, 0.9],
+    rad: col(7), phi: col(8), theta: col(9),
+    lookY: BEATS_DEF.map(function (r) { return r[14] ? molCy * r[14] : r[10]; }),
+    lookX: BEATS_DEF.map(function (r) { return r[14] ? molCx * r[14] : 0; }),
+    lookZ: BEATS_DEF.map(function (r) { return r[14] ? molCz * r[14] : r[11]; }),
+    pan: col(12), hold: col(13),
   };
+  (function checkCam() {
+    for (var k in CAM) {
+      if (CAM[k].length !== NB) throw new Error("CAM." + k + " has " + CAM[k].length + " entries, expected " + NB);
+      for (var i = 0; i < NB; i++) {
+        if (typeof CAM[k][i] !== "number" || CAM[k][i] !== CAM[k][i]) {
+          throw new Error("CAM." + k + "[" + i + "] (" + BEATS_DEF[i][0] + ") is not a number");
+        }
+      }
+    }
+  })();
   var _look = new THREE.Vector3(), _right = new THREE.Vector3();
   var cs = { rad: CAM.rad[0], phi: CAM.phi[0], theta: CAM.theta[0], lookY: 0, lookX: 0, lookZ: 0, pan: 0 };
   var camT = { rad: 0, phi: 0, theta: 0, lookY: 0, lookX: 0, lookZ: 0, pan: 0 }; // reused target
@@ -1145,41 +1192,42 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
   var time = 0;
   function morph(beat, frac) {
     var A = F[BEAT_FORM[beat]];
-    var B = F[BEAT_FORM[Math.max(0, beat - 1)]];
+    var PREV = F[BEAT_FORM[Math.max(0, beat - 1)]];
     var blend = beat === 0 ? 1 : clamp01(frac / TRANS[beat]);
     var be = RM ? 1 : MEASE[beat](blend);
 
-    var isDrift = beat <= 1 || beat >= 16;
-    var isShell = beat === 2 || beat === 3;
-    var isReal = beat >= 11 && beat <= 15 && BEAT_FORM[beat] === "REAL";
+    var form = BEAT_FORM[beat];
+    var isDrift = form === "DRIFT" || form === "DRIFT2";
+    var isShell = form === "SHELL";
+    var isReal = form === "REAL";
     var spin = 0;
     if (!RM) {
       if (isDrift) spin = time * 0.045;
       else if (isShell) spin = time * 0.06;
-      else if (beat === 15) spin = time * 0.06;       // the payoff reveal: slow auto-rotate
+      else if (beat === B.thesis) spin = time * 0.06;  // the payoff reveal: slow auto-rotate
       else if (isReal) spin = time * 0.025;
     }
     var cy = Math.cos(spin), sy = Math.sin(spin);
 
-    // beat 4 storm: turbulence ramps with local progress
-    var stormAmp = (beat === 4 && !RM) ? (6 + 16 * outQuart(frac)) : 0;
-    // beat 3 satellite ring
-    var ringT = beat === 3 ? outQuart(clamp01((frac - 0.15) / 0.5)) : 0;
+    // hype storm: turbulence ramps with local progress
+    var stormAmp = (beat === B.hype && !RM) ? (6 + 16 * outQuart(frac)) : 0;
+    // second-brain satellite ring
+    var ringT = beat === B.secondbrain ? outQuart(clamp01((frac - 0.15) / 0.5)) : 0;
     var ringSpin = RM ? 0 : time * 0.35;
-    // beat 6 lattice: rows rise with outExpo stagger (per-node blend overrides global)
-    var lattice = beat === 6;
-    // beat 12 alloy: two lobes merge toward the shared core
-    var mergeT = beat === 12 ? inOutCubic(clamp01((frac - 0.15) / 0.6)) : 1;
-    var lobeOff = beat === 12 ? 30 * (1 - mergeT) : 0;
+    // building lattice: rows rise with outExpo stagger (per-node blend overrides global)
+    var lattice = beat === B.building;
+    // alloy: two lobes merge toward the shared core
+    var mergeT = beat === B.alloy ? inOutCubic(clamp01((frac - 0.15) / 0.6)) : 1;
+    var lobeOff = beat === B.alloy ? 30 * (1 - mergeT) : 0;
     var breathe = (isReal && !RM) ? (1 + Math.sin(time * 0.5) * 0.010) : 1;
 
     for (var i = 0; i < N; i++) {
       var j = i * 3;
       var t = be;
       if (lattice) t = RM ? 1 : outExpo(clamp01((frac * 1.7 - rowDelay[i] * 0.9) / 0.55));
-      var x = B[j] + (A[j] - B[j]) * t;
-      var y = B[j + 1] + (A[j + 1] - B[j + 1]) * t;
-      var z = B[j + 2] + (A[j + 2] - B[j + 2]) * t;
+      var x = PREV[j] + (A[j] - PREV[j]) * t;
+      var y = PREV[j + 1] + (A[j + 1] - PREV[j + 1]) * t;
+      var z = PREV[j + 2] + (A[j + 2] - PREV[j + 2]) * t;
       if (ringT && i % RINGSTEP === 0) {
         var ra = ringA[i] + ringSpin;
         x += (Math.cos(ra) * 36 - x) * ringT;
@@ -1204,30 +1252,30 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
   var edgeOp = 0, molOp = 0;
   function reveal(beat, frac) {
     var focus = 0, focSel = 0, amber = 0, op = 1, eop = 0, mop = 0, pulse = 0, emix = 0;
-    if (beat === 10) {            // ATOM: collapse, single amber hub, rest at 8%
+    if (beat === B.atom) {              // collapse, single accent hub, rest at 8%
       focus = outQuart(clamp01((frac - 0.2) / 0.4)); focSel = 0;
-    } else if (beat === 11) {     // MOLECULE: spotlight the real cluster, edges draw in
+    } else if (beat === B.molecule) {   // spotlight the real cluster, edges draw in
       focus = 1; focSel = outQuart(clamp01(frac / 0.25));
       mop = outQuart(clamp01((frac - 0.3) / 0.45)) * 0.75;
-    } else if (beat === 12) {     // ALLOY: release focus, ignite top-degree amber
+    } else if (beat === B.alloy) {      // release focus, ignite top-degree accent
       focus = 1 - outQuart(clamp01(frac / 0.3)); focSel = 1;
       mop = (1 - clamp01(frac / 0.2)) * 0.75;
       amber = outQuart(clamp01((frac - 0.35) / 0.4));
-    } else if (beat === 13) {     // CASE STUDY: real graph framed close, light edges
+    } else if (beat === B.casestudy) {  // real graph framed close, light edges
       amber = 1 - clamp01(frac / 0.3);
       eop = outQuart(clamp01((frac - 0.2) / 0.5)) * 0.14;
-    } else if (beat === 14) {     // PIPELINE: edge pulse traveling
+    } else if (beat === B.pipeline) {   // edge pulse traveling
       eop = 0.14 + outQuart(clamp01(frac / 0.4)) * 0.10;
       pulse = outQuart(clamp01((frac - 0.15) / 0.4));
-    } else if (beat === 15) {     // THESIS: full graph, edges at full opacity, amber glow
+    } else if (beat === B.thesis) {     // full graph, edges at full opacity, accent glow
       eop = 0.24 + outQuart(clamp01(frac / 0.35)) * 0.28;
       pulse = 1 - clamp01(frac / 0.3);
       emix = outQuart(clamp01((frac - 0.2) / 0.5));
-    } else if (beat === 16) {     // END: dissolve back to drift
+    } else if (beat === B.end) {        // dissolve back to drift
       eop = 0.52 * (1 - inOutCubic(clamp01(frac / 0.5)));
       emix = 1 - clamp01(frac / 0.4);
       op = 1 - frac * 0.4;
-    } else if (beat === 17) {     // WORKS CITED: near-static dim backdrop
+    } else if (beat === B.works) {      // near-static dim backdrop
       op = 0.6 - frac * 0.15;
     }
     mat.uniforms.uFocus.value = focus;
@@ -1337,7 +1385,7 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     var bb = beatAt(p);
     var beat = bb.beat, frac = bb.frac;
     // edge set choice: full only on the thesis beat and only while FPS is healthy
-    setEdgeSet((beat === 15 && !degraded) ? EFULL : ESPINE);
+    setEdgeSet((beat === B.thesis && !degraded) ? EFULL : ESPINE);
     morph(beat, frac);
     reveal(beat, frac);
     if (edgeOp > 0.001 && edgesDirty) syncEdges();      // skipped entirely on no-edge beats
@@ -1467,8 +1515,9 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
   // Seven landmarks. An eighteen-beat scroll piece with no way in but the wheel is a trap;
   // these seek the document, not the engine, so the scroll position stays truthful.
   var NAV = [
-    { b: 1,  t: "Context" }, { b: 2,  t: "PKM" },   { b: 4,  t: "Hype" },
-    { b: 9,  t: "Method" },  { b: 13, t: "Case" },  { b: 15, t: "Thesis" }, { b: 17, t: "Refs" },
+    { b: B.context, t: "Context" }, { b: B.pkm,      t: "PKM" },     { b: B.hype,   t: "Hype" },
+    { b: B.method,  t: "Method" },  { b: B.casestudy, t: "Case" },   { b: B.thesis, t: "Thesis" },
+    { b: B.works,   t: "Refs" },
   ];
   var navBtns = [];
   (function buildNav() {
@@ -1540,6 +1589,26 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     idx = Math.max(0, Math.min(NB - 1, idx | 0));
     var b = BEATS[idx];
     return window.__SEEK(b.in + (Math.min(b.out, 1) - b.in) * frac);
+  };
+  // Deterministic fingerprint of the whole visual state at a given progress. Used to prove
+  // that a refactor of the beat tables changed nothing: same input scroll, same numbers out.
+  // Reports the camera in its own spherical state, not world position: world position folds
+  // in a pan term scaled by viewport aspect, which would make the probe depend on window
+  // size. `time` is pinned so the spin-driven particle hash does not depend on wall clock.
+  window.__QA_FP = function (p) {
+    time = 12.34;
+    window.__SEEK(p);
+    var h = 0;
+    for (var i = 0; i < livePos.length; i += 97) {
+      h = (h * 31 + Math.round(livePos[i] * 100)) | 0;
+    }
+    var r = function (v) { return Math.round(v * 1000) / 1000; };
+    return [r(cs.rad), r(cs.phi), r(cs.theta), r(cs.pan),
+            r(cs.lookX), r(cs.lookY), r(cs.lookZ),
+            h, r(mat.uniforms.uOpac.value), r(mat.uniforms.uAmber.value),
+            r(mat.uniforms.uFocus.value), r(mat.uniforms.uFocSel.value),
+            r(eMat.uniforms.uOpac.value), r(eMat.uniforms.uPulse.value),
+            r(eMat.uniforms.uMix.value), r(mMat.uniforms.uOpac.value), eCount].join(",");
   };
   // NaN guard for QA: scans the live position buffer
   window.__QA_NAN = function () {

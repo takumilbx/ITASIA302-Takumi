@@ -4,3 +4,4 @@
 # Full vault graph exports: contain titles/descriptions of personal vault notes. Never commit.
 personal-project/vault_data.js
 personal-project/vault_graph.json
+__pycache__/
