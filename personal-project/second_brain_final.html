@@ -1548,6 +1548,7 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
       if (hintEl) hintEl.style.opacity = beat === 0 ? "0.75" : "0";
       lastActive = beat;
       markNav(beat);
+      if (beat > B.glossary) chipBeat(beat);   // terms are defined by then, so they can be recalled
       measureHole(beat);
       requestAnimationFrame(function () { markOverflow(beat); measureHole(beat); });
     }
@@ -1718,6 +1719,81 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     }
     syncTallAsides();
   })();
+
+  // ---- term chips ------------------------------------------------------------
+  // The glossary beat is the single source of truth: its six definitions are read out of
+  // the markup, then the first mention of each term in every later beat becomes a chip
+  // carrying that definition. Done at runtime rather than in the prose so the copy stays
+  // plain text and a rewrite cannot break, or forget to re-apply, the markup.
+  var TERM_DEFS = {};
+  (function buildTerms() {
+    var g = panelEls[B.glossary];
+    if (!g) return;
+    var items = g.querySelectorAll(".gterm");
+    for (var i = 0; i < items.length; i++) {
+      var k = items[i].querySelector(".gk"), d = items[i].querySelector(".gd");
+      if (!k || !d) continue;
+      var word = k.textContent.trim().toLowerCase();
+      var def = d.textContent.replace(/^DRAFT, REWRITE ME\.\s*/, "").trim();
+      if (word) TERM_DEFS[word] = def;
+    }
+  })();
+
+  // singular and plural, longest first so "molecules" never matches as "molecule" + "s"
+  function termPattern() {
+    var words = Object.keys(TERM_DEFS);
+    if (!words.length) return null;
+    words.sort(function (a, b) { return b.length - a.length; });
+    return new RegExp("\\b(" + words.join("|") + ")(s)?\\b", "i");
+  }
+
+  var SKIP = /^(CITE|B|SPAN|CODE)$/;   // never chip inside a citation or a UI mock label
+  function chipBeat(idx) {
+    var el = panelEls[idx];
+    if (!el || el.__chipped) return;
+    el.__chipped = true;
+    var re = termPattern();
+    if (!re) return;
+    var seen = {};
+    var hosts = el.querySelectorAll(".blist li, .body, .essay, .aclaim, .lrow .lc, .ghost");
+    for (var h = 0; h < hosts.length; h++) {
+      var walker = document.createTreeWalker(hosts[h], NodeFilter.SHOW_TEXT, {
+        acceptNode: function (n) {
+          var p = n.parentNode;
+          while (p && p !== hosts[h]) {
+            if (p.classList && (p.classList.contains("cite") || p.classList.contains("t"))) return NodeFilter.FILTER_REJECT;
+            if (SKIP.test(p.tagName) && p.classList && p.classList.contains("mono")) return NodeFilter.FILTER_REJECT;
+            p = p.parentNode;
+          }
+          return NodeFilter.FILTER_ACCEPT;
+        },
+      });
+      var nodes = [], n;
+      while ((n = walker.nextNode())) nodes.push(n);
+      for (var i = 0; i < nodes.length; i++) {
+        var node = nodes[i], m = re.exec(node.nodeValue);
+        if (!m) continue;
+        var key = m[1].toLowerCase();
+        if (seen[key]) continue;
+        seen[key] = true;
+        var after = node.splitText(m.index);
+        after.nodeValue = after.nodeValue.slice(m[0].length);
+        var chip = document.createElement("span");
+        chip.className = "t";
+        chip.setAttribute("tabindex", "0");
+        chip.setAttribute("data-def", TERM_DEFS[key]);
+        chip.textContent = m[0];
+        after.parentNode.insertBefore(chip, after);
+      }
+    }
+  }
+  // tap to open on touch, where there is no hover
+  document.addEventListener("click", function (e) {
+    var chip = e.target.closest && e.target.closest(".t");
+    var open = document.querySelector(".t.open");
+    if (open && open !== chip) open.classList.remove("open");
+    if (chip) chip.classList.toggle("open");
+  });
 
   // ---- topbar beat index ----------------------------------------------------
   // Seven landmarks. An eighteen-beat scroll piece with no way in but the wheel is a trap;
