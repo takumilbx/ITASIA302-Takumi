@@ -4,7 +4,7 @@
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-04 / 17 {{·}} The Hype
+04 / 19 {{·}} The Hype
 
 ## [h22] h2
 Everyone is {{selling}} a brain

@@ -4,7 +4,7 @@
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-05 / 17 {{·}} The Meme
+05 / 19 {{·}} The Meme
 
 ## [h22] h2
 A beautifully tagged {{graveyard}}

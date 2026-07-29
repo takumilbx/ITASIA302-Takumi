@@ -34,8 +34,9 @@ PAGE = os.path.join(HERE, "second_brain_final.html")
 OUTDIR = os.path.join(HERE, "_drafts", "live")
 
 BEAT_NAMES = ["hero", "context", "pkm", "second_brain", "hype", "meme", "building",
-              "stack", "zettelkasten", "method", "atom", "molecule", "alloy",
-              "case_study", "pipeline", "thesis", "end", "works_cited"]
+              "glossary", "stack", "interface", "zettelkasten", "method", "atom",
+              "molecule", "alloy", "case_study", "pipeline", "thesis", "end",
+              "works_cited"]
 
 
 # ---------------------------------------------------------------- inline grammar
@@ -98,6 +99,10 @@ LEAF = [
     ("ak",      r'<span class="ak">(.*?)</span>',                   "text"),
     ("qsrc",    r'<span class="qsrc">(.*?)</span>',                 "text"),
     ("refnote", r'<p class="refnote">(.*?)</p>',                    "text"),
+    ("gk",      r'<span class="gk">(.*?)</span>',                   "text"),
+    ("gd",      r'<p class="gd">(.*?)</p>',                         "text"),
+    ("uicap",   r'<figcaption class="uicap">(.*?)</figcaption>',    "text"),
+    ("uinote",  r'<p class="uinote">(.*?)</p>',                     "text"),
 ]
 # blockquote text is everything before its <span class="qsrc">
 QUOTE = r'<blockquote class="q"[^>]*>(.*?)\s*(?=<span class="qsrc">)'

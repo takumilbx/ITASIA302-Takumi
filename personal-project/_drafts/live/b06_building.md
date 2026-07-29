@@ -4,7 +4,7 @@
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-06 / 17 {{·}} What I Am Building
+06 / 19 {{·}} What I Am Building
 
 ## [h22] h2
 A brain that {{helps me think}}

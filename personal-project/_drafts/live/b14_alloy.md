@@ -1,10 +1,10 @@
-# b12 · alloy
+# b14 · alloy
 
 <!-- Rewrite the text. Keep the ## [slot] headings, keep [[citations]] exactly.
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-12 / 17 {{·}} Alloy
+14 / 19 {{·}} Alloy
 
 ## [h22] h2
 Fuse into an {{alloy}}
