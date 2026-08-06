@@ -11,7 +11,7 @@ And a {{second brain}}?
 
 ## [blist3] blist
 - The famous version of the idea. Forte defines it as "a digital archive of your most valuable memories, ideas, and knowledge" [[(Forte, 2022, p. 4)]].
-- But storage is not the point. A folder of saved articles is a digital attic. It is supposed to be a *thinking partner*.
+- A folder of saved articles is an attic. The phrase *thinking partner* is doing a lot of work in that definition, and storage alone will not earn it.
 
 ## [quote4] quote
 "For Otto, his notebook plays the role usually played by a biological memory."
@@ -20,7 +20,7 @@ And a {{second brain}}?
 Clark & Chalmers, 1998, p. 12 · The Extended Mind
 
 ## [body6] body
-If Otto trusts his notebook and reaches for it the way you reach for memory, the notebook becomes part of his mind. Moving what you know into a system you trust is not laziness. It is cognitive extension [[(Clark & Chalmers, 1998)]].
+Otto has memory loss and keeps his addresses in a notebook. He reaches for it the way you reach for a memory, so Clark and Chalmers argue the notebook has become part of his mind [[(Clark & Chalmers, 1998)]]. That argument is what stopped me treating my own notes as a crutch.
 
 ## [essay7] essay · Field note
 Clark and Chalmers gave me permission to stop feeling guilty. I used to think that looking something up in my own notes was a kind of cheating, as though understanding meant holding it all in my skull. Otto's notebook counts as part of Otto's mind because he reaches for it without hesitating. I still hesitate before reaching for my vault. Less than I did in April.

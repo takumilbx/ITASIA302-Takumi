@@ -13,7 +13,7 @@ Building a[br]{{Second Brain}}
 ( for real this time )
 
 ## [ghost4] ghost
-One system, tested against a real master's thesis. What personal knowledge management is, why the hype deserves suspicion, what I built instead, and what the vault looks like tonight.
+One system, tested against a real master's thesis. What personal knowledge management is, why the hype deserves suspicion, what I built instead, and where the vault stands tonight.
 
 ## [note5] note
 Zettelkasten · ITASIA302 · filed August 2026

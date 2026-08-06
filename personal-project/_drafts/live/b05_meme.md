@@ -16,10 +16,10 @@ The people who sell you a "second brain" often cannot remember where their own c
 paraphrased from a widely shared meme; original author unidentified
 
 ## [blist5] blist
-- I came to this through failure, not theory. Organizing was always a job for *Future Me*, who never showed up.
-- The industry's answer is always the next template, the next app.
-- Now the stakes are real: a master's thesis does not fit in one head.
-- So: is the failure mine, or the *method's*?
+- I got here through failure rather than theory. Organising was always a job for *Future Me*, and he never showed up.
+- The industry's answer is always another template.
+- A master's thesis does not fit in one head, so the stakes stopped being hypothetical.
+- Which leaves a question I cannot dodge. Is the failure mine, or the *method's*?
 
 ## [essay6] essay · Field note
 My vault had beautiful tags and dead notes. Nothing came back out. I laughed at the car keys meme and then recognised myself in it, which is a worse feeling than it sounds. So either I am undisciplined, which is what every new template quietly implies, or capture-first points the wrong way. A thesis is a fair place to test that, because it asks for the same idea back months after you filed it.

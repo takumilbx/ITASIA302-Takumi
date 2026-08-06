@@ -10,9 +10,9 @@
 Capture {{one idea}}
 
 ## [blist3] blist
-- One claim, in my words. The exact quote and source sit underneath.
-- If it fits a clean filename, it is atomic. If not, it is two ideas wearing one coat.
-- The filename *is* the claim, so search finds the thought, not the book.
+- One claim, in my words. The exact quote and the source sit underneath it.
+- If it fits a clean filename it is atomic. If it does not, it is two ideas sharing a coat.
+- The filename *is* the claim, so searching for the thought finds it without me remembering the book.
 
 ## [ak4] ak
 atom · verified · **live from the vault**
