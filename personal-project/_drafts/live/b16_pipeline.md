@@ -18,4 +18,4 @@ One source, transformed by hand across seven steps: Zotero capture, Obsidian lit
 - The vault tonight: 3,066 linked notes, 9,121 links. Counts computed 2026-07-28 by the project's own parse script over the live vault.
 
 ## [essay5] essay · Field note
-The pipeline is where I use AI, and where I learned to bound it. NotebookLM answers only from the paper it is given. Claude proposes, but the accept-reject decision runs against the source page. An extraction pipeline without a rejection step is a rumor mill. The seven steps look slow. They are the reason this essay can cite its own claims down to the page.
+This is where I use AI and where I learned to fence it in. NotebookLM answers only from the paper I hand it. Claude proposes atoms, and accepting one means opening the source page. A pipeline with no rejection step is not a pipeline. Seven steps is slower than it sounds like it should be, and it is the reason every claim here has a page number behind it.

@@ -16,4 +16,4 @@ Fuse into an {{alloy}}
 - This is where the research output lives.
 
 ## [essay4] essay · Field note
-I chose the metallurgy metaphor over the usual gardening one on purpose. Gardens grow if you water them. Alloys require heat and pressure and unlike materials, which is what synthesis actually feels like. The arguments I trust most in my thesis are the ones where a Japanese survey, a Bangkok observation, and a twenty-year-old framework paper all push against each other and something harder than any of them comes out.
+I picked metallurgy over the usual gardening metaphor on purpose. Gardens grow if you water them. Alloys need heat, pressure, and two metals that do not want to mix. The arguments I trust most are the ones where a Japanese survey, a Bangkok classroom and a framework paper from 2006 disagree with each other and I have to sit with it for a week before anything comes out.

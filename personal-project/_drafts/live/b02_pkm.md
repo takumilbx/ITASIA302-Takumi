@@ -16,4 +16,4 @@ What is {{PKM}}?
 - Once Drucker introduced the idea of knowledge work, managing what you know stopped being optional [[(Drucker, 1959)]].
 
 ## [essay4] essay · Field note
-The library-versus-pile image is the one that finally landed for me. Both hold all your books. Only one gives you the right book before a deadline. For most of my degree I owned a pile and called it a library. The difference is not effort or discipline. It is whether the system is built for putting things in or for getting things back out.
+Library versus pile. Both hold every book you own. Only one hands you the right one the week a chapter is due. For most of my degree I owned a pile and called it a library. I assumed the fix was discipline, and I tried discipline for two years.

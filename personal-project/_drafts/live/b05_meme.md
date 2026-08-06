@@ -22,4 +22,4 @@ paraphrased from a widely shared meme; original author unidentified
 - So: is the failure mine, or the *method's*?
 
 ## [essay6] essay · Field note
-My vault had beautiful tags and dead notes. Nothing came back out. When I laughed at the car-keys meme I recognized myself in it, and that recognition is the honest starting point of this project. Either I am undisciplined, which is what the industry quietly implies with every new fix, or the capture-first method itself points the wrong way. A thesis is a good laboratory for that question, because a thesis punishes hoarding and rewards retrieval every single week.
+My vault had beautiful tags and dead notes. Nothing came back out. I laughed at the car keys meme and then recognised myself in it, which is a worse feeling than it sounds. So either I am undisciplined, which is what every new template quietly implies, or capture-first points the wrong way. A thesis is a fair place to test that, because it asks for the same idea back months after you filed it.

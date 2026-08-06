@@ -18,4 +18,4 @@ A Zettelkasten built retrieval-first, not capture-first like Forte's CODE and PA
 - *Alloy*. An original, thesis-grade synthesis. It can never be drafted directly from a source.
 
 ## [essay5] essay · Field note
-Forte's CODE moves material toward expression, and PARA sorts it by actionability. Both are capture-first at heart: they optimize the inbox. My tiers optimize the exit. The rule that nothing moves up until the tier below holds sounds bureaucratic, but it is the honesty mechanism of the whole system. An alloy built on unverified atoms is just an opinion with footnotes.
+Forte's CODE moves material toward expression and PARA sorts it by how actionable it is. Both are built around getting things in. Mine is built around getting things out, which sounds like a small difference and is not. The rule that nothing moves up until the tier below holds is the first thing I would drop if I were being lazy, and it is the part doing the work.

@@ -20,4 +20,4 @@ Five tools, in the order work moves through them. A source enters left, exits as
 - *Notion* · the calendar. Chapters, milestones, deadlines, linked back by citekey. Obsidian is the brain. Notion is the calendar.
 
 ## [essay5] essay · Field note
-The stack looks like tool clutter until you notice each tool holds a different kind of trust. Zotero I trust with provenance. Obsidian I trust with meaning. The AI layer I deliberately do not trust: everything it extracts gets checked against the source page before it becomes an atom. That distrust is a feature. An assistant that can only answer from the paper in front of it cannot invent my thesis for me.
+This looks like tool clutter until you notice that each one holds a different kind of trust. Zotero holds provenance. Obsidian holds meaning. The AI layer I do not trust at all, which is why it sits where it does: everything it pulls out gets checked against the page it came from before it counts as an atom. On a normal run, two candidates in seven do not survive that check.

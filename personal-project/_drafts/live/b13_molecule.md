@@ -16,4 +16,4 @@ Link into a {{molecule}}
 - Pattern recognition stops being a feeling and becomes a thing I can *open*.
 
 ## [essay4] essay · Field note
-A molecule is the note I write when I catch myself thinking "these three papers are secretly about the same thing." Before this system, that thought evaporated by morning. Now it becomes a file with three links and a name. The no-new-claims rule matters: a molecule that smuggles in its own assertions is an essay in disguise, and essays belong one tier up, where they must earn their evidence.
+A molecule is what I write when I catch myself thinking that three papers are secretly about the same thing. That thought used to evaporate by morning. Now it becomes a file with three links and a name I have to commit to. The rule about adding no new claims is there because I kept breaking it.

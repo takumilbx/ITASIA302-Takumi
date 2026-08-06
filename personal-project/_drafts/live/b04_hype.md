@@ -17,4 +17,4 @@ Everyone is {{selling}} a brain
 - Two failure modes I know personally: the Productivity Trap, where upkeep eats the thinking, and the Collecting Habit, where the brain becomes an attic of other people's ideas.
 
 ## [essay4] essay · Field note
-I am not writing this from above the hype. I bought in. I watched the setup videos, downloaded the templates, and rebuilt my vault three times to match other people's screenshots. Each rebuild felt like progress and produced nothing. The industry does not need the systems to work. It needs them to feel like they are about to. My project starts from the question the marketing never answers: where is the proof?
+I am not writing this from above the hype. I bought in. I watched the setup videos, downloaded the templates, and rebuilt my vault three times to match other people's screenshots. Every rebuild felt like progress and produced no finished writing. The thing the marketing never gets around to is proof, so that is where I started.

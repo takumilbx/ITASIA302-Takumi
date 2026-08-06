@@ -17,4 +17,4 @@ The {{slip-box}}
 - Atom, molecule, alloy: my plain-text rebuild of that idea, with one rule Luhmann never wrote down: one idea per note.
 
 ## [essay4] essay · Field note
-What convinced me was not the ninety thousand cards. It was that Luhmann treated the box as something worth talking to. A system you only feed is a diary. A system that talks back is a partner. My vault started talking back around the thousandth atom, when searches began returning notes I had honestly forgotten writing, connected in ways I had not planned. That moment is the entire sales pitch of the method, and no template can shortcut you to it.
+The ninety thousand cards are not what convinced me. Luhmann wrote about the box as something that could surprise him, and I had never thought about notes that way. Mine started doing it somewhere past the thousandth atom. I searched for something about teacher judgment and got back a note I had no memory of writing, sitting next to two I did. I still cannot tell you how to make that happen sooner.

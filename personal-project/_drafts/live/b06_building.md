@@ -16,4 +16,4 @@ A brain that {{helps me think}}
 - So: retrieval first, then test the claim honestly.
 
 ## [essay4] essay · Field note
-Retrieval-first is a design constraint, not a slogan. It changes small decisions. A note's filename becomes a full sentence, because future-me searches in sentences, not keywords. A note holds one idea, because two ideas in one file means one of them is unfindable. Every rule in my system exists to answer a single question: when I am writing at eleven at night, does the right idea come back?
+Retrieval-first is a constraint rather than a slogan, and it decides small things. Filenames became full sentences, because I search in sentences. One idea per file, because two ideas in one file means one of them is gone. The test I apply is boring and specific. It is eleven at night, I am writing, and I need the paper I read in April.

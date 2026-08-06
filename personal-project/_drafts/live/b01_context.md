@@ -16,4 +16,4 @@ Not a {{hobby system}}
 - The vault tonight: 2,163 atoms · 58 molecules · 9,121 links.
 
 ## [essay4] essay · Field note
-I did not start this project because I love note apps. I started it because my thesis reading list stopped fitting in my head. A paper I read in March has to survive until a chapter I write in November, and "I will remember it" has already failed me twice. Watching T-sensei teach in a classroom full of tablets gave me the same lesson from the other side: expertise is not how much you hold, it is what you can reach for at the right moment. So I stopped collecting and started building for reach.
+I did not start this because I like note apps. I started because my reading list stopped fitting in my head. A paper I read in March has to survive until a chapter I write in November. Twice now I have gone looking for something I know I read and come back with nothing. Teacher A's classroom showed me the same thing from the other side, though it took me most of a term to see it.

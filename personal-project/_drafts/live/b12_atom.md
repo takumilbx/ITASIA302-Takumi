@@ -27,4 +27,4 @@ Friction is feedback that generates moral awareness and preserves human agency.
 Selsbæk-Reitz, 2026, p. 91
 
 ## [essay8] essay · Field note
-Atomicity is the discipline I resisted longest and need most. My old notes were summaries: five ideas braided together, none of them findable. Splitting feels wasteful in the moment, like using five envelopes for five sentences. Then the payoff arrives months later, when one of those sentences is exactly the missing piece of an argument, and its filename walks it straight into my search results. This atom on screen earned its stamp the honest way: an earlier draft of this essay mislabeled its source, and the verification pass caught it.
+Atomicity is the discipline I resisted longest. My old notes were summaries, five ideas braided together, none of them findable. Splitting still feels wasteful while I am doing it. The payoff arrives months later and it is real: one of those sentences turns out to be the piece an argument was missing, and I find it by typing roughly what it says. The atom on this screen carries a verified stamp because an earlier draft of this essay got its source wrong and the check caught it.
