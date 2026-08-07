@@ -13,15 +13,13 @@ References
 - Aal, K., & Rüller, S. (2025). From personal knowledge management to the second brain to the personal AI companian [sic]. In *Companion Proceedings of the 2025 ACM International Conference on Supporting Group Work (GROUP '25 Companion)* (pp. 90-93). ACM. https://doi.org/10.1145/3688828.3699647
 - Archambault, L. M., & Barnett, J. H. (2010). Revisiting technological pedagogical content knowledge: Exploring the TPACK framework. *Computers & Education, 55*(4), 1656-1662. https://doi.org/10.1016/j.compedu.2010.07.009
 - Brantley-Dias, L., & Ertmer, P. A. (2013). Goldilocks and TPACK: Is the construct "just right?" *Journal of Research on Technology in Education, 46*(2), 103-128. https://doi.org/10.1080/15391523.2013.10782615
-- Bush, V. (1945, July). As we may think. *The Atlantic Monthly, 176*(1), 101-108.
 - Callister, W. D., Jr., & Rethwisch, D. G. (2018). *Materials science and engineering: An introduction* (10th ed.). Wiley.
+- Cheong, R. K. F., & Tsui, E. (2011). From skills and competencies to outcome-based collaborative work: Tracking a decade's development of personal knowledge management (PKM) models. *Knowledge and Process Management, 18*(3), 175-193. https://doi.org/10.1002/kpm.380
 - Clark, A., & Chalmers, D. (1998). The extended mind. *Analysis, 58*(1), 7-19. https://doi.org/10.1093/analys/58.1.7
-- Drucker, P. F. (1959). *Landmarks of tomorrow.* Harper & Brothers.
 - Ferreira, J. J., Segura, V., Souza, J. G., & Brasil, J. H. G. (2026). How people manage knowledge in their "second brains": A case study with industry researchers using Obsidian. In C. Ardito et al. (Eds.), *Human-computer interaction: INTERACT 2025* (LNCS Vol. 16111, pp. 72-76). Springer. https://doi.org/10.1007/978-3-032-05008-3_15
 - Forte, T. (2022). *Building a second brain: A proven method to organize your digital life and unlock your creative potential.* Profile Books.
-- Frand, J. L., & Hixson, C. G. (1998, October 15). *Personal knowledge management: Who? What? Why? When? Where? How?* [Paper presentation]. EDUCOM '98, Orlando, FL, United States.
 - Graham, C. R. (2011). Theoretical considerations for understanding technological pedagogical content knowledge (TPACK). *Computers & Education, 57*(3), 1953-1960. https://doi.org/10.1016/j.compedu.2011.04.010
-- Isaacson, W. (2017). *Leonardo da Vinci.* Simon & Schuster.
+- Jain, P. (2011). Personal knowledge management: The foundation of organisational knowledge management. *South African Journal of Libraries and Information Science, 77*(1), 1-14. https://doi.org/10.7553/77-1-62
 - Jones, W. (2010). No knowledge but through information. *First Monday, 15*(9). https://doi.org/10.5210/fm.v15i9.3062
 - Luhmann, N. (1981). Kommunikation mit Zettelkästen: Ein Erfahrungsbericht [Communicating with slip boxes: An empirical account]. In H. Baier, H. M. Kepplinger, & K. Reumann (Eds.), *Öffentliche Meinung und sozialer Wandel* (pp. 222-228). Westdeutscher Verlag. [In German]
 - Luhmann, N. (n.d.). *Communicating with slip boxes: An empirical account* (M. Kuehn, Trans.). https://luhmann.surge.sh/communicating-with-slip-boxes (Original work published 1981)
