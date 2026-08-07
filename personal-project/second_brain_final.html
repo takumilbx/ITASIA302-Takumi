@@ -287,6 +287,17 @@
   .ph.split > .kick { grid-area: 1 / 1; }
   .ph.split > h2    { grid-area: 2 / 1; }
   .ph.split > .flow, .ph.split > .scrollbox { grid-area: 3 / 1; }
+  /* a beat that shows screens puts them beside the prose, not under it */
+  .ph.split > .ui-flow {
+    grid-area: 3 / 2; align-self: start; margin-top: 6px;
+    max-height: 100%; min-height: 0; overflow-y: auto;
+  }
+  .ph.split:has(> .ui-flow), .tall .ph.split:has(> .ui-flow) {
+    grid-template-columns: minmax(0, 34ch) minmax(0, 52ch); max-width: none;
+  }
+  /* the panes are wide, so give them room and let them breathe vertically */
+  .ph.split > .ui-flow { gap: 16px; }
+  .ph.split > .ui-flow .uipane::before { display: none; }
   .tall .ph.split { max-width: none; grid-template-columns: minmax(0, 54ch) minmax(0, 26ch); }
   .ph.split > .essay {
     grid-area: 3 / 2; align-self: start; margin-top: 6px;
@@ -481,7 +492,7 @@
 
   /* Any region that can outrun the viewport scrolls in place. Pointer events are handed
      to it only while its beat is live, so the page scroll is never hijacked. */
-  .blist, .ledger, .refs, .scrollbox, .flow, .ph.split > .essay {
+  .blist, .ledger, .refs, .scrollbox, .flow, .ph.split > .essay, .ph.split > .ui-flow {
     overflow-y: auto; scrollbar-width: thin;
     scrollbar-color: var(--line) transparent; padding-right: 4px;
   }
@@ -491,7 +502,8 @@
     flex: none; overflow: visible; min-height: auto; padding-right: 0;
   }
   .panel.on .blist, .panel.on .ledger, .panel.on .refs,
-  .panel.on .scrollbox, .panel.on .flow, .panel.on .essay { pointer-events: auto; }
+  .panel.on .scrollbox, .panel.on .flow, .panel.on .essay,
+  .panel.on .ui-flow { pointer-events: auto; }
   .can-scroll {
     -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 40px), transparent 100%);
     mask-image: linear-gradient(to bottom, #000 calc(100% - 40px), transparent 100%);
@@ -663,13 +675,11 @@
   <section class="panel side-r tall" id="b10" data-beat="10"><div class="ph">
     <p class="kick">10 / 15 <i>·</i> The Workflow</p>
     <h2>One paper, <span class="sig">start to finish</span></h2>
-    <div class="scrollbox">
     <p class="body">First there is a paper I want to read. I use Zotero to capture it into my Zotero folder. Then I read it myself, once, properly.</p>
     <p class="body">After that I import it into Obsidian, using the plugin that connects the two. Now Obsidian has all the metadata of my reading, the author and the rest of it, and also the highlights I made in the paper.</p>
     <p class="body">Then I use Claude Code so that Claude can drive NotebookLM directly, instead of me opening a lot of browser tabs. What NotebookLM does is extract the key claims and the key arguments, and I am the one who verifies them, one by one.</p>
     <p class="body">Then I start to see the connections between the atoms, and I verify the molecules. Combining those molecules, I form the alloys myself.</p>
     <div class="ui-flow">
-
       <figure class="uipane" data-step="01">
         <figcaption class="uicap"><b>Zotero</b> · the paper arrives</figcaption>
         <div class="ui ui-zotero">
@@ -679,25 +689,20 @@
               <div class="uirow">My Library</div>
               <div class="uirow uiind">Thesis / TPACK</div>
               <div class="uirow uiind uion">Thesis / GIGA</div>
-              <div class="uirow uiind">Thesis / Fieldwork</div>
             </div>
             <div class="uicol uicol-list">
               <div class="uirow uihead"><span>Title</span><span>Year</span></div>
               <div class="uirow uion"><span>Ichinin ichidai tanmatsu no kankyo ni okeru&hellip;</span><span>2017</span></div>
               <div class="uirow"><span>Jido ga joho tanmatsu o katsuyo suru jugyo&hellip;</span><span>2019</span></div>
-              <div class="uirow"><span>GIGA sukuru koso no shinchoku ni okeru&hellip;</span><span>2025</span></div>
             </div>
             <div class="uicol uicol-meta">
               <div class="uimetak">Authors</div><div class="uimetav">Yagisawa, F.; Horita, T.</div>
               <div class="uimetak">Publication</div><div class="uimetav">Kyoiku Media Kenkyu 23(2)</div>
-              <div class="uimetak">Pages</div><div class="uimetav">83&ndash;94</div>
               <div class="uimetak">Citekey</div><div class="uimetav mono">yagisawa2017</div>
-              <div class="uimetak">Attachment</div><div class="uimetav">PDF</div>
             </div>
           </div>
         </div>
       </figure>
-
       <figure class="uipane" data-step="02">
         <figcaption class="uicap"><b>Obsidian</b> · the literature note</figcaption>
         <div class="ui ui-obsidian">
@@ -708,8 +713,6 @@
               <div class="uirow uiind uion">yagisawa2017.md</div>
               <div class="uirow">20 Atoms</div>
               <div class="uirow uiind">Expert teachers give reasons for when not&hellip;</div>
-              <div class="uirow uiind">Japanese experts apply a harmonious attitude&hellip;</div>
-              <div class="uirow">30 Molecules</div>
             </div>
             <div class="uicol uicol-editor">
               <div class="uiyaml">---<br>citekey: yagisawa2017<br>status: extracted<br>atoms: 3<br>---</div>
@@ -722,21 +725,17 @@
           </div>
         </div>
       </figure>
-
       <figure class="uipane" data-step="03">
         <figcaption class="uicap"><b>The atom</b> · one idea, one file</figcaption>
         <div class="ui ui-atom">
           <div class="uibar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="uititle mono">Expert teachers in one-to-one classrooms give clear reasons for when not to use ICT.md</span></div>
           <div class="uibody">
-            <div class="uiyaml">---<br>type: atom<br>source: yagisawa2017<br>page: 87<br>verified: true<br>---</div>
             <div class="uip">Expert teachers in one-to-one classrooms give clear reasons for when not to use ICT; novices barely can.</div>
             <div class="uiquote">&ldquo;&hellip;&rdquo; <span class="mono">Yagisawa &amp; Horita, 2017, p. 87</span></div>
             <div class="uip uilink">[[Knowing when not to use ICT as the mark of integrated TPACK]]</div>
           </div>
         </div>
       </figure>
-
-    </div>
     </div>
   </div></section>
   <section class="panel side-l tall" id="b11" data-beat="11"><div class="ph">
@@ -1605,7 +1604,7 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
       var kids = [].slice.call(ph.children);
       var head = 0;
       while (head < kids.length && (kids[head].classList.contains("kick") || kids[head].tagName === "H2")) head++;
-      var aside = ph.querySelector(":scope > .essay");
+      var aside = ph.querySelector(":scope > .essay") || ph.querySelector(":scope > .ui-flow");
       var flow = document.createElement("div");
       flow.className = "flow";
       for (var k = head; k < kids.length; k++) { if (kids[k] !== aside) flow.appendChild(kids[k]); }
@@ -1743,7 +1742,7 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
   function markOverflow(beat) {
     var el = panelEls[beat]; if (!el) return;
     var ph = el.querySelector(".ph");
-    var regions = el.querySelectorAll(".flow, .scrollbox, .ph.split > .essay");
+    var regions = el.querySelectorAll(".flow, .scrollbox, .ph.split > .essay, .ph.split > .ui-flow");
     var any = false;
     for (var i = 0; i < regions.length; i++) {
       var r = regions[i];
