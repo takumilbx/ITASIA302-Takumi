@@ -1,10 +1,10 @@
-# b13 · atom
+# b12 · atom
 
 <!-- Rewrite the text. Keep the ## [slot] headings, keep [[citations]] exactly.
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-13 / 20 {{·}} Atom
+12 / 19 {{·}} Atom
 
 ## [h22] h2
 Capture {{one idea}}

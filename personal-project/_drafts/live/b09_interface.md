@@ -1,10 +1,10 @@
-# b10 · interface
+# b09 · interface
 
 <!-- Rewrite the text. Keep the ## [slot] headings, keep [[citations]] exactly.
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-10 / 20 {{·}} The Workflow
+09 / 19 {{·}} The Workflow
 
 ## [h22] h2
 What it actually {{looks like}}

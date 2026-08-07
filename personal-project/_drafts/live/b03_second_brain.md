@@ -4,7 +4,7 @@
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-03 / 20 {{·}} Second Brain
+03 / 19 {{·}} Second Brain
 
 ## [h22] h2
 And a {{second brain}}?

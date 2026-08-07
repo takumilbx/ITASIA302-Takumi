@@ -1,10 +1,10 @@
-# b20 · works cited
+# b19 · works cited
 
 <!-- Rewrite the text. Keep the ## [slot] headings, keep [[citations]] exactly.
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-20 / 20 {{·}} Works Cited
+19 / 19 {{·}} Works Cited
 
 ## [h22] h2
 References
