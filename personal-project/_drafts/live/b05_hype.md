@@ -4,17 +4,13 @@
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-05 / 19 {{·}} The Hype
+05 / 20 {{·}} The Hype
 
 ## [h22] h2
-Everyone is {{selling}} a brain
+I tried to {{automate}} everything
 
-## [blist3] blist
-- His UK publisher describes the book as a Wall Street Journal bestseller, and Forte reports that it sold more than one hundred thousand copies in its first nine months [[(Forte, 2023; Profile Books, n.d.)]]. There is now a creator economy demonstrating note-taking systems with the energy of a skincare routine.
-- The newest promise is that AI makes all of it effortless. There is already research mapping the path from PKM to second brain to a personal AI companion [[(Aal & Rüller, 2025)]].
-- Whether any of it makes you think *better* gets asked much less often. The movement is practitioner-driven, and the academic literature treats it as information management [[(Jones, 2010)]] or as speculative design [[(Aal & Rüller, 2025)]] rather than as anything measured.
-- Jones puts the deeper problem plainly. "Knowledge can be managed only indirectly, through the management of information" [[(Jones, 2010, Abstract)]]. The knowing stays in a head.
-- I have hit two failure modes myself. In the Productivity Trap the upkeep eats the thinking. In the Collecting Habit the vault fills up with other people's ideas.
+## [body3] body
+After the reels I downloaded a template and rebuilt my vault twice.
 
-## [essay4] essay · Field note
-I am not writing this from above the hype. I bought in. I watched the setup videos, downloaded the templates, and rebuilt my vault three times to match other people's screenshots. Every rebuild felt like progress and produced no finished writing. The thing the marketing never gets around to is proof, so that is where I started.
+## [body4] body
+The first time I tried to automate everything. I had Claude Code pull all the arguments out of a paper, read it for me, and match it for me. It did all of that. But when I checked the results they were not in the direction I wanted. They were good, it is just that they were not that related to my thesis. Later then I found out that I was not the only one going that way. Aal and Rüller trace the same arc, from personal knowledge management, to the second brain built on tools like Evernote and Notion, to AI turning that into an active personal companion. They also raise the worry that comes with it, which is whether you keep your own autonomy and your own critical thinking while the AI does the work [[(Aal & Rüller, 2025)]].

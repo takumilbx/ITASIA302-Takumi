@@ -1,10 +1,10 @@
-# b19 · works cited
+# b20 · works cited
 
 <!-- Rewrite the text. Keep the ## [slot] headings, keep [[citations]] exactly.
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-19 / 19 {{·}} Works Cited
+20 / 20 {{·}} Works Cited
 
 ## [h22] h2
 References
@@ -26,7 +26,6 @@ References
 - Luhmann, N. (1981). Kommunikation mit Zettelkästen: Ein Erfahrungsbericht [Communicating with slip boxes: An empirical account]. In H. Baier, H. M. Kepplinger, & K. Reumann (Eds.), *Öffentliche Meinung und sozialer Wandel* (pp. 222-228). Westdeutscher Verlag. [In German]
 - Luhmann, N. (n.d.). *Communicating with slip boxes: An empirical account* (M. Kuehn, Trans.). https://luhmann.surge.sh/communicating-with-slip-boxes (Original work published 1981)
 - Mishra, P., & Koehler, M. J. (2006). Technological pedagogical content knowledge: A framework for teacher knowledge. *Teachers College Record, 108*(6), 1017-1054. https://doi.org/10.1111/j.1467-9620.2006.00684.x
-- Profile Books. (n.d.). *Building a second brain.* Retrieved August 7, 2026, from https://profilebooks.com/work/building-a-second-brain/
 - Roediger, H. L., III, & Karpicke, J. D. (2006). Test-enhanced learning: Taking memory tests improves long-term retention. *Psychological Science, 17*(3), 249-255. https://doi.org/10.1111/j.1467-9280.2006.01693.x
 - Sakakibara, N., Abe, M., Sekihara, M., Oshima, T., Kiryu, T., & Mizuochi, Y. (2025). GIGA sukuru koso no shinchoku ni okeru seika ya kadai ni kansuru kyoshoku keiken ni motozuku kyoin no ishiki [Teachers' perceptions based on teaching experience regarding the achievements and challenges in the progress of the GIGA School Initiative]. *Nihon Kyoiku Kogakkai Ronbunshi, 49*(1), 43-54. https://doi.org/10.15077/jjet.48089 [In Japanese]
 - Schmidt, J. F. K. (2016). Niklas Luhmann's card index: Thinking tool, communication partner, publication machine. In A. Cevolini (Ed.), *Forgetting machines: Knowledge management evolution in early modern Europe* (pp. 289-311). Brill. https://doi.org/10.1163/9789004325258_014

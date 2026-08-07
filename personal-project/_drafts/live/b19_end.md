@@ -1,10 +1,10 @@
-# b18 · end
+# b19 · end
 
 <!-- Rewrite the text. Keep the ## [slot] headings, keep [[citations]] exactly.
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-18 / 19 {{·}} End
+19 / 20 {{·}} End
 
 ## [h22] h2
 The box stays {{open}}

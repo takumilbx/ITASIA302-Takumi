@@ -4,7 +4,7 @@
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-04 / 19 {{·}} Plain Language
+04 / 20 {{·}} Plain Language
 
 ## [h22] h2
 The {{tools}} I use
@@ -46,4 +46,4 @@ I use it to ask questions about a single paper. It is quite common now. People u
 Notion
 
 ## [gd15] gd
-A landing page where I keep everything together. It references the data from my Obsidian vault, and the alloys I have already finalised. The vault has a lot of claims in it. The Notion page only has the selected ones, presented so that you can move around and read them easily.
+A landing page where I keep everything together. It references the data from my Obsidian vault. I use it to summarise the arguments in my thesis and to track the logical flow of the thesis. The vault has a lot of claims in it. The Notion page only has the selected ones, presented so that you can move around and read them easily.

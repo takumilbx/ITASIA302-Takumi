@@ -1,10 +1,10 @@
-# b07 · building
+# b08 · building
 
 <!-- Rewrite the text. Keep the ## [slot] headings, keep [[citations]] exactly.
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-07 / 19 {{·}} What I Am Building
+08 / 20 {{·}} What I Am Building
 
 ## [h22] h2
 A brain that {{helps me think}}

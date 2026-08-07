@@ -1,10 +1,10 @@
-# b06 · meme
+# b07 · meme
 
 <!-- Rewrite the text. Keep the ## [slot] headings, keep [[citations]] exactly.
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-06 / 19 {{·}} The Meme
+07 / 20 {{·}} The Meme
 
 ## [h22] h2
 A beautifully tagged {{graveyard}}

@@ -1,10 +1,10 @@
-# b10 · zettelkasten
+# b11 · zettelkasten
 
 <!-- Rewrite the text. Keep the ## [slot] headings, keep [[citations]] exactly.
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-10 / 19 {{·}} Zettelkasten
+11 / 20 {{·}} Zettelkasten
 
 ## [h22] h2
 The {{slip-box}}
