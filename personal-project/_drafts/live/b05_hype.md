@@ -1,10 +1,10 @@
-# b04 · hype
+# b05 · hype
 
 <!-- Rewrite the text. Keep the ## [slot] headings, keep [[citations]] exactly.
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-04 / 19 {{·}} The Hype
+05 / 19 {{·}} The Hype
 
 ## [h22] h2
 Everyone is {{selling}} a brain

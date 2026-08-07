@@ -1,10 +1,10 @@
-# b03 · second brain
+# b04 · second brain
 
 <!-- Rewrite the text. Keep the ## [slot] headings, keep [[citations]] exactly.
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-03 / 19 {{·}} Second Brain
+04 / 19 {{·}} Second Brain
 
 ## [h22] h2
 And a {{second brain}}?

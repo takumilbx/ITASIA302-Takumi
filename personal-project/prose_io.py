@@ -5,6 +5,7 @@ Round-trip the prose of second_brain_final.html through plain markdown.
     python3 prose_io.py extract        # HTML  -> _drafts/live/bNN_*.md
     python3 prose_io.py bake           # _drafts/live/*.md -> HTML
     python3 prose_io.py bake --check   # report what would change, write nothing
+    python3 prose_io.py bake --allow-move   # permit moving a citation between beats
 
 Written so the prose can be rewritten by hand without touching markup. The bake
 step never regenerates a panel: it substitutes text inside elements it already
@@ -33,8 +34,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 PAGE = os.path.join(HERE, "second_brain_final.html")
 OUTDIR = os.path.join(HERE, "_drafts", "live")
 
-BEAT_NAMES = ["hero", "context", "pkm", "second_brain", "hype", "meme", "building",
-              "glossary", "stack", "interface", "zettelkasten", "method", "atom",
+BEAT_NAMES = ["hero", "context", "glossary", "pkm", "second_brain", "hype", "meme",
+              "building", "stack", "interface", "zettelkasten", "method", "atom",
               "molecule", "alloy", "case_study", "pipeline", "thesis", "end",
               "works_cited"]
 
@@ -204,10 +205,53 @@ def parse_md(path):
     return {k: "\n".join(v).strip() for k, v in slots.items()}
 
 
-def bake(check_only=False):
+def doc_cites(page, from_markdown):
+    """Every citation in the whole narrative, as a multiset.
+
+    The per-slot guard protects against a citation being dropped while editing.
+    It cannot tell that apart from a citation being moved to another beat on
+    purpose, so this counts the document as a whole: a move leaves the totals
+    untouched, a deletion does not."""
+    from collections import Counter
+    total = Counter()
+    if from_markdown:
+        for fn in sorted(os.listdir(OUTDIR)):
+            if fn.endswith(".md"):
+                for body in parse_md(os.path.join(OUTDIR, fn)).values():
+                    total.update(cites(body))
+    else:
+        for n, b in split_beats(page).items():
+            for _, kind, p in find_slots(b["html"]):
+                if kind in ("blist", "refs"):
+                    for _, item in p["items"]:
+                        total.update(cites(to_md(item, kind)))
+                elif kind == "ledger":
+                    for _, _, _, lc in p["rows"]:
+                        total.update(cites(to_md(lc)))
+                else:
+                    total.update(cites(to_md(p["text"], p.get("kind", "text"))))
+    return total
+
+
+def bake(check_only=False, allow_move=False):
     page = open(PAGE, encoding="utf-8").read()
     if not os.path.isdir(OUTDIR):
         sys.exit(f"no {OUTDIR}. run: python3 prose_io.py extract")
+
+    if allow_move:
+        before, after = doc_cites(page, False), doc_cites(page, True)
+        lost, gained = before - after, after - before
+        if lost:
+            print("REFUSED: --allow-move permits relocating a citation, not losing one.")
+            for c, k in lost.items():
+                print(f"  missing from the whole narrative: {c}" + (f" x{k}" if k > 1 else ""))
+            sys.exit(1)
+        if gained:
+            print("note: citations new to the narrative (check they are in Works Cited):")
+            for c, k in gained.items():
+                print(f"  {c}" + (f" x{k}" if k > 1 else ""))
+        print("citation totals unchanged across the narrative, per-slot guard relaxed")
+
     beats = split_beats(page)
     edits, refusals, changed = [], [], 0
 
@@ -227,7 +271,7 @@ def bake(check_only=False):
                 items = [l[2:].strip() for l in new.splitlines() if l.startswith("- ")]
                 old_c = sorted(sum((cites(to_md(i, kind)) for _, i in p["items"]), []))
                 new_c = sorted(sum((cites(i) for i in items), []))
-                if old_c != new_c:
+                if old_c != new_c and not allow_move:
                     refusals.append((n, tag, old_c, new_c)); continue
                 inner = "\n      ".join(f"<li>{to_html(i, kind)}</li>" for i in items)
                 repl = "\n      " + inner + "\n    "
@@ -243,7 +287,7 @@ def bake(check_only=False):
                 if len(rows) != len(p["rows"]):
                     refusals.append((n, tag, f"{len(p['rows'])} rows", f"{len(rows)} rows")); continue
                 for (span, cls, lk, lc), (ncls, nlk, nlc) in zip(p["rows"], rows):
-                    if cites(to_md(lc)) != cites(nlc):
+                    if cites(to_md(lc)) != cites(nlc) and not allow_move:
                         refusals.append((n, tag, cites(to_md(lc)), cites(nlc))); continue
                     cls_out = "" if ncls == "row" else (" " + ncls.strip() if not ncls.startswith(" ") else ncls)
                     repl = (f'<div class="lrow{cls_out}"><span class="lk">{to_html(nlk)}</span>'
@@ -252,7 +296,7 @@ def bake(check_only=False):
                         edits.append((bspan[0] + span[0], bspan[0] + span[1], repl)); changed += 1
 
             else:
-                if cites(to_md(p["text"], p.get("kind", "text"))) != cites(new):
+                if cites(to_md(p["text"], p.get("kind", "text"))) != cites(new) and not allow_move:
                     refusals.append((n, tag, cites(to_md(p["text"], p.get("kind", "text"))), cites(new))); continue
                 repl = to_html(new, p.get("kind", "text"))
                 if repl != p["text"]:
@@ -277,6 +321,6 @@ if __name__ == "__main__":
     if cmd == "extract":
         extract()
     elif cmd == "bake":
-        bake(check_only="--check" in sys.argv)
+        bake(check_only="--check" in sys.argv, allow_move="--allow-move" in sys.argv)
     else:
         sys.exit(__doc__)

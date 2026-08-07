@@ -1,10 +1,10 @@
-# b07 · glossary
+# b02 · glossary
 
 <!-- Rewrite the text. Keep the ## [slot] headings, keep [[citations]] exactly.
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-07 / 19 {{·}} Plain Language
+02 / 19 {{·}} Plain Language
 
 ## [h22] h2
 Six words, {{before the method}}

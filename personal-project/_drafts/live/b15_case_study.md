@@ -10,7 +10,7 @@
 The method on a {{real thesis problem}}
 
 ## [body3] body
-These are live notes from my fieldwork, copied out of the vault as they stand.
+My thesis asks how teachers build TPACK, the knowledge that folds technology into real teaching [[(Mishra & Koehler, 2006)]]. I am comparing Japan's GIGA School Program with pilot classrooms run by the Bangkok Metropolitan Administration. I sit in on lessons at what Spradley calls the passive participation level, and interview afterwards [[(Spradley, 1980, pp. 58-59)]]. What follows are live notes from that work, copied out of the vault as they stand.
 
 ## [ledger4] ledger
 - (row) atom · field :: Teacher A frames science and ICT as well matched because the subject centers on observation and recording.

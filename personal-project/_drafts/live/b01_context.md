@@ -4,16 +4,17 @@
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-01 / 19 {{·}} Context
+01 / 19 {{·}} The Problem
 
 ## [h22] h2
-Not a {{hobby system}}
+I keep losing things I have {{already read}}
 
 ## [blist3] blist
-- My thesis is about how teachers acquire TPACK, the knowledge that folds technology into real teaching [[(Mishra & Koehler, 2006)]]. I am comparing Japan's GIGA School Program with pilot classrooms run by the Bangkok Metropolitan Administration.
-- Fieldwork has started. I sit in classrooms at what Spradley calls the passive participation level, then interview afterwards [[(Spradley, 1980, pp. 58-59)]].
-- So far that is 112 processed literature notes, across two sites and two languages, holding up an argument that has to survive two years.
-- Tonight the vault holds 2,163 atoms, 58 molecules and 9,121 links.
+- I read something, I understand it, and months later I need it back. That is where it goes wrong.
+- Usually I remember reading it. I remember roughly what it said. I still cannot find it.
+- Having more notes never fixed this. I had plenty of notes.
+- So I tried the obvious things. More folders. Better tags. Reading more slowly. None of them touched the part that was broken.
+- What follows is what I built after all of that failed, and an honest look at whether it works.
 
 ## [essay4] essay · Field note
-I did not start this because I like note apps. I started because my reading list stopped fitting in my head. A paper I read in March has to survive until a chapter I write in November. Twice now I have gone looking for something I know I read and come back with nothing. Teacher A's classroom showed me the same thing from the other side, though it took me most of a term to see it.
+WAITING FOR TAKUMI. Say what actually happened and this becomes that.
