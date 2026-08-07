@@ -1,10 +1,10 @@
-# b16 · pipeline
+# b13 · pipeline
 
 <!-- Rewrite the text. Keep the ## [slot] headings, keep [[citations]] exactly.
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-16 / 19 {{·}} Current State
+13 / 16 {{·}} Current State
 
 ## [h22] h2
 Where I {{am}} now

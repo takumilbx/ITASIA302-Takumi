@@ -4,7 +4,7 @@
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-05 / 19 {{·}} The Hype
+05 / 16 {{·}} The Hype
 
 ## [h22] h2
 I tried to {{automate}} everything

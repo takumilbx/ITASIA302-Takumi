@@ -1,10 +1,10 @@
-# b08 · stack
+# b10 · stack
 
 <!-- Rewrite the text. Keep the ## [slot] headings, keep [[citations]] exactly.
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-08 / 19 {{·}} The Stack
+10 / 16 {{·}} The Stack
 
 ## [h22] h2
 The {{tools}} I use

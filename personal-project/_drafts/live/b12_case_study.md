@@ -1,10 +1,10 @@
-# b15 · case study
+# b12 · case study
 
 <!-- Rewrite the text. Keep the ## [slot] headings, keep [[citations]] exactly.
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-15 / 19 {{·}} Case Study
+12 / 16 {{·}} Case Study
 
 ## [h22] h2
 The method on a {{real thesis problem}}

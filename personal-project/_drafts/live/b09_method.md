@@ -1,10 +1,10 @@
-# b11 · method
+# b09 · method
 
 <!-- Rewrite the text. Keep the ## [slot] headings, keep [[citations]] exactly.
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-11 / 19 {{·}} The Method
+09 / 16 {{·}} The Method
 
 ## [h22] h2
 The {{framework}} I apply
