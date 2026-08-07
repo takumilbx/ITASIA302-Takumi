@@ -4,13 +4,19 @@
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-10 / 16 {{·}} The Stack
+10 / 16 {{·}} The Workflow
 
 ## [h22] h2
-The {{tools}} I use
+One paper, {{start to finish}}
 
 ## [body3] body
-Five tools, in the order work moves through them. A paper goes in at one end and comes out as a note I can find.
+First there is a paper I want to read. I use Zotero to capture it into my Zotero folder. Then I read it myself, once, properly.
 
-## [essay4] essay · Field note
-This looks like tool clutter until you notice that each one holds a different kind of trust. Zotero holds provenance. Obsidian holds meaning. The AI layer I do not trust at all, which is why it sits where it does: everything it pulls out gets checked against the page it came from before it counts as an atom. On a normal run, two candidates in seven do not survive that check.
+## [body4] body
+After that I import it into Obsidian, using the plugin that connects the two. Now Obsidian has all the metadata of my reading, the author and the rest of it, and also the highlights I made in the paper.
+
+## [body5] body
+Then I use Claude Code so that Claude can drive NotebookLM directly, instead of me opening a lot of browser tabs. What NotebookLM does is extract the key claims and the key arguments, and I am the one who verifies them, one by one.
+
+## [body6] body
+Then I start to see the connections between the atoms, and I verify the molecules. Combining those molecules, I form the alloys myself.
