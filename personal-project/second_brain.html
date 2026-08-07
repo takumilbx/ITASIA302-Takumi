@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Second Brain · a visual essay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;0,6..96,900;1,6..96,400;1,6..96,500;1,6..96,600&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+  :root {
+    /* Quiet-gallery monochrome, OKLCH, tinted toward the brand blue. Never #000/#fff.
+       Higher-contrast ramp: bright ink, readable body, visible labels. */
+    --bg:        oklch(0.12 0.018 265);
+    --bg-deep:   oklch(0.09 0.018 265);
+    --ink:       oklch(0.97 0.006 250);
+    --ink-dim:   oklch(0.82 0.018 252);
+    --ink-faint: oklch(0.62 0.03 256);
+    --rule:      oklch(0.36 0.03 260);
+    --amber:     oklch(0.72 0.175 42);   /* the single emphasis accent, < 10% of pixels */
+
+    --display: "Bodoni Moda", "Times New Roman", Georgia, serif;
+    --sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+    --ease-out:    cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
+    --reveal-dur: 900ms;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: auto; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  /* Persistent WebGL backdrop */
+  #stage {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* Soft vignette: focuses the eye, lifts type off the field. Not glassmorphism, no border. */
+  #scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      radial-gradient(120% 90% at 50% 46%, transparent 38%, oklch(0.10 0.02 265 / 0.55) 100%),
+      linear-gradient(to bottom, oklch(0.10 0.02 265 / 0.45) 0%, transparent 22%, transparent 78%, oklch(0.10 0.02 265 / 0.55) 100%);
+  }
+
+  /* Scroll distance. Beats are fixed and cross-faded; this provides the scrubbed runway. */
+  #scroll-root { position: relative; width: 100%; }
+
+  /* Beat panels: fixed, mutually exclusive, opacity-gated by body[data-active-beat]. */
+  .beat {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    padding: clamp(28px, 6vw, 110px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 720ms var(--ease-out), visibility 0s linear 720ms;
+    pointer-events: none;
+  }
+  .beat .inner {
+    max-width: 62ch;
+    position: relative;
+    will-change: transform, opacity, filter;
+  }
+  /* Reading zones: text never floats on raw particles. Side beats get an edge-anchored panel
+     (viz cleared off the text side); centered beats get a strong radial. No blur, no border. */
+  .beat > .inner { z-index: 1; }
+  .align-left::before, .align-right::before {
+    content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  }
+  .align-left::before {
+    background: linear-gradient(to right,
+      var(--bg) 0%, var(--bg) 34%,
+      oklch(0.12 0.018 265 / 0.92) 47%,
+      oklch(0.12 0.018 265 / 0) 70%);
+  }
+  .align-right::before {
+    background: linear-gradient(to left,
+      var(--bg) 0%, var(--bg) 34%,
+      oklch(0.12 0.018 265 / 0.92) 47%,
+      oklch(0.12 0.018 265 / 0) 70%);
+  }
+  .align-center .inner::before {
+    content: ""; position: absolute; z-index: -1; inset: -22% -16%;
+    background: radial-gradient(ellipse at 50% 50%,
+      var(--bg) 0%,
+      oklch(0.12 0.018 265 / 0.92) 46%,
+      oklch(0.12 0.018 265 / 0.4) 66%,
+      transparent 82%);
+    pointer-events: none;
+  }
+  /* Asymmetric placement per beat (DESIGN_VARIANCE high). */
+  .align-center { justify-content: center; align-items: center; text-align: center; }
+  .align-center .inner { max-width: 56ch; }
+  #beat-0 .inner { max-width: min(1180px, 94vw); }
+  #beat-5 .inner { max-width: min(900px, 92vw); }
+  .align-left  { justify-content: flex-start; align-items: center; }
+  .align-right { justify-content: flex-end; align-items: center; }
+  .align-left .inner, .align-right .inner { max-width: 46ch; }
+  .lower { align-items: flex-end; padding-bottom: clamp(40px, 10vh, 140px); }
+  .top { align-items: flex-start; padding-top: clamp(36px, 8vh, 96px); }
+
+  body[data-active-beat="0"] #beat-0,
+  body[data-active-beat="1"] #beat-1,
+  body[data-active-beat="2"] #beat-2,
+  body[data-active-beat="3"] #beat-3,
+  body[data-active-beat="4"] #beat-4,
+  body[data-active-beat="5"] #beat-5,
+  body[data-active-beat="6"] #beat-6,
+  body[data-active-beat="7"] #beat-7,
+  body[data-active-beat="8"] #beat-8 {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 720ms var(--ease-out);
+  }
+
+  /* Staggered reveal of children when a beat is active. */
+  .beat .inner > * {
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(8px);
+    transition: opacity 760ms var(--ease-out), transform 760ms var(--ease-out), filter 760ms var(--ease-out);
+  }
+  .beat.is-active .inner > * { opacity: 1; transform: none; filter: none; }
+  .beat.is-active .inner > *:nth-child(1) { transition-delay: 60ms; }
+  .beat.is-active .inner > *:nth-child(2) { transition-delay: 140ms; }
+  .beat.is-active .inner > *:nth-child(3) { transition-delay: 220ms; }
+  .beat.is-active .inner > *:nth-child(4) { transition-delay: 300ms; }
+  .beat.is-active .inner > *:nth-child(5) { transition-delay: 380ms; }
+
+  /* Typography */
+  .kicker {
+    font-family: var(--mono);
+    font-weight: 400;
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 22px;
+  }
+  .kicker em { color: var(--amber); font-style: normal; }
+
+  h1.head, h2.head {
+    font-family: var(--display);
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    line-height: 1.03;
+    color: var(--ink);
+  }
+  h1.head { font-size: clamp(44px, 6vw, 112px); font-weight: 500; white-space: nowrap; }
+  h1.head .paren { color: var(--ink-dim); font-weight: 400; white-space: nowrap; }
+  h2.head { font-size: clamp(33px, 4.4vw, 68px); margin-bottom: 24px; }
+  .head em { font-style: italic; font-weight: 500; color: var(--amber); white-space: nowrap; }
+
+  .body {
+    font-family: var(--display);
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-size: clamp(17px, 1.5vw, 22px);
+    line-height: 1.66;
+    color: var(--ink-dim);
+    max-width: 56ch;
+  }
+  .body + .body { margin-top: 16px; }
+  .body em { color: var(--ink); font-style: italic; font-weight: 500; }
+  .sub {
+    font-family: var(--display);
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-size: clamp(18px, 1.7vw, 25px);
+    line-height: 1.5;
+    color: var(--ink-dim);
+    margin-top: 24px;
+    max-width: 50ch;
+  }
+
+  /* A quiet aside, not a card-with-stripe. Hairline top rule, mono label. */
+  .aside {
+    margin-top: 34px;
+    padding-top: 18px;
+    border-top: 1px solid var(--rule);
+    max-width: 60ch;
+  }
+  .aside .lbl {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 10px;
+  }
+  .aside .body { font-size: clamp(14px, 1.1vw, 16px); }
+
+  .pullquote {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(25px, 3.1vw, 44px);
+    line-height: 1.24;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .cite {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    color: var(--ink-faint);
+    margin-top: 20px;
+  }
+
+  /* Thesis hero line */
+  .thesis {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(27px, 3.7vw, 52px);
+    line-height: 1.18;
+    letter-spacing: -0.005em;
+    color: var(--ink);
+    max-width: 20ch;
+  }
+  .thesis em { font-style: italic; font-weight: 500; color: var(--amber); }
+
+  /* Lit cards row (beat 7): three columns, hairline separated, NOT identical icon cards. */
+  .lit-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    margin-top: 40px;
+    border-top: 1px solid var(--rule);
+    max-width: 86ch;
+  }
+  .lit {
+    padding: 22px 26px 4px 0;
+    border-right: 1px solid var(--rule);
+  }
+  .lit:last-child { border-right: none; padding-right: 0; }
+  .lit .ix { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; color: var(--amber); margin-bottom: 12px; }
+  .lit .t  { font-family: var(--display); font-style: italic; font-weight: 500; font-size: 18px; color: var(--ink); line-height: 1.28; margin-bottom: 8px; }
+  .lit .d  { font-family: var(--display); font-optical-sizing: auto; font-weight: 400; font-size: 14.5px; line-height: 1.52; color: var(--ink-dim); }
+
+  /* Pipeline (beat 6): header pinned top-left, one active step bottom-left, graph owns the rest. */
+  #beat-6 { display: block; padding: 0; }
+  #beat-6 .inner { max-width: none; width: 100%; height: 100%; }
+  #beat-6 .inner::before { display: none; } /* local scrims instead of one big one */
+  .pl-top {
+    position: absolute; top: clamp(38px, 9vh, 92px); left: clamp(28px, 6vw, 110px);
+    max-width: 40ch; z-index: 2;
+  }
+  .pl-top::before {
+    content: ""; position: absolute; z-index: -1; inset: -16% -14%;
+    background: radial-gradient(ellipse at 35% 40%, oklch(0.10 0.02 265 / 0.86) 0%, oklch(0.10 0.02 265 / 0.5) 55%, transparent 78%);
+  }
+  .pl-intro { font-family: var(--display); font-optical-sizing: auto; font-weight: 400; font-size: clamp(15px, 1.2vw, 17.5px); line-height: 1.6; color: var(--ink-dim); max-width: 40ch; }
+  .pl-chips { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 18px; }
+  .chip {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em;
+    color: var(--ink-dim); padding: 5px 11px; border: 1px solid var(--rule);
+  }
+  .chip b { color: var(--ink); font-weight: 500; }
+
+  .pl-steps {
+    position: absolute; left: clamp(28px, 6vw, 110px); bottom: clamp(40px, 10vh, 104px);
+    width: min(48ch, 82vw); height: 188px; z-index: 2;
+  }
+  .pl-steps::before {
+    content: ""; position: absolute; z-index: -1; inset: -22% -16% -30% -14%;
+    background: radial-gradient(ellipse at 30% 60%, oklch(0.10 0.02 265 / 0.88) 0%, oklch(0.10 0.02 265 / 0.52) 56%, transparent 80%);
+  }
+  .pl-rail { position: absolute; left: 0; bottom: -22px; width: 100%; height: 1px; background: var(--rule); }
+  .pl-rail-fill { display: block; height: 1px; width: 0%; background: var(--amber); transition: width 460ms var(--ease-out); }
+  .pl-step {
+    position: absolute; left: 0; right: 0; bottom: 8px;
+    opacity: 0; transform: translateY(12px); filter: blur(6px);
+    transition: opacity 520ms var(--ease-out), transform 520ms var(--ease-out), filter 520ms var(--ease-out);
+    pointer-events: none;
+  }
+  .pl-step.on { opacity: 1; transform: none; filter: none; }
+  .pl-step .n { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; color: var(--amber); margin-bottom: 9px; }
+  .pl-step .h { font-family: var(--display); font-size: clamp(21px,2.1vw,30px); font-weight: 600; color: var(--ink); margin-bottom: 8px; letter-spacing: -0.005em; }
+  .pl-step .h em { font-style: italic; font-weight: 500; color: var(--amber); }
+  .pl-step .b { font-family: var(--display); font-optical-sizing: auto; font-weight: 400; font-size: 15.5px; line-height: 1.58; color: var(--ink-dim); max-width: 48ch; }
+  .pl-step .b code { font-family: var(--mono); font-size: 12.5px; color: var(--ink); }
+
+  /* Progress rail */
+  #rail {
+    position: fixed; right: clamp(16px, 2.4vw, 40px); top: 50%; transform: translateY(-50%);
+    z-index: 3; display: flex; flex-direction: column; gap: 12px; pointer-events: none;
+  }
+  #rail .tick {
+    width: 22px; height: 1px; background: var(--ink-faint); opacity: 0.5;
+    transition: background 400ms, width 400ms, opacity 400ms;
+  }
+  #rail .tick.on { background: var(--amber); width: 34px; opacity: 1; }
+
+  /* Scroll hint (hero only) */
+  #hint {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+    z-index: 3; font-family: var(--mono); font-size: 10px; letter-spacing: 0.3em;
+    text-transform: uppercase; color: var(--ink-faint); pointer-events: none;
+    transition: opacity 600ms var(--ease-out);
+  }
+
+  /* Beat 4 sits over the low graveyard field, so it earns a stronger local scrim. */
+  #beat-4 .inner::before {
+    inset: -22% -20%;
+    background: radial-gradient(ellipse at 50% 48%,
+      var(--bg) 0%,
+      oklch(0.12 0.018 265 / 0.82) 52%,
+      oklch(0.12 0.018 265 / 0.34) 72%,
+      transparent 86%);
+  }
+
+  @media (max-width: 820px) {
+    .beat { padding: 24px; }
+    .align-left, .align-right { justify-content: flex-start; }
+    .lit-row { grid-template-columns: 1fr; }
+    .lit { border-right: none; border-bottom: 1px solid var(--rule); padding: 18px 0; }
+    .lit:last-child { border-bottom: none; }
+    #rail { display: none; }
+    h1.head { white-space: normal; font-size: clamp(34px, 10vw, 56px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .beat .inner > * { transition-duration: 1ms; filter: none; transform: none; }
+  }
+
+  /* Verification only: snap opacity transitions so seek() screenshots capture settled state. */
+  body.seek-snap .beat,
+  body.seek-snap .beat .inner > *,
+  body.seek-snap .pl-step { transition: none !important; }
+</style>
+</head>
+<body data-active-beat="0">
+
+<canvas id="stage"></canvas>
+<div id="scrim"></div>
+
+<!-- Progress rail -->
+<nav id="rail" aria-hidden="true">
+  <span class="tick" data-b="0"></span><span class="tick" data-b="1"></span>
+  <span class="tick" data-b="2"></span><span class="tick" data-b="3"></span>
+  <span class="tick" data-b="4"></span><span class="tick" data-b="5"></span>
+  <span class="tick" data-b="6"></span><span class="tick" data-b="7"></span>
+  <span class="tick" data-b="8"></span>
+</nav>
+
+<!-- Beats -->
+<main>
+  <section class="beat align-center" id="beat-0" data-beat="0">
+    <div class="inner">
+      <p class="kicker">Project Overview <em>·</em> Initial Draft</p>
+      <h1 class="head">Building a<br><em>Second Brain</em><br><span class="paren">(For Real This Time)</span></h1>
+      <p class="sub">The project in one walk-through. What PKM is, why the hype around it is suspicious, what I am building, and where it is heading.</p>
+    </div>
+  </section>
+
+  <section class="beat align-left" id="beat-1" data-beat="1">
+    <div class="inner">
+      <p class="kicker">01 <em>·</em> PKM</p>
+      <h2 class="head">What is <em>PKM</em>?</h2>
+      <p class="body">Personal knowledge management is the set of steps a person uses to collect, organize, store, find, and share what they know. It means having a real system for your own knowledge instead of just hoping you will remember things later. The key idea is that the individual, not a company or an institution, is in charge of managing it.</p>
+      <div class="aside">
+        <p class="lbl">The habit is old</p>
+        <p class="body">The term comes from a 1999 paper by Frand and Hixon, but the practice runs from Leonardo's notebooks to Luhmann's Zettelkasten, a box of more than 90,000 linked cards. In 1945 Vannevar Bush imagined the Memex, a desk that could store everything you read and find it again quickly.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="beat align-right" id="beat-2" data-beat="2">
+    <div class="inner">
+      <p class="kicker">02 <em>·</em> Second Brain</p>
+      <h2 class="head">And a <em>second brain</em>?</h2>
+      <p class="body">If PKM is the general idea, the second brain is its most famous version: an external, digital place for the ideas you collect. But storage is not the point. Tiago Forte calls it a system that "expands our memory and our intellect using the modern tools of technology and networks." A folder of saved articles is a digital attic. A second brain is meant to be a thinking partner.</p>
+      <div class="aside">
+        <p class="lbl">The extended mind</p>
+        <p class="body">Clark and Chalmers argued in 1998 that thinking does not only happen inside the head. If Otto trusts his notebook and uses it constantly, it becomes part of his mind. Moving information into a system you trust is not laziness, it is cognitive extension.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="beat align-left" id="beat-3" data-beat="3">
+    <div class="inner">
+      <p class="kicker">03 <em>·</em> The Hype</p>
+      <h2 class="head">Everyone is <em>selling</em> a brain</h2>
+      <p class="body">Spend any time in the productivity side of the internet and someone will try to sell you a brain. Forte's book was a bestseller. Creators show off note-taking systems with the energy people usually save for skincare routines. The newest promise is that AI will finally make it effortless. Whether any of it actually <em>works</em> is treated as a separate, slightly awkward question.</p>
+      <div class="aside">
+        <p class="lbl">The quiet evidence</p>
+        <p class="body">There is little solid research showing these systems improve thinking. William Jones argued you can only manage information, because knowledge is personal and lives in the mind. That gap between loud claims and quiet evidence is where this project starts.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="beat align-center top" id="beat-4" data-beat="4">
+    <div class="inner">
+      <p class="kicker">04 <em>·</em> The Meme</p>
+      <p class="pullquote">The people who promote "second brains" often still cannot remember where their own car keys are. The partner who quietly tracks the keys, the glasses, and the appointments was the original second brain all along.</p>
+      <p class="cite">based on the "second brain" meme by @nunoei, paraphrased</p>
+      <p class="body" style="margin-top:26px">I came to this not through theory but through failure. For years, organizing my notes was a job for Future Me, who never showed up. My vault turned into a beautifully tagged graveyard. Is the failure mine, or the method's? That is the whole reason for this project.</p>
+    </div>
+  </section>
+
+  <section class="beat align-center" id="beat-5" data-beat="5">
+    <div class="inner">
+      <p class="kicker">05 <em>·</em> What I'm Building</p>
+      <h2 class="head">A second brain that actually <em>helps me think</em></h2>
+      <p class="body">I am not building a fancier filing cabinet. I am building a system where small, single-idea notes connect into arguments, and where the question <em>"do I really understand this?"</em> has a structural answer. Most PKM advice focuses on capture, getting everything in. But the thing that decides whether a system works is retrieval, getting the right idea back out at the moment you are thinking. So the project puts retrieval first, then tests that idea honestly.</p>
+    </div>
+  </section>
+
+  <section class="beat" id="beat-6" data-beat="6">
+    <div class="inner">
+      <div class="pl-top">
+        <p class="kicker" style="margin-bottom:14px">06 <em>·</em> Current State</p>
+        <h2 class="head" style="margin-bottom:14px">Where I <em>am</em> now</h2>
+        <p class="pl-intro">A paper enters through Zotero, becomes a literature note in Obsidian, and Claude Code runs a NotebookLM integration to extract candidate atoms. Verified atoms land in the vault, cluster into molecules, and synthesize into alloys tracked in Notion. This is that vault, in full.</p>
+        <div class="pl-chips">
+          <span class="chip"><b>1,471</b> notes</span>
+          <span class="chip"><b>4,247</b> links</span>
+          <span class="chip"><b>Zotero</b> · 49 sources</span>
+        </div>
+      </div>
+      <div class="pl-steps">
+        <div class="pl-rail"><span class="pl-rail-fill"></span></div>
+        <div class="pl-step" data-step="0"><div class="n">Step 01 · Zotero</div><div class="h">Capture <em>the paper</em></div><div class="b">Every source enters through Zotero. PDF attached, metadata extracted, citekey auto-generated <code>authorYEAR</code>. A structured import note drops into the vault inbox.</div></div>
+        <div class="pl-step" data-step="1"><div class="n">Step 02 · Obsidian lit note</div><div class="h">Process into a <em>literature note</em></div><div class="b">The import becomes a structured note <code>@FERREIRA2026.md</code>. Four sections always: Main Argument, Methodology, Key Findings, Atoms Extracted. The single source of truth downstream.</div></div>
+        <div class="pl-step" data-step="2"><div class="n">Step 03 · Claude Code + NLM MCP</div><div class="h">Extract atoms via <em>NotebookLM</em></div><div class="b">Claude Code reads the lit note, opens the PDF, runs the NotebookLM MCP integration. Three focused queries return candidate atoms. Each gets verified against the source.</div></div>
+        <div class="pl-step" data-step="3"><div class="n">Step 04 · Atoms</div><div class="h">Verified atoms <em>land in the vault</em></div><div class="b">Each verified suggestion becomes its own file in <code>/Atoms/</code>. The filename is the claim as a full declarative sentence, findable by search alone. The vault holds atoms across thesis topics: TPACK, PKM, Japan's GIGA program, Bangkok's BMA pilot.</div></div>
+        <div class="pl-step" data-step="4"><div class="n">Step 05 · Molecules</div><div class="h">Atoms <em>cluster into molecules</em></div><div class="b">When 2 to 5 atoms share a theme, they pull into a molecule: a connection note with no new claims, only relations. Pattern recognition stops being implicit and becomes a saved object.</div></div>
+        <div class="pl-step" data-step="5"><div class="n">Step 06 · Alloys</div><div class="h">Molecules fuse into <em>alloys</em></div><div class="b">An alloy is a thesis-grade synthesis, an original argument built from molecules and atoms. It can never be drafted directly from a source. Alloys are where the project's research output lives.</div></div>
+        <div class="pl-step" data-step="6"><div class="n">Step 07 · Notion</div><div class="h">Alloys surface in <em>Notion</em></div><div class="b">Each alloy surfaces as a thesis chapter draft or a fieldwork milestone. Deadlines and status reference vault notes by citekey. Obsidian is the brain. Notion is the calendar.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="beat align-left" id="beat-7" data-beat="7">
+    <div class="inner" style="max-width:90ch">
+      <p class="kicker">07 <em>·</em> Thesis</p>
+      <p class="thesis">Retrieval-first organization explains why generic PKM templates <em>fail</em> in domain-expert workflows.</p>
+      <div class="lit-row">
+        <div class="lit"><div class="ix">01 · Bestseller</div><div class="t">Forte, Building a Second Brain (2022)</div><div class="d">The book that popularized the capture-first method. This project argues against it. It is here not as research but as the main thing the project studies.</div></div>
+        <div class="lit"><div class="ix">02 · Historical</div><div class="t">Luhmann, Communicating with Slip Boxes (1981)</div><div class="d">Luhmann's own account of his Zettelkasten. The historical balance to the modern hype. Retrieval-first thinking is older than the apps selling it.</div></div>
+        <div class="lit"><div class="ix">03 · Current</div><div class="t">Ferreira (2026), on retrieval-first organization</div><div class="d">Recent work that gives the project its main angle and shapes the thesis.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="beat align-center" id="beat-8" data-beat="8">
+    <div class="inner">
+      <p class="kicker">08 <em>·</em> End</p>
+      <p class="sub" style="color:var(--ink)">ITASIA302 · personal project · May 2026</p>
+    </div>
+  </section>
+</main>
+
+<div id="scroll-root"></div>
+<div id="hint">Scroll</div>
+
+<!-- Real vault graph data: window.VAULT (1471 nodes, 4247 edges). Inlined for the final single-file build. -->
+<script src="_vault_inline.js"></script>
+
+<script>
+"use strict";
+(function () {
+  const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // ---------------------------------------------------------------------------
+  // Beat scroll model: weighted so beat 6 (the pipeline reveal) gets 10x length.
+  // ---------------------------------------------------------------------------
+  const WEIGHTS = [1, 1, 1, 1, 1, 1, 10, 1, 1];
+  const TOTAL_W = WEIGHTS.reduce((a, b) => a + b, 0);
+  const BOUNDS = [];
+  { let acc = 0; for (let i = 0; i < WEIGHTS.length; i++) { const s = acc / TOTAL_W; acc += WEIGHTS[i]; BOUNDS.push([s, acc / TOTAL_W]); } }
+  const SCROLL_VH = 1900; // total scroll distance
+
+  function beatFromProgress(p) {
+    for (let i = 0; i < BOUNDS.length; i++) {
+      if (p < BOUNDS[i][1] || i === BOUNDS.length - 1) {
+        const [s, e] = BOUNDS[i];
+        return { beat: i, frac: Math.min(1, Math.max(0, (p - s) / (e - s))) };
+      }
+    }
+    return { beat: 8, frac: 1 };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Data: real vault, with a graceful fallback so the page never blank-screens.
+  // ---------------------------------------------------------------------------
+  const V = window.VAULT || null;
+  const N = V ? V.n : 1400;
+
+  // Seeded PRNG for deterministic abstract formations.
+  function mulberry32(a) { return function () { a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  const rnd = mulberry32(0x5eed);
+
+  // Real positions, centered and scaled to a known radius.
+  const real = new Float32Array(N * 3);
+  const grp = new Int16Array(N);
+  const lc = new Float32Array(N);
+  let GROUPS = ["atom"];
+  if (V) {
+    GROUPS = V.g;
+    let cx = 0, cy = 0, cz = 0;
+    for (let i = 0; i < N; i++) { cx += V.pos[i*3]; cy += V.pos[i*3+1]; cz += V.pos[i*3+2]; }
+    cx /= N; cy /= N; cz /= N;
+    let maxR = 1e-6;
+    for (let i = 0; i < N; i++) {
+      const dx = V.pos[i*3]-cx, dy = V.pos[i*3+1]-cy, dz = V.pos[i*3+2]-cz;
+      maxR = Math.max(maxR, Math.hypot(dx, dy, dz));
+    }
+    const TARGET_R = 64, s = TARGET_R / maxR;
+    for (let i = 0; i < N; i++) {
+      real[i*3]   = (V.pos[i*3]-cx) * s;
+      real[i*3+1] = (V.pos[i*3+1]-cy) * s;
+      real[i*3+2] = (V.pos[i*3+2]-cz) * s;
+      grp[i] = V.grp[i];
+      lc[i] = V.lc[i];
+    }
+  } else {
+    for (let i = 0; i < N; i++) {
+      real[i*3] = (rnd()-0.5)*120; real[i*3+1] = (rnd()-0.5)*120; real[i*3+2] = (rnd()-0.5)*120;
+      grp[i] = (rnd()*9)|0; lc[i] = (rnd()*8)|0;
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Abstract formations (each Float32Array N*3), keyed by beat.
+  // ---------------------------------------------------------------------------
+  const F = {
+    CLOUD:    new Float32Array(N * 3),
+    HUB:      new Float32Array(N * 3),
+    CHAOS:    new Float32Array(N * 3),
+    COLLAPSE: new Float32Array(N * 3),
+    LIFT:     new Float32Array(N * 3),
+    REAL:     real,
+  };
+  const chaosDir = new Float32Array(N * 3); // persistent per-particle turbulence axis
+
+  (function buildFormations() {
+    const golden = Math.PI * (3 - Math.sqrt(5));
+    for (let i = 0; i < N; i++) {
+      const j = i * 3;
+      // CLOUD: fibonacci shell, slight radial jitter. Reads as a constellation, not a fuzzy ball.
+      const y = 1 - (i / (N - 1)) * 2;
+      const r = Math.sqrt(Math.max(0, 1 - y * y));
+      const th = golden * i;
+      const shell = 30 + (rnd() - 0.5) * 6;
+      F.CLOUD[j]   = Math.cos(th) * r * shell;
+      F.CLOUD[j+1] = y * shell * 0.8;
+      F.CLOUD[j+2] = Math.sin(th) * r * shell;
+
+      // HUB: most particles gathered near center, a few orbit out. ("second brain" as one idea)
+      const hr = Math.pow(rnd(), 2.2) * 26;
+      const ha = rnd() * Math.PI * 2, hb = Math.acos(2*rnd()-1);
+      F.HUB[j]   = Math.sin(hb)*Math.cos(ha)*hr;
+      F.HUB[j+1] = Math.cos(hb)*hr*0.7;
+      F.HUB[j+2] = Math.sin(hb)*Math.sin(ha)*hr;
+
+      // CHAOS: wide noisy scatter (turbulence added per-frame)
+      F.CHAOS[j]   = (rnd()-0.5)*150;
+      F.CHAOS[j+1] = (rnd()-0.5)*96;
+      F.CHAOS[j+2] = (rnd()-0.5)*150;
+      chaosDir[j] = rnd()*6.28; chaosDir[j+1] = rnd()*6.28; chaosDir[j+2] = 0.5 + rnd();
+
+      // COLLAPSE: flat inert plane, "the beautifully tagged graveyard"
+      F.COLLAPSE[j]   = (rnd()-0.5)*132;
+      F.COLLAPSE[j+1] = -42 + (rnd()-0.5)*3.0;
+      F.COLLAPSE[j+2] = (rnd()-0.5)*132;
+
+      // LIFT: rising off the plane toward real XZ, hovering, pre-snap
+      F.LIFT[j]   = F.COLLAPSE[j]   * 0.55 + real[j]   * 0.30;
+      F.LIFT[j+1] = -6 + (rnd()) * 26;
+      F.LIFT[j+2] = F.COLLAPSE[j+2] * 0.55 + real[j+2] * 0.30;
+    }
+  })();
+
+  // Per-beat motion signature. Each beat is its OWN physics (stiffness/drag/flow/force),
+  // not a uniform crossfade. Particles spring toward the formation with inertia + a curl-noise
+  // flow field, so they are always alive. Momentum carries across beat boundaries.
+  const MOT = [
+    { form: "CLOUD",    stiff: 2.6,  drag: 2.4, flow: 1.7, rot:  0.045, mode: "drift"   }, // 0 hero
+    { form: "CLOUD",    stiff: 3.2,  drag: 2.7, flow: 1.3, rot:  0.05,  mode: "breathe" }, // 1 pkm
+    { form: "HUB",      stiff: 7.0,  drag: 2.8, flow: 0.7, rot:  0.10,  mode: "orbit"   }, // 2 second brain
+    { form: "CHAOS",    stiff: 0.9,  drag: 1.0, flow: 6.5, rot:  0.0,   mode: "chaos"   }, // 3 hype
+    { form: "COLLAPSE", stiff: 1.4,  drag: 2.2, flow: 0.35,rot:  0.0,   mode: "gravity" }, // 4 meme
+    { form: "LIFT",     stiff: 2.4,  drag: 1.9, flow: 2.2, rot:  0.02,  mode: "lift"    }, // 5 building
+    { form: "REAL",     stiff: 17.0, drag: 4.0, flow: 0.45,rot:  0.028, mode: "reveal"  }, // 6 pipeline
+    { form: "REAL",     stiff: 24.0, drag: 7.5, flow: 0.5, rot:  0.022, mode: "settle"  }, // 7 thesis
+    { form: "REAL",     stiff: 4.5,  drag: 2.6, flow: 1.3, rot:  0.04,  mode: "recede"  }, // 8 end
+  ];
+
+  // Easings
+  const easeOutQuart = t => 1 - Math.pow(1 - t, 4);
+  const easeInOutCubic = t => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2;
+  const smooth = t => t*t*(3-2*t);
+  const clamp01 = t => Math.min(1, Math.max(0, t));
+
+  // ---------------------------------------------------------------------------
+  // THREE setup
+  // ---------------------------------------------------------------------------
+  const canvas = document.getElementById("stage");
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  function vw() { return (window.visualViewport && window.visualViewport.width) || window.innerWidth; }
+  function vh() { return (window.visualViewport && window.visualViewport.height) || window.innerHeight; }
+  renderer.setSize(vw(), vh());
+  renderer.setClearColor(new THREE.Color(0x0a0c14), 1);
+
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x0a0c14, 0.0042);
+  const camera = new THREE.PerspectiveCamera(55, vw() / vh(), 0.1, 800);
+
+  // Domain colors (muted; mixed toward ink in-shader, only at reveal). Order matches GROUPS.
+  const DOMAIN_HEX = {
+    atom: 0x6f93b8, policy: 0x55a08a, theory: 0xb07088, tool: 0x8585bd,
+    author: 0xb070a0, class: 0xc4a877, notebooklm: 0x83b8a2, audit: 0x8a99b3, citation: 0xcfd6e6,
+  };
+  const nodeColor = new Float32Array(N * 3);
+  {
+    const c = new THREE.Color();
+    for (let i = 0; i < N; i++) {
+      const name = GROUPS[grp[i]] || "atom";
+      c.setHex(DOMAIN_HEX[name] != null ? DOMAIN_HEX[name] : 0x9fb0cc);
+      nodeColor[i*3] = c.r; nodeColor[i*3+1] = c.g; nodeColor[i*3+2] = c.b;
+    }
+  }
+
+  // Particle sizes from real degree.
+  const nodeSize = new Float32Array(N);
+  for (let i = 0; i < N; i++) nodeSize[i] = 1.9 + Math.sqrt(lc[i]) * 0.72;
+
+  // Live position buffer (mutated each frame) + velocity for the physics integrator.
+  const livePos = new Float32Array(N * 3);
+  livePos.set(F.CLOUD);
+  const vel = new Float32Array(N * 3);
+  const phase = new Float32Array(N);   // decorrelates the flow field per particle
+  const stagger = new Float32Array(N); // per-particle arrival offset for the streaming reveal
+  for (let i = 0; i < N; i++) { phase[i] = rnd() * 6.283; stagger[i] = rnd() * 0.40; }
+
+  const pGeo = new THREE.BufferGeometry();
+  pGeo.setAttribute("position", new THREE.BufferAttribute(livePos, 3));
+  pGeo.setAttribute("aColor", new THREE.BufferAttribute(nodeColor, 3));
+  pGeo.setAttribute("aSize", new THREE.BufferAttribute(nodeSize, 1));
+
+  const INK = new THREE.Color(0xdfe6f2);
+  const pMat = new THREE.ShaderMaterial({
+    uniforms: {
+      uScale:   { value: vh() * 0.6 },
+      uTint:    { value: 0.0 },
+      uInk:     { value: new THREE.Vector3(INK.r, INK.g, INK.b) },
+      uOpacity: { value: 1.0 },
+    },
+    vertexShader: `
+      attribute float aSize;
+      attribute vec3 aColor;
+      uniform float uScale;
+      varying vec3 vColor;
+      void main() {
+        vColor = aColor;
+        vec4 mv = modelViewMatrix * vec4(position, 1.0);
+        gl_Position = projectionMatrix * mv;
+        gl_PointSize = clamp(aSize * uScale / max(1.0, -mv.z), 1.4, 16.0);
+      }`,
+    fragmentShader: `
+      precision mediump float;
+      uniform float uTint;
+      uniform vec3 uInk;
+      uniform float uOpacity;
+      varying vec3 vColor;
+      void main() {
+        vec2 d = gl_PointCoord - 0.5;
+        float r = length(d);
+        // Crisp disc with a thin anti-aliased edge. No additive bloom.
+        float a = smoothstep(0.5, 0.42, r);
+        if (a <= 0.01) discard;
+        vec3 col = mix(uInk, vColor, clamp(uTint, 0.0, 1.0));
+        gl_FragColor = vec4(col, a * uOpacity);
+      }`,
+    transparent: true,
+    depthWrite: false,
+    depthTest: false,
+    blending: THREE.NormalBlending,
+  });
+  const points = new THREE.Points(pGeo, pMat);
+  points.frustumCulled = false;
+  scene.add(points);
+
+  // Edges (real graph structure). Neutral faint ink so they never read as rainbow.
+  let edgeLines = null, edgePos = null, edgeMat = null, edgeIndex = null;
+  if (V && V.e && V.e.length) {
+    const EC = V.e.length / 2;
+    edgePos = new Float32Array(EC * 6);
+    edgeIndex = V.e;
+    const eGeo = new THREE.BufferGeometry();
+    eGeo.setAttribute("position", new THREE.BufferAttribute(edgePos, 3));
+    edgeMat = new THREE.LineBasicMaterial({
+      color: 0x3a4a68, transparent: true, opacity: 0.0, depthWrite: false, depthTest: false, blending: THREE.NormalBlending,
+    });
+    edgeLines = new THREE.LineSegments(eGeo, edgeMat);
+    edgeLines.frustumCulled = false;
+    scene.add(edgeLines);
+  }
+  function syncEdges() {
+    if (!edgeLines) return;
+    const EC = edgeIndex.length / 2;
+    for (let i = 0; i < EC; i++) {
+      const s = edgeIndex[i*2]*3, t = edgeIndex[i*2+1]*3;
+      const o = i*6;
+      edgePos[o]=livePos[s]; edgePos[o+1]=livePos[s+1]; edgePos[o+2]=livePos[s+2];
+      edgePos[o+3]=livePos[t]; edgePos[o+4]=livePos[t+1]; edgePos[o+5]=livePos[t+2];
+    }
+    edgeLines.geometry.attributes.position.needsUpdate = true;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Camera keyframes (spherical around a lookAt point). Interpolated continuously.
+  // ---------------------------------------------------------------------------
+  const CAM = {
+    rad:  [66, 80, 80, 106, 82, 86, 122, 104, 158],
+    phi:  [1.42, 1.40, 1.30, 1.50, 1.90, 1.60, 1.42, 1.18, 1.36],
+    theta:[0.0, 0.22, 0.50, 0.90, 1.06, 1.32, 1.74, 2.20, 2.55],
+    lookY:[0, 0, 2, 0, -16, -6, 4, -26, 6],
+    // Pan as a fraction of the view width at subject distance (+ shifts subject right, into the
+    // negative space opposite the text). Aspect/zoom independent. Side beats push mass off the text.
+    pan:  [0, 0.32, -0.32, 0.27, 0, 0, 0.22, 0.27, 0],
+  };
+  const _look = new THREE.Vector3();
+  const _right = new THREE.Vector3();
+  const camS = { rad: CAM.rad[0], phi: CAM.phi[0], theta: CAM.theta[0], lookY: CAM.lookY[0], pan: CAM.pan[0] };
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function camTarget(beat, frac) {
+    const a = beat, b = Math.min(8, beat + 1), t = easeInOutCubic(frac);
+    return {
+      rad: lerp(CAM.rad[a], CAM.rad[b], t),
+      phi: lerp(CAM.phi[a], CAM.phi[b], t),
+      theta: lerp(CAM.theta[a], CAM.theta[b], t),
+      lookY: lerp(CAM.lookY[a], CAM.lookY[b], t),
+      pan: lerp(CAM.pan[a], CAM.pan[b], t),
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Per-frame state
+  // ---------------------------------------------------------------------------
+  let scrollProgress = 0;
+  let seeking = false; // verification: when true, ScrollTrigger stops overriding scrollProgress
+  let time = 0;
+  const _va = new THREE.Vector3(), _vb = new THREE.Vector3();
+
+  const GROUND = -42;
+  function updateParticles(beat, frac, dt) {
+    const h = dt > 0.033 ? 0.033 : dt;     // clamp step for integrator stability
+    const m = MOT[beat];
+    const form = F[m.form];
+    const baseK = m.stiff, drag = m.drag, flowAmp = m.flow, mode = m.mode;
+
+    // Whole-formation slow rotation (applied to the target the particles chase).
+    const ang = time * m.rot;
+    const ca = Math.cos(ang), sa = Math.sin(ang);
+    const breath = mode === "breathe" ? (1 + Math.sin(time * 0.5) * 0.06)
+                 : mode === "drift"   ? (1 + Math.sin(time * 0.35) * 0.035) : 1;
+    const orbit   = mode === "orbit"   ? 0.9 : 0;
+    const gravity = mode === "gravity" ? 26  : 0;
+    const lift    = mode === "lift"    ? 17  : 0;
+    const recede  = mode === "recede"  ? 0.5 : 0;
+
+    for (let i = 0; i < N; i++) {
+      const j = i * 3;
+      // target position (rotated + breathed)
+      let tx = form[j], ty = form[j+1], tz = form[j+2];
+      if (breath !== 1) { tx *= breath; ty *= breath; tz *= breath; }
+      if (ang) { const nx = tx * ca - tz * sa; tz = tx * sa + tz * ca; tx = nx; }
+
+      let x = livePos[j], y = livePos[j+1], z = livePos[j+2];
+      let vx = vel[j], vy = vel[j+1], vz = vel[j+2];
+
+      // reveal: stagger stiffness so particles stream in (waves), not all at once
+      let k = baseK;
+      if (mode === "reveal") k = baseK * clamp01((frac - stagger[i]) / 0.15);
+
+      // curl-ish flow field keeps motion organic and alive
+      const ph = phase[i];
+      const fx = Math.sin(y * 0.05 + time * 0.6 + ph) + Math.cos(z * 0.045 - time * 0.4);
+      const fy = Math.sin(z * 0.05 + time * 0.5 + ph) + Math.cos(x * 0.043 - time * 0.45);
+      const fz = Math.sin(x * 0.048 + time * 0.55 + ph) + Math.cos(y * 0.04 - time * 0.5);
+
+      let ax = (tx - x) * k + fx * flowAmp - vx * drag;
+      let ay = (ty - y) * k + fy * flowAmp - vy * drag;
+      let az = (tz - z) * k + fz * flowAmp - vz * drag;
+
+      if (orbit)   { ax += -z * orbit; az += x * orbit; }        // swirl about Y
+      if (gravity) { ay -= gravity; ax *= 0.22; az *= 0.22; }    // rain down, weak xz spread
+      if (lift)    { ay += lift; }                                // rise off the floor
+      if (recede)  { ax += x * recede; ay += y * recede; az += z * recede; } // drift apart
+
+      vx += ax * h; vy += ay * h; vz += az * h;
+      x += vx * h; y += vy * h; z += vz * h;
+
+      if (gravity && y < GROUND) { y = GROUND; vy *= -0.22; vx *= 0.86; vz *= 0.86; } // settle on the plane
+
+      livePos[j] = x; livePos[j+1] = y; livePos[j+2] = z;
+      vel[j] = vx; vel[j+1] = vy; vel[j+2] = vz;
+    }
+    pGeo.attributes.position.needsUpdate = true;
+  }
+
+  function updateReveal(beat, frac) {
+    // tint + edges fade in across beat 6; hold beat 7; fade beat 8.
+    let tint = 0, eOp = 0, pOp = 1;
+    if (beat < 6) { tint = 0; eOp = 0; }
+    else if (beat === 6) {
+      tint = clamp01((frac - 0.18) / 0.4) * 0.5;
+      eOp = clamp01((frac - 0.12) / 0.3) * 0.32;
+    } else if (beat === 7) { tint = 0.5; eOp = 0.32; }
+    else if (beat === 8) { tint = 0.5 * (1 - frac); eOp = 0.32 * (1 - frac); pOp = 1 - frac * 0.5; }
+    pMat.uniforms.uTint.value = tint;
+    pMat.uniforms.uOpacity.value = pOp;
+    if (edgeMat) edgeMat.opacity = eOp;
+  }
+
+  // Beat 6 pipeline sub-steps: one active step at a time; the graph is the star.
+  const stepEls = Array.from(document.querySelectorAll("#beat-6 .pl-step"));
+  const railFill = document.querySelector(".pl-rail-fill");
+  let lastStep = -2;
+  function updateSteps(beat, frac) {
+    let idx = -1;
+    if (beat === 6 && frac >= 0.2) idx = Math.min(6, Math.floor(((frac - 0.2) / 0.8) * 7));
+    if (idx !== lastStep) {
+      stepEls.forEach((e, k) => e.classList.toggle("on", k === idx));
+      if (railFill) railFill.style.width = (idx < 0 ? 0 : ((idx + 1) / 7) * 100) + "%";
+      lastStep = idx;
+    }
+  }
+
+  // Active-beat class + rail + hint
+  const beatEls = Array.from(document.querySelectorAll(".beat"));
+  const railEls = Array.from(document.querySelectorAll("#rail .tick"));
+  const hintEl = document.getElementById("hint");
+  let activeBeat = -1;
+  function setActiveBeat(beat) {
+    if (beat === activeBeat) return;
+    activeBeat = beat;
+    document.body.dataset.activeBeat = beat;
+    beatEls.forEach(e => e.classList.toggle("is-active", +e.dataset.beat === beat));
+    railEls.forEach(e => e.classList.toggle("on", +e.dataset.b === beat));
+    if (hintEl) hintEl.style.opacity = beat === 0 ? "0.8" : "0";
+  }
+
+  function applyCamera(beat, frac, dt) {
+    const tgt = camTarget(beat, frac);
+    // smoothed follow so scrubbing feels connected (spring-like), not laggy
+    const k = prefersReduced ? 1 : 1 - Math.pow(0.0001, dt);
+    camS.rad += (tgt.rad - camS.rad) * k;
+    camS.phi += (tgt.phi - camS.phi) * k;
+    camS.theta += (tgt.theta - camS.theta) * k;
+    camS.lookY += (tgt.lookY - camS.lookY) * k;
+    camS.pan += (tgt.pan - camS.pan) * k;
+    // Wide-aspect compensation: pull closer on wide windows so the viz fills the frame
+    // (less dead space), push back on narrow/portrait so it stays in view.
+    const radK = Math.max(0.78, Math.min(1.2, 1.55 / camera.aspect));
+    const r = camS.rad * radK;
+    const sp = Math.sin(camS.phi), cp = Math.cos(camS.phi);
+    camera.position.set(
+      r * sp * Math.sin(camS.theta),
+      r * cp,
+      r * sp * Math.cos(camS.theta)
+    );
+    _look.set(0, camS.lookY, 0);
+    // Screen-space pan: slide eye+target along the camera right axis by a fraction of the
+    // view width at the subject distance (aspect/zoom independent).
+    const viewH = 2 * r * Math.tan((camera.fov * Math.PI / 180) / 2);
+    const panWorld = camS.pan * viewH * camera.aspect;
+    _right.subVectors(camera.position, _look).cross(camera.up).normalize();
+    camera.position.addScaledVector(_right, panWorld);
+    _look.addScaledVector(_right, panWorld);
+    camera.lookAt(_look);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Render loop
+  // ---------------------------------------------------------------------------
+  let rafId = null, last = performance.now();
+  function frame(dt) {
+    time += dt;
+    const { beat, frac } = beatFromProgress(scrollProgress);
+    setActiveBeat(beat);
+    updateParticles(beat, frac, dt);
+    if (edgeMat && edgeMat.opacity > 0.001) syncEdges();
+    updateReveal(beat, frac);
+    updateSteps(beat, frac);
+    applyCamera(beat, frac, dt);
+    renderer.render(scene, camera);
+  }
+  function tick(now) {
+    rafId = requestAnimationFrame(tick);
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    frame(dt);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Scroll wiring
+  // ---------------------------------------------------------------------------
+  document.getElementById("scroll-root").style.height = SCROLL_VH + "vh";
+  if (window.gsap && window.ScrollTrigger) {
+    gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.create({
+      trigger: "#scroll-root",
+      start: "top top",
+      end: "bottom bottom",
+      scrub: prefersReduced ? true : 0.4,
+      onUpdate: self => { if (!seeking) scrollProgress = self.progress; },
+    });
+  } else {
+    window.addEventListener("scroll", () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      scrollProgress = max > 0 ? window.scrollY / max : 0;
+    }, { passive: true });
+  }
+
+  // resize + visibility
+  function onResize() {
+    renderer.setSize(vw(), vh());
+    camera.aspect = vw() / vh();
+    camera.updateProjectionMatrix();
+    pMat.uniforms.uScale.value = vh() * 0.6;
+  }
+  window.addEventListener("resize", onResize);
+  if (window.visualViewport) window.visualViewport.addEventListener("resize", onResize);
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) { if (rafId) { cancelAnimationFrame(rafId); rafId = null; } }
+    else if (!rafId) { last = performance.now(); rafId = requestAnimationFrame(tick); }
+  });
+
+  setActiveBeat(0);
+  rafId = requestAnimationFrame(tick);
+
+  // expose minimal debug hook for verification (settles camera smoothing deterministically)
+  window.__SB = {
+    beatFromProgress, get progress() { return scrollProgress; }, N, hasData: !!V,
+    seek(p, steps) {
+      seeking = true; // decouple from ScrollTrigger so forced frames hold this progress
+      document.body.classList.add("seek-snap"); // snap CSS opacity transitions for instant capture
+      scrollProgress = Math.min(1, Math.max(0, p));
+      steps = steps || 150;
+      for (let i = 0; i < steps; i++) frame(0.05);
+      const b = beatFromProgress(scrollProgress);
+      return { progress: scrollProgress, beat: b.beat, frac: +b.frac.toFixed(3), tint: +pMat.uniforms.uTint.value.toFixed(3), edgeOpacity: edgeMat ? +edgeMat.opacity.toFixed(3) : 0 };
+    },
+    resume() { seeking = false; document.body.classList.remove("seek-snap"); return "live scroll re-enabled"; },
+    bounds() {
+      const v = new THREE.Vector3();
+      const W = vw(), H = vh();
+      let minx = 1e9, maxx = -1e9, miny = 1e9, maxy = -1e9, on = 0;
+      for (let i = 0; i < N; i++) {
+        v.set(livePos[i*3], livePos[i*3+1], livePos[i*3+2]).project(camera);
+        const sx = (v.x * 0.5 + 0.5) * W, sy = (-v.y * 0.5 + 0.5) * H;
+        if (v.z < 1 && sx >= 0 && sx <= W && sy >= 0 && sy <= H) on++;
+        if (sx < minx) minx = sx; if (sx > maxx) maxx = sx;
+        if (sy < miny) miny = sy; if (sy > maxy) maxy = sy;
+      }
+      return { W, H, onScreen: on, pct: Math.round(on / N * 100),
+        box: { x: Math.round(minx), y: Math.round(miny), w: Math.round(maxx - minx), h: Math.round(maxy - miny) } };
+    },
+  };
+})();
+</script>
+</body>
+</html>

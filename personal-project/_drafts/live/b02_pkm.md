@@ -1,10 +1,10 @@
-# b03 · pkm
+# b02 · pkm
 
 <!-- Rewrite the text. Keep the ## [slot] headings, keep [[citations]] exactly.
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-03 / 19 {{·}} Personal Knowledge Management
+02 / 19 {{·}} Personal Knowledge Management
 
 ## [h22] h2
 What is {{PKM}}?

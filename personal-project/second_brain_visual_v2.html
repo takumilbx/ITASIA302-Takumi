@@ -525,27 +525,184 @@
     }
     // Molecules — ~28 tight clusters of linked atoms
     function layoutMolecules() { return layoutClusters(28, 1.25, 0.12, 0.85); }
-    /* ── Beat layout instances (graph node configurations) ──── */
-    const LO_HERO    = layoutCloud(1.45, 0.95);       // organic graph
-    const LO_PKM     = layoutScatter(2.2);            // isolated, unlinked
-    const LO_SECOND  = layoutCloud(1.30, 0.95);       // denser, will link
-    const LO_HYPE    = layoutScatter(2.95);           // wide chaos
-    const LO_MEME    = layoutPile();                  // collapsed pile
-    const LO_BUILD   = layoutCloud(1.38, 0.95);       // organized
-    const LO_ENTRY   = layoutScatter(2.4);            // pipeline entry disperse
-    const LO_THESIS  = layoutConverge();              // distilled
-    const LO_END     = layoutCloud(1.30, 0.95);       // resting
 
-    // Pipeline sub-step layouts
-    const LO_ZOTERO  = layoutGather();                // capture → gather inward
-    const LO_OBSID   = layoutLattice(8, 6, 5, 0.30);  // vault grid
-    const LO_CLAUDE  = layoutCloud(0.85, 1.0);        // synthesize → dense
-    const LO_NLM     = layoutHub();                   // integrate → hub + spokes
-    const LO_NOTION  = layoutRows();                  // publish → ordered rows
+    // Brain as a side-profile OUTLINE — nodes trace the contour so it reads
+    // as a brain line-drawing at low node count (filling reads as a blob).
+    // Closed loop facing left: frontal pole → gyri top → occipital → cerebellum
+    // → brainstem → temporal underside → back to front.
+    const BRAIN_PATH = [
+      [-1.02, 0.10], [-0.98, 0.44], [-0.78, 0.64], [-0.60, 0.48],
+      [-0.42, 0.72], [-0.20, 0.55], [-0.02, 0.76], [ 0.20, 0.57],
+      [ 0.40, 0.73], [ 0.62, 0.55], [ 0.84, 0.45], [ 1.00, 0.16],
+      [ 1.03,-0.12], [ 0.88,-0.30], [ 0.99,-0.50], [ 0.78,-0.61],
+      [ 0.58,-0.46], [ 0.47,-0.58], [ 0.39,-0.94], [ 0.26,-0.62],
+      [ 0.06,-0.56], [-0.18,-0.65], [-0.46,-0.55], [-0.70,-0.59],
+      [-0.90,-0.36], [-1.02,-0.08],
+    ];
+    // central sulcus fold (interior diagonal — the brain's dividing crease)
+    const BRAIN_FOLD = [[-0.38, 0.50], [-0.16, 0.22], [0.06, 0.00], [0.28,-0.20], [0.46,-0.32]];
+    function fillBrainOutline(a, off, scale, count) {
+      const M = BRAIN_PATH.length;
+      const outlineN = Math.round(count * 0.82);
+      for (let i = 0; i < outlineN; i++) {
+        const t = (i / outlineN) * M;
+        const k = Math.floor(t) % M, k2 = (k + 1) % M, f = t - Math.floor(t);
+        const x = BRAIN_PATH[k][0] + (BRAIN_PATH[k2][0] - BRAIN_PATH[k][0]) * f;
+        const y = BRAIN_PATH[k][1] + (BRAIN_PATH[k2][1] - BRAIN_PATH[k][1]) * f;
+        const idx = off + i;
+        a[idx*3]   = (x + rnd(-0.025, 0.025)) * scale;
+        a[idx*3+1] = (y + rnd(-0.025, 0.025)) * scale;
+        a[idx*3+2] = rnd(-0.07, 0.07) * scale;
+      }
+      for (let i = outlineN; i < count; i++) {
+        const t = ((i - outlineN) / Math.max(1, count - outlineN)) * (BRAIN_FOLD.length - 1);
+        const k = Math.min(BRAIN_FOLD.length - 2, Math.floor(t)), f = t - k;
+        const x = BRAIN_FOLD[k][0] + (BRAIN_FOLD[k+1][0] - BRAIN_FOLD[k][0]) * f;
+        const y = BRAIN_FOLD[k][1] + (BRAIN_FOLD[k+1][1] - BRAIN_FOLD[k][1]) * f;
+        const idx = off + i;
+        a[idx*3]   = (x + rnd(-0.04, 0.04)) * scale;
+        a[idx*3+1] = (y + rnd(-0.04, 0.04)) * scale;
+        a[idx*3+2] = rnd(-0.07, 0.07) * scale;
+      }
+    }
+    // Single brain (hero / building / end / alloys)
+    function layoutBrain(scale) {
+      const a = L();
+      fillBrainOutline(a, 0, scale, N);
+      return a;
+    }
+    // Two side-by-side brain outlines (Second Brain)
+    function layoutDualBrain() {
+      const a = L();
+      const half = N >> 1, gap = 1.25, sc = 0.78;
+      fillBrainOutline(a, 0, sc, half);
+      fillBrainOutline(a, half, sc, N - half);
+      for (let i = 0; i < half; i++) a[i*3] -= gap;
+      for (let i = half; i < N; i++) a[i*3] += gap;
+      return a;
+    }
+
+    // ── Tool logo node-outlines (crisp mono constellations) ────
+    function layoutZ() { // Zotero — bold Z
+      const a = L(); const W = 1.3, H = 1.3, st = 0.20;
+      const D = Math.hypot(W, H), px = -H/D, py = W/D;
+      for (let i = 0; i < N; i++) {
+        const r = Math.random(); let x, y;
+        if (r < 0.30)      { x = -W/2 + Math.random()*W; y = H/2 - Math.random()*st; }
+        else if (r < 0.70) { const t = Math.random(); const perp = (Math.random()-0.5)*st;
+                             x = W/2 - t*W + perp*px; y = H/2 - t*H + perp*py; }
+        else               { x = -W/2 + Math.random()*W; y = -H/2 + Math.random()*st; }
+        a[i*3]=x; a[i*3+1]=y; a[i*3+2]=rnd(-0.05,0.05);
+      }
+      return a;
+    }
+    function layoutGem() { // Obsidian — faceted diamond
+      const a = L();
+      for (let i = 0; i < N; i++) {
+        const yRel = rnd(-1, 1), t = Math.abs(yRel);
+        const rMax = yRel >= 0 ? (1 - t)*0.62 + (1 - t*t)*0.14 : (1 - t)*0.52;
+        const th = Math.random()*TAU, r = Math.sqrt(Math.random())*rMax;
+        a[i*3]=r*Math.cos(th); a[i*3+1]=yRel*1.05; a[i*3+2]=r*Math.sin(th)*0.6;
+      }
+      return a;
+    }
+    function layoutAsterisk() { // Claude — even sunburst spokes
+      const a = L(); const arms = 11;
+      for (let i = 0; i < N; i++) {
+        const ang = (i % arms)/arms*TAU + (Math.random()-0.5)*0.06;
+        const t = Math.pow(Math.random(), 0.6), rad = t*1.2;
+        const perp = (Math.random()-0.5)*0.05*(1 - t*0.7);
+        a[i*3]=rad*Math.cos(ang)-perp*Math.sin(ang);
+        a[i*3+1]=rad*Math.sin(ang)+perp*Math.cos(ang);
+        a[i*3+2]=rnd(-0.05,0.05);
+      }
+      return a;
+    }
+    function layoutArcs() { // NotebookLM — nested arcs
+      const a = L(); const radii = [0.45, 0.80, 1.15];
+      for (let i = 0; i < N; i++) {
+        const r = radii[i % 3] + (Math.random()-0.5)*0.08;
+        const th = Math.PI*0.5 + Math.random()*Math.PI*1.1;
+        a[i*3]=r*Math.cos(th); a[i*3+1]=r*Math.sin(th); a[i*3+2]=rnd(-0.05,0.05);
+      }
+      return a;
+    }
+    function layoutN() { // Notion — bold N
+      const a = L(); const W = 1.15, H = 1.3, st = 0.22;
+      const D = Math.hypot(W, H), px = H/D, py = W/D;
+      for (let i = 0; i < N; i++) {
+        const r = Math.random(); let x, y;
+        if (r < 0.34)      { x = -W/2 + (Math.random()-0.5)*st; y = (Math.random()-0.5)*H; }
+        else if (r < 0.66) { const t = Math.random(); const perp = (Math.random()-0.5)*st;
+                             x = -W/2 + t*W + perp*px; y = H/2 - t*H + perp*py; }
+        else               { x = W/2 + (Math.random()-0.5)*st; y = (Math.random()-0.5)*H; }
+        a[i*3]=x; a[i*3+1]=y; a[i*3+2]=rnd(-0.05,0.05);
+      }
+      return a;
+    }
+    // Internet hype: radial starburst rays — loud, viral, over-the-top.
+    function layoutBurst() {
+      const a = L();
+      const rays = 16;
+      for (let i = 0; i < N; i++) {
+        const ang = (i % rays) / rays * TAU + (Math.random() - 0.5) * 0.12;
+        const t = Math.pow(Math.random(), 0.5);
+        const rad = 0.2 + t * 2.6;
+        a[i*3]   = Math.cos(ang) * rad;
+        a[i*3+1] = Math.sin(ang) * rad * 0.72 + (Math.random() - 0.5) * 0.35;
+        a[i*3+2] = (Math.random() - 0.5) * 0.35;
+      }
+      return a;
+    }
+    // Hype is slop: the burst collapses to a small, low, messy heap.
+    function layoutSlop() {
+      const a = L();
+      for (let i = 0; i < N; i++) {
+        const [x, y, z] = rSph();
+        const r = Math.pow(Math.random(), 0.4) * 0.65;
+        a[i*3]   = x * r * 1.4 + (Math.random() - 0.5) * 0.3;
+        a[i*3+1] = -0.55 + Math.abs(y) * r * 0.5;  // sunk, piled low
+        a[i*3+2] = z * r * 0.9;
+      }
+      return a;
+    }
+    // Obsidian-style dense interconnected web (the graph app itself)
+    function layoutWeb() { return layoutCloud(1.05, 1.0); }
+
+    /* ── Beat layout instances (graph node configurations) ──── */
+    const LO_HERO    = layoutBrain(1.55);             // 0 brain silhouette
+    const LO_PKM     = layoutScatter(2.2);            // 1 isolated, unlinked
+    const LO_SECOND  = layoutDualBrain();             // 2 two brains
+    const LO_HYPE    = layoutBurst();                 // 3 internet hype starburst
+    const LO_MEME    = layoutSlop();                  // 4 hype collapses to slop
+    const LO_BUILD   = layoutBrain(1.20);             // 5 the working system (dense brain)
+    const LO_ENTRY   = layoutScatter(2.4);            // 6 pipeline entry disperse
+    const LO_THESIS  = layoutConverge();              // 7 distilled
+    const LO_END     = layoutBrain(1.30);             // 8 resting brain
+
+    // Capture: outer source-nodes + a central collection (hub edges = capturing in)
+    function layoutCapture() {
+      const a = L();
+      for (let i = 0; i < N; i++) {
+        if (i === 0) { a[0] = a[1] = a[2] = 0; continue; } // collection center
+        if (i < N * 0.40) { const [x,y,z] = rSph(); const r = Math.random() * 0.42;
+                            a[i*3]=x*r; a[i*3+1]=y*r; a[i*3+2]=z*r; }
+        else { const [x,y,z] = rSph(); const r = 1.0 + Math.random() * 0.95;
+               a[i*3]=x*r; a[i*3+1]=y*r*0.8; a[i*3+2]=z*r*0.6; }
+      }
+      return a;
+    }
+
+    // Pipeline sub-step layouts — tools shown by the ACTION they perform
+    const LO_ZOTERO  = layoutCapture();               // capture sources inward
+    const LO_OBSID   = layoutWeb();                    // link into a graph (the web)
+    const LO_CLAUDE  = layoutClusters(3, 0.95, 0.42, 0.8); // synthesize into themes
+    const LO_NLM     = layoutHub();                    // integrate → central hub
+    const LO_NOTION  = layoutRows();                   // publish → ordered output
     const LO_ZETTEL  = layoutLattice(10, 6, 4, 0.34); // zettelkasten lattice
     const LO_ATOMS   = layoutScatter(2.6);            // extracted facts, isolated
     const LO_MOLEC   = layoutMolecules();             // linked clusters
-    const LO_ALLOYS  = layoutCloud(0.95, 1.0);        // refined dense
+    const LO_ALLOYS  = layoutBrain(1.05);             // refined dense brain
 
     /* ── Per-beat layout + edge tables ────────────────────────
        One layout per beat. Node positions morph only in boundary zones.
@@ -563,16 +720,17 @@
       LO_END,     // 8 End
     ];
     // [linkRadius, maxDegree, edgeOpacity] per beat
+    // [linkRadius, maxDegree, edgeOpacity, mode]  mode: 0 = proximity, 1 = hub
     const BEAT_EDGES = [
-      [0.55, 3, 0.45], // 0 Hero — sparse graph
-      [0.00, 0, 0.00], // 1 PKM — NO edges (the problem)
-      [0.72, 5, 0.65], // 2 Second Brain — dense links
-      [0.95, 8, 0.55], // 3 Hype — tangle
-      [0.32, 2, 0.20], // 4 Meme — mostly gone
-      [0.55, 4, 0.55], // 5 Building — organized
-      [0.45, 3, 0.35], // 6 Pipeline base (per sub-step below)
-      [0.85, 4, 0.65], // 7 Thesis — few nodes, strong links
-      [0.50, 3, 0.42], // 8 End — calm
+      [0.17, 3, 0.50, 0], // 0 Hero — trace brain outline
+      [0.00, 0, 0.00, 0], // 1 PKM — NO edges (the problem)
+      [0.17, 3, 0.55, 0], // 2 Second Brain — trace two brain outlines
+      [1.05, 9, 0.50, 0], // 3 Hype — over-connected noise
+      [0.00, 0, 0.00, 0], // 4 Meme — no real links (slop is empty)
+      [0.20, 4, 0.62, 0], // 5 Building — brain outline, denser links
+      [0.45, 3, 0.35, 0], // 6 Pipeline base (per sub-step below)
+      [0.85, 4, 0.65, 0], // 7 Thesis — few nodes, strong links
+      [0.17, 3, 0.46, 0], // 8 End — calm brain outline
     ];
     const BEAT_BRAIN_ALPHA = [1.00, 1.00, 1.00, 0.90, 0.70, 1.00, 1.00, 1.00, 0.55];
 
@@ -632,16 +790,17 @@
       LO_ALLOYS,   // 9 Alloys        (Section 3)
     ];
     // [linkRadius, maxDegree, edgeOpacity] per pipeline sub-step.
+    // [linkRadius, maxDegree, edgeOpacity, mode]  mode: 0 = proximity, 1 = hub (all→center)
     const PIPELINE_EDGES = [
-      [0.55, 4, 0.50], // 1 Zotero    — gather, loose links
-      [0.40, 6, 0.65], // 2 Obsidian  — vault grid links
-      [0.60, 7, 0.70], // 3 Claude    — dense synthesis
-      [0.00, 0, 0.55], // 4 NotebookLM — hub: edges drawn explicitly to center
-      [0.30, 4, 0.55], // 5 Notion    — ordered rows
-      [0.42, 6, 0.72], // 6 Zettelkasten — strong lattice links
-      [0.00, 0, 0.00], // 7 Atoms     — NO edges (isolated facts)
-      [0.20, 5, 0.70], // 8 Molecules — tight cluster links
-      [0.55, 8, 0.78], // 9 Alloys    — dense interconnect
+      [0.00, 0, 0.50, 1], // 1 Zotero    — capture: lines pull sources to center
+      [0.55, 8, 0.72, 0], // 2 Obsidian  — the graph: dense interconnected web
+      [0.45, 5, 0.65, 0], // 3 Claude    — synthesis: cluster links
+      [0.00, 0, 0.58, 1], // 4 NotebookLM — integrate: hub star
+      [0.30, 3, 0.45, 0], // 5 Notion    — publish: light aligned links
+      [0.42, 6, 0.72, 0], // 6 Zettelkasten — strong lattice links
+      [0.00, 0, 0.00, 0], // 7 Atoms     — NO edges (isolated facts)
+      [0.20, 5, 0.70, 0], // 8 Molecules — tight cluster links
+      [0.55, 8, 0.78, 0], // 9 Alloys    — dense interconnect
     ];
 
     // Per-step camera. Tools pull back so logos read at comfortable size + frame.
@@ -667,12 +826,12 @@
 
     // One camera per beat, tuned to graph node spread (~±1.5 to ±3).
     const BEAT_CAMS = [
-      { z: 4.2, ang: 0.16, x: 0.00, y: 0.00, lookX: 0.00, lookY: 0.00 }, // 0 Hero
+      { z: 4.0, ang: 0.16, x: 0.00, y: 0.00, lookX: 0.00, lookY: 0.00 }, // 0 Hero - brain
       { z: 5.0, ang: 0.14, x: 0.00, y: 0.00, lookX: 0.00, lookY: 0.00 }, // 1 PKM - wide scatter
-      { z: 3.9, ang: 0.20, x: 0.00, y: 0.00, lookX: 0.00, lookY: 0.00 }, // 2 Second Brain
-      { z: 5.6, ang: 0.34, x: 0.00, y: 0.00, lookX: 0.00, lookY: 0.00 }, // 3 Hype - widest
-      { z: 3.6, ang: 0.18, x: 0.00, y:-0.45, lookX: 0.00, lookY:-0.70 }, // 4 Meme - look at pile
-      { z: 3.9, ang: 0.18, x: 0.00, y: 0.00, lookX: 0.00, lookY: 0.00 }, // 5 Building
+      { z: 4.6, ang: 0.20, x: 0.00, y: 0.00, lookX: 0.00, lookY: 0.00 }, // 2 Second Brain - two brains
+      { z: 5.8, ang: 0.30, x: 0.00, y: 0.00, lookX: 0.00, lookY: 0.00 }, // 3 Hype - burst, wide
+      { z: 3.3, ang: 0.16, x: 0.00, y:-0.50, lookX: 0.00, lookY:-0.60 }, // 4 Meme - small slop heap
+      { z: 3.3, ang: 0.18, x: 0.00, y: 0.00, lookX: 0.00, lookY: 0.00 }, // 5 Building - dense brain
       { z: 4.4, ang: 0.16, x: 0.00, y: 0.00, lookX: 0.00, lookY: 0.00 }, // 6 Pipeline
       { z: 2.7, ang: 0.16, x: 0.00, y: 0.00, lookX: 0.00, lookY: 0.00 }, // 7 Thesis - tight
       { z: 4.2, ang: 0.18, x: 0.00, y: 0.00, lookX: 0.00, lookY: 0.00 }, // 8 End
@@ -732,8 +891,8 @@
     // so 2D logos read face-on. Returns 0..1 weight indicating "this step is a
     // tool step" — interpolated across step blends so locking is smooth.
     function isToolStep(s) {
-      // 0-4 = Section 1 tools: Zotero, Obsidian, Claude, NotebookLM, Notion
-      return s <= 4;
+      // Action formations are 3D — let them rotate ambiently (no face-on lock).
+      return false;
     }
     function getToolLockWeight(p) {
       const blend = getPipelineStepBlend(p);
@@ -752,6 +911,7 @@
           A[0] + (B[0] - A[0]) * ef,
           Math.round(A[1] + (B[1] - A[1]) * ef),
           A[2] + (B[2] - A[2]) * ef,
+          (ef < 0.5 ? A[3] : B[3]),   // mode snaps at midpoint (can't interpolate)
         ];
       }
       const m = getMorph(p);
@@ -760,6 +920,7 @@
         A[0] + (B[0] - A[0]) * f,
         Math.round(A[1] + (B[1] - A[1]) * f),
         A[2] + (B[2] - A[2]) * f,
+        (f < 0.5 ? A[3] : B[3]),
       ];
     }
     // Per-step camera blend inside pipeline beat. Returns null outside it.
@@ -912,6 +1073,16 @@
             if (edgeDeg[i] >= maxDeg) break;
           }
         }
+      }
+      return v;
+    }
+    // Hub edges: every node linked to the center node (node 0). Star topology.
+    function buildHubEdges() {
+      let v = 0; const maxV = MAX_EDGES * 2;
+      const cx = curr[0], cy = curr[1], cz = curr[2];
+      for (let i = 1; i < N && v < maxV; i++) {
+        edgeVerts[v*3]=cx; edgeVerts[v*3+1]=cy; edgeVerts[v*3+2]=cz; v++;
+        edgeVerts[v*3]=curr[i*3]; edgeVerts[v*3+1]=curr[i*3+1]; edgeVerts[v*3+2]=curr[i*3+2]; v++;
       }
       return v;
     }
@@ -1165,12 +1336,13 @@
       }
       positionAttr.needsUpdate = true;
 
-      // Dynamic proximity edges from current node positions.
+      // Dynamic edges from current node positions (proximity or hub).
       const ep = getEdgeParams(scrollProgress);
       edgeOpacityCurr += (ep[2] - edgeOpacityCurr) * 0.08;
       edgeMat.opacity = edgeOpacityCurr * brainAlphaCurr;
-      if (edgeOpacityCurr > 0.012 && ep[0] > 0.001) {
-        const vc = buildEdges(ep[0], ep[1]);
+      const hubMode = ep[3] === 1;
+      if (edgeOpacityCurr > 0.012 && (hubMode || ep[0] > 0.001)) {
+        const vc = hubMode ? buildHubEdges() : buildEdges(ep[0], ep[1]);
         edgeGeo.setDrawRange(0, vc);
         edgePosAttr.needsUpdate = true;
         edges.visible = true;

@@ -19,14 +19,34 @@
       --sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
       --mono:"Geist Mono",ui-monospace,"SF Mono",Menlo,monospace;
       --ease:cubic-bezier(.22,.61,.36,1);
+      --scrollbar-thumb: var(--amber);
+      --scrollbar-track: var(--bg);
     }
     *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
-    html { scroll-behavior:auto; }
+    html {
+      scroll-behavior:auto;
+      scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+      scrollbar-width: thin;
+    }
+    @supports not (scrollbar-color: auto) {
+      html::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      html::-webkit-scrollbar-thumb {
+        background: var(--scrollbar-thumb);
+        border-radius: 4px;
+      }
+      html::-webkit-scrollbar-track {
+        background: var(--scrollbar-track);
+      }
+    }
     body {
       background:var(--bg);
-      background-image:linear-gradient(rgba(232,99,74,.018) 1px,transparent 1px),
-        linear-gradient(90deg,rgba(232,99,74,.018) 1px,transparent 1px);
-      background-size:52px 52px;
+      background-image:
+        radial-gradient(rgba(232, 99, 74, 0.04) 1px, transparent 1px),
+        radial-gradient(rgba(82, 153, 200, 0.02) 1.5px, transparent 1.5px);
+      background-size: 26px 26px, 104px 104px;
       color:var(--ink); font-family:var(--sans); font-weight:300;
       -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
       overflow-x:clip; line-height:1.6; min-height:100vh;
@@ -36,10 +56,36 @@
       background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/></filter><rect width='256' height='256' filter='url(%23n)'/></svg>");
       background-size:220px 220px; mix-blend-mode:overlay;
     }
-    .glow-tl { position:fixed; top:0; left:0; width:55vw; height:55vh; pointer-events:none; z-index:0;
-      background:radial-gradient(at 0% 0%,rgba(232,99,74,.08) 0%,transparent 60%); }
-    .glow-br { position:fixed; bottom:0; right:0; width:50vw; height:50vh; pointer-events:none; z-index:0;
-      background:radial-gradient(at 100% 100%,rgba(114,114,192,.06) 0%,transparent 65%); }
+    .glow-tl {
+      position:fixed; top:-10%; left:-10%; width:60vw; height:60vh; pointer-events:none; z-index:0;
+      background:radial-gradient(circle at 30% 30%,rgba(232,99,74,0.12) 0%,transparent 70%);
+      filter:blur(40px);
+      animation:float-glow-1 12s ease-in-out infinite alternate;
+    }
+    .glow-br {
+      position:fixed; bottom:-10%; right:-10%; width:60vw; height:60vh; pointer-events:none; z-index:0;
+      background:radial-gradient(circle at 70% 70%,rgba(114,114,192,0.10) 0%,transparent 70%);
+      filter:blur(40px);
+      animation:float-glow-2 15s ease-in-out infinite alternate;
+    }
+    .glow-center {
+      position:fixed; top:30%; right:10%; width:50vw; height:50vh; pointer-events:none; z-index:0;
+      background:radial-gradient(circle at 50% 50%,rgba(69,168,132,0.08) 0%,transparent 70%);
+      filter:blur(50px);
+      animation:float-glow-3 18s ease-in-out infinite alternate;
+    }
+    @keyframes float-glow-1 {
+      0% { transform:translate(0, 0) scale(1); opacity:0.8; }
+      100% { transform:translate(4vw, 3vh) scale(1.15); opacity:1; }
+    }
+    @keyframes float-glow-2 {
+      0% { transform:translate(0, 0) scale(1); opacity:0.7; }
+      100% { transform:translate(-3vw, -4vh) scale(1.1); opacity:0.9; }
+    }
+    @keyframes float-glow-3 {
+      0% { transform:translate(0, 0) scale(1); opacity:0.6; }
+      100% { transform:translate(-2vw, 4vh) scale(1.2); opacity:0.8; }
+    }
     .edge-gradient { position:fixed; top:0; left:0; right:0; height:2px; z-index:10000;
       background:linear-gradient(90deg,transparent 0%,var(--sky) 22%,var(--lilac) 62%,transparent 100%);
       opacity:.5; pointer-events:none; }
@@ -49,16 +95,31 @@
       position:fixed; top:0; left:0; right:0; z-index:50;
       display:flex; justify-content:space-between; align-items:center;
       padding:0 48px; height:52px;
-      background:linear-gradient(180deg,rgba(5,6,14,.97) 0%,rgba(5,6,14,.80) 70%,transparent 100%);
-      backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+      background: rgba(5, 6, 14, 0.85);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
     }
     .topbar-title { font-family:var(--serif); font-weight:300; font-size:15px; letter-spacing:-.01em; color:var(--ink); white-space:nowrap; }
     .topbar-title em { color:var(--amber); font-style:italic; }
-    .topbar-nav { display:flex; gap:0; list-style:none; }
-    .topbar-nav a { font-family:var(--mono); font-size:9px; letter-spacing:.2em;
-      text-transform:uppercase; color:var(--ink-faint); text-decoration:none;
-      padding:6px 12px; transition:color 150ms ease; }
-    .topbar-nav a:hover { color:var(--amber); }
+    .topbar-nav { display:flex; gap:8px; list-style:none; }
+    .topbar-nav a {
+      position: relative;
+      font-family:var(--mono); font-size:10px; letter-spacing:.2em;
+      text-transform:uppercase; color:var(--ink-dim); text-decoration:none;
+      padding:6px 12px; transition:color 250ms ease;
+    }
+    .topbar-nav a::after {
+      content: '';
+      position: absolute; bottom: 0; left: 50%; width: 0; height: 1px;
+      background: var(--amber); transition: width 250ms ease, left 250ms ease;
+    }
+    .topbar-nav a:hover {
+      color: var(--ink);
+    }
+    .topbar-nav a:hover::after {
+      width: 100%; left: 0;
+    }
 
     /* Scroll story — brain fullscreen background, text overlays */
     .story { position:relative; z-index:1; }
@@ -67,37 +128,243 @@
       pointer-events:none; overflow:hidden;
     }
     canvas#brain { width:100% !important; height:100% !important; display:block; }
-    .brain-progress { position:absolute; top:64px; left:24px; right:24px; height:1px;
-      background:rgba(46,58,85,.4); overflow:hidden; pointer-events:none; }
-    .brain-progress-bar { height:100%; width:0%; background:var(--amber); transition:width .35s ease; }
-    .brain-hud { position:absolute; bottom:36px; left:0; right:0; text-align:center; pointer-events:none;
-      font-family:var(--mono); font-size:9px; letter-spacing:.32em; text-transform:uppercase;
-      color:var(--ink-faint); transition:color .6s,opacity .6s; opacity:.65; }
+    .brain-progress {
+      position:absolute; top:64px; left:24px; right:24px; height:2px;
+      background:rgba(46,58,85,.2); overflow:hidden; pointer-events:none;
+      border-radius: 1px;
+    }
+    .brain-progress-bar {
+      height:100%; width:0%;
+      background: linear-gradient(90deg, var(--sky), var(--lilac), var(--amber));
+      box-shadow: 0 0 8px var(--amber);
+      transition:width .35s ease;
+    }
+    .brain-hud {
+      position:absolute; bottom:36px; left:50%; transform:translateX(-50%);
+      pointer-events:none;
+      padding: 6px 16px;
+      background: rgba(11, 13, 26, 0.65);
+      border: 1px solid rgba(46, 58, 85, 0.3);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+      font-family:var(--mono); font-size:9.5px; letter-spacing:.26em; text-transform:uppercase;
+      color:var(--ink-faint); transition:color .6s, border-color .6s, opacity .6s; opacity:.75;
+      display: inline-block; white-space: nowrap;
+    }
     .brain-hud em { color:var(--amber); font-style:normal; }
-    .brain-hud.lit { color:var(--ink); opacity:1; }
+    .brain-hud.lit {
+      color:var(--ink); border-color: rgba(232, 99, 74, 0.4); opacity:1;
+      box-shadow: 0 0 10px rgba(232, 99, 74, 0.15);
+    }
 
-    .task-ticker { position:absolute; top:84px; left:0; right:0; text-align:center; pointer-events:none;
-      font-family:var(--mono); font-size:9.5px; letter-spacing:.30em; text-transform:uppercase;
-      color:var(--ink-dim); opacity:.55; transition:opacity .45s ease;
-      display:inline-flex; justify-content:center; gap:10px; }
-    .task-ticker .tick-dot { display:inline-block; width:6px; height:6px; border-radius:50%;
-      background:var(--teal); box-shadow:0 0 8px var(--teal); animation:tick-pulse 1.2s ease-in-out infinite;
-      align-self:center; }
-    @keyframes tick-pulse { 0%,100%{opacity:.25;transform:scale(.85);} 50%{opacity:1;transform:scale(1.15);} }
+    .task-ticker {
+      position:absolute; top:84px; left:50%; transform:translateX(-50%);
+      pointer-events:none;
+      padding: 6px 16px;
+      background: rgba(11, 13, 26, 0.5);
+      border: 1px solid rgba(46, 58, 85, 0.2);
+      backdrop-filter: blur(8px);
+      border-radius: 4px;
+      font-family:var(--mono); font-size:9.5px; letter-spacing:.24em; text-transform:uppercase;
+      color:var(--ink-dim); opacity:.75; transition:opacity .45s ease, border-color .45s ease;
+      display:inline-flex; justify-content:center; align-items:center; gap:10px;
+    }
+    .task-ticker .tick-dot {
+      display:inline-block; width:6px; height:6px; border-radius:50%;
+      background:var(--teal); box-shadow:0 0 10px var(--teal); animation:tick-pulse 1.2s ease-in-out infinite;
+    }
+    @keyframes tick-pulse { 0%,100%{opacity:.3;transform:scale(.85);} 50%{opacity:1;transform:scale(1.25);box-shadow:0 0 12px var(--teal);} }
     .task-ticker .tick-text { transition:opacity .35s ease; }
+    .task-ticker.swap { border-color: rgba(232, 99, 74, 0.3); }
     .task-ticker.swap .tick-text { opacity:0; }
 
-    .text-col { position:relative; z-index:2; pointer-events:none; }
-    .beat {
-      min-height:100vh; padding:14vh 56px;
-      display:flex; flex-direction:column; justify-content:center;
-      opacity:0; transform:translateY(14px); pointer-events:auto;
-      transition:opacity .8s var(--ease), transform .8s var(--ease);
+    .text-col {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 10;
+      pointer-events: none;
     }
-    .beat.active { opacity:1; transform:translateY(0); }
+    .beat {
+      display: contents !important;
+    }
+    .beat::before {
+      display: none !important;
+    }
+
+    .story-chunk {
+      position: fixed;
+      z-index: 20;
+      opacity: 0;
+      filter: blur(8px);
+      transition: opacity 0.6s ease, filter 0.6s ease;
+      pointer-events: none;
+      width: 100%;
+      max-width: 540px;
+      box-sizing: border-box;
+      margin: 0 !important;
+    }
+    .story-chunk.active {
+      opacity: 1;
+      filter: blur(0);
+      pointer-events: auto;
+      will-change: transform, opacity, filter;
+    }
+
+    /* Story chunk typographic and layout variations */
+    .chunk-lead .beat-body {
+      font-size: clamp(18px, 1.45vw, 21px);
+      line-height: 1.68;
+      color: var(--ink);
+    }
+    .chunk-lead .beat-body::first-letter {
+      font-family: var(--serif);
+      font-size: 2.45em;
+      float: left;
+      line-height: 0.85;
+      margin-right: 10px;
+      margin-top: 4px;
+      color: var(--amber);
+      text-shadow: 0 0 12px rgba(232, 99, 74, 0.4);
+    }
+
+    .story-chunk.chunk-card {
+      background: rgba(18, 22, 38, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-left: 4px solid var(--sky);
+      border-radius: 8px;
+      padding: 24px 28px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+      max-width: 580px;
+      box-sizing: border-box;
+    }
+    .story-chunk.chunk-card.active,
+    .story-chunk.lit-card-wrapper.active .lit-card {
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .story-chunk.chunk-card.card-sky { border-left-color: var(--sky); }
+    .story-chunk.chunk-card.card-amber { border-left-color: var(--amber); }
+    .story-chunk.chunk-card.card-coral { border-left-color: var(--coral); }
+    .story-chunk.chunk-card.card-teal { border-left-color: var(--teal); }
+    .story-chunk.chunk-card.card-lilac { border-left-color: var(--lilac); }
+    
+    .story-chunk.chunk-card.chunk-lead .beat-body::first-letter {
+      float: none;
+      font-size: inherit;
+      color: inherit;
+      text-shadow: none;
+      margin: 0;
+    }
+
+    .story-chunk.chunk-quote {
+      position: relative;
+      margin: 36px 0;
+      padding: 16px 24px;
+      border-left: 3px solid var(--amber);
+      background: rgba(232, 99, 74, 0.03);
+      max-width: 560px;
+    }
+    .story-chunk.chunk-quote blockquote {
+      font-style: italic;
+      color: var(--ink);
+      font-size: clamp(15px, 1.1vw, 17px);
+      line-height: 1.7;
+    }
+    .story-chunk.chunk-quote cite {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+      margin-top: 8px;
+      display: block;
+    }
+
+    /* Layout offsets using margins (to avoid conflicts with JS transform translations) */
+    /* For right-side beats (default) */
+    .beat:not(.beat-left):not(.beat-center-stage):not(.beat-thesis) .chunk-offset-left {
+      margin-left: -160px;
+      max-width: 580px;
+    }
+    .beat:not(.beat-left):not(.beat-center-stage):not(.beat-thesis) .chunk-offset-right {
+      margin-left: 60px;
+      max-width: 500px;
+    }
+
+    /* For left-side beats (.beat-left) */
+    .beat.beat-left .chunk-offset-left {
+      margin-left: -40px;
+      max-width: 500px;
+    }
+    .beat.beat-left .chunk-offset-right {
+      margin-left: 160px;
+      max-width: 580px;
+    }
+    .chunk-narrow {
+      max-width: 460px;
+      width: 90vw;
+    }
+    .chunk-wide {
+      max-width: 760px;
+      width: 90vw;
+    }
+    .story-chunk.pl-step {
+      max-width: 1140px;
+      width: 92vw;
+    }
+
+    /* Keep layouts neat on smaller viewports */
+    @media (max-width: 900px) {
+      .beat:not(.beat-left):not(.beat-center-stage):not(.beat-thesis) .chunk-offset-left,
+      .beat:not(.beat-left):not(.beat-center-stage):not(.beat-thesis) .chunk-offset-right,
+      .beat.beat-left .chunk-offset-left,
+      .beat.beat-left .chunk-offset-right {
+        margin-left: 0;
+        max-width: 100%;
+      }
+      .story-chunk.chunk-card {
+        padding: 18px 20px;
+      }
+    }
+
+    /* Global high-contrast HUD text shadow for readability */
+    .beat-num,
+    .beat-heading,
+    .beat-body,
+    .req-tag,
+    .part-label,
+    .hero-kicker,
+    .hero-sub,
+    .pl-step-num,
+    .pl-step-title,
+    .pl-step-body,
+    .thesis-hero blockquote,
+    .thesis-hero-label,
+    .pull-quote blockquote,
+    .pull-quote cite,
+    .editorial-quote,
+    .editorial-cite,
+    .lit-card-num,
+    .lit-card-cite,
+    .lit-card-note,
+    .lit-card-flag,
+    .refs-section h3,
+    .refs li,
+    .refs-note,
+    .draft-note,
+    .brain-hud {
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95), 0 0 20px rgba(0, 0, 0, 0.85) !important;
+    }
     /* Hero beat: centered over the brain, with subtle radial darkening for title readability */
-    #beat-0 { text-align:center; align-items:center; max-width:880px; margin:0 auto; padding-top:30vh;
-      background:radial-gradient(ellipse at center, rgba(5,6,14,.62) 0%, rgba(5,6,14,.25) 50%, transparent 80%); }
+    #beat-0 { text-align:center; align-items:center; max-width:880px; margin:0 auto; }
+    #beat-0 > .story-chunk { padding-top: 12vh; }
+    #beat-0::before {
+      background:radial-gradient(ellipse at center, rgba(5,6,14,.62) 0%, rgba(5,6,14,.25) 50%, transparent 80%);
+    }
     #beat-0 .beat-heading { font-size:clamp(38px,4.4vw,62px); max-width:none; }
     .hero-hint { font-family:var(--mono); font-size:10px; letter-spacing:.32em;
       text-transform:uppercase; color:var(--ink-faint); margin-top:48px;
@@ -106,16 +373,19 @@
     /* CTA row for thesis beat */
     .cta-row { display:flex; gap:12px; flex-wrap:wrap; margin-top:24px; }
     .cta-row .beat-link { margin-top:0; }
-    /* Story beats: right half of viewport. Bg is vertical fade — no hard horizontal
-       cutoff. Top/bottom soft edges let brain breathe; middle is near-opaque for reading. */
+    /* Story beats: right half of viewport. Bg is vertical fade with horizontal mask for soft inner edges. */
     .beat:not(#beat-0) {
       width:50%; margin-left:50%; padding-left:32px; padding-right:48px;
-      background:linear-gradient(180deg,
-        rgba(5,6,14,0) 0%,
-        rgba(5,6,14,.92) 9%,
-        rgba(5,6,14,.96) 50%,
-        rgba(5,6,14,.92) 91%,
-        rgba(5,6,14,0) 100%);
+    }
+    .beat:not(#beat-0)::before {
+      left: -120px; right: 0;
+      background: linear-gradient(180deg,
+        transparent 0px,
+        rgba(5,6,14,.80) 150px,
+        rgba(5,6,14,.80) calc(100% - 150px),
+        transparent 100%);
+      -webkit-mask-image: linear-gradient(90deg, transparent 0px, black 160px, black calc(100% - 40px), transparent 100%);
+      mask-image: linear-gradient(90deg, transparent 0px, black 160px, black calc(100% - 40px), transparent 100%);
     }
     .beat:last-child { min-height:80vh; }
     .beat-num { font-family:var(--mono); font-size:9.5px; letter-spacing:.28em;
@@ -137,15 +407,22 @@
       padding:1px 6px; border-radius:2px; }
 
     .pull-quote {
-      position:relative; margin:24px 0; padding:24px 28px 22px 36px;
+      position:relative; margin:32px 0; padding:12px 0 12px 24px;
       border-left:3px solid var(--amber);
-      background:linear-gradient(180deg,rgba(232,99,74,.07) 0%,rgba(232,99,74,.02) 100%);
+      background: none;
+      backdrop-filter: none; -webkit-backdrop-filter: none;
+      border-radius: 0;
+      border-top: none;
+      border-right: none;
+      border-bottom: none;
+      box-shadow: none;
       max-width:600px;
     }
-    .pull-quote blockquote { font-family:var(--serif); font-weight:300; font-size:clamp(14px,1.05vw,16px);
-      line-height:1.7; color:var(--ink); font-style:italic; margin-bottom:12px; }
-    .pull-quote cite { font-family:var(--mono); font-size:9px; letter-spacing:.2em;
-      text-transform:uppercase; color:var(--ink-faint); font-style:normal; }
+    .pull-quote blockquote { font-family:var(--serif); font-weight:300; font-size:clamp(14.5px, 1.1vw, 17px);
+      line-height:1.75; color:var(--ink); font-style:italic; margin-bottom:14px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); }
+    .pull-quote cite { font-family:var(--mono); font-size:9.5px; letter-spacing:.22em;
+      text-transform:uppercase; color:var(--ink-dim); font-style:normal; }
 
     .stat-row { display:flex; gap:36px; margin-top:24px; flex-wrap:wrap; }
     .stat { display:flex; flex-direction:column; gap:6px; }
@@ -179,45 +456,56 @@
     footer.footer a:hover { color:var(--amber); border-bottom-color:var(--amber); }
 
     /* ════ Per-beat layout variants ═════════════════════════════════════ */
-    /* Default 50%-right kept for unspecified beats; these override per-beat.
-       :not(#beat-0) needed for ID-level specificity to beat the default rule. */
+    /* Default 50%-right kept for unspecified beats; these override default */
     .beat.beat-left:not(#beat-0) {
       width: 46%; margin-left: 6%; margin-right: auto;
       padding-left: 56px; padding-right: 32px;
+    }
+    .beat.beat-left:not(#beat-0)::before {
+      left: -60px; right: -120px;
       background: linear-gradient(180deg,
-        rgba(5,6,14,0) 0%,
-        rgba(5,6,14,.92) 9%,
-        rgba(5,6,14,.96) 50%,
-        rgba(5,6,14,.92) 91%,
-        rgba(5,6,14,0) 100%);
+        transparent 0px,
+        rgba(5,6,14,.80) 150px,
+        rgba(5,6,14,.80) calc(100% - 150px),
+        transparent 100%);
+      -webkit-mask-image: linear-gradient(90deg, transparent 0px, black 100px, black calc(100% - 160px), transparent 100%);
+      mask-image: linear-gradient(90deg, transparent 0px, black 100px, black calc(100% - 160px), transparent 100%);
     }
     .beat.beat-center-stage:not(#beat-0) {
       width: 100%; max-width: 820px; margin: 0 auto;
       padding-left: 56px; padding-right: 56px;
-      background: linear-gradient(180deg,
-        rgba(5,6,14,0) 0%,
-        rgba(5,6,14,.90) 8%,
-        rgba(5,6,14,.95) 50%,
-        rgba(5,6,14,.90) 92%,
-        rgba(5,6,14,0) 100%);
       align-items: center;
+    }
+    .beat.beat-center-stage:not(#beat-0)::before {
+      left: -80px; right: -80px;
+      background: linear-gradient(180deg,
+        transparent 0px,
+        rgba(5,6,14,.80) 150px,
+        rgba(5,6,14,.80) calc(100% - 150px),
+        transparent 100%);
+      -webkit-mask-image: linear-gradient(90deg, transparent 0px, black 140px, black calc(100% - 140px), transparent 100%);
+      mask-image: linear-gradient(90deg, transparent 0px, black 140px, black calc(100% - 140px), transparent 100%);
     }
     .beat.beat-center-stage .beat-num,
     .beat.beat-center-stage .req-tag,
     .beat.beat-center-stage .beat-heading { text-align: center; }
     .beat.beat-center-stage .beat-heading { max-width: 24ch; margin-left: auto; margin-right: auto; }
     .beat.beat-center-stage .beat-body { text-align: left; max-width: 56ch; margin-left: auto; margin-right: auto; }
-
+ 
     .beat.beat-thesis:not(#beat-0) {
       width: 100%; max-width: 920px; margin: 0 auto;
       padding-left: 56px; padding-right: 56px;
-      background: linear-gradient(180deg,
-        rgba(5,6,14,0) 0%,
-        rgba(5,6,14,.92) 8%,
-        rgba(5,6,14,.96) 50%,
-        rgba(5,6,14,.92) 92%,
-        rgba(5,6,14,0) 100%);
       align-items: center;
+    }
+    .beat.beat-thesis:not(#beat-0)::before {
+      left: -80px; right: -80px;
+      background: linear-gradient(180deg,
+        transparent 0px,
+        rgba(5,6,14,.80) 150px,
+        rgba(5,6,14,.80) calc(100% - 150px),
+        transparent 100%);
+      -webkit-mask-image: linear-gradient(90deg, transparent 0px, black 140px, black calc(100% - 140px), transparent 100%);
+      mask-image: linear-gradient(90deg, transparent 0px, black 140px, black calc(100% - 140px), transparent 100%);
     }
     .beat.beat-thesis .beat-num,
     .beat.beat-thesis .req-tag,
@@ -231,66 +519,99 @@
     /* Editorial blockquote (beat-4 meme) — no card frame, italic centered serif */
     .editorial-quote {
       font-family: var(--serif); font-style: italic; font-weight: 300;
-      font-size: clamp(22px,2.5vw,32px); line-height: 1.42;
-      color: var(--ink); max-width: 30ch; text-align: center;
-      margin: 32px auto 22px; padding: 0 12px;
+      font-size: clamp(24px, 2.7vw, 36px); line-height: 1.48;
+      color: var(--ink); max-width: 32ch; text-align: center;
+      margin: 48px auto 24px; padding: 0 16px;
       position: relative; quotes: '\201C' '\201D';
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
     }
     .editorial-quote::before {
-      content: open-quote; color: var(--amber); opacity: .55;
-      font-style: normal; font-size: 1.1em; margin-right: .05em;
+      content: open-quote; color: var(--amber); opacity: .75;
+      font-style: normal; font-size: 1.25em; margin-right: .05em;
+      text-shadow: 0 0 12px rgba(232, 99, 74, 0.4);
     }
     .editorial-quote::after {
-      content: close-quote; color: var(--amber); opacity: .55;
-      font-style: normal; font-size: 1.1em; margin-left: .05em;
+      content: close-quote; color: var(--amber); opacity: .75;
+      font-style: normal; font-size: 1.25em; margin-left: .05em;
+      text-shadow: 0 0 12px rgba(232, 99, 74, 0.4);
     }
     .editorial-cite {
       display: block; font-family: var(--mono); font-size: 10px;
-      letter-spacing: .22em; text-transform: uppercase;
-      color: var(--ink-faint); text-align: center; margin: 0 auto 32px;
+      letter-spacing: .24em; text-transform: uppercase;
+      color: var(--ink-dim); text-align: center; margin: 0 auto 48px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
     }
-    .editorial-cite::before { content: "— "; color: var(--amber); }
+    .editorial-cite::before { content: "— "; color: var(--amber); text-shadow: 0 0 8px var(--amber); }
 
     /* Hero thesis quote (beat-7) — framed top/bottom amber rules, hero serif */
     .thesis-hero {
-      margin: 28px auto 32px; padding: 32px 24px;
-      max-width: 720px; text-align: center;
-      border-top: 1px solid rgba(232,99,74,.32);
-      border-bottom: 1px solid rgba(232,99,74,.32);
-      background: linear-gradient(180deg, rgba(232,99,74,.04) 0%, transparent 50%, rgba(232,99,74,.04) 100%);
+      margin: 40px auto 44px; padding: 24px 0;
+      max-width: 760px; text-align: center;
+      border: none;
+      background: none;
+      box-shadow: none;
+      backdrop-filter: none; -webkit-backdrop-filter: none;
+      position: relative;
     }
+    .thesis-hero::before, .thesis-hero::after {
+      content: ''; position: absolute; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--amber), transparent);
+      opacity: 0.8;
+    }
+    .thesis-hero::before { top: 0; }
+    .thesis-hero::after { bottom: 0; }
     .thesis-hero blockquote {
       font-family: var(--serif); font-weight: 300; font-style: italic;
-      font-size: clamp(22px,2.6vw,36px); line-height: 1.32;
-      letter-spacing: -.012em; color: var(--ink); quotes: '\201C' '\201D';
+      font-size: clamp(24px, 2.8vw, 38px); line-height: 1.38;
+      letter-spacing: -.015em; color: var(--ink); quotes: '\201C' '\201D';
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
     }
     .thesis-hero blockquote::before {
       content: open-quote; color: var(--amber); font-style: normal;
-      margin-right: .04em; opacity: .8;
+      margin-right: .04em; opacity: 1; text-shadow: 0 0 12px rgba(232, 99, 74, 0.5);
     }
     .thesis-hero blockquote::after {
       content: close-quote; color: var(--amber); font-style: normal;
-      margin-left: .04em; opacity: .8;
+      margin-left: .04em; opacity: 1; text-shadow: 0 0 12px rgba(232, 99, 74, 0.5);
     }
     .thesis-hero-label {
-      display: block; font-family: var(--mono); font-size: 9px;
-      letter-spacing: .32em; text-transform: uppercase;
-      color: var(--amber); margin-bottom: 14px; opacity: .8;
+      display: block; font-family: var(--mono); font-size: 9.5px;
+      letter-spacing: .36em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 16px; opacity: 1;
+      text-shadow: 0 0 8px rgba(232, 99, 74, 0.4);
     }
 
-    /* Literature as 3-card row (beat-7) — replaces stacked .lit list */
+    /* Literature as vertical stacked list (beat-7) */
     .lit-cards {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
-      margin: 32px 0 8px; max-width: none;
+      display: flex; flex-direction: column; gap: 32px;
+      margin: 40px 0 12px; max-width: 600px;
     }
     .lit-card {
-      background: linear-gradient(180deg, rgba(14,24,36,.55) 0%, rgba(14,24,36,.22) 100%);
-      border: 1px solid var(--rule); border-left: 2px solid var(--amber);
-      padding: 18px 16px 18px; border-radius: 3px;
-      display: flex; flex-direction: column; gap: 8px;
+      background: rgba(18, 22, 38, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-left: 4px solid var(--amber);
+      padding: 24px 28px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      transition: transform 300ms var(--ease), border-left-color 300ms var(--ease), background 300ms var(--ease), border-color 300ms var(--ease);
     }
+    .lit-card:hover {
+      transform: translateY(-4px);
+      background: rgba(18, 22, 38, 0.6);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    .lit-card-wrapper .lit-card {
+      margin: 0 !important;
+    }
+    .lit-card-1 { border-left-color: var(--amber); }
     .lit-card-2 { border-left-color: var(--teal); }
     .lit-card-3 { border-left-color: var(--lilac); }
+    .lit-card-1:hover { border-left-color: #ff7e67; }
+    .lit-card-2:hover { border-left-color: #55cfa3; }
+    .lit-card-3:hover { border-left-color: #8c8cde; }
     .lit-card-num {
       font-family: var(--mono); font-size: 9px; letter-spacing: .26em;
       text-transform: uppercase; color: var(--ink-faint);
@@ -300,19 +621,18 @@
     .lit-card-3 .lit-card-num { color: var(--lilac); }
     .lit-card-cite {
       font-family: var(--serif); font-weight: 500;
-      font-size: 14.5px; line-height: 1.32; color: var(--ink);
+      font-size: 15px; line-height: 1.35; color: var(--ink);
     }
     .lit-card-cite em { font-style: italic; font-weight: 400; }
     .lit-card-note {
-      font-family: var(--serif); font-weight: 300; font-size: 12.5px;
+      font-family: var(--serif); font-weight: 300; font-size: 13px;
       line-height: 1.6; color: var(--ink-dim); margin-top: 4px;
     }
     .lit-card-flag {
       font-family: var(--mono); font-size: 10px; letter-spacing: .04em;
-      color: var(--ink-faint); font-style: italic; margin-top: 8px;
-      padding-top: 8px; border-top: 1px dashed var(--rule);
+      color: var(--ink-faint); font-style: italic; margin-top: auto;
+      padding-top: 10px; border-top: 1px dashed rgba(46, 58, 85, 0.5);
     }
-    @media (max-width: 900px) { .lit-cards { grid-template-columns: 1fr; } }
 
     /* Hero kicker contrast — over brain canvas */
     #beat-0 .hero-kicker { color: var(--ink-dim); }
@@ -387,21 +707,38 @@
     /* ════ Pipeline (beat-6 walkthrough) ════════════════════════════════ */
     /* Beat-6 full-width override: pipeline needs both columns visible */
     #beat-6 { width:100%; max-width:1180px; margin-left:auto; margin-right:auto;
-      padding-left:56px; padding-right:56px; padding-top:12vh; padding-bottom:8vh;
-      background:linear-gradient(180deg,
-        rgba(5,6,14,0) 0%,
-        rgba(5,6,14,.92) 4%,
-        rgba(5,6,14,.96) 50%,
-        rgba(5,6,14,.92) 96%,
-        rgba(5,6,14,0) 100%); }
+      padding-left:56px; padding-right:56px; padding-top:12vh; padding-bottom:8vh; }
+    #beat-6::before {
+      left: -80px; right: -80px;
+      background: linear-gradient(180deg,
+        transparent 0px,
+        rgba(5,6,14,.80) 150px,
+        rgba(5,6,14,.80) calc(100% - 150px),
+        transparent 100%);
+      -webkit-mask-image: linear-gradient(90deg, transparent 0px, black 140px, black calc(100% - 140px), transparent 100%);
+      mask-image: linear-gradient(90deg, transparent 0px, black 140px, black calc(100% - 140px), transparent 100%);
+    }
 
-    .pl-track { margin:32px 0 0; display:flex; flex-direction:column; gap:0; }
+
+    .pl-track { margin:32px 0 0; display:flex; flex-direction:column; gap:48px; }
     .pl-step {
       display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);
-      gap:36px; align-items:center; padding:32px 0;
-      border-top:1px solid var(--rule);
+      gap:36px; align-items:center;
+      padding:32px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      background: rgba(18, 22, 38, 0.25);
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: background 0.6s var(--ease), border-color 0.6s var(--ease), box-shadow 0.6s var(--ease), opacity 0.8s var(--ease), filter 0.8s var(--ease);
     }
-    .pl-step:first-child { border-top:none; padding-top:18px; }
+    .pl-step:first-child { padding-top:32px; }
+    .pl-step.active {
+      background: rgba(18, 22, 38, 0.55);
+      border-color: rgba(255, 255, 255, 0.09);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+    }
     .pl-step-num { font-family:var(--mono); font-size:9px; letter-spacing:.28em;
       text-transform:uppercase; color:var(--amber); margin-bottom:10px; }
     .pl-step-title { font-family:var(--serif); font-weight:400;
@@ -417,8 +754,10 @@
       padding:1px 5px; border-radius:2px; }
     .pl-step-visual {
       position:relative;
-      background:linear-gradient(180deg, rgba(14,24,36,.55) 0%, rgba(14,24,36,.25) 100%);
-      border:1px solid var(--rule); border-radius:4px;
+      background: rgba(11, 13, 26, 0.3);
+      border: 1px solid rgba(46, 58, 85, 0.15);
+      box-shadow: none;
+      border-radius: 8px;
       min-height:320px; overflow:hidden;
     }
     .pl-stage { position:relative; width:100%; height:100%; min-height:320px;
@@ -426,9 +765,9 @@
       font-family:var(--mono); font-size:11px;
       display:flex; align-items:center; justify-content:center; }
     .pl-replay { position:absolute; top:12px; right:12px; z-index:5;
-      background:transparent; border:1px solid var(--rule);
+      background:transparent; border:1px solid rgba(46, 58, 85, 0.4);
       font-family:var(--mono); font-size:9px; letter-spacing:.18em;
-      text-transform:uppercase; color:var(--ink-faint);
+      text-transform:uppercase; color:var(--ink-dim);
       padding:5px 9px; cursor:pointer; border-radius:2px;
       transition:color 150ms ease, border-color 150ms ease; }
     .pl-replay:hover { color:var(--amber); border-color:var(--amber); }
@@ -438,25 +777,30 @@
     .pl-zot-pdf { position:absolute; right:32px; top:50%;
       transform:translateY(-50%) translateX(180px);
       width:130px; height:170px;
-      background:linear-gradient(180deg,#1a2030 0%,#0e1420 100%);
-      border:1px solid var(--rule); border-radius:3px;
-      box-shadow:-8px 4px 24px rgba(0,0,0,.55);
+      background: linear-gradient(135deg, rgba(26, 32, 48, 0.95) 0%, rgba(14, 20, 32, 0.98) 100%);
+      border: 1px solid rgba(82, 153, 200, 0.35); border-radius: 4px;
+      box-shadow: -12px 12px 32px rgba(0,0,0,.75), inset 0 1px 1px rgba(255,255,255,0.05);
       opacity:0; }
-    .pl-zot-pdf-label { position:absolute; top:10px; right:10px;
-      font-family:var(--mono); font-size:8px; letter-spacing:.18em; color:var(--ink-faint); }
-    .pl-zot-pdf-lines { position:absolute; top:32px; left:14px; right:14px; bottom:14px;
-      background:repeating-linear-gradient(180deg, transparent 0 7px, var(--ink-faint) 7px 8px);
-      opacity:.25; }
+    .pl-zot-pdf-label { position:absolute; top:12px; right:12px;
+      font-family:var(--mono); font-size:8px; letter-spacing:.18em; color:var(--sky);
+      text-shadow: 0 0 6px rgba(82, 153, 200, 0.4); }
+    .pl-zot-pdf-lines { position:absolute; top:36px; left:14px; right:14px; bottom:14px;
+      background:repeating-linear-gradient(180deg, transparent 0 8px, rgba(136, 153, 184, 0.15) 8px 9px); }
     .pl-zot-meta { position:absolute; left:28px; top:50%; transform:translateY(-50%);
-      list-style:none; padding:0; margin:0; max-width:260px; }
-    .pl-zot-mf { font-family:var(--mono); font-size:10.5px; line-height:1.7;
-      color:var(--ink-dim); margin-bottom:4px; opacity:0;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .pl-zot-k { color:var(--sky); margin-right:6px; }
+      list-style:none; padding:0; margin:0; width:calc(100% - 190px); max-width:280px; }
+    .pl-zot-mf { font-family:var(--mono); font-size:10.5px; line-height:1.8;
+      color:var(--ink-dim); margin-bottom:8px; opacity:0;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      background: rgba(14, 20, 32, 0.25);
+      border: 1px solid rgba(46, 58, 85, 0.15);
+      padding: 4px 10px; border-radius: 4px; }
+    .pl-zot-k { color:var(--sky); margin-right:6px; font-weight: 500; }
     .pl-zot-stamp { position:absolute; bottom:28px; left:28px;
-      font-family:var(--mono); font-size:13px; letter-spacing:.08em;
+      font-family:var(--mono); font-size:12px; letter-spacing:.12em;
       font-weight:600; color:var(--amber); padding:6px 12px;
-      border:1.5px solid var(--amber);
+      border: 2px solid var(--amber); border-radius: 4px;
+      background: rgba(232, 99, 74, 0.05);
+      box-shadow: 0 0 15px rgba(232, 99, 74, 0.2), inset 0 0 4px rgba(232, 99, 74, 0.2);
       transform:scale(0) rotate(-12deg); opacity:0; transform-origin:center; }
     .pl-step.pl-ran-01 .pl-zot-pdf { animation:pl-zot-slide .9s cubic-bezier(.22,.61,.36,1) .15s forwards; }
     .pl-step.pl-ran-01 .pl-zot-mf-1 { animation:pl-zot-meta .45s ease 1.05s forwards; }
@@ -470,25 +814,31 @@
 
     /* --- Step 02: Lit note --- */
     .pl-stage-litnote { padding:0; align-items:stretch; }
-    .pl-ln-file { width:100%; height:100%; background:#02030a;
-      display:flex; flex-direction:column; font-family:var(--mono); }
-    .pl-ln-tab { display:flex; align-items:center; gap:8px; padding:8px 14px;
-      background:rgba(232,99,74,.08); border-bottom:1px solid var(--rule); font-size:11px; }
-    .pl-ln-icon { color:var(--amber); font-size:12px; }
-    .pl-ln-fname { color:var(--ink); }
-    .pl-ln-body { padding:12px 16px 6px; font-family:var(--mono); font-size:10.5px;
-      line-height:1.65; color:var(--ink-dim); white-space:pre-wrap; word-break:break-word; margin:0; }
-    .pl-ln-cur { display:inline-block; width:6px; height:11px; background:var(--sky);
-      vertical-align:middle; margin-left:1px;
+    .pl-ln-file { width:100%; height:100%; background: rgba(4, 6, 12, 0.3);
+      display:flex; flex-direction:column; font-family:var(--sans);
+      border-right: 1px solid rgba(46, 58, 85, 0.15); }
+    .pl-ln-tab { display:flex; align-items:center; gap:8px; padding:10px 16px;
+      background: rgba(11, 14, 23, 0.35); border-bottom:1px solid rgba(46, 58, 85, 0.25); font-size:11px;
+      font-family: var(--mono);
+      box-shadow: inset 0 -1px 0 var(--amber); }
+    .pl-ln-icon { color:var(--amber); font-size:12px; filter: drop-shadow(0 0 4px rgba(232, 99, 74, 0.4)); }
+    .pl-ln-fname { color:var(--ink); font-weight: 400; }
+    .pl-ln-body { padding:16px 20px 8px; font-family:var(--serif); font-size:13px;
+      line-height:1.7; color:var(--ink); white-space:pre-wrap; word-break:break-word; margin:0; }
+    .pl-ln-cur { display:inline-block; width:6px; height:13px; background:var(--amber);
+      vertical-align:middle; margin-left:2px;
       animation:pl-ln-blink 1s step-end infinite; opacity:0; }
     .pl-step.pl-ran-02 .pl-ln-cur { opacity:1; }
     @keyframes pl-ln-blink { 0%,100%{opacity:1} 50%{opacity:0} }
-    .pl-ln-sections { padding:8px 16px 16px; }
-    .pl-ln-sec { opacity:0; transform:translateY(8px); margin-bottom:12px; }
-    .pl-ln-h { font-family:var(--mono); font-size:11px; color:var(--teal); margin-bottom:6px; }
-    .pl-ln-skel { display:flex; flex-direction:column; gap:5px; }
-    .pl-ln-skel span { display:block; height:7px; border-radius:2px;
-      background:linear-gradient(90deg, rgba(46,58,85,.55) 25%, rgba(69,87,128,.45) 50%, rgba(46,58,85,.55) 75%);
+    .pl-ln-sections { padding:0 20px 20px; display:flex; flex-direction:column; gap:12px; }
+    .pl-ln-sec { opacity:0; transform:translateY(8px);
+      background: rgba(11, 14, 26, 0.25);
+      border: 1px solid rgba(46, 58, 85, 0.12);
+      border-radius: 4px; padding: 12px 14px; }
+    .pl-ln-h { font-family:var(--mono); font-size:10px; font-weight:500; letter-spacing: 0.05em; color:var(--teal); margin-bottom:8px; text-transform: uppercase; }
+    .pl-ln-skel { display:flex; flex-direction:column; gap:6px; }
+    .pl-ln-skel span { display:block; height:6px; border-radius:2px;
+      background:linear-gradient(90deg, rgba(46,58,85,.35) 25%, rgba(69,87,128,.25) 50%, rgba(46,58,85,.35) 75%);
       background-size:400px 100%; animation:pl-ln-shimmer 2s infinite linear; }
     @keyframes pl-ln-shimmer { 0% { background-position:-400px 0; } 100% { background-position:400px 0; } }
     .pl-step.pl-ran-02 .pl-ln-sec { animation:pl-ln-section-in .5s ease forwards; }
@@ -500,39 +850,44 @@
 
     /* --- Step 03: Terminal --- */
     .pl-stage-terminal { padding:0; align-items:stretch; }
-    .pl-term { width:100%; height:100%; background:#02030a;
-      display:flex; flex-direction:column; border-radius:3px; }
-    .pl-term-bar { display:flex; align-items:center; gap:6px; padding:7px 12px;
-      background:#0a0d16; border-bottom:1px solid var(--rule); }
-    .pl-term-dot { display:inline-block; width:9px; height:9px; border-radius:50%; opacity:.65; }
-    .pl-term-dot-r { background:#ff5f56; }
-    .pl-term-dot-y { background:#ffbd2e; }
-    .pl-term-dot-g { background:#27c93f; }
-    .pl-term-bar-title { font-family:var(--mono); font-size:12px; color:var(--ink-faint);
-      margin-left:10px; letter-spacing:.04em; }
-    .pl-term-body { flex:1; padding:14px 16px; font-family:var(--mono); font-size:11px;
-      line-height:1.75; color:var(--ink-dim); overflow:hidden; }
-    .pl-term-line { opacity:0; transition:opacity .15s ease; }
+    .pl-term { width:100%; height:100%; background: rgba(3, 5, 10, 0.3);
+      display:flex; flex-direction:column; border-radius:6px;
+      box-shadow: none; }
+    .pl-term-bar { display:flex; align-items:center; gap:6px; padding:9px 16px;
+      background: rgba(11, 13, 20, 0.35); border-bottom:1px solid rgba(46, 58, 85, 0.25); }
+    .pl-term-dot { display:inline-block; width:8px; height:8px; border-radius:50%; opacity:.85; }
+    .pl-term-dot-r { background:#ff5f56; box-shadow: 0 0 6px #ff5f56; }
+    .pl-term-dot-y { background:#ffbd2e; box-shadow: 0 0 6px #ffbd2e; }
+    .pl-term-dot-g { background:#27c93f; box-shadow: 0 0 6px #27c93f; }
+    .pl-term-bar-title { font-family:var(--mono); font-size:10px; color:var(--ink-dim);
+      margin-left:12px; letter-spacing:.1em; text-transform: uppercase; }
+    .pl-term-body { flex:1; padding:18px 20px; font-family:var(--mono); font-size:10.5px;
+      line-height:1.8; color:#cbd5e1; overflow:hidden; }
+    .pl-term-line { opacity:0; transition:opacity .15s ease; margin-bottom:4px; }
     .pl-term-line.pl-in { opacity:1; }
-    .pl-tprompt { color:var(--amber); } .pl-tuser { color:var(--ink); }
-    .pl-tmcp { color:var(--sky); } .pl-tok { color:var(--teal); }
+    .pl-tprompt { color:var(--amber); font-weight: 500; } .pl-tuser { color:var(--ink); }
+    .pl-tmcp { color:var(--sky); } .pl-tok { color:var(--teal); font-weight: 500; text-shadow: 0 0 8px rgba(69,168,132,0.3); }
     .pl-tdim { color:var(--ink-faint); }
-    .pl-tcur { display:inline-block; width:7px; height:11px; background:var(--sky);
+    .pl-tcur { display:inline-block; width:6px; height:12px; background:var(--sky);
       vertical-align:middle; margin-left:1px; animation:pl-ln-blink 1s step-end infinite; }
 
     /* --- Step 04: Atoms --- */
     .pl-stage-atoms { padding:24px; align-items:flex-start; justify-content:flex-start; display:block; position:relative; }
     .pl-atoms-counter-wrap { position:absolute; top:24px; left:28px; z-index:2; }
-    .pl-atoms-counter { font-family:var(--mono); font-size:34px; font-weight:300;
-      color:var(--ink); letter-spacing:-.025em; }
+    .pl-atoms-counter { font-family:var(--mono); font-size:36px; font-weight:300;
+      color:var(--ink); letter-spacing:-.025em; text-shadow: 0 0 10px rgba(255, 255, 255, 0.1); }
     .pl-atoms-counter-lbl { font-family:var(--mono); font-size:9px; letter-spacing:.22em;
-      text-transform:uppercase; color:var(--ink-faint); margin-top:2px; }
+      text-transform:uppercase; color:var(--ink-dim); margin-top:4px; }
     .pl-atoms-scatter { position:absolute; inset:0; overflow:hidden; }
     .pl-atom-card { position:absolute;
-      background:rgba(232,99,74,.07); border:1px solid rgba(232,99,74,.25);
-      border-left:2px solid var(--amber); padding:5px 8px;
-      font-family:var(--mono); font-size:9px; color:var(--ink-dim);
-      line-height:1.4; max-width:180px; border-radius:2px;
+      background: rgba(232, 99, 74, 0.08);
+      border: 1px solid rgba(232, 99, 74, 0.35);
+      border-left: 3px solid var(--amber);
+      padding: 6px 10px;
+      font-family: var(--mono); font-size: 8.5px; color: var(--ink);
+      line-height: 1.4; max-width: 180px; border-radius: 4px;
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), 0 0 8px rgba(232, 99, 74, 0.05);
       opacity:0; transform:scale(.4) translateY(16px); pointer-events:none; }
     @keyframes pl-atom-pop {
       0% { opacity:0; transform:scale(.3) translateY(20px); }
@@ -544,25 +899,29 @@
     .pl-stage-molecules { padding:0; position:relative; display:block; }
     .pl-mol-svg { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:1; }
     .pl-mol-field { position:absolute; inset:0; z-index:2; }
-    .pl-mol-dot { position:absolute; width:10px; height:10px; background:var(--amber);
-      border-radius:50%; box-shadow:0 0 10px rgba(232,99,74,.55);
+    .pl-mol-dot { position:absolute; width:10px; height:10px; background:var(--teal);
+      border-radius:50%; box-shadow:0 0 12px var(--teal);
       transition:left 1.2s cubic-bezier(.4,.1,.3,1), top 1.2s cubic-bezier(.4,.1,.3,1);
       transform:translate(-50%,-50%); opacity:0; }
     .pl-mol-dot.pl-in { opacity:1; }
     .pl-mol-label { position:absolute; font-family:var(--mono); font-size:9.5px;
-      color:var(--teal); letter-spacing:.04em; transform:translate(-50%,0);
-      opacity:0; transition:opacity .6s ease; }
+      color:var(--teal); letter-spacing:.04em; transform:translate(-50%, -15px);
+      opacity:0; transition:opacity .6s ease;
+      text-shadow: 0 0 8px rgba(69, 168, 132, 0.5), 0 1px 2px rgba(0,0,0,0.8); }
     .pl-mol-label.pl-in { opacity:1; }
-    .pl-mol-line { stroke:var(--teal); stroke-width:1; opacity:0; transition:opacity .6s ease; }
-    .pl-mol-line.pl-in { opacity:.45; }
+    .pl-mol-line { stroke:var(--teal); stroke-width:1.5; opacity:0;
+      filter: drop-shadow(0 0 4px var(--teal));
+      transition:opacity .6s ease; }
+    .pl-mol-line.pl-in { opacity:.65; }
 
     /* --- Step 06: Alloys --- */
     .pl-stage-alloys { padding:0; display:block; }
     .pl-alloy-stage { position:relative; width:100%; height:100%; min-height:320px; padding:24px; }
-    .pl-alloy-mol { position:absolute; width:32px; height:32px; border-radius:50%;
-      background:radial-gradient(circle, rgba(69,168,132,.35) 30%, rgba(69,168,132,.05) 70%);
-      border:1px solid rgba(69,168,132,.5); opacity:0;
-      transition:all .9s cubic-bezier(.5,.1,.3,1); }
+    .pl-alloy-mol { position:absolute; width:36px; height:36px; border-radius:50%;
+      background:radial-gradient(circle, rgba(69,168,132,0.4) 30%, rgba(69,168,132,0.05) 70%);
+      border:1.5px solid rgba(69,168,132,0.6); opacity:0;
+      transition:all .9s cubic-bezier(.5,.1,.3,1);
+      box-shadow: 0 0 12px rgba(69, 168, 132, 0.2); }
     .pl-alloy-mol-1 { left:18%; top:22%; }
     .pl-alloy-mol-2 { left:75%; top:22%; }
     .pl-alloy-mol-3 { left:46%; top:70%; }
@@ -576,62 +935,68 @@
       left:50%; top:50%; transform:translate(-50%,-50%) scale(.2); opacity:0; }
     .pl-alloy-block { position:absolute; left:50%; top:50%;
       transform:translate(-50%,-50%) scale(.85);
-      width:88%; max-width:380px;
-      background:linear-gradient(180deg, rgba(232,99,74,.06) 0%, rgba(232,99,74,.01) 100%);
-      border:1px solid rgba(232,99,74,.35); border-left:2px solid var(--amber);
-      padding:16px 18px; opacity:0;
+      width:90%; max-width:380px;
+      background: rgba(14, 20, 32, 0.4);
+      border: 1px solid rgba(232, 99, 74, 0.2); border-left: 3px solid var(--amber);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      padding:20px 22px; opacity:0;
       transition:opacity .7s ease, transform .7s cubic-bezier(.5,.1,.3,1);
-      border-radius:3px; }
+      border-radius:6px;
+      box-shadow: none; }
     .pl-step.pl-ran-06.pl-alloy-fused .pl-alloy-block {
       opacity:1; transform:translate(-50%,-50%) scale(1); }
     .pl-alloy-label { font-family:var(--mono); font-size:9px; letter-spacing:.22em;
-      text-transform:uppercase; color:var(--amber); margin-bottom:8px; }
+      text-transform:uppercase; color:var(--amber); margin-bottom:10px;
+      text-shadow: 0 0 8px rgba(232, 99, 74, 0.4); }
     .pl-alloy-thesis { font-family:var(--serif); font-weight:400; font-style:italic;
-      font-size:13.5px; line-height:1.5; color:var(--ink); margin-bottom:14px; }
-    .pl-alloy-evidence { border-top:1px solid rgba(232,99,74,.2); padding-top:10px;
-      display:flex; flex-direction:column; gap:5px; }
-    .pl-alloy-chain { display:flex; align-items:center; gap:5px;
+      font-size:14.5px; line-height:1.6; color:var(--ink); margin-bottom:16px; }
+    .pl-alloy-evidence { border-top:1px solid rgba(232,99,74,.2); padding-top:14px;
+      display:flex; flex-direction:column; gap:8px; }
+    .pl-alloy-chain { display:flex; align-items:center; gap:6px;
       font-family:var(--mono); font-size:9px; color:var(--ink-dim);
       white-space:nowrap; overflow:hidden; }
-    .pl-alloy-node { padding:1px 5px; background:rgba(114,114,192,.12); color:var(--lilac); border-radius:2px; }
-    .pl-alloy-node-mol { background:rgba(69,168,132,.12); color:var(--teal); }
-    .pl-alloy-node-alloy { background:rgba(232,99,74,.15); color:var(--amber); }
+    .pl-alloy-node { padding:2px 6px; background:rgba(114,114,192,.18); color:var(--lilac); border-radius:3px; }
+    .pl-alloy-node-mol { padding:2px 6px; background:rgba(69,168,132,.18); color:var(--teal); border-radius:3px; }
+    .pl-alloy-node-alloy { padding:2px 6px; background:rgba(232,99,74,.2); color:var(--amber); border-radius:3px; }
     .pl-alloy-arrow { color:var(--ink-faint); }
 
     /* --- Step 07: Notion --- */
     .pl-stage-notion { padding:0; display:block; overflow:hidden; }
     .pl-notion-page { position:relative; width:92%; max-width:420px;
-      margin:18px auto; padding:22px;
-      background:#f7f6f3; color:#37352f;
-      font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
-      border-radius:4px; box-shadow:0 8px 28px rgba(0,0,0,.4);
+      margin:20px auto; padding:24px;
+      background: rgba(15, 17, 28, 0.85); color: var(--ink);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      border-radius:8px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.6);
       transform:translateX(120%); opacity:0;
       transition:transform .8s cubic-bezier(.22,.61,.36,1), opacity .6s ease; }
     .pl-step.pl-ran-07 .pl-notion-page { transform:translateX(0); opacity:1; }
-    .pl-notion-icon { font-size:26px; margin-bottom:6px; }
-    .pl-notion-title { font-size:18px; font-weight:700; line-height:1.25; color:#37352f; margin-bottom:8px; }
-    .pl-notion-title em { font-style:italic; font-weight:600; color:#6b5b48; }
-    .pl-notion-meta { display:flex; align-items:center; gap:8px; font-size:11px; color:#787774; margin-bottom:14px; }
+    .pl-notion-icon { font-size:28px; margin-bottom:8px; }
+    .pl-notion-title { font-size:19px; font-weight:700; line-height:1.25; color: var(--ink); margin-bottom:10px; }
+    .pl-notion-title em { font-style:italic; font-weight:600; color: var(--amber); }
+    .pl-notion-meta { display:flex; align-items:center; gap:8px; font-size:11px; color: var(--ink-dim); margin-bottom:16px; }
     .pl-notion-pill { display:inline-block; padding:2px 8px; border-radius:3px; font-weight:500;
-      background:#fdecc8; color:#806c2a; }
-    .pl-notion-pill-active { background:#cfeae4; color:#2d6a52; }
-    .pl-notion-pill-text { color:#9b9a97; }
-    .pl-notion-divider { height:1px; background:#e9e8e3; margin:12px 0; }
-    .pl-notion-section-label { font-size:11px; font-weight:600; color:#9b9a97;
-      text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px; }
-    .pl-notion-checklist { list-style:none; padding:0; margin:0; }
-    .pl-notion-li { display:flex; align-items:center; gap:8px; font-size:12.5px; padding:3px 0; color:#37352f; }
+      background: rgba(232, 99, 74, 0.15); color: var(--amber); }
+    .pl-notion-pill-active { background: rgba(69, 168, 132, 0.15); color: var(--teal); }
+    .pl-notion-pill-text { color: var(--ink-faint); }
+    .pl-notion-divider { height:1px; background: rgba(255, 255, 255, 0.08); margin:16px 0; }
+    .pl-notion-section-label { font-size:10.5px; font-weight:600; color: var(--ink-dim);
+      text-transform:uppercase; letter-spacing:.06em; margin-bottom:8px; }
+    .pl-notion-checklist { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:4px; }
+    .pl-notion-li { display:flex; align-items:center; gap:8px; font-size:12.5px; padding:2px 0; color: var(--ink); }
     .pl-notion-box { display:inline-block; width:14px; height:14px;
-      border:1.5px solid #b7b6b3; border-radius:3px; text-align:center;
-      line-height:11px; font-size:10px; color:#fff; background:#fff; flex-shrink:0; }
-    .pl-notion-done .pl-notion-box { background:#2d6a52; border-color:#2d6a52; }
-    .pl-notion-done { color:#9b9a97; text-decoration:line-through; }
-    .pl-notion-ref { color:#6b5b48; font-size:10px; margin-left:4px; }
+      border:1.5px solid rgba(255, 255, 255, 0.25); border-radius:3px; text-align:center;
+      line-height:11px; font-size:10px; color:#fff; background: transparent; flex-shrink:0; }
+    .pl-notion-done .pl-notion-box { background: var(--teal); border-color: var(--teal); }
+    .pl-notion-done { color: var(--ink-faint); text-decoration:line-through; }
+    .pl-notion-ref { color: var(--sky); font-size:10px; margin-left:4px; font-weight: 500; }
     .pl-notion-linkcard { display:flex; align-items:flex-start; gap:10px;
-      background:#fff; border:1px solid #e9e8e3; padding:10px 12px; border-radius:4px; }
-    .pl-notion-linkcard-icon { color:#b7b6b3; font-size:14px; flex-shrink:0; margin-top:1px; }
-    .pl-notion-linkcard-title { font-size:12.5px; font-weight:500; line-height:1.35; color:#37352f; margin-bottom:2px; }
-    .pl-notion-linkcard-sub { font-size:10.5px; color:#9b9a97; }
+      background: rgba(255, 255, 255, 0.02); border:1px solid rgba(255, 255, 255, 0.05); padding:10px 12px; border-radius:4px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.15); }
+    .pl-notion-linkcard-icon { color: var(--ink-dim); font-size:14px; flex-shrink:0; margin-top:2px; }
+    .pl-notion-linkcard-title { font-size:12.5px; font-weight:500; line-height:1.35; color: var(--ink); margin-bottom:2px; }
+    .pl-notion-linkcard-sub { font-size:10.5px; color: var(--ink-dim); }
 
     @media (max-width: 720px) {
       .pl-step { grid-template-columns:1fr; gap:24px; padding:24px 0; }
@@ -653,12 +1018,51 @@
 
     @media (max-width: 900px) {
       .brain-col { opacity:0.45; }
-      .beat:not(#beat-0) { width:auto; margin-left:0; padding:6vh 28px;
-        background:linear-gradient(180deg, rgba(5,6,14,.55) 0%, rgba(5,6,14,.85) 100%); }
-      #beat-0 { padding:14vh 28px; }
-      .beat { min-height:auto; padding:8vh 28px; }
+      
+      /* Reset widths, margins, and paddings for all story beat variations on mobile */
+      .beat:not(#beat-0),
+      .beat.beat-left:not(#beat-0),
+      .beat.beat-center-stage:not(#beat-0),
+      .beat.beat-thesis:not(#beat-0),
+      #beat-6 {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding: 6vh 24px !important;
+        min-height: auto !important;
+      }
+      
+      /* Reset background offsets and masks for mobile screens, applying soft vertical gradients */
+      .beat:not(#beat-0)::before,
+      .beat.beat-left:not(#beat-0)::before,
+      .beat.beat-center-stage:not(#beat-0)::before,
+      .beat.beat-thesis:not(#beat-0)::before,
+      #beat-6::before {
+        left: 0 !important;
+        right: 0 !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        background: linear-gradient(180deg,
+          transparent 0px,
+          rgba(5, 6, 14, 0.80) 60px,
+          rgba(5, 6, 14, 0.80) calc(100% - 60px),
+          transparent 100%) !important;
+        -webkit-mask-image: none !important;
+        mask-image: none !important;
+      }
+      
+      #beat-0 {
+        padding: 14vh 24px !important;
+        max-width: 100% !important;
+      }
+      #beat-0::before {
+        background: none !important;
+      }
+      
       .topbar { padding:0 24px; }
-      footer.footer { padding:24px 32px; flex-direction:column; gap:10px; align-items:flex-start; }
+      footer.footer { padding:24px 24px; flex-direction:column; gap:10px; align-items:flex-start; }
+      .lit-card-1, .lit-card-2, .lit-card-3 { margin-left: 0 !important; max-width: 100% !important; }
     }
     @media (prefers-reduced-motion: reduce) {
       .beat { opacity:1; transform:none; transition:none; }
@@ -670,6 +1074,7 @@
 <div class="grain"></div>
 <div class="glow-tl"></div>
 <div class="glow-br"></div>
+<div class="glow-center"></div>
 <div class="edge-gradient"></div>
 
 <nav class="topbar">
@@ -695,68 +1100,109 @@
   <div class="text-col">
 
     <section class="beat" id="beat-0">
-      <div class="hero-kicker"><em>Project Overview</em> &nbsp;·&nbsp; Initial Draft</div>
-      <h1 class="beat-heading">Building a <em>Second Brain</em><br>(For Real This Time)</h1>
-      <p class="hero-sub">The project in one walk-through. It covers what PKM is, why the hype around it is suspicious, what I am building, and where it is heading. The six required parts of this overview sit inside the relevant beats and are tagged in teal as they appear.</p>
-      <div class="hero-hint">↓ &nbsp;scroll</div>
+      <div class="story-chunk" data-chunk-id="0">
+        <div class="hero-kicker"><em>Project Overview</em> &nbsp;·&nbsp; Initial Draft</div>
+        <h1 class="beat-heading">Building a <em>Second Brain</em><br>(For Real This Time)</h1>
+        <p class="hero-sub">The project in one walk-through. It covers what PKM is, why the hype around it is suspicious, what I am building, and where it is heading. The six required parts of this overview sit inside the relevant beats and are tagged in teal as they appear.</p>
+        <div class="hero-hint">↓ &nbsp;scroll</div>
+      </div>
     </section>
 
     <section class="beat beat-left" id="beat-1">
-      <div class="beat-num"><em>01</em> &nbsp;·&nbsp; PKM</div>
-      <h2 class="beat-heading">What is <em>PKM</em>?</h2>
-      <p class="beat-body">Personal knowledge management, or PKM, is the set of steps a person uses to collect, organize, store, find, and share what they know. In simple terms, it means having a real system for your own knowledge instead of just hoping you will remember things later. The key idea is that the individual, not a company or an institution, is the person in charge of managing it.</p>
-      <p class="beat-body">The name is new, but the habit is very old. The term PKM comes from a 1999 working paper by Frand and Hixon (1999), which is fairly recent. The practice itself goes back centuries, from Leonardo da Vinci's notebooks to Niklas Luhmann's Zettelkasten, a box of more than 90,000 linked index cards. Even the idea of a machine for it is old. In 1945, Vannevar Bush imagined the Memex, a desk that could store everything you read and let you find it again quickly (Bush, 1945).</p>
-      <p class="beat-body">So why does such an old habit suddenly need its own research field? The reason is that the amount of information we deal with has grown very fast. Once Peter Drucker (1968) described the modern "knowledge worker", whose main asset is what they know, managing that knowledge stopped being optional. A simple way to picture PKM is the difference between a library and a pile. Both of them hold all your books, but only one of them will give you the right book before the deadline.</p>
+      <div class="story-chunk chunk-lead" data-chunk-id="1">
+        <div class="beat-num"><em>01</em> &nbsp;·&nbsp; PKM</div>
+        <h2 class="beat-heading">What is <em>PKM</em>?</h2>
+        <p class="beat-body">Personal knowledge management, or PKM, is the set of steps a person uses to collect, organize, store, find, and share what they know. In simple terms, it means having a real system for your own knowledge instead of just hoping you will remember things later. The key idea is that the individual, not a company or an institution, is the person in charge of managing it.</p>
+      </div>
+      <div class="story-chunk chunk-card card-sky chunk-offset-right" data-chunk-id="2">
+        <p class="beat-body">The name is new, but the habit is very old. The term PKM comes from a 1999 working paper by Frand and Hixon (1999), which is fairly recent. The practice itself goes back centuries, from Leonardo da Vinci's notebooks to Niklas Luhmann's Zettelkasten, a box of more than 90,000 linked index cards. Even the idea of a machine for it is old. In 1945, Vannevar Bush imagined the Memex, a desk that could store everything you read and let you find it again quickly (Bush, 1945).</p>
+      </div>
+      <div class="story-chunk chunk-narrow chunk-offset-left" data-chunk-id="3">
+        <p class="beat-body">So why does such an old habit suddenly need its own research field? The reason is that the amount of information we deal with has grown very fast. Once Peter Drucker (1968) described the modern "knowledge worker", whose main asset is what they know, managing that knowledge stopped being optional. A simple way to picture PKM is the difference between a library and a pile. Both of them hold all your books, but only one of them will give you the right book before the deadline.</p>
+      </div>
     </section>
 
     <section class="beat" id="beat-2">
-      <div class="beat-num"><em>02</em> &nbsp;·&nbsp; Second Brain</div>
-      <h2 class="beat-heading">And a <em>second brain</em>?</h2>
-      <p class="beat-body">If PKM is the general idea, the <em>second brain</em> is its most famous version. A second brain is an external, digital place where you keep the ideas and information you collect through learning and experience. But storage by itself is not the point. Tiago Forte describes it as a system that "expands our memory and our intellect using the modern tools of technology and networks." What makes it more than simple note-taking is that it should also help you find, compare, shorten, and reuse your notes. A folder full of saved articles is just a digital attic. A second brain is meant to be a thinking partner.</p>
-      <p class="beat-body">The idea is centuries old, but the name is recent. Forte introduced his "Building a Second Brain" method in 2017 and explained it fully in his 2022 book of the same name (Forte, 2022). He gave the practice two simple structures. CODE stands for Capture, Organize, Distill, and Express. PARA stands for Projects, Areas, Resources, and Archives, and it sorts notes by how useful they are for action rather than by topic. So PKM is the wider category, and the second brain is one specific version of it. If PKM is cooking, the second brain is one particular and very well-marketed recipe.</p>
-      <p class="beat-body">It is easy to treat all of this as productivity-influencer noise, but the core idea is actually serious. In their 1998 paper "The Extended Mind", the philosophers Andy Clark and David Chalmers argued that thinking does not only happen inside the head (Clark and Chalmers, 1998). They imagined a man named Otto, whose memory is failing, who keeps his information in a notebook that he always carries. If he trusts that notebook and uses it all the time, they argued, it becomes a real part of his mind. The lesson for the second brain is reassuring. Moving information into a system you trust is not laziness. You already do this every time you let your phone hold a number that you would never try to remember, and nobody calls that cheating.</p>
+      <div class="story-chunk chunk-lead" data-chunk-id="4">
+        <div class="beat-num"><em>02</em> &nbsp;·&nbsp; Second Brain</div>
+        <h2 class="beat-heading">And a <em>second brain</em>?</h2>
+        <p class="beat-body">If PKM is the general idea, the <em>second brain</em> is its most famous version. A second brain is an external, digital place where you keep the ideas and information you collect through learning and experience. But storage by itself is not the point. Tiago Forte describes it as a system that "expands our memory and our intellect using the modern tools of technology and networks." What makes it more than simple note-taking is that it should also help you find, compare, shorten, and reuse your notes. A folder full of saved articles is just a digital attic. A second brain is meant to be a thinking partner.</p>
+      </div>
+      <div class="story-chunk chunk-card card-amber chunk-offset-left" data-chunk-id="5">
+        <p class="beat-body">The idea is centuries old, but the name is recent. Forte introduced his "Building a Second Brain" method in 2017 and explained it fully in his 2022 book of the same name (Forte, 2022). He gave the practice two simple structures. CODE stands for Capture, Organize, Distill, and Express. PARA stands for Projects, Areas, Resources, and Archives, and it sorts notes by how useful they are for action rather than by topic. So PKM is the wider category, and the second brain is one specific version of it. If PKM is cooking, the second brain is one particular and very well-marketed recipe.</p>
+      </div>
+      <div class="story-chunk chunk-quote chunk-offset-right" data-chunk-id="6">
+        <blockquote>In their 1998 paper "The Extended Mind", the philosophers Andy Clark and David Chalmers argued that thinking does not only happen inside the head. If Otto trusts his notebook and uses it all the time, it becomes a real part of his mind. Moving information into a system you trust is not laziness — it is cognitive extension.</blockquote>
+        <cite>Clark & Chalmers, "The Extended Mind" (1998)</cite>
+      </div>
     </section>
 
     <section class="beat beat-left" id="beat-3">
-      <div class="beat-num"><em>03</em> &nbsp;·&nbsp; The Hype</div>
-      <h2 class="beat-heading">Everyone is <em>selling</em> a brain</h2>
-      <p class="beat-body">Spend any time in the productivity side of the internet and someone will try to sell you a brain. Forte's book was a bestseller. A whole industry of online creators now shows off note-taking "systems" with the kind of energy that people usually save for skincare routines. The newest promise is that AI will finally make the whole thing effortless. One 2025 academic paper describes this path clearly, moving from PKM, to the second brain, to a "personal AI companion" (Aal and Rüller, 2025). The market is huge and the discussion never stops. Whether any of it actually <em>works</em> is treated as a separate and slightly awkward question.</p>
-      <p class="beat-body">Two problems keep coming back. The first is the productivity trap. The system that is supposed to be your second brain often needs so much care that you spend more time looking after it than actually using it. The second is the collecting habit. People save articles that they will never open again, until the second brain becomes the same messy attic it was meant to replace. Reorganizing your notes can feel like progress in the same way that buying a gym membership can feel like exercise. Most of the time, it is just procrastination with nicer fonts.</p>
-      <p class="beat-body">There is also a deeper problem. There is very little solid research showing that these systems really improve thinking. Most of the evidence is just personal stories. Some scholars even doubt the basic idea. William Jones (2007) argued that you can only really manage information, because knowledge is personal and lives in the mind, so it cannot be tidied up from the outside in the same way. In short, the field gives a lot of confident advice based on surprisingly little proof. That gap between loud claims and quiet evidence is exactly where this project starts, and it is also what the next beat is about.</p>
+      <div class="story-chunk chunk-lead" data-chunk-id="7">
+        <div class="beat-num"><em>03</em> &nbsp;·&nbsp; The Hype</div>
+        <h2 class="beat-heading">Everyone is <em>selling</em> a brain</h2>
+        <p class="beat-body">Spend any time in the productivity side of the internet and someone will try to sell you a brain. Forte's book was a bestseller. A whole industry of online creators now shows off note-taking "systems" with the kind of energy that people usually save for skincare routines. The newest promise is that AI will finally make the whole thing effortless. One 2025 academic paper describes this path clearly, moving from PKM, to the second brain, to a "personal AI companion" (Aal and Rüller, 2025). The market is huge and the discussion never stops. Whether any of it actually <em>works</em> is treated as a separate and slightly awkward question.</p>
+      </div>
+      <div class="story-chunk chunk-card card-coral chunk-offset-right" data-chunk-id="8">
+        <h4 style="font-family:var(--mono); font-size:10px; color:var(--coral); letter-spacing:.2em; margin-bottom:12px; text-transform:uppercase;">Two Persistent Failure Modes</h4>
+        <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:12px;">
+          <li>
+            <strong style="color:var(--ink); font-family:var(--serif); display:block; margin-bottom:4px;">1. The Productivity Trap</strong>
+            <span style="font-family:var(--serif); font-size:14px; color:var(--ink-dim); line-height:1.5;">The system needs so much care that you spend more time looking after it than actually using it.</span>
+          </li>
+          <li>
+            <strong style="color:var(--ink); font-family:var(--serif); display:block; margin-bottom:4px;">2. The Collecting Habit</strong>
+            <span style="font-family:var(--serif); font-size:14px; color:var(--ink-dim); line-height:1.5;">Saving articles that you will never open again, until the second brain becomes a digital attic.</span>
+          </li>
+        </ul>
+      </div>
+      <div class="story-chunk chunk-narrow chunk-offset-left" data-chunk-id="9">
+        <p class="beat-body">There is also a deeper problem. There is very little solid research showing that these systems really improve thinking. Most of the evidence is just personal stories. Some scholars even doubt the basic idea. William Jones (2007) argued that you can only really manage information, because knowledge is personal and lives in the mind, so it cannot be tidied up from the outside in the same way. In short, the field gives a lot of confident advice based on surprisingly little proof. That gap between loud claims and quiet evidence is exactly where this project starts, and it is also what the next beat is about.</p>
+      </div>
     </section>
 
     <section class="beat beat-center-stage" id="beat-4">
-      <div class="beat-num"><em>04</em> &nbsp;·&nbsp; The Meme</div>
-      <div class="req-tag">Required part: Motivation</div>
-      <h2 class="beat-heading">So why <em>bother</em>?</h2>
-      <p class="editorial-quote">The sharpest critics of this whole genre enjoy pointing out something funny. The people who promote "second brains" often still cannot remember where their own car keys are. The partner who quietly keeps track of the keys, the glasses, and the kid's appointments was the original second brain all along.</p>
-      <span class="editorial-cite">Based on the "second brain" meme by @nunoei, paraphrased</span>
-      <p class="beat-body"><span class="part-label">Motivation.</span> I did not come to this topic through theory. I came to it through failure. For years I saved notes and told myself that organizing them was a job for Future Me, who would surely have more time and more discipline. Future Me never showed up. My vault slowly turned into a beautifully tagged graveyard. The industry's answer is always the same one, which is the next template, the next app, or the next creator's setup. I bought in again and again. The meme above deserves a real answer, and so does the question hiding under it. Is the failure mine, or is it the method's? That question is the whole reason for this project.</p>
+      <div class="story-chunk chunk-card card-coral chunk-wide" data-chunk-id="10">
+        <div class="beat-num"><em>04</em> &nbsp;·&nbsp; The Meme</div>
+        <div class="req-tag">Required part: Motivation</div>
+        <h2 class="beat-heading">So why <em>bother</em>?</h2>
+        <p class="editorial-quote">The sharpest critics of this whole genre enjoy pointing out something funny. The people who promote "second brains" often still cannot remember where their own car keys are. The partner who quietly keeps track of the keys, the glasses, and the kid's appointments was the original second brain all along.</p>
+        <span class="editorial-cite">Based on the "second brain" meme by @nunoei, paraphrased</span>
+      </div>
+      <div class="story-chunk chunk-lead chunk-wide" data-chunk-id="11">
+        <p class="beat-body"><span class="part-label">Motivation.</span> I did not come to this topic through theory. I came to it through failure. For years I saved notes and told myself that organizing them was a job for Future Me, who would surely have more time and more discipline. Future Me never showed up. My vault slowly turned into a beautifully tagged graveyard. The industry's answer is always the same one, which is the next template, the next app, or the next creator's setup. I bought in again and again. The meme above deserves a real answer, and so does the question hiding under it. Is the failure mine, or is it the method's? That question is the whole reason for this project.</p>
+      </div>
     </section>
 
     <section class="beat" id="beat-5">
-      <div class="beat-num"><em>05</em> &nbsp;·&nbsp; What I'm Building</div>
-      <div class="req-tag">Required parts: Project idea &middot; Format</div>
-      <h2 class="beat-heading">A second brain that actually <em>helps me think</em></h2>
-      <p class="beat-body"><span class="part-label">Project idea.</span> I am not building a fancier filing cabinet. I am building a system where small, single-idea notes connect into arguments, where research builds on itself instead of just piling up, and where the question <em>"do I really understand this?"</em> has a clear, structural answer. The main idea behind it is simple. Most PKM advice focuses on capture, which means getting everything in. But the thing that really decides whether a system works is retrieval, which means getting the right idea back out at the moment you are thinking. So the project builds a second brain that puts retrieval first, and then tests that idea honestly.</p>
-      <p class="beat-body"><span class="part-label">Format.</span> The final product makes this case as a digital essay on the web. It is a small set of linked pages rather than one long document. It includes this overview, a visual companion that you scroll through, a full written essay, and a section with data. The format is part of the argument. A project about how to organize knowledge should be easy to move around in. A flat PDF would quietly work against its own point.</p>
+      <div class="story-chunk chunk-lead" data-chunk-id="12">
+        <div class="beat-num"><em>05</em> &nbsp;·&nbsp; What I'm Building</div>
+        <div class="req-tag">Required parts: Project idea &middot; Format</div>
+        <h2 class="beat-heading">A second brain that actually <em>helps me think</em></h2>
+        <p class="beat-body"><span class="part-label">Project idea.</span> I am not building a fancier filing cabinet. I am building a system where small, single-idea notes connect into arguments, where research builds on itself instead of just piling up, and where the question <em>"do I really understand this?"</em> has a clear, structural answer. The main idea behind it is simple. Most PKM advice focuses on capture, which means getting everything in. But the thing that really decides whether a system works is retrieval, which means getting the right idea back out at the moment you are thinking. So the project builds a second brain that puts retrieval first, and then tests that idea honestly.</p>
+      </div>
+      <div class="story-chunk chunk-card card-teal chunk-offset-left" data-chunk-id="13">
+        <p class="beat-body"><span class="part-label">Format.</span> The final product makes this case as a digital essay on the web. It is a small set of linked pages rather than one long document. It includes this overview, a visual companion that you scroll through, a full written essay, and a section with data. The format is part of the argument. A project about how to organize knowledge should be easy to move around in. A flat PDF would quietly work against its own point.</p>
+      </div>
     </section>
 
     <section class="beat" id="beat-6">
-      <div class="beat-num"><em>06</em> &nbsp;·&nbsp; Current State</div>
-      <div class="req-tag">Required parts: Sources &middot; Methods</div>
-      <h2 class="beat-heading">Where I <em>am</em> now</h2>
-      <p class="beat-body"><span class="part-label">Sources &middot; Methods.</span> The system is a pipeline. A paper enters through Zotero. It becomes a structured literature note in Obsidian. Claude Code runs a NotebookLM MCP integration to extract candidate atoms from the PDF. Verified atoms land in the vault, cluster into molecules, and synthesize into alloys that get tracked in Notion as actionable work. Each step below is animated. Each animation uses a real artifact from the vault.</p>
-      <div class="tool-row">
-        <span class="tool-chip chip-amber">Obsidian · Vault</span>
-        <span class="tool-chip chip-coral">Zotero · 49 sources</span>
-        <span class="tool-chip chip-teal">Notion · Tracking</span>
-        <span class="tool-chip chip-lilac">AI / MCP · Retrieval</span>
+      <div class="story-chunk chunk-card card-teal chunk-wide" data-chunk-id="14">
+        <div class="beat-num"><em>06</em> &nbsp;·&nbsp; Current State</div>
+        <div class="req-tag">Required parts: Sources &middot; Methods</div>
+        <h2 class="beat-heading">Where I <em>am</em> now</h2>
+        <p class="beat-body"><span class="part-label">Sources &middot; Methods.</span> The system is a pipeline. A paper enters through Zotero. It becomes a structured literature note in Obsidian. Claude Code runs a NotebookLM MCP integration to extract candidate atoms from the PDF. Verified atoms land in the vault, cluster into molecules, and synthesize into alloys that get tracked in Notion as actionable work. Each step below is animated. Each animation uses a real artifact from the vault.</p>
+        <div class="tool-row">
+          <span class="tool-chip chip-amber">Obsidian · Vault</span>
+          <span class="tool-chip chip-coral">Zotero · 49 sources</span>
+          <span class="tool-chip chip-teal">Notion · Tracking</span>
+          <span class="tool-chip chip-lilac">AI / MCP · Retrieval</span>
+        </div>
       </div>
 
       <div class="pl-track">
 
-        <div class="pl-step" data-step="01" id="pl-step-01">
+        <div class="pl-step story-chunk" data-step="01" data-chunk-id="15" id="pl-step-01">
           <div class="pl-step-prose">
             <div class="pl-step-num">Step 01 &middot; Zotero</div>
             <h3 class="pl-step-title">Capture <em>the paper</em></h3>
@@ -780,7 +1226,7 @@
           </div>
         </div>
 
-        <div class="pl-step" data-step="02" id="pl-step-02">
+        <div class="pl-step story-chunk" data-step="02" data-chunk-id="16" id="pl-step-02">
           <div class="pl-step-prose">
             <div class="pl-step-num">Step 02 &middot; Obsidian lit note</div>
             <h3 class="pl-step-title">Process into a <em>literature note</em></h3>
@@ -818,7 +1264,7 @@
           </div>
         </div>
 
-        <div class="pl-step" data-step="03" id="pl-step-03">
+        <div class="pl-step story-chunk" data-step="03" data-chunk-id="17" id="pl-step-03">
           <div class="pl-step-prose">
             <div class="pl-step-num">Step 03 &middot; Claude Code + NLM MCP</div>
             <h3 class="pl-step-title">Extract atoms via <em>NotebookLM</em></h3>
@@ -840,7 +1286,7 @@
           </div>
         </div>
 
-        <div class="pl-step" data-step="04" id="pl-step-04">
+        <div class="pl-step story-chunk" data-step="04" data-chunk-id="18" id="pl-step-04">
           <div class="pl-step-prose">
             <div class="pl-step-num">Step 04 &middot; Atoms</div>
             <h3 class="pl-step-title">Verified atoms <em>land in the vault</em></h3>
@@ -858,7 +1304,7 @@
           </div>
         </div>
 
-        <div class="pl-step" data-step="05" id="pl-step-05">
+        <div class="pl-step story-chunk" data-step="05" data-chunk-id="19" id="pl-step-05">
           <div class="pl-step-prose">
             <div class="pl-step-num">Step 05 &middot; Molecules</div>
             <h3 class="pl-step-title">Atoms <em>cluster into molecules</em></h3>
@@ -873,7 +1319,7 @@
           </div>
         </div>
 
-        <div class="pl-step" data-step="06" id="pl-step-06">
+        <div class="pl-step story-chunk" data-step="06" data-chunk-id="20" id="pl-step-06">
           <div class="pl-step-prose">
             <div class="pl-step-num">Step 06 &middot; Alloys</div>
             <h3 class="pl-step-title">Molecules fuse into <em>alloys</em></h3>
@@ -918,7 +1364,7 @@
           </div>
         </div>
 
-        <div class="pl-step" data-step="07" id="pl-step-07">
+        <div class="pl-step story-chunk" data-step="07" data-chunk-id="21" id="pl-step-07">
           <div class="pl-step-prose">
             <div class="pl-step-num">Step 07 &middot; Notion</div>
             <h3 class="pl-step-title">Alloys surface in <em>Notion</em></h3>
@@ -960,38 +1406,53 @@
 
       </div>
 
-      <p class="beat-body" style="margin-top:32px;"><span class="part-label">Methods.</span> Three threads run at once: history of the second brain (commonplace book → Zettelkasten → today), my own practice as data (including failures), and a vault analysis (link density, retrieval hit rate). An AI statement records how I use AI — would be poor form to criticize opaque systems while quietly running one.</p>
+      <div class="story-chunk chunk-card card-sky chunk-offset-right" data-chunk-id="22" style="margin-top:32px;">
+        <p class="beat-body"><span class="part-label">Methods.</span> Three threads run at once: history of the second brain (commonplace book → Zettelkasten → today), my own practice as data (including failures), and a vault analysis (link density, retrieval hit rate). An AI statement records how I use AI — would be poor form to criticize opaque systems while quietly running one.</p>
+      </div>
     </section>
-
+ 
     <section class="beat beat-thesis" id="beat-7">
-      <div class="beat-num"><em>07</em> &nbsp;·&nbsp; Thesis Seed</div>
-      <div class="req-tag">Required part: Three pieces of literature</div>
-      <h2 class="beat-heading">Where it's <em>heading</em></h2>
-      <p class="beat-body">Put together, the walk-through points to one working thesis. It is the seed that the full essay will grow from.</p>
-      <div class="thesis-hero">
-        <span class="thesis-hero-label">Working thesis</span>
-        <blockquote>Retrieval-first organization explains why generic PKM templates fail in domain-expert workflows.</blockquote>
+      <div class="story-chunk chunk-lead chunk-wide" data-chunk-id="23">
+        <div class="beat-num"><em>07</em> &nbsp;·&nbsp; Thesis Seed</div>
+        <div class="req-tag">Required part: Three pieces of literature</div>
+        <h2 class="beat-heading">Where it's <em>heading</em></h2>
+        <p class="beat-body">Put together, the walk-through points to one working thesis. It is the seed that the full essay will grow from.</p>
+        <div class="thesis-hero">
+          <span class="thesis-hero-label">Working thesis</span>
+          <blockquote>Retrieval-first organization explains why generic PKM templates fail in domain-expert workflows.</blockquote>
+        </div>
       </div>
-      <p class="beat-body">Three pieces of academic literature support this argument. One is a popular book rather than a peer-reviewed work — kept on purpose, because the project studies it directly.</p>
+      
+      <div class="story-chunk chunk-card card-amber chunk-wide" data-chunk-id="24">
+        <p class="beat-body">Three pieces of academic literature support this argument. One is a popular book rather than a peer-reviewed work — kept on purpose, because the project studies it directly.</p>
+      </div>
+
       <div class="lit-cards">
-        <div class="lit-card lit-card-1">
-          <div class="lit-card-num">01 &middot; Bestseller</div>
-          <div class="lit-card-cite">Tiago Forte, <em>Building a Second Brain</em> (2022)</div>
-          <div class="lit-card-note">The bestseller that made the "second brain" idea and the capture-first method popular. This project argues against that method — the book is here not as research but as the main thing the project studies.</div>
+        <div class="story-chunk lit-card-wrapper lit-card-1" data-chunk-id="25">
+          <div class="lit-card lit-card-1">
+            <div class="lit-card-num">01 &middot; Bestseller</div>
+            <div class="lit-card-cite">Tiago Forte, <em>Building a Second Brain</em> (2022)</div>
+            <div class="lit-card-note">The bestseller that made the "second brain" idea and the capture-first method popular. This project argues against that method — the book is here not as research but as the main thing the project studies.</div>
+          </div>
         </div>
-        <div class="lit-card lit-card-2">
-          <div class="lit-card-num">02 &middot; Historical anchor</div>
-          <div class="lit-card-cite">Niklas Luhmann, "Communicating with Slip Boxes" (1981, English tr.)</div>
-          <div class="lit-card-note">Luhmann's own account of how he worked with his Zettelkasten. The historical and theoretical balance to the modern hype — retrieval-first thinking is much older than the apps now selling it.</div>
+        <div class="story-chunk lit-card-wrapper lit-card-2" data-chunk-id="26">
+          <div class="lit-card lit-card-2">
+            <div class="lit-card-num">02 &middot; Historical anchor</div>
+            <div class="lit-card-cite">Niklas Luhmann, "Communicating with Slip Boxes" (1981, English tr.)</div>
+            <div class="lit-card-note">Luhmann's own account of how he worked with his Zettelkasten. The historical and theoretical balance to the modern hype — retrieval-first thinking is much older than the apps now selling it.</div>
+          </div>
         </div>
-        <div class="lit-card lit-card-3">
-          <div class="lit-card-num">03 &middot; Current angle</div>
-          <div class="lit-card-cite">Ferreira (2026), on retrieval-first organization</div>
-          <div class="lit-card-note">Recent work that gives the project its main angle and shapes the working thesis directly.</div>
-          <div class="lit-card-flag">Full reference details still to be confirmed.</div>
+        <div class="story-chunk lit-card-wrapper lit-card-3" data-chunk-id="27">
+          <div class="lit-card lit-card-3">
+            <div class="lit-card-num">03 &middot; Current angle</div>
+            <div class="lit-card-cite">Ferreira (2026), on retrieval-first organization</div>
+            <div class="lit-card-note">Recent work that gives the project its main angle and shapes the working thesis directly.</div>
+            <div class="lit-card-flag">Full reference details still to be confirmed.</div>
+          </div>
         </div>
       </div>
-      <div class="cta-row" style="justify-content:center;">
+
+      <div class="cta-row story-chunk" data-chunk-id="28" style="justify-content:center;">
         <a href="second_brain_website.html" class="beat-link">Full essay <span class="arrow">→</span></a>
         <a href="../research-trends/index.html" class="beat-link">Data work <span class="arrow">→</span></a>
         <a href="../home.html" class="beat-link">Back to home <span class="arrow">→</span></a>
@@ -999,8 +1460,10 @@
     </section>
 
     <section class="beat" id="beat-8">
-      <div class="beat-num"><em>08</em> &nbsp;·&nbsp; End</div>
-      <h2 class="beat-heading" style="font-size:clamp(20px,1.8vw,28px);">ITASIA302 · personal project · May 2026</h2>
+      <div class="story-chunk" data-chunk-id="29">
+        <div class="beat-num"><em>08</em> &nbsp;·&nbsp; End</div>
+        <h2 class="beat-heading" style="font-size:clamp(20px,1.8vw,28px);">ITASIA302 · personal project · May 2026</h2>
+      </div>
     </section>
 
   </div>
@@ -1043,7 +1506,7 @@ if (typeof THREE === "undefined" || typeof gsap === "undefined" || typeof Scroll
   renderer.setClearColor(0x000000, 0);
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+  const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 100);
   camera.position.set(0, 0, 6.5);
 
   function resize() {
@@ -1057,15 +1520,21 @@ if (typeof THREE === "undefined" || typeof gsap === "undefined" || typeof Scroll
   requestAnimationFrame(resize);
   window.addEventListener("resize", resize);
 
-  /* ── Pointer tracking for hover glow ──────────────────── */
+  /* ── Pointer tracking for hover glow and text float ───── */
   const mouseNDC = { x: 2.0, y: 2.0 };
+  let cursorX = 0, cursorY = 0;
   window.addEventListener("pointermove", (e) => {
     const w = canvas.clientWidth  || window.innerWidth;
     const h = canvas.clientHeight || window.innerHeight;
     mouseNDC.x =  (e.clientX / w) * 2 - 1;
     mouseNDC.y = -((e.clientY / h) * 2 - 1);
+    cursorX = (e.clientX / window.innerWidth) - 0.5;
+    cursorY = (e.clientY / window.innerHeight) - 0.5;
   }, { passive: true });
-  window.addEventListener("pointerleave", () => { mouseNDC.x = 2.0; mouseNDC.y = 2.0; });
+  window.addEventListener("pointerleave", () => {
+    mouseNDC.x = 2.0; mouseNDC.y = 2.0;
+    cursorX = 0; cursorY = 0;
+  });
 
   /* ── Constants ────────────────────────────────────────── */
   const N = 4500, C = 4;
@@ -1190,7 +1659,7 @@ if (typeof THREE === "undefined" || typeof gsap === "undefined" || typeof Scroll
     }
     return a;
   }
-  // Beat 2 — Second Brain: original + mirrored ghost copy (externalization)
+  // Beat 2 — Second Brain: dual brains representation (mirrored lobes)
   function makeDualBrain(brain) {
     const a = new Float32Array(N * 3);
     const scale = 0.62;
@@ -1204,7 +1673,8 @@ if (typeof THREE === "undefined" || typeof gsap === "undefined" || typeof Scroll
     }
     return a;
   }
-  // Beat 4 — Meme: brain particles collapsed to viewport floor (deflated / dropped keys)
+
+  // Beat 3 — Meme: particles falling to the floor
   function makeFalling(brain) {
     const a = new Float32Array(N * 3);
     for (let i = 0; i < N; i++) {
@@ -1224,40 +1694,178 @@ if (typeof THREE === "undefined" || typeof gsap === "undefined" || typeof Scroll
   const K_SLIP    = makeSlipbox();
   const K_DUAL    = makeDualBrain(K_BRAIN);
   const K_FALL    = makeFalling(K_BRAIN);
-  /* State per beat — semantic shape arc:
-     0 hero=brain · 1 PKM=slipbox · 2 second-brain=dual · 3 hype=chaos
-     4 meme=falling · 5 building=brain (reassembled) · 6 state=clusters
-     7 thesis=focus · 8 end=brain faded */
-  const STATE_MAP = [K_BRAIN, K_SLIP, K_DUAL, K_CHAOS, K_FALL, K_BRAIN, K_CLUSTER, K_FOCUS, K_BRAIN];
 
-  /* ── Highlight maps per beat (4 cluster alpha targets) ─ */
-  const ALL_ON   = [1.0, 1.0, 1.0, 1.0];
-  const FAINT    = [0.45, 0.45, 0.45, 0.45]; // beat 4 dim during meme
-  const BASE_DIM = [0.18, 0.18, 0.18, 0.18];
-  const HL_MAP = [ALL_ON, ALL_ON, ALL_ON, ALL_ON, FAINT, ALL_ON, BASE_DIM, ALL_ON, ALL_ON];
-  // Beat 6 — 7-step pipeline cycle. Each step maps to its primary tool cluster:
-  // 01 Zotero=coral(1) · 02 Obsidian=amber(0) · 03 Claude/NLM=lilac(3)
-  // 04 Atoms=amber · 05 Molecules=amber · 06 Alloys=amber · 07 Notion=teal(2)
-  const PIPE_ORDER = [1, 0, 3, 0, 0, 0, 2];
-
-  /* ── Per-beat global brain + line alpha ───────────────── */
-  // Beat 6 brain dimmed — pipeline visuals foreground attention
-  const BRAIN_ALPHA = [1.0, 1.0, 1.0, 0.85, 0.60, 1.0, 0.45, 1.0, 0.25];
-  // Lines only meaningful for brain-shaped beats; off for slipbox/dual/chaos/falling/cluster/focus
-  const LINE_ALPHA  = [0.40, 0.00, 0.00, 0.00, 0.00, 0.40, 0.00, 0.00, 0.12];
-
-  /* ── Camera keyframes per beat (z, ang π units, x off, lookY, lookX) ── */
-  const CAM_KEY = [
-    { z: 6.5, ang: 0.40,  x: 0.00,  lookY: 0.00, lookX: 0.00 }, // 0 hero — small centered brain
-    { z: 5.4, ang: 0.42,  x: 0.04,  lookY: 0.02, lookX: 0.55 }, // 1 pkm — slipbox lattice, wider framing
-    { z: 6.4, ang: 0.50,  x: 0.00,  lookY: 0.02, lookX: 0.20 }, // 2 second brain — dual, pulled back to show pair
-    { z: 6.8, ang: 0.55,  x: 0.04,  lookY: 0.02, lookX: 0.50 }, // 3 hype — chaos scatter, pulled back
-    { z: 6.0, ang: 0.48,  x: 0.04,  lookY:-0.30, lookX: 0.40 }, // 4 meme — falling, tilted down
-    { z: 4.6, ang: 0.50,  x: 0.04,  lookY: 0.02, lookX: 0.70 }, // 5 project — re-emerges (reassembled brain)
-    { z: 5.0, ang: 0.20,  x: 0.04,  lookY: 0.02, lookX: 0.70 }, // 6 current state — clusters splay
-    { z: 1.8, ang: 0.10,  x: 0.00,  lookY: 0.00, lookX: 0.55 }, // 7 thesis seed — zoomed on focus point
-    { z: 5.6, ang: 0.40,  x: 0.00,  lookY: 0.02, lookX: 0.60 }  // 8 end — pulled back, faded
+  /* State per chunk (30 chunks):
+     - 0: Hero
+     - 1,2,3: PKM (Slipbox)
+     - 4,5,6: Second Brain (Dual Brain)
+     - 7,8,9: Hype (Chaos)
+     - 10,11: Meme (Falling)
+     - 12,13: What I Build (Brain)
+     - 14: Pipeline Intro (Clusters)
+     - 15..21: Pipeline Steps 1..7 (Clusters)
+     - 22: Pipeline Outro (Clusters)
+     - 23..27: Thesis Seed & Lit Cards (Focus Singularity)
+     - 28: CTA Row (Brain)
+     - 29: End (Brain)
+  */
+  const STATE_MAP = [
+    K_BRAIN,                    // 0 Hero
+    K_SLIP, K_SLIP, K_SLIP,     // 1,2,3 PKM
+    K_DUAL, K_DUAL, K_DUAL,     // 4,5,6 Second Brain
+    K_CHAOS, K_CHAOS, K_CHAOS,  // 7,8,9 Hype
+    K_FALL, K_FALL,             // 10,11 Meme
+    K_BRAIN, K_BRAIN,           // 12,13 What I Build
+    K_CLUSTER,                  // 14 Pipeline Intro
+    K_CLUSTER, K_CLUSTER, K_CLUSTER, K_CLUSTER, K_CLUSTER, K_CLUSTER, K_CLUSTER, // 15..21 Steps 1..7
+    K_CLUSTER,                  // 22 Pipeline Outro
+    K_FOCUS, K_FOCUS, K_FOCUS, K_FOCUS, K_FOCUS, // 23..27 Thesis Seed & Lit Cards
+    K_BRAIN,                    // 28 CTA Row
+    K_BRAIN                     // 29 End
   ];
+
+  /* ── Highlight maps per chunk (4 cluster alpha targets) ─ */
+  const ALL_ON   = [1.0, 1.0, 1.0, 1.0];
+  const FAINT    = [0.45, 0.45, 0.45, 0.45]; 
+  const BASE_DIM = [0.18, 0.18, 0.18, 0.18];
+  
+  const HL_MAP = [
+    ALL_ON,                                        // 0 Hero
+    ALL_ON, ALL_ON, ALL_ON,                        // 1,2,3 PKM
+    ALL_ON, ALL_ON, ALL_ON,                        // 4,5,6 Second Brain
+    ALL_ON, ALL_ON, ALL_ON,                        // 7,8,9 Hype
+    FAINT, FAINT,                                  // 10,11 Meme
+    ALL_ON, ALL_ON,                                // 12,13 What I Build
+    BASE_DIM,                                      // 14 Pipeline Intro
+    [0.20, 1.00, 0.20, 0.20],                      // 15 Step 01 Zotero
+    [1.00, 0.20, 0.20, 0.20],                      // 16 Step 02 Obsidian
+    [0.20, 0.20, 0.20, 1.00],                      // 17 Step 03 Claude
+    [1.00, 0.20, 0.20, 0.20],                      // 18 Step 04 Atoms
+    [1.00, 0.20, 0.20, 0.20],                      // 19 Step 05 Molecules
+    [1.00, 0.20, 0.20, 0.20],                      // 20 Step 06 Alloys
+    [0.20, 0.20, 1.00, 0.20],                      // 21 Step 07 Notion
+    BASE_DIM,                                      // 22 Pipeline Outro
+    ALL_ON, ALL_ON, ALL_ON, ALL_ON, ALL_ON,        // 23..27 Thesis Seed & Lit Cards
+    ALL_ON,                                        // 28 CTA Row
+    ALL_ON                                         // 29 End
+  ];
+
+  /* ── Global brain alpha per chunk ───────────────── */
+  const BRAIN_ALPHA = [
+    1.0,                       // 0 Hero
+    1.0, 1.0, 1.0,             // 1,2,3 PKM
+    1.0, 1.0, 1.0,             // 4,5,6 Second Brain
+    0.85, 0.85, 0.85,          // 7,8,9 Hype
+    0.60, 0.60,                // 10,11 Meme
+    1.0, 1.0,                  // 12,13 What I Build
+    0.45,                      // 14 Pipeline Intro
+    0.45, 0.45, 0.45, 0.45, 0.45, 0.45, 0.45, // 15..21 Steps 1..7
+    0.45,                      // 22 Pipeline Outro
+    1.0, 1.0, 1.0, 1.0, 1.0,   // 23..27 Thesis Seed & Lit Cards
+    1.0,                       // 28 CTA Row
+    0.25                       // 29 End
+  ];
+
+  /* ── Line connection alpha per chunk ───────────────── */
+  const LINE_ALPHA  = [
+    0.40,                      // 0 Hero
+    0.00, 0.00, 0.00,          // 1,2,3 PKM
+    0.00, 0.00, 0.00,          // 4,5,6 Second Brain
+    0.00, 0.00, 0.00,          // 7,8,9 Hype
+    0.00, 0.00,                // 10,11 Meme
+    0.40, 0.40,                // 12,13 What I Build
+    0.00,                      // 14 Pipeline Intro
+    0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, // 15..21 Steps 1..7
+    0.00,                      // 22 Pipeline Outro
+    0.00, 0.00, 0.00, 0.00, 0.00, // 23..27 Thesis Seed & Lit Cards
+    0.40,                      // 28 CTA Row
+    0.12                       // 29 End
+  ];
+
+  /* ── Camera keyframes per chunk (z, ang π units, x off, y off, lookX, lookY) ── */
+  const CAM_KEY = [
+    { z: 6.5, ang: 0.40,  x: 0.00,  y: 0.05,  lookX: 0.00, lookY: 0.00 }, // 0 hero (centered view)
+    { z: 0.65, ang: 0.25,  x:-0.80,  y: 0.00,  lookX:-0.80, lookY: 0.00 }, // 1 pkm approach (text left, brain right)
+    { z: 0.48, ang: 0.35,  x: 0.80,  y:-0.05,  lookX: 0.80, lookY:-0.05 }, // 2 pkm inside columns (text right, brain left)
+    { z: 0.32, ang: 0.15,  x:-0.80,  y: 0.05,  lookX:-0.80, lookY: 0.05 }, // 3 pkm macro zoom (text left, brain right)
+    { z: 0.80, ang: 0.35,  x: 0.80,  y: 0.00,  lookX: 0.80, lookY: 0.00 }, // 4 second brain dual (text right, brain left)
+    { z: 0.42, ang: 0.45,  x:-0.80,  y: 0.08,  lookX:-0.80, lookY: 0.08 }, // 5 second brain close right (text left, brain right)
+    { z: 0.35, ang: 0.25,  x: 0.80,  y:-0.08,  lookX: 0.80, lookY:-0.08 }, // 6 second brain left core (text right, brain left)
+    { z: 0.60, ang: 0.50,  x:-0.80,  y: 0.00,  lookX:-0.80, lookY: 0.00 }, // 7 hype chaos approach (text left, brain right)
+    { z: 0.30, ang: 0.75,  x: 0.80,  y:-0.10,  lookX: 0.80, lookY:-0.10 }, // 8 hype inside drift (text right, brain left)
+    { z: 0.85, ang: 0.30,  x:-0.80,  y: 0.15,  lookX:-0.80, lookY: 0.05 }, // 9 hype pull back (text left, brain right)
+    { z: 0.55, ang: 0.45,  x: 0.00,  y:-1.00,  lookX: 0.00, lookY:-1.15 }, // 10 meme quote floor (center stage)
+    { z: 0.40, ang: 0.30,  x: 0.00,  y:-1.10,  lookX: 0.00, lookY:-1.25 }, // 11 meme motivation scan (center stage)
+    { z: 0.70, ang: 0.48,  x: 0.80,  y: 0.00,  lookX: 0.80, lookY: 0.00 }, // 12 project build core (text right, brain left)
+    { z: 0.38, ang: 0.28,  x:-0.80,  y: 0.10,  lookX:-0.80, lookY: 0.10 }, // 13 project build retrieval lobe (text left, brain right)
+    { z: 4.5,  ang: 0.20,  x: 0.00,  y: 0.00,  lookX: 0.00, lookY: 0.00 }, // 14 pipeline intro splay
+    { z: 0.18, ang: 0.16,  x: 0.00,  y: 0.00,  lookX: 0.68, lookY: 0.56 }, // 15 Step 01 Zotero
+    { z: 0.18, ang: 0.26,  x: 0.00,  y: 0.00,  lookX:-0.68, lookY: 0.56 }, // 16 Step 02 Obsidian
+    { z: 0.18, ang: 0.16,  x: 0.00,  y: 0.00,  lookX: 0.68, lookY:-0.56 }, // 17 Step 03 Claude
+    { z: 0.15, ang: 0.26,  x: 0.00,  y: 0.00,  lookX:-0.68, lookY: 0.56 }, // 18 Step 04 Atoms
+    { z: 0.14, ang: 0.28,  x: 0.00,  y: 0.00,  lookX:-0.68, lookY: 0.56 }, // 19 Step 05 Molecules
+    { z: 0.12, ang: 0.30,  x: 0.00,  y: 0.00,  lookX:-0.68, lookY: 0.56 }, // 20 Step 06 Alloys
+    { z: 0.18, ang: 0.26,  x: 0.00,  y: 0.00,  lookX:-0.68, lookY:-0.56 }, // 21 Step 07 Notion
+    { z: 4.5,  ang: 0.20,  x: 0.80,  y: 0.00,  lookX: 0.80, lookY: 0.00 }, // 22 pipeline outro splay (text right, brain left)
+    { z: 0.08, ang: 0.10,  x: 0.00,  y: 0.00,  lookX: 0.00, lookY: 0.00 }, // 23 thesis seed quote singularity
+    { z: 0.12, ang: 0.22,  x: 0.00,  y: 0.00,  lookX: 0.00, lookY: 0.00 }, // 24 thesis lit intro
+    { z: 0.15, ang: 0.30,  x:-0.80,  y: 0.00,  lookX:-0.80, lookY: 0.00 }, // 25 Lit 1 orbit (card left, brain right)
+    { z: 0.15, ang:-0.10,  x: 0.80,  y: 0.00,  lookX: 0.80, lookY: 0.00 }, // 26 Lit 2 orbit (card right, brain left)
+    { z: 0.13, ang: 0.15,  x:-0.80,  y: 0.05,  lookX:-0.80, lookY: 0.05 }, // 27 Lit 3 orbit (card left, brain right)
+    { z: 5.5,  ang: 0.35,  x: 0.00,  y: 0.00,  lookX: 0.00, lookY: 0.00 }, // 28 cta row overview
+    { z: 6.0,  ang: 0.40,  x: 0.00,  y: 0.05,  lookX: 0.00, lookY: 0.00 }  // 29 end pull back
+  ];
+  const ANCHOR_MAP = [
+    [ 0.00,  0.00,  0.00], // 0 Hero
+    [-0.50,  0.20,  0.00], // 1 PKM 1
+    [ 0.50, -0.20,  0.00], // 2 PKM 2
+    [-0.50, -0.20,  0.00], // 3 PKM 3
+    [ 0.60,  0.00,  0.00], // 4 Second Brain 1
+    [ 0.70,  0.10,  0.00], // 5 Second Brain 2
+    [-0.60, -0.10,  0.00], // 6 Second Brain 3
+    [-0.50,  0.30,  0.00], // 7 Hype 1
+    [ 0.50, -0.30,  0.00], // 8 Hype 2
+    [-0.50, -0.10,  0.00], // 9 Hype 3
+    [ 0.00, -1.15,  0.00], // 10 Meme 1
+    [-0.30, -1.25,  0.00], // 11 Meme 2
+    [ 0.40,  0.00,  0.00], // 12 Project 1
+    [-0.50,  0.10,  0.00], // 13 Project 2
+    [ 0.00,  0.00,  0.00], // 14 Pipeline Intro
+    [ 0.53,  0.43,  0.00], // 15 Pipeline Step 1
+    [-0.53,  0.43,  0.00], // 16 Pipeline Step 2
+    [ 0.53, -0.43,  0.00], // 17 Pipeline Step 3
+    [-0.53,  0.43,  0.00], // 18 Pipeline Step 4
+    [-0.53,  0.43,  0.00], // 19 Pipeline Step 5
+    [-0.53,  0.43,  0.00], // 20 Pipeline Step 6
+    [-0.53, -0.43,  0.00], // 21 Pipeline Step 7
+    [ 0.00,  0.00,  0.00], // 22 Pipeline Outro
+    [ 0.00,  0.00,  0.00], // 23 Thesis Seed
+    [ 0.00,  0.00,  0.00], // 24 Thesis Lit Intro
+    [ 0.05,  0.00,  0.00], // 25 Lit 1
+    [-0.05,  0.00,  0.00], // 26 Lit 2
+    [ 0.00,  0.05,  0.00], // 27 Lit 3
+    [ 0.00,  0.00,  0.00], // 28 CTA Row
+    [ 0.00,  0.00,  0.00]  // 29 End
+  ];
+
+  function getCameraTarget(scrollT) {
+    const NB = CAM_KEY.length;
+    const sClamp = Math.max(0, Math.min(NB - 1 - 1e-6, scrollT));
+    const i0 = Math.floor(sClamp);
+    const i1 = Math.min(NB - 1, i0 + 1);
+    const fRaw = sClamp - i0;
+    const f = easeInOutCubic(fRaw);
+
+    const kA = CAM_KEY[i0], kB = CAM_KEY[i1];
+    return {
+      z: kA.z + (kB.z - kA.z) * f,
+      ang: kA.ang + (kB.ang - kA.ang) * f,
+      x: kA.x + (kB.x - kA.x) * f,
+      y: kA.y + (kB.y - kA.y) * f,
+      lookX: kA.lookX + (kB.lookX - kA.lookX) * f,
+      lookY: kA.lookY + (kB.lookY - kA.lookY) * f
+    };
+  }
 
   const HUD_LABELS = [
     "second brain · <em>personal project</em>",
@@ -1328,7 +1936,8 @@ if (typeof THREE === "undefined" || typeof gsap === "undefined" || typeof Scroll
       vec2 delta = ndc - uMouse;
       delta.x *= uAspect;
       float hover = uHoverStrength * (1.0 - smoothstep(0.0, uHoverRadius, length(delta)));
-      gl_PointSize = aSize * (340.0 / -mv.z) * (1.0 + pulse * 0.10 + hover * 0.50 + uBeatPulse * 0.55);
+      float pSize = aSize * (340.0 / max(-mv.z, 0.05)) * (1.0 + pulse * 0.10 + hover * 0.50 + uBeatPulse * 0.55);
+      gl_PointSize = min(pSize, 90.0);
       vC = aColor;
       vA = aAlpha;
       vPulse = clamp(pulse + hover * 0.45 + uBeatPulse * 0.85, 0.0, 2.0);
@@ -1424,14 +2033,23 @@ if (typeof THREE === "undefined" || typeof gsap === "undefined" || typeof Scroll
   const positionAttr = geo.attributes.position;
   const alphaAttr = geo.attributes.aAlpha;
   const alphaTargets = ALL_ON.slice();
+  
   let currentBeat = -1;
-  let beat6Sub = 0;
+  let currentChunk = -1;
   let tStart = performance.now();
   let easing = false;
-  let camCurrX = 0, camCurrY = 0.05, camCurrZ = 6.5, camCurrLookY = 0, camCurrLookX = 0;
-  let camTgtX  = 0, camTgtY  = 0.05, camTgtZ  = 6.5, camTgtLookY  = 0, camTgtLookX  = 0;
-  const CAM_LERP = 0.05;
-  let brainAlphaCurr = 1.0, brainAlphaTgt = 1.0;
+  let camLocalCurrZ = 6.5;
+  let camLocalCurrAng = 0.40;
+  let camLocalCurrOffX = 0;
+  let camLocalCurrOffY = 0.05;
+  let camLocalCurrLookX = 0;
+  let camLocalCurrLookY = 0;
+  let brainAlphaCurr = 1.0;
+  let brainAlphaTgt = 1.0;
+  linesAlphaTgt = 1.0;
+  let hudX = 0, hudY = 0;
+  const tempV = new THREE.Vector3();
+  const floatingSet = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 25, 26, 27]);
 
   const hud = document.getElementById("brain-hud");
   const progBar = document.getElementById("prog-bar");
@@ -1441,70 +2059,112 @@ if (typeof THREE === "undefined" || typeof gsap === "undefined" || typeof Scroll
     return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
   }
 
-  // Per-beat trigger now only updates HUD/class/progress.
-  // Position/camera/alpha all interpolate continuously from scrollT in render loop.
-  function activateBeat(n) {
-    if (n === currentBeat) return;
-    currentBeat = n;
-    hud.innerHTML = HUD_LABELS[n];
-    hud.classList.toggle("lit", n === 5 || n === 6 || n === 7);
-    progBar.style.width = ((n + 1) / 9 * 100).toFixed(1) + "%";
-    // Punch: brain pulses brighter+bigger, camera kicks back, decays in render loop
-    uniforms.uBeatPulse.value = 1.0;
-    camKick = 1.0;
+  function activateChunk(n) {
+    if (n === currentChunk) return;
+    currentChunk = n;
+
+    // Find parent beat index
+    const parentBeat = chunkEls[n].closest(".beat");
+    if (parentBeat) {
+      const beatIndex = Array.from(beatEls).indexOf(parentBeat);
+      if (beatIndex !== -1 && beatIndex !== currentBeat) {
+        currentBeat = beatIndex;
+        hud.innerHTML = HUD_LABELS[beatIndex];
+        hud.classList.toggle("lit", beatIndex === 5 || beatIndex === 6 || beatIndex === 7);
+        progBar.style.width = ((beatIndex + 1) / 9 * 100).toFixed(1) + "%";
+        
+        // Punch: brain pulses brighter+bigger, camera kicks back, decays in render loop
+        uniforms.uBeatPulse.value = 1.0;
+        camKick = 1.0;
+      }
+    }
   }
 
-  function updateCamTarget(n) {
-    const k = CAM_KEY[n];
-    const angR = k.ang * Math.PI;
-    camTgtX = Math.sin(angR) * k.z * 0.30 + k.x;
-    camTgtY = 0.05;
-    camTgtZ = Math.cos(angR) * k.z;
-    camTgtLookY = k.lookY;
-    camTgtLookX = k.lookX;
-    brainAlphaTgt = BRAIN_ALPHA[n];
-    linesAlphaTgt = LINE_ALPHA[n];
-  }
-
-  /* ── ScrollTrigger ────────────────────────────────────── */
+  /* ── Scroll Spacers & ScrollTrigger ───────────────────── */
   const beatEls = document.querySelectorAll(".beat");
-  beatEls.forEach((el, i) => {
+  const chunkEls = document.querySelectorAll(".story-chunk");
+  const chunkScales = new Float32Array(chunkEls.length);
+  chunkScales.fill(0.95);
+  if (chunkEls.length > 0) chunkScales[0] = 1.0;
+  const chunkHeights = new Float32Array(chunkEls.length);
+  const chunkWidths = new Float32Array(chunkEls.length);
+  function recacheChunkHeights() {
+    for (let i = 0; i < chunkEls.length; i++) {
+      chunkHeights[i] = chunkEls[i].offsetHeight;
+      chunkWidths[i] = chunkEls[i].offsetWidth;
+    }
+  }
+
+  // Create scroll spacers container
+  const scrollContainer = document.createElement("div");
+  scrollContainer.className = "scroll-container";
+  scrollContainer.style.position = "absolute";
+  scrollContainer.style.top = "0";
+  scrollContainer.style.left = "0";
+  scrollContainer.style.width = "100%";
+  scrollContainer.style.height = "auto";
+  scrollContainer.style.pointerEvents = "none";
+  scrollContainer.style.zIndex = "-1";
+  document.body.appendChild(scrollContainer);
+
+  chunkEls.forEach((el, i) => {
+    const spacer = document.createElement("div");
+    spacer.className = "scroll-spacer";
+    spacer.style.height = i === 0 ? "110vh" : "90vh";
+    
+    // Add special classes/datasets for pipeline step spacers to trigger intersection observer
+    if (el.classList.contains("pl-step")) {
+      spacer.classList.add("pl-step-spacer");
+      spacer.dataset.step = el.dataset.step;
+    }
+    scrollContainer.appendChild(spacer);
+
     ScrollTrigger.create({
-      trigger: el,
-      start: "top 65%",
-      onEnter: () => { el.classList.add("active"); activateBeat(i); },
-      onEnterBack: () => { el.classList.add("active"); activateBeat(i); }
+      trigger: spacer,
+      start: "top 60%",
+      end: "bottom 40%",
+      onToggle: (self) => {
+        if (self.isActive) {
+          el.classList.add("active");
+          activateChunk(i);
+        } else {
+          el.classList.remove("active");
+        }
+      }
     });
   });
 
-  // Beat 6 sub-progress (drives pipeline highlight cycle, decoupled from global progress)
-  ScrollTrigger.create({
-    trigger: beatEls[6],
-    start: "top center",
-    end: "bottom center",
-    scrub: 0.3,
-    onUpdate: (self) => { beat6Sub = self.progress; }
-  });
-
-  // Global scroll progress — continuous beat index for seamless morph
+  // Global scroll progress — continuous chunk index for seamless morph
   let scrollT = 0;
-  const textCol = document.querySelector(".text-col");
   ScrollTrigger.create({
-    trigger: textCol,
+    trigger: scrollContainer,
     start: "top top",
     end: "bottom bottom",
     scrub: 0.35,
-    onUpdate: (self) => { scrollT = self.progress * (beatEls.length - 1); }
+    onUpdate: (self) => { scrollT = self.progress * (chunkEls.length - 1); }
   });
 
-  // First beat visible immediately
-  beatEls[0].classList.add("active");
-  activateBeat(0);
+  // First chunk active immediately
+  chunkEls[0].classList.add("active");
+  activateChunk(0);
+  recacheChunkHeights();
 
   // Refresh on font load to correct any layout shifts
   if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(() => ScrollTrigger.refresh());
+    document.fonts.ready.then(() => {
+      recacheChunkHeights();
+      ScrollTrigger.refresh();
+    });
   }
+
+  let resizeRaf = 0;
+  window.addEventListener("resize", () => {
+    if (resizeRaf) cancelAnimationFrame(resizeRaf);
+    resizeRaf = requestAnimationFrame(() => {
+      recacheChunkHeights();
+      ScrollTrigger.refresh();
+    });
+  });
 
   /* ── Task ticker (AI-thinking strings) ────────────────── */
   const TASKS = [
@@ -1548,7 +2208,7 @@ if (typeof THREE === "undefined" || typeof gsap === "undefined" || typeof Scroll
     points.rotation.y += ROT_SPEED;
     lines.rotation.y = points.rotation.y;
 
-    // ── Continuous scroll-driven state (seamless beat morph) ───────────────
+    // ── Continuous scroll-driven state (seamless chunk morph) ───────────────
     const NB = STATE_MAP.length;
     const sClamp = Math.max(0, Math.min(NB - 1 - 1e-6, scrollT));
     const i0 = Math.floor(sClamp);
@@ -1556,28 +2216,49 @@ if (typeof THREE === "undefined" || typeof gsap === "undefined" || typeof Scroll
     const fRaw = sClamp - i0;
     const f = easeInOutCubic(fRaw);
 
-    // Camera params interpolated between adjacent beats
-    const kA = CAM_KEY[i0], kB = CAM_KEY[i1];
-    const cz   = kA.z    + (kB.z    - kA.z   ) * f;
-    const cAng = kA.ang  + (kB.ang  - kA.ang ) * f;
-    const cXo  = kA.x    + (kB.x    - kA.x   ) * f;
-    camTgtLookY = kA.lookY + (kB.lookY - kA.lookY) * f;
-    camTgtLookX = kA.lookX + (kB.lookX - kA.lookX) * f;
-    const angR = cAng * Math.PI;
-    camTgtX = Math.sin(angR) * cz * 0.30 + cXo;
-    camTgtZ = Math.cos(angR) * cz;
+    // Camera params interpolated between adjacent chunks dynamically
+    const camTarget = getCameraTarget(scrollT);
 
-    // Light damping on top of scrub (cam follows close, no jitter)
-    camCurrX += (camTgtX - camCurrX) * 0.18;
-    camCurrY += (camTgtY - camCurrY) * 0.18;
-    camCurrZ += (camTgtZ - camCurrZ) * 0.18;
-    camCurrLookY += (camTgtLookY - camCurrLookY) * 0.18;
-    camCurrLookX += (camTgtLookX - camCurrLookX) * 0.18;
+    // Smooth camera local parameters to avoid jitter
+    camLocalCurrZ += (camTarget.z - camLocalCurrZ) * 0.18;
+    camLocalCurrAng += (camTarget.ang - camLocalCurrAng) * 0.18;
+    camLocalCurrOffX += (camTarget.x - camLocalCurrOffX) * 0.18;
+    camLocalCurrOffY += (camTarget.y - camLocalCurrOffY) * 0.18;
+    camLocalCurrLookX += (camTarget.lookX - camLocalCurrLookX) * 0.18;
+    camLocalCurrLookY += (camTarget.lookY - camLocalCurrLookY) * 0.18;
+
+    const angR = camLocalCurrAng * Math.PI;
+    const localCamX = Math.sin(angR) * camLocalCurrZ * 0.30 + camLocalCurrOffX;
+    const localCamY = camLocalCurrOffY;
+    const localCamZ = Math.cos(angR) * camLocalCurrZ;
+
+    const localLookX = camLocalCurrLookX;
+    const localLookY = camLocalCurrLookY;
+    const localLookZ = 0;
+
+    // Y-rotation angle of the brain points
+    const theta = points.rotation.y;
+    const cosT = Math.cos(theta);
+    const sinT = Math.sin(theta);
+
+    // Dynamic pullback kick
+    const localCamZWithKick = localCamZ + camKick * 0.7;
+
+    // Rotate camera position & target around Y axis to lock tracking
+    const rotCamX = localCamX * cosT + localCamZWithKick * sinT;
+    const rotCamY = localCamY;
+    const rotCamZ = -localCamX * sinT + localCamZWithKick * cosT;
+
+    const rotLookX = localLookX * cosT + localLookZ * sinT;
+    const rotLookY = localLookY;
+    const rotLookZ = -localLookX * sinT + localLookZ * cosT;
+
     // Decay beat-enter punch
     uniforms.uBeatPulse.value *= 0.93;
     camKick *= 0.91;
-    camera.position.set(camCurrX, camCurrY, camCurrZ + camKick * 0.7);
-    camera.lookAt(camCurrLookX, camCurrLookY, 0);
+
+    camera.position.set(rotCamX, rotCamY, rotCamZ);
+    camera.lookAt(rotLookX, rotLookY, rotLookZ);
 
     // Brain + line alpha (continuous)
     brainAlphaTgt = BRAIN_ALPHA[i0] + (BRAIN_ALPHA[i1] - BRAIN_ALPHA[i0]) * f;
@@ -1587,16 +2268,10 @@ if (typeof THREE === "undefined" || typeof gsap === "undefined" || typeof Scroll
     brainAlphaCurr += (brainAlphaTgt - brainAlphaCurr) * 0.12;
     uniforms.uOpacity.value = brainAlphaCurr;
 
-    // Cluster highlight targets (per-beat blend)
+    // Cluster highlight targets (per-chunk blend)
     const hlA = HL_MAP[i0], hlB = HL_MAP[i1];
     for (let k = 0; k < 4; k++) {
       alphaTargets[k] = hlA[k] + (hlB[k] - hlA[k]) * f;
-    }
-    // Beat 6 sub-cycle override — 7 stages mapped to pipeline steps
-    if (Math.round(scrollT) === 6) {
-      const stage = Math.min(PIPE_ORDER.length - 1, Math.floor(beat6Sub * PIPE_ORDER.length));
-      for (let k = 0; k < 4; k++) alphaTargets[k] = 0.20;
-      alphaTargets[PIPE_ORDER[stage]] = 1.0;
     }
 
     // Position interpolation every frame — seamless morph as scroll advances
@@ -1626,6 +2301,98 @@ if (typeof THREE === "undefined" || typeof gsap === "undefined" || typeof Scroll
       if (Math.abs(d) > 0.001) { aAlpha[i] += d * 0.045; aDirty = true; }
     }
     if (aDirty) alphaAttr.needsUpdate = true;
+
+    // Smooth cursor-driven HUD floating drift and 3D projection placement
+    if (window.innerWidth < 900) {
+      // Center everything on mobile/small viewports
+      let targetHudX = cursorX * -15;
+      let targetHudY = cursorY * -10;
+      hudX += (targetHudX - hudX) * 0.08;
+      hudY += (targetHudY - hudY) * 0.08;
+
+      for (let k = 0; k < chunkEls.length; k++) {
+        const isActive = (k === currentChunk);
+        const targetScale = isActive ? 1.0 : 0.95;
+        chunkScales[k] += (targetScale - chunkScales[k]) * 0.15;
+        const settled = !isActive && Math.abs(chunkScales[k] - 0.95) < 0.005;
+        if (settled) continue;
+
+        chunkEls[k].style.left = "50%";
+        chunkEls[k].style.top = "50%";
+        chunkEls[k].style.transform = `translate3d(-50%, -50%, 0) translate3d(${hudX}px, ${hudY}px, 0) scale(${chunkScales[k]})`;
+      }
+    } else {
+      // Desktop: handle 3D projection or centering
+      let targetHudX = cursorX * -35;
+      let targetHudY = cursorY * -30;
+      hudX += (targetHudX - hudX) * 0.08;
+      hudY += (targetHudY - hudY) * 0.08;
+
+      for (let k = 0; k < chunkEls.length; k++) {
+        const isActive = (k === currentChunk);
+        const targetScale = isActive ? 1.0 : 0.95;
+        chunkScales[k] += (targetScale - chunkScales[k]) * 0.15;
+        const settled = !isActive && Math.abs(chunkScales[k] - 0.95) < 0.005;
+        if (settled) continue;
+
+        if (floatingSet.has(k)) {
+          // Get anchor k
+          const anchor = ANCHOR_MAP[k];
+          const ax = anchor[0];
+          const ay = anchor[1];
+          const az = anchor[2];
+
+          // Rotate anchor around Y axis
+          const theta = points.rotation.y;
+          const cosT = Math.cos(theta);
+          const sinT = Math.sin(theta);
+          const rotX = ax * cosT + az * sinT;
+          const rotY = ay;
+          const rotZ = -ax * sinT + az * cosT;
+
+          // Project (reuse hoisted tempV — no per-frame allocation)
+          tempV.set(rotX, rotY, rotZ);
+          tempV.project(camera);
+
+          const screenX = (tempV.x * 0.5 + 0.5) * window.innerWidth;
+          const screenY = (tempV.y * -0.5 + 0.5) * window.innerHeight;
+
+          // Horizontal offset
+          let offsetX = 0;
+          let offsetY = 0;
+
+          if (chunkEls[k].classList.contains("chunk-offset-left")) {
+            offsetX = -280;
+          } else if (chunkEls[k].classList.contains("chunk-offset-right")) {
+            offsetX = 80;
+          } else if (chunkEls[k].classList.contains("lit-card-1") || chunkEls[k].classList.contains("lit-card-3")) {
+            offsetX = -240;
+          } else if (chunkEls[k].classList.contains("lit-card-2")) {
+            offsetX = 60;
+          } else {
+            const leftSides = [1, 3, 5, 7, 9, 13];
+            offsetX = leftSides.includes(k) ? -280 : 80;
+          }
+
+          // Use cached dimensions (Fix 3 + Fix 6) and clamp to viewport
+          const chunkW = chunkWidths[k] || 480;
+          const chunkH = chunkHeights[k] || 200;
+          let targetX = screenX + offsetX;
+          let targetY = screenY + offsetY - (chunkH / 2);
+          targetX = Math.max(16, Math.min(window.innerWidth - chunkW - 16, targetX));
+          targetY = Math.max(60, Math.min(window.innerHeight - chunkH - 16, targetY));
+
+          chunkEls[k].style.left = `${targetX + hudX}px`;
+          chunkEls[k].style.top = `${targetY + hudY}px`;
+          chunkEls[k].style.transform = `scale(${chunkScales[k]})`;
+        } else {
+          // Centered
+          chunkEls[k].style.left = "50%";
+          chunkEls[k].style.top = "50%";
+          chunkEls[k].style.transform = `translate3d(-50%, -50%, 0) translate3d(${hudX}px, ${hudY}px, 0) scale(${chunkScales[k]})`;
+        }
+      }
+    }
 
     renderer.render(scene, camera);
   }
@@ -1924,19 +2691,20 @@ document.addEventListener("DOMContentLoaded", () => {
     if (typeof runner === 'function') runner(stepEl);
   }
 
-  const plSteps = document.querySelectorAll('.pl-step');
+  const plSteps = document.querySelectorAll('.pl-step-spacer');
   if ('IntersectionObserver' in window) {
     const plObs = new IntersectionObserver((entries) => {
       entries.forEach(e => {
         if (e.isIntersecting && !pipelineRan.has(e.target.dataset.step)) {
           pipelineRan.add(e.target.dataset.step);
-          runPipelineStep(e.target);
+          const realStepEl = document.querySelector(`.pl-step[data-step="${e.target.dataset.step}"]`);
+          if (realStepEl) runPipelineStep(realStepEl);
         }
       });
     }, { threshold: 0.4, rootMargin: '0px 0px -10% 0px' });
     plSteps.forEach(s => plObs.observe(s));
   } else {
-    plSteps.forEach(s => runPipelineStep(s));
+    document.querySelectorAll('.pl-step').forEach(s => runPipelineStep(s));
   }
 
   document.querySelectorAll('.pl-replay').forEach(btn => {

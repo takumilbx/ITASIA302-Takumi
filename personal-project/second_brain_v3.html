@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Second Brain · a visual essay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+  :root {
+    /* Near-monochrome, OKLCH, tinted toward a cold ink-blue. Never pure #000 / #fff. */
+    --bg:     oklch(0.145 0.018 264);
+    --bg-deep:oklch(0.105 0.020 264);
+    --ink:    oklch(0.95 0.008 250);
+    --ink-2:  oklch(0.73 0.022 254);
+    --ink-3:  oklch(0.52 0.028 258);
+    --faint:  oklch(0.40 0.030 260);
+    --line:   oklch(0.30 0.022 262);
+    /* One accent. Warm amber = "signal". Spent under 10% of the surface. */
+    --amber:  oklch(0.78 0.142 66);
+    --amber-2:oklch(0.70 0.150 56);
+
+    --sans: "Inter Tight", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+    --e-out:   cubic-bezier(0.23, 1, 0.32, 1);
+    --e-inout: cubic-bezier(0.77, 0, 0.175, 1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: auto; -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  /* ---- Persistent WebGL field ------------------------------------------- */
+  #viz { position: fixed; inset: 0; z-index: 0; pointer-events: none; display: block; }
+
+  /* Vignette + top/bottom feathering. Focuses the eye, lifts type off the field.
+     Not glassmorphism, no border, no card. */
+  #scrim {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background:
+      radial-gradient(125% 95% at 50% 48%, transparent 40%, oklch(0.105 0.020 264 / 0.62) 100%),
+      linear-gradient(to bottom, oklch(0.105 0.020 264 / 0.42) 0%, transparent 20%, transparent 80%, oklch(0.105 0.020 264 / 0.50) 100%);
+  }
+
+  /* ---- Instrument frame: hairline progress + one mono readout ----------- */
+  #progress {
+    position: fixed; top: 0; left: 0; height: 2px; width: 0%;
+    background: var(--amber); z-index: 6; opacity: 0.85;
+    box-shadow: 0 0 12px oklch(0.78 0.142 66 / 0.5);
+    transition: width 120ms linear;
+  }
+  #readout {
+    position: fixed; left: clamp(20px, 4vw, 56px); bottom: clamp(18px, 3vh, 30px);
+    z-index: 6; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.16em;
+    color: var(--faint); text-transform: uppercase; pointer-events: none;
+    display: flex; align-items: center; gap: 10px;
+  }
+  #readout .dot { width: 5px; height: 5px; background: var(--amber); border-radius: 50%;
+    box-shadow: 0 0 8px oklch(0.78 0.142 66 / 0.7); opacity: 0.9; }
+  #readout b { color: var(--ink-2); font-weight: 500; }
+  #count {
+    position: fixed; right: clamp(20px, 4vw, 56px); bottom: clamp(18px, 3vh, 30px);
+    z-index: 6; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.18em;
+    color: var(--faint); text-transform: uppercase; pointer-events: none;
+    opacity: 0; transition: opacity 600ms var(--e-out);
+  }
+  #count b { color: var(--amber); font-weight: 500; }
+
+  /* ---- Beat panels: fixed, mutually exclusive, opacity-gated ------------ */
+  .beat {
+    position: fixed; inset: 0; z-index: 3;
+    display: flex; padding: clamp(26px, 6vw, 112px);
+    opacity: 0; visibility: hidden;
+    transition: opacity 760ms var(--e-out), visibility 0s linear 760ms;
+    pointer-events: none;
+  }
+  body[data-beat="0"] #b0, body[data-beat="1"] #b1, body[data-beat="2"] #b2,
+  body[data-beat="3"] #b3, body[data-beat="4"] #b4, body[data-beat="5"] #b5,
+  body[data-beat="6"] #b6, body[data-beat="7"] #b7, body[data-beat="8"] #b8 {
+    opacity: 1; visibility: visible; transition: opacity 760ms var(--e-out);
+  }
+
+  .inner { position: relative; max-width: 60ch; will-change: transform, opacity, filter; }
+  /* Feathered local scrim so text always lifts off the field. Soft, not a box. */
+  .inner::before {
+    content: ""; position: absolute; z-index: -1; inset: -16% -13%;
+    background: radial-gradient(ellipse at 46% 50%,
+      oklch(0.105 0.020 264 / 0.88) 0%, oklch(0.105 0.020 264 / 0.66) 46%,
+      oklch(0.105 0.020 264 / 0.26) 66%, transparent 80%);
+  }
+  .align-c { justify-content: center; align-items: center; text-align: center; }
+  .align-c .inner { max-width: 54ch; }
+  .align-l { justify-content: flex-start; align-items: center; }
+  .align-r { justify-content: flex-end; align-items: center; }
+  .align-l .inner, .align-r .inner { max-width: 45ch; }
+  .lower { align-items: flex-end; padding-bottom: clamp(54px, 12vh, 150px); }
+  .upper { align-items: flex-start; padding-top: clamp(40px, 9vh, 104px); }
+
+  /* Staggered child reveal on the active beat. */
+  .beat .inner > * {
+    opacity: 0; transform: translateY(15px); filter: blur(8px);
+    transition: opacity 780ms var(--e-out), transform 780ms var(--e-out), filter 780ms var(--e-out);
+  }
+  .beat.on .inner > * { opacity: 1; transform: none; filter: none; }
+  .beat.on .inner > *:nth-child(1) { transition-delay: 70ms; }
+  .beat.on .inner > *:nth-child(2) { transition-delay: 150ms; }
+  .beat.on .inner > *:nth-child(3) { transition-delay: 240ms; }
+  .beat.on .inner > *:nth-child(4) { transition-delay: 330ms; }
+  .beat.on .inner > *:nth-child(5) { transition-delay: 420ms; }
+
+  /* ---- Typography ------------------------------------------------------- */
+  .kick {
+    font-family: var(--mono); font-weight: 400; font-size: 11px;
+    letter-spacing: 0.30em; text-transform: uppercase; color: var(--faint);
+    margin-bottom: 24px;
+  }
+  .kick i { color: var(--amber); font-style: normal; }
+
+  h1, h2 { font-family: var(--sans); font-weight: 300; letter-spacing: -0.035em; line-height: 1.03; color: var(--ink); }
+  h1 { font-size: clamp(44px, 7vw, 92px); }
+  h2 { font-size: clamp(33px, 5vw, 64px); margin-bottom: 26px; }
+  h1 .dim, h2 .dim { color: var(--ink-3); font-weight: 300; }
+  /* Emphasis = italic of the SAME family. The single hottest word also takes amber. */
+  h1 em, h2 em { font-style: italic; font-weight: 400; }
+  h1 .sig, h2 .sig { font-style: italic; font-weight: 400; color: var(--amber); }
+
+  .lead {
+    font-family: var(--sans); font-weight: 300;
+    font-size: clamp(17px, 1.55vw, 22px); line-height: 1.5; color: var(--ink-2);
+    margin-top: 24px; max-width: 52ch;
+  }
+  .body {
+    font-family: var(--sans); font-weight: 300;
+    font-size: clamp(15.5px, 1.25vw, 19px); line-height: 1.62; color: var(--ink-2);
+    max-width: 60ch;
+  }
+  .body + .body { margin-top: 16px; }
+  .body em { font-style: italic; color: var(--ink); }
+  .body .sig { font-style: italic; color: var(--amber); }
+
+  /* A quiet aside. Hairline top rule + mono label. Not a stripe, not a card. */
+  .aside { margin-top: 32px; padding-top: 18px; border-top: 1px solid var(--line); max-width: 58ch; }
+  .aside .lbl { font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--faint); margin-bottom: 11px; }
+  .aside .body { font-size: clamp(13.5px, 1.05vw, 15.5px); color: var(--ink-3); }
+
+  /* Two failure modes (beat 3): hairline-separated, numbered, not icon cards. */
+  .modes { margin-top: 30px; display: grid; gap: 0; max-width: 58ch; border-top: 1px solid var(--line); }
+  .mode { padding: 16px 0; border-bottom: 1px solid var(--line); display: grid;
+    grid-template-columns: auto 1fr; gap: 18px; align-items: baseline; }
+  .mode .mn { font-family: var(--mono); font-size: 11px; color: var(--amber); letter-spacing: 0.1em; }
+  .mode .mt { font-family: var(--sans); font-weight: 500; color: var(--ink); font-size: 15px; }
+  .mode .md { font-family: var(--sans); font-weight: 300; color: var(--ink-3); font-size: 14px; line-height: 1.5; margin-top: 3px; }
+
+  .pull {
+    font-family: var(--sans); font-style: italic; font-weight: 300;
+    font-size: clamp(23px, 3vw, 42px); line-height: 1.28; color: var(--ink); letter-spacing: -0.015em;
+  }
+  .cite { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: var(--faint); margin-top: 22px; }
+
+  .thesis {
+    font-family: var(--sans); font-weight: 400; font-size: clamp(26px, 3.6vw, 50px);
+    line-height: 1.18; letter-spacing: -0.025em; color: var(--ink); max-width: 19ch;
+  }
+  .thesis .sig { font-style: italic; color: var(--amber); }
+
+  /* Lit cards (beat 7): three columns, hairline-separated, distinct, not identical. */
+  .lits { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 42px;
+    border-top: 1px solid var(--line); max-width: 84ch; }
+  .lit { padding: 24px 28px 6px 0; border-right: 1px solid var(--line); }
+  .lit:last-child { border-right: none; padding-right: 0; }
+  .lit .lx { font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; color: var(--amber); margin-bottom: 13px; }
+  .lit .lt { font-family: var(--sans); font-style: italic; font-weight: 400; font-size: 16.5px; color: var(--ink); line-height: 1.3; margin-bottom: 9px; }
+  .lit .ld { font-family: var(--sans); font-weight: 300; font-size: 13.5px; line-height: 1.5; color: var(--ink-3); }
+
+  /* ---- Beat 6 pipeline: header pinned, one active step, graph owns the rest. */
+  #b6 { display: block; padding: 0; }
+  #b6 .inner { max-width: none; width: 100%; height: 100%; }
+  #b6 .inner::before { display: none; }
+  .pl-head {
+    position: absolute; top: clamp(40px, 9vh, 96px); left: clamp(26px, 6vw, 112px);
+    max-width: 38ch; z-index: 2;
+  }
+  .pl-head::before { content: ""; position: absolute; z-index: -1; inset: -18% -16%;
+    background: radial-gradient(ellipse at 34% 42%, oklch(0.105 0.020 264 / 0.86) 0%, oklch(0.105 0.020 264 / 0.48) 56%, transparent 80%); }
+  .pl-intro { font-family: var(--sans); font-weight: 300; font-size: clamp(14px, 1.1vw, 16px); line-height: 1.58; color: var(--ink-3); max-width: 38ch; margin-top: 14px; }
+
+  .pl-steps {
+    position: absolute; left: clamp(26px, 6vw, 112px); bottom: clamp(56px, 12vh, 128px);
+    width: min(46ch, 80vw); height: 170px; z-index: 2;
+  }
+  .pl-steps::before { content: ""; position: absolute; z-index: -1; inset: -24% -18% -34% -16%;
+    background: radial-gradient(ellipse at 28% 60%, oklch(0.105 0.020 264 / 0.88) 0%, oklch(0.105 0.020 264 / 0.5) 56%, transparent 82%); }
+  .pl-rail { position: absolute; left: 0; bottom: -20px; width: 100%; height: 1px; background: var(--line); }
+  .pl-fill { display: block; height: 1px; width: 0%; background: var(--amber); transition: width 480ms var(--e-out); }
+  .pl-step {
+    position: absolute; left: 0; right: 0; bottom: 6px;
+    opacity: 0; transform: translateY(13px); filter: blur(6px);
+    transition: opacity 540ms var(--e-out), transform 540ms var(--e-out), filter 540ms var(--e-out);
+  }
+  .pl-step.on { opacity: 1; transform: none; filter: none; }
+  .pl-step .sn { font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; color: var(--amber); margin-bottom: 10px; }
+  .pl-step .sh { font-family: var(--sans); font-weight: 400; font-size: clamp(20px, 2vw, 28px); color: var(--ink); margin-bottom: 9px; letter-spacing: -0.02em; }
+  .pl-step .sh em { font-style: italic; }
+  .pl-step .sh .sig { font-style: italic; color: var(--amber); }
+  .pl-step .sb { font-family: var(--sans); font-weight: 300; font-size: 14.5px; line-height: 1.52; color: var(--ink-3); max-width: 46ch; }
+  .pl-step .sb code { font-family: var(--mono); font-size: 12.5px; color: var(--ink-2); }
+
+  /* ---- Scroll hint (hero) ---------------------------------------------- */
+  #hint { position: fixed; bottom: clamp(48px, 8vh, 70px); left: 50%; transform: translateX(-50%);
+    z-index: 6; font-family: var(--mono); font-size: 10px; letter-spacing: 0.34em; text-transform: uppercase;
+    color: var(--faint); pointer-events: none; transition: opacity 600ms var(--e-out); }
+  #hint::after { content: ""; display: block; width: 1px; height: 26px; margin: 12px auto 0;
+    background: linear-gradient(to bottom, var(--faint), transparent); }
+
+  #scroll-root { position: relative; width: 100%; }
+
+  /* ---- Responsive ------------------------------------------------------- */
+  @media (max-width: 860px) {
+    .beat { padding: 22px; }
+    .align-l, .align-r { justify-content: flex-start; }
+    .align-l .inner, .align-r .inner { max-width: none; }
+    .lits { grid-template-columns: 1fr; }
+    .lit { border-right: none; border-bottom: 1px solid var(--line); padding: 16px 0; }
+    .lit:last-child { border-bottom: none; }
+    .pl-steps { width: min(90vw, 46ch); }
+    #count { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .beat .inner > * { transition-duration: 1ms; filter: none; transform: none; }
+    #progress { transition: none; }
+  }
+</style>
+</head>
+<body data-beat="0">
+
+<canvas id="viz"></canvas>
+<div id="scrim"></div>
+<div id="progress"></div>
+<div id="readout"><span class="dot"></span><span id="rstate">field <b>· drift</b></span></div>
+<div id="count">vault · <b id="cN">0</b> notes &nbsp;/&nbsp; <b id="cE">0</b> links</div>
+
+<main>
+  <!-- Beat 0 — Hero -->
+  <section class="beat align-c" id="b0" data-beat="0">
+    <div class="inner">
+      <p class="kick">Project Overview <i>·</i> Initial Draft</p>
+      <h1>Building a <span class="sig">Second&nbsp;Brain</span><br><span class="dim">(For Real This Time)</span></h1>
+      <p class="lead">The project in one walk-through. What PKM is, why the hype around it is suspicious, what I am building, and where it is heading.</p>
+    </div>
+  </section>
+
+  <!-- Beat 1 — PKM -->
+  <section class="beat align-l" id="b1" data-beat="1">
+    <div class="inner">
+      <p class="kick">01 <i>·</i> PKM</p>
+      <h2>What is <em>PKM</em>?</h2>
+      <p class="body">Personal knowledge management is the set of steps a person uses to collect, organize, store, find, and share what they know. It means having a real system for your own knowledge instead of just hoping you will remember things later. The key idea is that the individual, not a company, is in charge of managing it.</p>
+      <div class="aside">
+        <p class="lbl">The habit is old</p>
+        <p class="body">The term comes from a 1999 paper by Frand and Hixon, but the practice runs from Leonardo's notebooks to Luhmann's Zettelkasten, a box of more than 90,000 linked cards. In 1945, Vannevar Bush imagined the Memex, a desk that could store everything you read and find it again quickly.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Beat 2 — Second Brain -->
+  <section class="beat align-r" id="b2" data-beat="2">
+    <div class="inner">
+      <p class="kick">02 <i>·</i> Second Brain</p>
+      <h2>And a <em>second brain</em>?</h2>
+      <p class="body">If PKM is the general idea, the second brain is its most famous version: an external, digital place for the ideas you collect. But storage is not the point. Tiago Forte calls it a system that "expands our memory and our intellect using the modern tools of technology and networks." A folder of saved articles is a digital attic. A second brain is meant to be a thinking partner.</p>
+      <div class="aside">
+        <p class="lbl">The extended mind</p>
+        <p class="body">Clark and Chalmers argued in 1998 that thinking does not only happen inside the head. If Otto trusts his notebook and uses it constantly, it becomes part of his mind. Moving information into a system you trust is not laziness, it is cognitive extension.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Beat 3 — The Hype -->
+  <section class="beat align-l" id="b3" data-beat="3">
+    <div class="inner">
+      <p class="kick">03 <i>·</i> The Hype</p>
+      <h2>Everyone is <em>selling</em> a brain</h2>
+      <p class="body">Spend any time in the productivity side of the internet and someone will try to sell you a brain. Forte's book was a bestseller. Creators show off note-taking systems with the energy people usually save for skincare routines. The newest promise is that AI will finally make it effortless. Whether any of it actually <em>works</em> is treated as a separate, slightly awkward question.</p>
+      <div class="modes">
+        <div class="mode"><span class="mn">01</span><div><div class="mt">The Productivity Trap</div><div class="md">The system needs so much care you spend more time maintaining it than using it.</div></div></div>
+        <div class="mode"><span class="mn">02</span><div><div class="mt">The Collecting Habit</div><div class="md">Saving articles you will never reopen, until the second brain becomes a digital attic.</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Beat 4 — The Meme (over the graveyard) -->
+  <section class="beat align-c upper" id="b4" data-beat="4">
+    <div class="inner">
+      <p class="kick">04 <i>·</i> The Meme</p>
+      <p class="pull">The people who promote "second brains" often still cannot remember where their own car keys are. The partner who quietly tracks the keys, the glasses, and the appointments was the original second brain all along.</p>
+      <p class="cite">based on the "second brain" meme by @nunoei, paraphrased</p>
+      <p class="body" style="margin-top:26px;max-width:64ch">I came to this not through theory but through failure. For years, organizing my notes was a job for Future Me, who never showed up. My vault turned into a beautifully tagged graveyard. Is the failure mine, or the <span class="sig">method's</span>? That is the whole reason for this project.</p>
+    </div>
+  </section>
+
+  <!-- Beat 5 — What I'm building -->
+  <section class="beat align-l" id="b5" data-beat="5">
+    <div class="inner">
+      <p class="kick">05 <i>·</i> What I'm Building</p>
+      <h2>A second brain that actually <span class="sig">helps me think</span></h2>
+      <p class="body">I am not building a fancier filing cabinet. I am building a system where small, single-idea notes connect into arguments, and where the question <em>"do I really understand this?"</em> has a structural answer. Most PKM advice focuses on capture, getting everything in. But the thing that decides whether a system works is retrieval, getting the right idea back out at the moment you are thinking. So the project puts retrieval first, then tests that idea honestly.</p>
+    </div>
+  </section>
+
+  <!-- Beat 6 — The pipeline (centerpiece) -->
+  <section class="beat" id="b6" data-beat="6">
+    <div class="inner">
+      <div class="pl-head">
+        <p class="kick" style="margin-bottom:13px">06 <i>·</i> Current State</p>
+        <h2 style="margin-bottom:0;font-size:clamp(30px,4vw,52px)">Where I <em>am</em> now</h2>
+        <p class="pl-intro">A paper enters through Zotero, becomes a literature note in Obsidian, and Claude Code runs a NotebookLM integration to extract candidate atoms. Verified atoms land in the vault, cluster into molecules, and synthesize into alloys tracked in Notion. This is that vault, in full.</p>
+      </div>
+      <div class="pl-steps">
+        <div class="pl-rail"><span class="pl-fill"></span></div>
+        <div class="pl-step" data-step="0"><div class="sn">Step 01 · Zotero</div><div class="sh">Capture <span class="sig">the paper</span></div><div class="sb">Every source enters through Zotero. PDF attached, metadata extracted, citekey auto-generated <code>authorYEAR</code>. A structured import note drops into the vault inbox.</div></div>
+        <div class="pl-step" data-step="1"><div class="sn">Step 02 · Obsidian</div><div class="sh">Process into a <em>literature note</em></div><div class="sb">The import becomes a structured note <code>@FERREIRA2026.md</code>. Four sections, always: Main Argument, Methodology, Key Findings, Atoms Extracted. The single source of truth downstream.</div></div>
+        <div class="pl-step" data-step="2"><div class="sn">Step 03 · Claude + NotebookLM</div><div class="sh">Extract atoms via <span class="sig">NotebookLM</span></div><div class="sb">Claude Code reads the note, opens the PDF, runs the NotebookLM integration. Focused queries return candidate atoms. Each is verified against the source; verified atoms saved, rejected ones logged with reasons.</div></div>
+        <div class="pl-step" data-step="3"><div class="sn">Step 04 · Atoms</div><div class="sh">Verified atoms <span class="sig">land in the vault</span></div><div class="sb">Each becomes its own file. The filename is the claim as a full declarative sentence, findable by search alone. The vault holds atoms across thesis topics: TPACK, PKM, Japan's GIGA program, Bangkok's BMA pilot.</div></div>
+        <div class="pl-step" data-step="4"><div class="sn">Step 05 · Molecules</div><div class="sh">Atoms <em>cluster into molecules</em></div><div class="sb">When 2 to 5 atoms share a theme, they pull into a molecule: a connection note with no new claims, only relations. Pattern recognition stops being implicit and becomes a saved object.</div></div>
+        <div class="pl-step" data-step="5"><div class="sn">Step 06 · Alloys</div><div class="sh">Molecules fuse into <span class="sig">alloys</span></div><div class="sb">An alloy is a thesis-grade synthesis, an original argument built from molecules and atoms. It can never be drafted directly from a source. Alloys are where the research output lives.</div></div>
+        <div class="pl-step" data-step="6"><div class="sn">Step 07 · Notion</div><div class="sh">Alloys surface in <em>Notion</em></div><div class="sb">Each alloy becomes a thesis chapter draft or a fieldwork milestone. Deadlines and status reference vault notes by citekey. Obsidian is the brain. Notion is the calendar.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Beat 7 — Thesis -->
+  <section class="beat align-l" id="b7" data-beat="7">
+    <div class="inner" style="max-width:88ch">
+      <p class="kick">07 <i>·</i> Thesis</p>
+      <p class="thesis">Retrieval-first organization explains why generic PKM templates <span class="sig">fail</span> in domain-expert workflows.</p>
+      <div class="lits">
+        <div class="lit"><div class="lx">01 · Bestseller</div><div class="lt">Forte, Building a Second Brain (2022)</div><div class="ld">The book that popularized the capture-first method. This project argues against it; it is here as the main thing studied, not as research.</div></div>
+        <div class="lit"><div class="lx">02 · Historical</div><div class="lt">Luhmann, Communicating with Slip Boxes (1981)</div><div class="ld">Luhmann's own account of his Zettelkasten. The historical balance to the modern hype. Retrieval-first thinking is older than the apps selling it.</div></div>
+        <div class="lit"><div class="lx">03 · Current</div><div class="lt">Ferreira (2026), on retrieval-first organization</div><div class="ld">Recent work that gives the project its main angle and shapes the thesis.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Beat 8 — End -->
+  <section class="beat align-c" id="b8" data-beat="8">
+    <div class="inner">
+      <p class="kick">08 <i>·</i> End</p>
+      <p class="lead" style="font-style:italic;color:var(--ink-2)">ITASIA302 · personal project · May 2026</p>
+    </div>
+  </section>
+</main>
+
+<div id="scroll-root"></div>
+<div id="hint">Scroll</div>
+
+<!-- Real vault graph, derived from vault_graph.json. Inlined for the final single-file build. -->
+<script src="sbv3_data.js"></script>
+
+<script>
+"use strict";
+(function () {
+  const RM = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // -- Scroll model: beat 6 (the reveal) gets ~10x the runway -------------
+  const W = [1, 1, 1, 1, 1, 1, 10, 1, 1];
+  const TW = W.reduce((a, b) => a + b, 0);
+  const BND = []; { let a = 0; for (const w of W) { BND.push([a / TW, (a + w) / TW]); a += w; } }
+  const SCROLL_VH = 1950;
+  function beatAt(p) {
+    for (let i = 0; i < BND.length; i++) {
+      if (p < BND[i][1] || i === BND.length - 1) {
+        const [s, e] = BND[i];
+        return { beat: i, frac: Math.min(1, Math.max(0, (p - s) / (e - s))) };
+      }
+    }
+    return { beat: 8, frac: 1 };
+  }
+
+  // -- Deterministic PRNG -------------------------------------------------
+  function rng(seed) { return function () { seed |= 0; seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  const rnd = rng(0x53420203);
+
+  // -- Data: real vault, with a fallback so the page never blank-screens --
+  const D = window.__SBV3 || null;
+  const N = D ? D.n : 1400;
+  const MAXDEG = D ? D.md : 60;
+  const GROUPS = D ? D.g : ["atom"];
+
+  const real = new Float32Array(N * 3);
+  const grp = new Int16Array(N);
+  const deg = new Float32Array(N);
+  if (D) {
+    let mx = 1e-6;
+    for (let i = 0; i < N; i++) mx = Math.max(mx, Math.abs(D.pos[i*3]), Math.abs(D.pos[i*3+1]), Math.abs(D.pos[i*3+2]));
+    const s = 62 / mx;
+    for (let i = 0; i < N; i++) {
+      real[i*3] = D.pos[i*3] * s; real[i*3+1] = D.pos[i*3+1] * s; real[i*3+2] = D.pos[i*3+2] * s;
+      grp[i] = D.grp[i]; deg[i] = D.deg[i];
+    }
+  } else {
+    for (let i = 0; i < N; i++) { real[i*3]=(rnd()-0.5)*120; real[i*3+1]=(rnd()-0.5)*120; real[i*3+2]=(rnd()-0.5)*120; grp[i]=(rnd()*9)|0; deg[i]=(rnd()*40)|0; }
+  }
+
+  // group centroids of the real formation (used to tighten "molecules" on reveal)
+  const gc = new Float32Array(GROUPS.length * 3);
+  { const cnt = new Float32Array(GROUPS.length);
+    for (let i = 0; i < N; i++) { const g = grp[i]; gc[g*3]+=real[i*3]; gc[g*3+1]+=real[i*3+1]; gc[g*3+2]+=real[i*3+2]; cnt[g]++; }
+    for (let g = 0; g < GROUPS.length; g++) { if (cnt[g]) { gc[g*3]/=cnt[g]; gc[g*3+1]/=cnt[g]; gc[g*3+2]/=cnt[g]; } } }
+
+  // -- Formations (each Float32Array N*3) ---------------------------------
+  const F = {
+    DRIFT: new Float32Array(N*3),  // calm fibonacci shell
+    CORE:  new Float32Array(N*3),  // gather to one center
+    STORM: new Float32Array(N*3),  // wide noisy scatter
+    GRID:  new Float32Array(N*3),  // flat, perfectly aligned graveyard lattice
+    EMBER: new Float32Array(N*3),  // graveyard, but the heavy nodes lift off
+    REAL:  real,
+  };
+  const turb = new Float32Array(N*3); // per-particle turbulence axes for STORM
+  (function build() {
+    const golden = Math.PI * (3 - Math.sqrt(5));
+    const cols = Math.ceil(Math.sqrt(N)); // grid dimension
+    for (let i = 0; i < N; i++) {
+      const j = i*3;
+      // DRIFT: fibonacci sphere shell, light jitter -> constellation, not a fuzzy ball
+      const y = 1 - (i / (N - 1)) * 2, rr = Math.sqrt(Math.max(0, 1 - y*y)), th = golden * i;
+      const sh = 36 + (rnd() - 0.5) * 7;
+      F.DRIFT[j] = Math.cos(th)*rr*sh; F.DRIFT[j+1] = y*sh*0.86; F.DRIFT[j+2] = Math.sin(th)*rr*sh;
+      // CORE: dense gather, a few orbit out
+      const hr = Math.pow(rnd(), 2.3) * 30, ha = rnd()*6.283, hb = Math.acos(2*rnd()-1);
+      F.CORE[j] = Math.sin(hb)*Math.cos(ha)*hr; F.CORE[j+1] = Math.cos(hb)*hr*0.72; F.CORE[j+2] = Math.sin(hb)*Math.sin(ha)*hr;
+      // STORM: wide scatter
+      F.STORM[j] = (rnd()-0.5)*168; F.STORM[j+1] = (rnd()-0.5)*104; F.STORM[j+2] = (rnd()-0.5)*168;
+      turb[j] = rnd()*6.283; turb[j+1] = rnd()*6.283; turb[j+2] = 0.6 + rnd()*1.1;
+      // GRID: perfectly aligned lattice on a low plane (the tagged graveyard)
+      const cx = i % cols, cz = (i / cols) | 0;
+      F.GRID[j] = (cx/(cols-1) - 0.5) * 150;
+      F.GRID[j+1] = -40 + (rnd()-0.5) * 1.2;
+      F.GRID[j+2] = (cz/(cols-1) - 0.5) * 150;
+      // EMBER: graveyard, but heavy (high-degree) nodes rise off the plane
+      const d01 = Math.min(1, deg[i] / (MAXDEG * 0.5));
+      F.EMBER[j] = F.GRID[j] * 0.84;
+      F.EMBER[j+1] = -40 + d01 * 48 + (rnd()-0.5) * 2;
+      F.EMBER[j+2] = F.GRID[j+2] * 0.84;
+    }
+  })();
+
+  const BEAT_FORM = ["DRIFT","DRIFT","CORE","STORM","GRID","EMBER","REAL","REAL","REAL"];
+  const TRANS     = [0.5,    0.5,   0.5,   0.42,  0.5,   0.5,    0.34,  0.45, 0.4]; // morph-in portion
+
+  // -- Easings ------------------------------------------------------------
+  const clamp01 = t => t < 0 ? 0 : t > 1 ? 1 : t;
+  const outQuart = t => 1 - Math.pow(1 - t, 4);
+  const inOutCubic = t => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2;
+  const inCubic = t => t*t*t;          // gravity drop into the graveyard
+  const outExpo = t => t === 1 ? 1 : 1 - Math.pow(2, -10*t);
+  // per-beat morph easing
+  const MEASE = [outQuart, outQuart, inOutCubic, outQuart, inCubic, outQuart, outExpo, outQuart, inOutCubic];
+
+  // -- THREE setup --------------------------------------------------------
+  const canvas = document.getElementById("viz");
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: "high-performance" });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  const vw = () => (window.visualViewport && window.visualViewport.width) || window.innerWidth;
+  const vh = () => (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+  renderer.setSize(vw(), vh());
+  const BG = new THREE.Color(0x111626);
+  renderer.setClearColor(BG, 1);
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x111626, 0.0045);
+  const camera = new THREE.PerspectiveCamera(54, vw()/vh(), 0.1, 900);
+
+  // domain colors: muted, only mixed in at the reveal. Order matches GROUPS.
+  const DHEX = { atom:0x8fb0d6, policy:0x6db59c, theory:0xb4879d, tool:0x8f93cf,
+    author:0xc08fae, class:0xcdb47e, notebooklm:0x86c2ad, audit:0x96a6c2, citation:0xd6dcec };
+  const aColor = new Float32Array(N*3);
+  { const c = new THREE.Color();
+    for (let i = 0; i < N; i++) { const nm = GROUPS[grp[i]] || "atom"; c.setHex(DHEX[nm] != null ? DHEX[nm] : 0xa6b6d2); aColor[i*3]=c.r; aColor[i*3+1]=c.g; aColor[i*3+2]=c.b; } }
+  const aSize = new Float32Array(N);
+  for (let i = 0; i < N; i++) aSize[i] = 1.7 + Math.sqrt(deg[i]) * 0.66;
+  const aHot = new Float32Array(N); // alloys: top-degree nodes glow amber on reveal
+  for (let i = 0; i < N; i++) aHot[i] = clamp01((deg[i] / MAXDEG - 0.32) / 0.4);
+
+  const livePos = new Float32Array(N*3); livePos.set(F.DRIFT);
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute("position", new THREE.BufferAttribute(livePos, 3));
+  geo.setAttribute("aColor", new THREE.BufferAttribute(aColor, 3));
+  geo.setAttribute("aSize", new THREE.BufferAttribute(aSize, 1));
+  geo.setAttribute("aHot", new THREE.BufferAttribute(aHot, 1));
+
+  const INK = new THREE.Color(0xe9eef8);
+  const AMBER = new THREE.Color(0xffb049);
+  const mat = new THREE.ShaderMaterial({
+    uniforms: {
+      uScale:  { value: vh() * 0.5 },
+      uTint:   { value: 0.0 },   // 0 = ink white, 1 = group color
+      uAmber:  { value: 0.0 },   // alloy amber reveal
+      uOpac:   { value: 1.0 },
+      uInk:    { value: new THREE.Vector3(INK.r, INK.g, INK.b) },
+      uAmberC: { value: new THREE.Vector3(AMBER.r, AMBER.g, AMBER.b) },
+    },
+    vertexShader: `
+      attribute float aSize; attribute vec3 aColor; attribute float aHot;
+      uniform float uScale; uniform float uAmber;
+      varying vec3 vColor; varying float vHot;
+      void main(){
+        vColor = aColor; vHot = aHot;
+        vec4 mv = modelViewMatrix * vec4(position, 1.0);
+        gl_Position = projectionMatrix * mv;
+        float boost = 1.0 + aHot * uAmber * 0.9;   // alloys swell as they ignite
+        gl_PointSize = clamp(aSize * boost * uScale / max(1.0, -mv.z), 1.5, 22.0);
+      }`,
+    fragmentShader: `
+      precision highp float;
+      uniform float uTint; uniform float uAmber; uniform float uOpac;
+      uniform vec3 uInk; uniform vec3 uAmberC;
+      varying vec3 vColor; varying float vHot;
+      void main(){
+        // crisp SQUARE mark (a tile / card), thin AA edge. No additive bloom.
+        vec2 d = abs(gl_PointCoord - 0.5);
+        float m = max(d.x, d.y);
+        float a = smoothstep(0.5, 0.43, m);
+        if (a <= 0.01) discard;
+        vec3 col = mix(uInk, vColor, clamp(uTint, 0.0, 1.0));
+        col = mix(col, uAmberC, clamp(vHot * uAmber, 0.0, 1.0));
+        gl_FragColor = vec4(col, a * uOpac);
+      }`,
+    transparent: true, depthWrite: false, depthTest: false, blending: THREE.NormalBlending,
+  });
+  const points = new THREE.Points(geo, mat);
+  points.frustumCulled = false; scene.add(points);
+
+  // edges (real structure). neutral cold ink, never rainbow. fade in at reveal.
+  let edges = null, ePos = null, eMat = null, eIdx = null;
+  if (D && D.e && D.e.length) {
+    eIdx = D.e; const EC = eIdx.length / 2;
+    ePos = new Float32Array(EC * 6);
+    const eg = new THREE.BufferGeometry();
+    eg.setAttribute("position", new THREE.BufferAttribute(ePos, 3));
+    eMat = new THREE.LineBasicMaterial({ color: 0x4a5d80, transparent: true, opacity: 0.0, depthWrite: false, depthTest: false });
+    edges = new THREE.LineSegments(eg, eMat); edges.frustumCulled = false; scene.add(edges);
+  }
+  function syncEdges() {
+    if (!edges) return; const EC = eIdx.length / 2;
+    for (let i = 0; i < EC; i++) {
+      const s = eIdx[i*2]*3, t = eIdx[i*2+1]*3, o = i*6;
+      ePos[o]=livePos[s]; ePos[o+1]=livePos[s+1]; ePos[o+2]=livePos[s+2];
+      ePos[o+3]=livePos[t]; ePos[o+4]=livePos[t+1]; ePos[o+5]=livePos[t+2];
+    }
+    edges.geometry.attributes.position.needsUpdate = true;
+  }
+
+  // -- Camera keyframes (spherical + screen-space pan into negative space) -
+  const CAM = {
+    rad:   [122, 132, 132, 184, 150, 138, 168, 152, 270],
+    phi:   [1.42, 1.40, 1.34, 1.52, 0.60, 1.16, 1.40, 1.34, 1.42],
+    theta: [0.0, 0.32, -0.22, 0.66, 0.85, 1.14, 1.62, 2.02, 2.40],
+    lookY: [0, 0, 2, 0, -30, -10, 2, 2, 4],
+    pan:   [0, 0.24, -0.24, 0.10, 0, 0.06, 0.22, 0.20, 0],
+  };
+  const _look = new THREE.Vector3(), _right = new THREE.Vector3();
+  const cs = { rad: CAM.rad[0], phi: CAM.phi[0], theta: CAM.theta[0], lookY: CAM.lookY[0], pan: CAM.pan[0] };
+  const lerp = (a, b, t) => a + (b - a) * t;
+  function camTarget(beat, frac) {
+    const a = beat, b = Math.min(8, beat + 1), t = inOutCubic(frac);
+    return { rad: lerp(CAM.rad[a],CAM.rad[b],t), phi: lerp(CAM.phi[a],CAM.phi[b],t),
+      theta: lerp(CAM.theta[a],CAM.theta[b],t), lookY: lerp(CAM.lookY[a],CAM.lookY[b],t), pan: lerp(CAM.pan[a],CAM.pan[b],t) };
+  }
+
+  // -- Per-frame state ----------------------------------------------------
+  let progress = 0, seeking = false, time = 0;
+
+  function morph(beat, frac) {
+    const A = F[BEAT_FORM[beat]], B = F[BEAT_FORM[Math.max(0, beat - 1)]];
+    const tp = TRANS[beat];
+    const blend = beat === 0 ? 1 : clamp01(frac / tp);
+    const be = MEASE[beat](blend);
+
+    const isDrift = beat <= 1, isCore = beat === 2, isStorm = beat === 3, isReal = beat >= 6;
+    const spin = RM ? 0 : (isDrift ? time*0.045 : isCore ? time*0.075 : isReal ? time*0.028 : 0);
+    const cy = Math.cos(spin), sy = Math.sin(spin);
+    const stormAmp = (isStorm && !RM) ? (14 + 9 * Math.sin(frac * Math.PI)) : 0;
+    const breathe = (isReal && !RM) ? (1 + Math.sin(time*0.5) * 0.011) : 1;
+    // molecules: on the reveal, pull each node a touch toward its group centroid
+    const reveal = beat === 6 ? clamp01((frac - 0.5) / 0.5) : (beat > 6 ? 1 : 0);
+    const cluster = reveal * 0.12;
+
+    for (let i = 0; i < N; i++) {
+      const j = i*3;
+      let x = B[j]   + (A[j]   - B[j])   * be;
+      let y = B[j+1] + (A[j+1] - B[j+1]) * be;
+      let z = B[j+2] + (A[j+2] - B[j+2]) * be;
+      if (cluster) {
+        const g = grp[i]*3;
+        x += (gc[g]   - x) * cluster;
+        y += (gc[g+1] - y) * cluster;
+        z += (gc[g+2] - z) * cluster;
+      }
+      if (stormAmp) {
+        x += Math.sin(time*turb[j+2] + turb[j]) * stormAmp;
+        y += Math.cos(time*turb[j+2] + turb[j+1]) * stormAmp * 0.7;
+        z += Math.sin(time*turb[j+2]*0.9 + turb[j]) * stormAmp;
+      }
+      if (breathe !== 1) { x*=breathe; y*=breathe; z*=breathe; }
+      if (spin) { const nx = x*cy - z*sy; z = x*sy + z*cy; x = nx; }
+      livePos[j]=x; livePos[j+1]=y; livePos[j+2]=z;
+    }
+    geo.attributes.position.needsUpdate = true;
+  }
+
+  function reveal(beat, frac) {
+    let tint = 0, amber = 0, eop = 0, op = 1;
+    if (beat < 5) { tint = 0; }
+    else if (beat === 5) { tint = clamp01((frac - 0.4) / 0.6) * 0.25; }
+    else if (beat === 6) {
+      tint = 0.25 + clamp01((frac - 0.2) / 0.45) * 0.6;
+      eop  = clamp01((frac - 0.16) / 0.4) * 0.34;
+      amber = clamp01((frac - 0.62) / 0.3);   // alloys ignite late (step 06)
+    } else if (beat === 7) { tint = 0.85; eop = 0.34; amber = 1; }
+    else if (beat === 8) { tint = 0.85*(1-frac); eop = 0.34*(1-frac); amber = (1-frac); op = 1 - frac*0.55; }
+    mat.uniforms.uTint.value = tint; mat.uniforms.uAmber.value = amber; mat.uniforms.uOpac.value = op;
+    if (eMat) eMat.opacity = eop;
+  }
+
+  function applyCam(beat, frac, dt) {
+    const t = camTarget(beat, frac);
+    const k = (RM || seeking) ? 1 : 1 - Math.pow(0.0006, dt);
+    cs.rad += (t.rad - cs.rad)*k; cs.phi += (t.phi - cs.phi)*k; cs.theta += (t.theta - cs.theta)*k;
+    cs.lookY += (t.lookY - cs.lookY)*k; cs.pan += (t.pan - cs.pan)*k;
+    const sp = Math.sin(cs.phi), cp = Math.cos(cs.phi);
+    camera.position.set(cs.rad*sp*Math.sin(cs.theta), cs.rad*cp, cs.rad*sp*Math.cos(cs.theta));
+    _look.set(0, cs.lookY, 0);
+    const viewH = 2 * cs.rad * Math.tan((camera.fov*Math.PI/180)/2);
+    const panW = cs.pan * viewH * camera.aspect;
+    _right.subVectors(camera.position, _look).cross(camera.up).normalize();
+    camera.position.addScaledVector(_right, panW); _look.addScaledVector(_right, panW);
+    camera.lookAt(_look);
+  }
+
+  // -- Beat 6 sub-steps + readout -----------------------------------------
+  const stepEls = Array.from(document.querySelectorAll("#b6 .pl-step"));
+  const fillEl = document.querySelector(".pl-fill");
+  const rstate = document.getElementById("rstate");
+  const cEl = document.getElementById("count"), cN = document.getElementById("cN"), cE = document.getElementById("cE");
+  const STATE_LABEL = ["drift","drift","one idea","the hype","the graveyard","reignition","the vault","the vault","archive"];
+  let lastStep = -2, lastBeat = -1;
+  function hud(beat, frac) {
+    if (beat !== lastBeat) { rstate.innerHTML = "field <b>· " + STATE_LABEL[beat] + "</b>"; lastBeat = beat; }
+    let idx = -1;
+    if (beat === 6 && frac >= 0.2) idx = Math.min(6, Math.floor(((frac - 0.2) / 0.8) * 7));
+    if (idx !== lastStep) {
+      stepEls.forEach((e, k) => e.classList.toggle("on", k === idx));
+      if (fillEl) fillEl.style.width = (idx < 0 ? 0 : ((idx + 1) / 7) * 100) + "%";
+      lastStep = idx;
+    }
+    // count readout climbs with the reveal
+    if (beat >= 6) {
+      const r = beat === 6 ? clamp01((frac - 0.2) / 0.6) : 1;
+      cEl.style.opacity = beat === 8 ? String(1 - frac) : "1";
+      cN.textContent = Math.round(r * N).toLocaleString();
+      cE.textContent = Math.round(r * (eIdx ? eIdx.length/2 : 4247)).toLocaleString();
+    } else { cEl.style.opacity = "0"; }
+  }
+
+  // -- Active beat class + hint -------------------------------------------
+  const beatEls = Array.from(document.querySelectorAll(".beat"));
+  const hintEl = document.getElementById("hint");
+  const progEl = document.getElementById("progress");
+  let active = -1;
+  function setActive(beat) {
+    if (beat === active) return; active = beat;
+    document.body.dataset.beat = beat;
+    beatEls.forEach(e => e.classList.toggle("on", +e.dataset.beat === beat));
+    if (hintEl) hintEl.style.opacity = beat === 0 ? "0.75" : "0";
+  }
+
+  // -- Render loop --------------------------------------------------------
+  let raf = null, last = performance.now();
+  function frame(dt) {
+    time += dt;
+    const { beat, frac } = beatAt(progress);
+    setActive(beat);
+    morph(beat, frac);
+    reveal(beat, frac);
+    if (eMat && eMat.opacity > 0.001) syncEdges();
+    hud(beat, frac);
+    applyCam(beat, frac, dt);
+    progEl.style.width = (progress * 100).toFixed(2) + "%";
+    renderer.render(scene, camera);
+  }
+  function tick(now) { raf = requestAnimationFrame(tick); const dt = Math.min(0.05, (now - last)/1000); last = now; frame(dt); }
+
+  // -- Scroll wiring ------------------------------------------------------
+  document.getElementById("scroll-root").style.height = SCROLL_VH + "vh";
+  if (window.gsap && window.ScrollTrigger) {
+    gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.create({ trigger: "#scroll-root", start: "top top", end: "bottom bottom",
+      scrub: RM ? true : 0.4, onUpdate: self => { if (!seeking) progress = self.progress; } });
+  } else {
+    window.addEventListener("scroll", () => { const m = document.documentElement.scrollHeight - window.innerHeight; progress = m > 0 ? window.scrollY/m : 0; }, { passive: true });
+  }
+
+  function onResize() {
+    renderer.setSize(vw(), vh()); camera.aspect = vw()/vh(); camera.updateProjectionMatrix();
+    mat.uniforms.uScale.value = vh() * 0.5;
+  }
+  window.addEventListener("resize", onResize);
+  if (window.visualViewport) window.visualViewport.addEventListener("resize", onResize);
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) { if (raf) { cancelAnimationFrame(raf); raf = null; } }
+    else if (!raf) { last = performance.now(); raf = requestAnimationFrame(tick); }
+  });
+
+  setActive(0);
+  raf = requestAnimationFrame(tick);
+
+  // verification hook: force synchronous frames so motion is observable in a paused tab
+  window.__V3 = {
+    N, hasData: !!D, get progress() { return progress; }, beatAt,
+    seek(p, steps) {
+      seeking = true; progress = clamp01(p); steps = steps || 90;
+      for (let i = 0; i < steps; i++) frame(0.05);
+      const b = beatAt(progress);
+      return { progress, beat: b.beat, frac: +b.frac.toFixed(3),
+        tint: +mat.uniforms.uTint.value.toFixed(3), amber: +mat.uniforms.uAmber.value.toFixed(3),
+        edge: eMat ? +eMat.opacity.toFixed(3) : 0 };
+    },
+    resume() { seeking = false; return "live"; },
+  };
+})();
+</script>
+</body>
+</html>

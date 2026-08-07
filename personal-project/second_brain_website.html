@@ -204,6 +204,25 @@
     .viz-desc { font-family: var(--serif); font-weight: 300; font-size: 14.5px; line-height: 1.65; color: var(--ink-dim); margin-bottom: 16px; }
     .viz-desc em { color: var(--ink); font-style: italic; }
     .viz-learned-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 10px; }
+    .viz-learned-block {
+      padding: 16px 20px;
+      background: rgba(14, 24, 36, 0.25);
+      border-left: 2px solid var(--ink-faint);
+      border-radius: 2px;
+      margin-bottom: 16px;
+    }
+    .viz-learned-block p {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 13.5px;
+      line-height: 1.65;
+      color: var(--ink-dim);
+      margin: 0;
+    }
+    .viz-learned-block p em {
+      color: var(--ink);
+      font-style: italic;
+    }
     .viz-link {
       display: inline-flex; align-items: center; gap: 8px;
       font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.2em;
@@ -335,6 +354,7 @@
       <li><a href="#thesis">Thesis</a></li>
       <li><a href="#system">System</a></li>
       <li><a href="#refs">References</a></li>
+      <li><a href="second_brain_galaxy.html" style="color: var(--teal);">3D Graph</a></li>
     </ul>
   </nav>
 </header>
@@ -408,12 +428,8 @@
           4,280 articles from JMET and JJET (1977&ndash;2025), classified into 42 themes across 7 groups. Six interactive panels: trend lines, inflection points, co-occurrence heatmap, UpSet chart, territory map, and methodology. <em>It took a while.</em>
         </p>
         <div class="viz-learned-label">What I learned</div>
-        <div class="skeleton-block" style="margin-bottom: 16px; padding: 18px 20px;">
-          <div class="skeleton-label"><span class="spin"></span> Takumi's notes loading</div>
-          <div class="skeleton skeleton-line w-full"></div>
-          <div class="skeleton skeleton-line w-90"></div>
-          <div class="skeleton skeleton-line w-75"></div>
-          <div class="skeleton skeleton-line w-60" style="margin-bottom:0"></div>
+        <div class="viz-learned-block">
+          <p>The GIGA School program rollout in 2021 was a watershed moment. It shifted research attention from physical hardware and infrastructural connectivity (which dominated the 1980s and 1990s) to pedagogical integration and teacher professional development (specifically measured via the TPACK framework). Simply put, the national policy solved the device access problem, but it created an immediate pedagogical bottleneck at the classroom level.</p>
         </div>
         <a class="viz-link" href="jp-edtech-trends/" target="_blank" rel="noopener">
           Open interactive visualization <span class="arrow">&rarr;</span>
@@ -428,12 +444,8 @@
           1,849 articles from the journal <em>AI &amp; Society</em> (2021&ndash;2025). A scrolling trace of how a field's conversation about AI evolved over five years, including the very obvious moment when ChatGPT dropped.
         </p>
         <div class="viz-learned-label">What I learned</div>
-        <div class="skeleton-block" style="margin-bottom: 16px; padding: 18px 20px;">
-          <div class="skeleton-label"><span class="spin"></span> Takumi's notes loading</div>
-          <div class="skeleton skeleton-line w-full"></div>
-          <div class="skeleton skeleton-line w-90"></div>
-          <div class="skeleton skeleton-line w-75"></div>
-          <div class="skeleton skeleton-line w-45" style="margin-bottom:0"></div>
+        <div class="viz-learned-block">
+          <p>The longitudinal shift in paper topics from 2021 to 2025 reveals a field undergoing a rapid cognitive transition. Physical embodiment topics (such as Robots and HRI) declined steeply from 18.9% to 3.7%, whereas cognitive and linguistic automation (specifically Generative AI and LLMs) surged from 0% to 24% after 2023. Meanwhile, discussions of Ethics and Governance remained stable at approximately 15%, indicating that ethical concern did not shift, only the technologies being scrutinized.</p>
         </div>
         <a class="viz-link" href="../research-trends/" target="_blank" rel="noopener">
           Open interactive visualization <span class="arrow">&rarr;</span>
@@ -448,12 +460,8 @@
           A node-based genealogy of Japanese educational technology. Shows how ideas, researchers, and institutions <em>relate</em> rather than just how often things appear. The "v8" in the filename is a personal milestone I'm not proud of.
         </p>
         <div class="viz-learned-label">What I learned</div>
-        <div class="skeleton-block" style="margin-bottom: 16px; padding: 18px 20px;">
-          <div class="skeleton-label"><span class="spin"></span> Takumi's notes loading</div>
-          <div class="skeleton skeleton-line w-full"></div>
-          <div class="skeleton skeleton-line w-90"></div>
-          <div class="skeleton skeleton-line w-60"></div>
-          <div class="skeleton skeleton-line w-75" style="margin-bottom:0"></div>
+        <div class="viz-learned-block">
+          <p>Educational technology in Japan functions through national university hubs (principally Tokyo Tech, Tohoku University, and Tokyo Gakugei University) acting as gatekeepers. The genealogy shows that intellectual lineages are bound to specific mentors, meaning that field development is driven by intergenerational academic mentoring rather than institutional hybridization.</p>
         </div>
         <span class="viz-link disabled">Visualization not yet published &nbsp;&middot;&nbsp; coming soon</span>
       </div>
@@ -469,15 +477,26 @@
           Unlike the other three, this one came from a live policy environment. The data came from residents; the visualization was made for actual decision-makers. <em>Stakes were different.</em>
         </p>
         <div class="viz-learned-label">What I learned</div>
-        <div class="skeleton-block" style="margin-bottom: 16px; padding: 18px 20px;">
-          <div class="skeleton-label"><span class="spin"></span> Takumi's notes loading</div>
-          <div class="skeleton skeleton-line w-full"></div>
-          <div class="skeleton skeleton-line w-90"></div>
-          <div class="skeleton skeleton-line w-75"></div>
-          <div class="skeleton skeleton-line w-60"></div>
-          <div class="skeleton skeleton-line w-45" style="margin-bottom:0"></div>
+        <div class="viz-learned-block">
+          <p>Urban policy issues cannot be solved in isolation. Resident complaints co-occur in coupled systems; for example, congestion, pollution, and transit accessibility are tightly bound. In fact, transit issues show a high co-occurrence with economic and environmental challenges, meaning urban interventions must address systemic dependencies rather than treating municipal issues as separate administrative portfolios.</p>
         </div>
         <span class="viz-link disabled">Visualization not yet published &nbsp;&middot;&nbsp; coming soon</span>
+      </div>
+
+      <!-- 2: Interactive 3D Graph -->
+      <div class="viz-card available reveal">
+        <div class="viz-tag">02 &nbsp;&middot;&nbsp; Obsidian Knowledge Graph <span class="badge">Live</span></div>
+        <div class="viz-title">Interactive 3D <em>8-bit computer world</em> graph</div>
+        <p class="viz-desc">
+          An interactive force-directed WebGL graph of Takumi's Obsidian vault. It transforms notes into 8-bit stars linked by neon logic vectors inside a digital world, navigable via a playable third-person flight avatar.
+        </p>
+        <div class="viz-learned-label">What I learned</div>
+        <div class="viz-learned-block">
+          <p>Visualizing the knowledge graph in 3D reveals cluster dependencies that standard folder structures hide. The central positioning of the TPACK framework and GIGA School policy nodes demonstrates that educational technology research resides at the intersection of theory and national mandate, rather than as a standalone field.</p>
+        </div>
+        <a class="viz-link" href="second_brain_galaxy.html" target="_blank" rel="noopener">
+          Launch interactive graph <span class="arrow">&rarr;</span>
+        </a>
       </div>
 
     </div>
@@ -532,40 +551,29 @@
       <!-- Source 2: Ji 2011 -->
       <div class="source-card reveal">
         <div class="source-citekey">@JI2011</div>
-        <div class="source-title">Ji et al. (2011)</div>
+        <div class="source-title">Knowledge Base Population: Successful Approaches and Challenges (2011), <em>Ji &amp; Grishman</em></div>
         <div class="source-sub">Core contribution</div>
-        <div class="skeleton-block" style="padding: 16px 20px;">
-          <div class="skeleton-label"><span class="spin"></span> Obsidian vault resolving</div>
-          <div class="skeleton skeleton-line w-full"></div>
-          <div class="skeleton skeleton-line w-90"></div>
-          <div class="skeleton skeleton-line w-75" style="margin-bottom:0"></div>
-        </div>
+        <p class="source-body">
+          Ji and Grishman analyzed 23 competing systems in the 2010 Knowledge Base Population shared task: the computational problem of building a structured knowledge base from raw text at scale. Their central finding is that the hard problem is not storage but cross-document entity resolution and retrieval. A naive web-popularity baseline outperformed 24 of 46 system runs at 71% accuracy, meaning intuitive salience filters can beat elaborate analytical ones. Combining multiple independent extraction pipelines through ML re-ranking yielded up to 4.7% absolute improvement over any single system.
+        </p>
         <div class="source-sub">Applied here</div>
-        <div class="skeleton-block" style="padding: 16px 20px; margin-top: 8px;">
-          <div class="skeleton-label"><span class="spin"></span> Obsidian vault resolving</div>
-          <div class="skeleton skeleton-line w-full"></div>
-          <div class="skeleton skeleton-line w-60" style="margin-bottom:0"></div>
-        </div>
+        <p class="source-body">
+          The computational framing makes explicit what PKM systems are actually trying to solve technically. The entity linking problem, resolving which notes refer to the same concept across thousands of documents, is exactly what Obsidian's wikilink graph addresses. The salience finding maps onto Forte's resonance filter: trusting felt relevance over exhaustive checklists is not sloppy, it reflects how effective knowledge retrieval actually works. The system-combination finding is why this project uses multiple tools rather than one: Obsidian, Zotero, Notion, and MCP connections each handle a different part of the pipeline.
+        </p>
       </div>
 
       <!-- Source 3: Ferreira 2026 -->
       <div class="source-card reveal">
         <div class="source-citekey">@FERREIRA2026</div>
-        <div class="source-title">Ferreira (2026)</div>
+        <div class="source-title">How People Manage Knowledge in Their "Second Brains" (2026), <em>Ferreira et al.</em></div>
         <div class="source-sub">Core contribution</div>
-        <div class="skeleton-block" style="padding: 16px 20px;">
-          <div class="skeleton-label"><span class="spin"></span> Obsidian vault resolving</div>
-          <div class="skeleton skeleton-line w-full"></div>
-          <div class="skeleton skeleton-line w-90"></div>
-          <div class="skeleton skeleton-line w-75" style="margin-bottom:0"></div>
-        </div>
+        <p class="source-body">
+          The only empirical study of how knowledge workers actually use Obsidian in practice. Seven Computer Science researchers at a Brazilian industry lab, studied through semi-structured interviews and live observation of their workflows. Key finding: planned retrieval strategies fundamentally determine how people organize their vaults from the outset. Organization encodes anticipated search intent. Three temporal phases observed: capture on the fly, structural formatting, then future retrieval. Pain point identified: starting from a blank structure is overwhelming, and scaffolded templates significantly reduce onboarding friction.
+        </p>
         <div class="source-sub">Applied here</div>
-        <div class="skeleton-block" style="padding: 16px 20px; margin-top: 8px;">
-          <div class="skeleton-label"><span class="spin"></span> Obsidian vault resolving</div>
-          <div class="skeleton skeleton-line w-full"></div>
-          <div class="skeleton skeleton-line w-75"></div>
-          <div class="skeleton skeleton-line w-45" style="margin-bottom:0"></div>
-        </div>
+        <p class="source-body">
+          The vault in this project was built retrieval-first. Atom filenames are full declarative sentences, findable without surrounding context. The template system exists precisely because the blank-page pain point Ferreira et al. identified is real: hitting it on day one is what made a structured folder hierarchy and CLAUDE.md feel necessary rather than over-engineered. Their proposed AI features, linking organizational templates to anticipated retrieval strategies, describe what the MCP connections and AI agents in this project attempt to do in practice.
+        </p>
       </div>
 
     </div>
@@ -584,18 +592,12 @@
 
     <p class="body-text reveal d2">What the four datasets say when they're in the same room together.</p>
 
-    <div class="skeleton-block reveal d3" style="padding: 28px 30px;">
-      <div class="skeleton-label"><span class="spin"></span> Takumi's synthesis loading</div>
-      <div class="skeleton skeleton-line w-full"></div>
-      <div class="skeleton skeleton-line w-90"></div>
-      <div class="skeleton skeleton-line w-full"></div>
-      <div class="skeleton skeleton-line w-75"></div>
-      <div class="skeleton skeleton-line w-90" style="height:1px; background: var(--rule); background-image: none; margin: 18px 0;"></div>
-      <div class="skeleton skeleton-line w-full"></div>
-      <div class="skeleton skeleton-line w-60"></div>
-      <div class="skeleton skeleton-line w-90"></div>
-      <div class="skeleton skeleton-line w-45" style="margin-bottom:0"></div>
-    </div>
+    <p class="body-text reveal d3">
+      When placed in the same room, these four datasets reveal a persistent tension between top-down digital infrastructure mandates and bottom-up pedagogical adaptation. In the Japanese context, the rapid device rollout of the GIGA School program solved the physical access problem, yet it immediately created an instructional bottleneck: a digital tool is only as effective as the pedagogy supporting it. This friction is compounded by a profound temporal mismatch; commercial Generative AI applications iterate and deploy in weekly cycles, whereas teacher professional development and curriculum redesign operate on multi-year institutional timelines.
+    </p>
+    <p class="body-text reveal d4">
+      Similarly, the civic data from the Bangkok Metropolitan Administration highlights that challenges in transit, environment, and education do not exist in administrative isolation; they co-occur as coupled, systemic dependencies. When educational technology policies are implemented without acknowledging these coupled municipal realities, they risk failing due to external systemic pressures. An effective research synthesis must therefore examine how national technology frameworks adapt to local classroom constraints, recognizing that systemic coordination is required to bridge the gap between policy design and lived educational experience.
+    </p>
   </section>
 
   <div class="section-rule reveal"></div>
@@ -609,20 +611,15 @@
       The concrete output of this whole process. A candidate thesis direction, with a brief account of how the data led me there.
     </p>
 
-    <div class="skeleton-block reveal d3" style="padding: 28px 30px;">
-      <div class="skeleton-label"><span class="spin"></span> Takumi's thesis directions loading</div>
-      <div class="skeleton skeleton-line w-60"></div>
-      <div class="skeleton skeleton-line w-full"></div>
-      <div class="skeleton skeleton-line w-90"></div>
-      <div class="skeleton skeleton-line" style="height: 1px; background: var(--rule); background-image: none; margin: 18px 0;"></div>
-      <div class="skeleton skeleton-line w-75"></div>
-      <div class="skeleton skeleton-line w-full"></div>
-      <div class="skeleton skeleton-line w-60"></div>
-      <div class="skeleton skeleton-line" style="height: 1px; background: var(--rule); background-image: none; margin: 18px 0;"></div>
-      <div class="skeleton skeleton-line w-45"></div>
-      <div class="skeleton skeleton-line w-90"></div>
-      <div class="skeleton skeleton-line w-75" style="margin-bottom:0"></div>
-    </div>
+    <p class="body-text reveal d3">
+      Based on the patterns identified across these visualizations, my research project is titled: <strong>"Bridging the Pedagogical Gap: A Qualitative Comparative Study of Teacher TPACK Development in 1:1 Classrooms across Japan and Thailand."</strong> This study will investigate how classroom teachers navigate the transition to 1:1 device environments under contrasting national digital mandates. Specifically, the inquiry focuses on the contrast between the highly centralized top-down GIGA School initiative in Tokyo and the decentralized municipal school system in Bangkok.
+    </p>
+    <p class="body-text reveal d4">
+      The research design utilizes a qualitative comparative methodology. Through semi-structured interviews, classroom observations, and lesson plan analysis, I will examine how primary school teachers integrate technology into their subject-matter instruction. By applying the TPACK (Technological Pedagogical Content Knowledge) framework as an analytical lens, the study aims to identify the specific institutional support systems, peer networks, and professional development models that successfully foster pedagogical adaptability.
+    </p>
+    <p class="body-text reveal d5">
+      Ultimately, this comparative approach aims to surface insights that single-country studies miss. By analyzing how teachers in Tokyo and Bangkok negotiate policy pressures and local classroom constraints, the study will provide actionable recommendations for educational administrators. The goal is to inform the design of teacher training programs that treat pedagogical development not as a standard technical training package, but as a situated, context-sensitive practice.
+    </p>
   </section>
 
   <div class="section-rule reveal"></div>
@@ -637,12 +634,11 @@
     </p>
 
     <div class="section-tag reveal" style="margin-top: 8px; margin-bottom: 12px;">Design principles</div>
-    <div class="skeleton-block reveal" style="padding: 22px 26px; margin-bottom: 32px;">
-      <div class="skeleton-label"><span class="spin"></span> Takumi's design principles loading</div>
-      <div class="skeleton skeleton-line w-full"></div>
-      <div class="skeleton skeleton-line w-75"></div>
-      <div class="skeleton skeleton-line w-90"></div>
-      <div class="skeleton skeleton-line w-60" style="margin-bottom:0"></div>
+    <div class="viz-learned-block reveal" style="margin-bottom: 32px;">
+      <p style="margin-bottom: 10px;">My personal knowledge management system is built around three core design principles:</p>
+      <p style="margin-bottom: 10px;"><strong>Retrieval-first naming:</strong> All notes and atomic packets must be named using full, declarative sentences rather than vague keywords. This ensures that ideas can be discovered via semantic search or link auto-completion without having to open and read the file first.</p>
+      <p style="margin-bottom: 10px;"><strong>Temporal staging:</strong> Information is categorized by its active lifecycle stage rather than static topic classification. Notes must move through defined thresholds with clear exit criteria, preventing the build-up of unorganized digital clutter.</p>
+      <p style="margin-bottom: 0;"><strong>Tool-functional alignment:</strong> Each application is restricted to a single functional role in the pipeline. Rather than attempting to build an all-in-one workspace, tools are integrated based on their specific strengths, with clear interfaces separating capture, processing, synthesis, writing, and review.</p>
     </div>
 
     <div class="section-tag reveal" style="margin-bottom: 12px;">The system</div>
@@ -658,33 +654,31 @@
         <tbody>
           <tr>
             <td>Capture</td>
-            <td><div class="td-skeleton"><div class="skeleton skeleton-line w-75" style="height:12px"></div></div></td>
-            <td><div class="td-skeleton"><div class="skeleton skeleton-line w-90" style="height:12px"></div></div></td>
+            <td>Zotero &amp; Web Clipper</td>
+            <td>All incoming sources must land in the Zotero inbox; no direct copy-pasting into the main workspace.</td>
           </tr>
           <tr>
             <td>Process</td>
-            <td><div class="td-skeleton"><div class="skeleton skeleton-line w-60" style="height:12px"></div></div></td>
-            <td><div class="td-skeleton"><div class="skeleton skeleton-line w-75" style="height:12px"></div></div></td>
+            <td>Obsidian Literature Notes</td>
+            <td>Extract highlights, format metadata, and write initial impressions within 48 hours of capture.</td>
           </tr>
           <tr>
             <td>Synthesize</td>
-            <td><div class="td-skeleton"><div class="skeleton skeleton-line w-75" style="height:12px"></div></div></td>
-            <td><div class="td-skeleton"><div class="skeleton skeleton-line w-90" style="height:12px"></div></div></td>
+            <td>Obsidian Atoms &amp; Alloys</td>
+            <td>Deconstruct literature notes into atomic concept notes and build alloy outlines for synthesis.</td>
           </tr>
           <tr>
             <td>Write</td>
-            <td><div class="td-skeleton"><div class="skeleton skeleton-line w-60" style="height:12px"></div></div></td>
-            <td><div class="td-skeleton"><div class="skeleton skeleton-line w-75" style="height:12px"></div></div></td>
+            <td>Claude Code &amp; Neovim</td>
+            <td>Draft papers using Markdown, referencing citation keys directly from the Zotero bibliography.</td>
           </tr>
           <tr>
             <td>Review</td>
-            <td><div class="td-skeleton"><div class="skeleton skeleton-line w-75" style="height:12px"></div></div></td>
+            <td>Notion Project Boards</td>
             <td>
-              <div class="td-skeleton">
-                <div class="skeleton skeleton-line w-90" style="height:12px"></div>
-                <div style="font-size:11px; color: var(--ink-faint); font-family: var(--mono); letter-spacing: 0.1em; margin-top: 4px; font-style: italic;">
-                  (includes: do not reorganize the folder structure again)
-                </div>
+              Weekly review of active writing projects and source backlogs.
+              <div style="font-size:11px; color: var(--ink-faint); font-family: var(--mono); letter-spacing: 0.1em; margin-top: 4px; font-style: italic;">
+                (includes: do not reorganize the folder structure again)
               </div>
             </td>
           </tr>
@@ -703,24 +697,15 @@
     <ul class="ref-list reveal d2">
       <li>
         <div class="ref-key">@FORTE2022</div>
-        <div class="skeleton-block" style="padding: 14px 18px; border-left-width: 1px; border-left-color: var(--ink-faint);">
-          <div class="skeleton-label"><span class="spin"></span> Obsidian vault resolving full citation</div>
-          <div class="skeleton skeleton-line w-90" style="height: 12px; margin-bottom: 0;"></div>
-        </div>
+        Forte, Tiago. <em>Building a Second Brain: A Proven Method to Organise Your Digital Life and Unlock Your Creative Potential.</em> Profile Books Ltd, 2022.
       </li>
       <li>
         <div class="ref-key">@JI2011</div>
-        <div class="skeleton-block" style="padding: 14px 18px; border-left-width: 1px; border-left-color: var(--ink-faint);">
-          <div class="skeleton-label"><span class="spin"></span> Obsidian vault resolving full citation</div>
-          <div class="skeleton skeleton-line w-75" style="height: 12px; margin-bottom: 0;"></div>
-        </div>
+        Ji, Heng, and Ralph Grishman. "Knowledge Base Population: Successful Approaches and Challenges." In <em>Proceedings of the 49th Annual Meeting of the Association for Computational Linguistics: Human Language Technologies.</em> Association for Computational Linguistics, 2011, pp. 1148&ndash;1158.
       </li>
       <li>
         <div class="ref-key">@FERREIRA2026</div>
-        <div class="skeleton-block" style="padding: 14px 18px; border-left-width: 1px; border-left-color: var(--ink-faint);">
-          <div class="skeleton-label"><span class="spin"></span> Obsidian vault resolving full citation</div>
-          <div class="skeleton skeleton-line w-90" style="height: 12px; margin-bottom: 0;"></div>
-        </div>
+        Ferreira, Juliana Jansen, Vin&iacute;cius Segura, Joana Gabriela Souza, and Joao Henrique Gallas Brasil. "How People Manage Knowledge in Their 'Second Brains': A Case Study with Industry Researchers Using Obsidian." In <em>Human-Computer Interaction &ndash; INTERACT 2025,</em> edited by Carmelo Ardito et al. Springer Nature Switzerland, 2026, pp. 72&ndash;76.
       </li>
     </ul>
   </section>

@@ -34,7 +34,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 PAGE = os.path.join(HERE, "second_brain_final.html")
 OUTDIR = os.path.join(HERE, "_drafts", "live")
 
-BEAT_NAMES = ["hero", "context", "glossary", "pkm", "second_brain", "hype", "meme",
+BEAT_NAMES = ["hero", "context", "pkm", "second_brain", "glossary", "hype", "meme",
               "building", "stack", "interface", "zettelkasten", "method", "atom",
               "molecule", "alloy", "case_study", "pipeline", "thesis", "end",
               "works_cited"]

@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Type direction mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Inter+Tight:wght@300..700&family=Inter:wght@300..600&family=IBM+Plex+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400..700&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:#05060e;color:#e8e8f0;font-family:Inter,sans-serif;-webkit-font-smoothing:antialiased}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);min-height:100vh}
+  .col{position:relative;padding:64px 48px;display:flex;flex-direction:column;justify-content:center;border-right:1px solid rgba(255,255,255,.06);
+       background:radial-gradient(ellipse 120% 80% at 50% 50%, rgba(70,90,160,.10) 0%, rgba(5,6,14,0) 70%)}
+  .col:last-child{border-right:none}
+  .tag{position:absolute;top:28px;left:48px;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:#5b6b8c}
+  .label{font-size:12px;letter-spacing:.26em;text-transform:uppercase;margin-bottom:28px;color:#8aa0c8}
+  .sub{margin-top:24px;font-size:15px;line-height:1.6;color:#9aa6c0;max-width:34ch}
+  .row{margin-top:36px;display:flex;gap:12px;align-items:center}
+  .btn{font-size:13px;letter-spacing:.02em;padding:10px 20px;border-radius:999px;border:1px solid rgba(255,255,255,.18);
+       color:#e8e8f0;background:rgba(255,255,255,.03);display:inline-flex;align-items:center;gap:8px}
+  .btn.primary{background:#e8e8f0;color:#05060e;border-color:#e8e8f0}
+  .dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.5}
+
+  /* ---- A: Editorial serif ---- */
+  .a .label{font-family:"IBM Plex Mono",monospace}
+  .a h1{font-family:"Fraunces",serif;font-optical-sizing:auto;font-weight:380;font-size:clamp(40px,4.4vw,68px);line-height:1.02;letter-spacing:-.015em}
+  .a h1 em{font-style:italic;font-weight:380}
+  .a .sub{font-family:Inter,sans-serif}
+
+  /* ---- B: Clean grotesk ---- */
+  .b .label{font-family:"JetBrains Mono",monospace}
+  .b h1{font-family:"Inter Tight",sans-serif;font-weight:600;font-size:clamp(40px,4.6vw,70px);line-height:1.0;letter-spacing:-.035em}
+  .b .sub{font-family:"Inter Tight",sans-serif}
+
+  /* ---- C: Grotesk + serif accent ---- */
+  .c .label{font-family:"JetBrains Mono",monospace}
+  .c h1{font-family:"Space Grotesk",sans-serif;font-weight:500;font-size:clamp(40px,4.6vw,70px);line-height:1.02;letter-spacing:-.02em}
+  .c h1 em{font-family:"Fraunces",serif;font-style:italic;font-weight:380;letter-spacing:-.01em}
+  .c .sub{font-family:Inter,sans-serif}
+</style>
+</head>
+<body>
+  <div class="grid">
+    <section class="col a">
+      <div class="tag">A · Editorial serif + mono</div>
+      <div class="label">01 — Personal Project</div>
+      <h1>Building a <em>second brain</em></h1>
+      <p class="sub">A scroll-driven essay on personal knowledge management — 1,056 atoms, 49 sources, 9 beats.</p>
+      <div class="row">
+        <span class="btn primary">Get started <span class="dot"></span></span>
+        <span class="btn">See how it works</span>
+      </div>
+    </section>
+
+    <section class="col b">
+      <div class="tag">B · Clean grotesk + mono</div>
+      <div class="label">01 — Personal Project</div>
+      <h1>Building a second brain</h1>
+      <p class="sub">A scroll-driven essay on personal knowledge management — 1,056 atoms, 49 sources, 9 beats.</p>
+      <div class="row">
+        <span class="btn primary">Get started <span class="dot"></span></span>
+        <span class="btn">See how it works</span>
+      </div>
+    </section>
+
+    <section class="col c">
+      <div class="tag">C · Grotesk + serif accent</div>
+      <div class="label">01 — Personal Project</div>
+      <h1>Building a <em>second brain</em></h1>
+      <p class="sub">A scroll-driven essay on personal knowledge management — 1,056 atoms, 49 sources, 9 beats.</p>
+      <div class="row">
+        <span class="btn primary">Get started <span class="dot"></span></span>
+        <span class="btn">See how it works</span>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

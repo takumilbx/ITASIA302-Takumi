@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Second Brain · 8-Bit Graph · ITASIA302</title>
+  <meta name="description" content="An interactive 3D 8-bit computer world graph of Takumi's Obsidian knowledge vault.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=IBM+Plex+Sans:wght@300;400;500&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="vault_data.js"></script>
+  <style>
+    :root {
+      --bg: #05060e;
+      --bg-soft: #0b0d1a;
+      --ink: #e0e6f0;
+      --ink-dim: #8899b8;
+      --ink-faint: #2e3a55;
+      --rule: #182030;
+      --amber: #e8634a;
+      --teal: #45a884;
+      --sky: #5299c8;
+      --lilac: #7272c0;
+      --coral: #b85c7a;
+      --sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 300;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* WebGL Canvas */
+    #canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      display: block;
+    }
+
+    /* CRT Vignette Overlay */
+    .crt-vignette {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      pointer-events: none;
+      box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.8), inset 0 0 200px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Custom Scanline Overlay */
+    .crt-scanlines {
+      position: fixed;
+      inset: 0;
+      z-index: 9;
+      pointer-events: none;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.04));
+      background-size: 100% 4px, 6px 100%;
+      opacity: 0.8;
+    }
+
+    /* HUD Top Header */
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 48px;
+      height: 52px;
+      background: linear-gradient(180deg, rgba(5,6,14,0.95) 0%, rgba(5,6,14,0.7) 70%, transparent 100%);
+      border-bottom: 1px solid rgba(24, 32, 48, 0.4);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+    }
+    .topbar-title {
+      font-family: var(--mono);
+      font-weight: 400;
+      color: var(--teal);
+    }
+    .topbar-title em {
+      color: var(--amber);
+      font-style: normal;
+    }
+    .topbar-nav {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+    .topbar-nav a {
+      color: var(--ink-dim);
+      text-decoration: none;
+      transition: color 150ms ease;
+    }
+    .topbar-nav a:hover {
+      color: var(--amber);
+    }
+    .topbar-nav .active-link {
+      color: var(--teal);
+      border-bottom: 1px solid var(--teal);
+    }
+
+    /* Reticle / Target Cursor */
+    .reticle {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 24px;
+      height: 24px;
+      pointer-events: none;
+      z-index: 20;
+      opacity: 0.6;
+    }
+    .reticle::before, .reticle::after {
+      content: "";
+      position: absolute;
+      background: var(--teal);
+    }
+    .reticle::before {
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      transform: translateY(-50%);
+    }
+    .reticle::after {
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      transform: translateX(-50%);
+    }
+    .reticle-box {
+      position: absolute;
+      inset: 4px;
+      border: 1px solid var(--teal);
+    }
+
+    /* Monospaced Readout HUD */
+    #hud-readout {
+      position: fixed;
+      top: 72px;
+      left: 36px;
+      width: 280px;
+      background: rgba(5, 6, 14, 0.85);
+      border: 1px solid var(--rule);
+      padding: 16px;
+      z-index: 30;
+      font-family: var(--mono);
+      font-size: 11px;
+      line-height: 1.6;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    .hud-title {
+      font-size: 12px;
+      color: var(--amber);
+      margin-bottom: 8px;
+      border-bottom: 1px dashed var(--rule);
+      padding-bottom: 4px;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+    .hud-row {
+      display: flex;
+      justify-content: space-between;
+      color: var(--ink-dim);
+    }
+    .hud-val {
+      color: var(--ink);
+    }
+
+    /* Scanner Overlay for Near Nodes */
+    #scanner-panel {
+      position: fixed;
+      top: 72px;
+      right: 36px;
+      width: 320px;
+      background: rgba(5, 6, 14, 0.92);
+      border: 1px solid var(--rule);
+      border-left: 3px solid var(--teal);
+      padding: 18px;
+      z-index: 30;
+      font-family: var(--mono);
+      font-size: 11px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      display: none;
+      animation: flash-border 1s ease;
+    }
+    @keyframes flash-border {
+      0% { border-color: var(--amber); }
+      100% { border-color: var(--teal); }
+    }
+    .scanner-header {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--teal);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+    }
+    .scanner-desc {
+      color: var(--ink-dim);
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    .scanner-meta {
+      border-top: 1px solid rgba(24, 32, 48, 0.5);
+      padding-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    /* Instructions Panel */
+    #instructions-panel {
+      position: fixed;
+      bottom: 36px;
+      left: 36px;
+      background: rgba(5, 6, 14, 0.85);
+      border: 1px solid var(--rule);
+      padding: 12px 18px;
+      z-index: 30;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--ink-dim);
+      line-height: 1.5;
+    }
+    #instructions-panel strong {
+      color: var(--amber);
+      font-weight: normal;
+    }
+
+    /* BIOS Styled Developer Panel */
+    #bios-panel {
+      position: fixed;
+      bottom: 36px;
+      right: 36px;
+      width: 320px;
+      background: rgba(5, 6, 14, 0.96);
+      border: 1px solid var(--teal);
+      border-radius: 2px;
+      padding: 16px;
+      z-index: 100;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--teal);
+      box-shadow: 0 0 25px rgba(69, 168, 132, 0.15);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .bios-header {
+      text-align: center;
+      font-weight: 500;
+      border-bottom: 1px solid var(--teal);
+      padding-bottom: 8px;
+      margin-bottom: 4px;
+      color: var(--teal);
+      letter-spacing: 0.05em;
+    }
+    .bios-sec-title {
+      font-size: 9px;
+      text-transform: uppercase;
+      color: var(--amber);
+      letter-spacing: 0.15em;
+      margin-top: 4px;
+      margin-bottom: 2px;
+    }
+    .bios-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .bios-label {
+      width: 120px;
+      color: var(--ink);
+    }
+    .bios-slider {
+      flex: 1;
+      height: 4px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: var(--rule);
+      outline: none;
+      border: 1px solid var(--teal);
+    }
+    .bios-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 10px;
+      height: 10px;
+      background: var(--teal);
+      cursor: pointer;
+      border-radius: 0;
+    }
+    .bios-val {
+      width: 45px;
+      text-align: right;
+      color: var(--teal);
+    }
+    .bios-btn {
+      background: transparent;
+      border: 1px solid var(--teal);
+      color: var(--teal);
+      padding: 4px 8px;
+      cursor: pointer;
+      text-transform: uppercase;
+      font-family: var(--mono);
+      font-size: 10px;
+      transition: background 150ms, color 150ms;
+    }
+    .bios-btn:hover {
+      background: var(--teal);
+      color: var(--bg);
+    }
+    .pointer-btn {
+      width: 100%;
+      text-align: center;
+      padding: 6px;
+    }
+
+    /* Tiny alert overlays */
+    #pointer-lock-alert {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) translateY(40px);
+      z-index: 101;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--amber);
+      background: rgba(5,6,14,0.9);
+      border: 1px solid var(--amber);
+      padding: 8px 12px;
+      pointer-events: none;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="canvas" layoutsubtree></canvas>
+  
+  <div class="crt-scanlines"></div>
+  <div class="crt-vignette"></div>
+  <div class="reticle"><div class="reticle-box"></div></div>
+
+  <nav class="topbar">
+    <div class="topbar-title">~/itasia302/pkm/<em>8bit-graph</em></div>
+    <ul class="topbar-nav">
+      <li><a href="index.html">Hub</a></li>
+      <li><a href="second_brain_website.html">Essay</a></li>
+      <li><a href="second_brain_visual.html">Visual Companion</a></li>
+      <li><a class="active-link" href="#">Interactive Graph</a></li>
+    </ul>
+  </nav>
+
+  <!-- Flight HUD -->
+  <div id="hud-readout">
+    <div class="hud-title">SYSTEM STATUS</div>
+    <div class="hud-row"><span>COORDS:</span><span class="hud-val" id="hud-pos">X:00.0 Y:00.0 Z:00.0</span></div>
+    <div class="hud-row"><span>VELOCITY:</span><span class="hud-val" id="hud-vel">0.00 M/S</span></div>
+    <div class="hud-row"><span>FPS:</span><span class="hud-val" id="hud-fps">60</span></div>
+    <div class="hud-row"><span>ACTIVE BITS:</span><span class="hud-val" id="hud-nodes">17 NODES</span></div>
+    <div class="hud-row"><span>SYS MATRIX:</span><span class="hud-val" style="color:var(--teal)">ONLINE</span></div>
+  </div>
+
+  <!-- Node Scanner Panel -->
+  <div id="scanner-panel">
+    <div class="scanner-header">
+      <span id="scan-title">NODE NAME</span>
+      <span id="scan-group" style="color:var(--amber); font-size:9px; border:1px solid var(--rule); padding:1px 4px;">GROUP</span>
+    </div>
+    <div class="scanner-desc" id="scan-desc">Node description will sit here. It details the specific knowledge concept mapped in 8-bit space.</div>
+    <div class="scanner-meta">
+      <div class="hud-row"><span>BIT ADDR:</span><span class="hud-val" id="scan-addr">0x00FF</span></div>
+      <div class="hud-row"><span>DEGREE DENSITY:</span><span class="hud-val" id="scan-degree">5 LINKS</span></div>
+      <div class="hud-row"><span>LINK DIST:</span><span class="hud-val" id="scan-dist">0.00M</span></div>
+    </div>
+  </div>
+
+  <!-- Instruction Overlay -->
+  <div id="instructions-panel">
+    <strong>STEER:</strong> Move mouse/drag &nbsp;|&nbsp; <strong>THRUST:</strong> W/S (Fwd/Bwd) &nbsp;|&nbsp; <strong>STRAFE:</strong> A/D (L/R) &nbsp;|&nbsp; <strong>ELEVATE:</strong> Q/E (Up/Dn)<br>
+    Click window to lock cursor (recommended for steering controls)
+  </div>
+
+  <!-- BIOS Settings Panel -->
+  <div id="bios-panel">
+    <div class="bios-header">BIOS V1.0.8 - SYSTEM CONTROL</div>
+    
+    <div class="bios-sec-title">POST-PROCESSING (CRT)</div>
+    <div class="bios-row">
+      <span class="bios-label">Pixelation</span>
+      <input type="range" class="bios-slider" id="param-pix" min="128" max="2048" step="16" value="512">
+      <span class="bios-val" id="val-pix">512p</span>
+    </div>
+    <div class="bios-row">
+      <span class="bios-label">RGB Aberr</span>
+      <input type="range" class="bios-slider" id="param-aberr" min="0" max="25" step="1" value="8">
+      <span class="bios-val" id="val-aberr">0.08</span>
+    </div>
+    <div class="bios-row">
+      <span class="bios-label">Scanlines</span>
+      <input type="range" class="bios-slider" id="param-scan" min="0" max="100" step="5" value="70">
+      <span class="bios-val" id="val-scan">0.70</span>
+    </div>
+    <div class="bios-row">
+      <span class="bios-label">Static Noise</span>
+      <input type="range" class="bios-slider" id="param-noise" min="0" max="50" step="5" value="20">
+      <span class="bios-val" id="val-noise">0.20</span>
+    </div>
+
+    <div class="bios-sec-title">PHYSICS ENGINE</div>
+    <div class="bios-row">
+      <span class="bios-label">Repulsion</span>
+      <input type="range" class="bios-slider" id="param-rep" min="1" max="50" step="1" value="22">
+      <span class="bios-val" id="val-rep">22.0</span>
+    </div>
+    <div class="bios-row">
+      <span class="bios-label">Link Spring</span>
+      <input type="range" class="bios-slider" id="param-spr" min="5" max="80" step="5" value="35">
+      <span class="bios-val" id="val-spr">0.35</span>
+    </div>
+    <div class="bios-row">
+      <span class="bios-label">Center Grav</span>
+      <input type="range" class="bios-slider" id="param-grav" min="0" max="30" step="2" value="10">
+      <span class="bios-val" id="val-grav">1.0</span>
+    </div>
+
+    <div class="bios-sec-title">GRAPH VISUALS</div>
+    <div class="bios-row">
+      <span class="bios-label">Fog Density</span>
+      <input type="range" class="bios-slider" id="param-fog" min="2" max="60" step="2" value="12">
+      <span class="bios-val" id="val-fog">0.012</span>
+    </div>
+    <div class="bios-row">
+      <span class="bios-label">Star Scale</span>
+      <input type="range" class="bios-slider" id="param-size" min="5" max="30" step="1" value="12">
+      <span class="bios-val" id="val-size">1.2</span>
+    </div>
+    <div class="bios-row">
+      <span class="bios-label">Link Opacity</span>
+      <input type="range" class="bios-slider" id="param-lopac" min="10" max="100" step="5" value="75">
+      <span class="bios-val" id="val-lopac">0.75</span>
+    </div>
+    <div class="bios-row">
+      <span class="bios-label">Show Links</span>
+      <button class="bios-btn" id="btn-toggle-links" style="width: 100px; text-align: center;">ON</button>
+    </div>
+
+    <div class="bios-sec-title">STEERING CONTROLS</div>
+    <div class="bios-row">
+      <span class="bios-label">Fwd Speed</span>
+      <input type="range" class="bios-slider" id="param-spd" min="2" max="30" step="1" value="12">
+      <span class="bios-val" id="val-spd">12.0</span>
+    </div>
+    <button class="bios-btn pointer-btn" id="lock-btn">LOCK MOUSE FOR FLIGHT</button>
+  </div>
+
+  <div id="pointer-lock-alert">Cursor Locked. Press ESC to unlock.</div>
+
+  <!-- WebGL Shader & Controls Implementation -->
+  <script>
+    "use strict";
+
+    // ─── 1. Core Obsidian Node & Edge Dataset ───
+    let NODES = [];
+    let EDGES = [];
+
+    if (window.VAULT_DATA && window.VAULT_DATA.nodes) {
+      NODES = window.VAULT_DATA.nodes;
+      EDGES = window.VAULT_DATA.edges;
+    } else {
+      NODES = [
+        { id: 0,  title: "Second Brain",     group: "core",     val: 12, addr: "0x00A1", desc: "Digital extension of individual memory and logic; external vault supporting human cognition." },
+        { id: 1,  title: "PKM",              group: "core",     val: 9,  addr: "0x00B4", desc: "Personal Knowledge Management; structured processes to capture, organize, and synthesize ideas." },
+        { id: 2,  title: "Zettelkasten",     group: "core",     val: 7,  addr: "0x00C9", desc: "Classic slip-box note method; utilizes atomic cards and semantic links to build a network." },
+        { id: 3,  title: "Extended Mind",    group: "theory",   groupColor: "#b85c7a", val: 8,  addr: "0x01E2", desc: "Philosophical argument by Clark & Chalmers that tool-coupled systems are literal components of mind." },
+        { id: 4,  title: "TPACK Framework",  group: "theory",   groupColor: "#5299c8", val: 9,  addr: "0x01F5", desc: "Technological Pedagogical Content Knowledge; classroom integration model for tech." },
+        { id: 5,  title: "GIGA School",      group: "policy",   groupColor: "#45a884", val: 7,  addr: "0x02D3", desc: "Japan's national policy mandate deploying 1:1 computers to elementary and junior high schools." },
+        { id: 6,  title: "Bangkok BMA",      group: "policy",   groupColor: "#45a884", val: 6,  addr: "0x02EA", desc: "Bangkok Municipal Administration schools; digital infrastructure and classroom systems." },
+        { id: 7,  title: "Obsidian Vault",   group: "tool",     groupColor: "#7272c0", val: 8,  addr: "0x03B1", desc: "Main vault repository running local Markdown files, acting as a personal semantic index." },
+        { id: 8,  title: "Zotero Inbox",     group: "tool",     groupColor: "#7272c0", val: 6,  addr: "0x03C5", desc: "Central collection hub for academic sources and citation metadata." },
+        { id: 9,  title: "Notion Boards",    group: "tool",     groupColor: "#7272c0", val: 5,  addr: "0x03DF", desc: "Project tracking and temporal staging boards managing active lifecycle states." },
+        { id: 10, title: "Retrieval-first",  group: "atom",     groupColor: "#7272c0", val: 10, addr: "0x04F1", desc: "Design paradigm prioritizing semantic discovery and search optimization over simple content acquisition." },
+        { id: 11, title: "Temporal Staging",  group: "atom",     groupColor: "#7272c0", val: 7,  addr: "0x04F9", desc: "Lifecycle organization scheme sorting notes by their active project context rather than static topics." },
+        { id: 12, title: "Tool Alignment",   group: "atom",     groupColor: "#7272c0", val: 6,  addr: "0x04FC", desc: "Functional system constraint separating tools strictly by their task domain (Capture, Process, Write)." },
+        { id: 13, title: "Memex",            group: "theory",   groupColor: "#b85c7a", val: 6,  addr: "0x011C", desc: "Vannevar Bush's conceptual 1945 microfilm machine; the foundational model for hypertext links." },
+        { id: 14, title: "Forte 2022",       group: "citation", groupColor: "#b85c7a", val: 6,  addr: "0x05A2", desc: "Author of 'Building a Second Brain'; outlines the popular CODE and PARA methodologies." },
+        { id: 15, title: "Luhmann 1981",     group: "citation", groupColor: "#b85c7a", val: 7,  addr: "0x05BC", desc: "Sociologist who authored 'Communicating with Slip Boxes'; outlines the emergence of system dialogue." },
+        { id: 16, title: "Ferreira 2026",    group: "citation", groupColor: "#b85c7a", val: 6,  addr: "0x05D1", desc: "Researcher studying how scientific professionals manage digital second brains on Obsidian." }
+      ];
+
+      EDGES = [
+        { source: 0, target: 1 },  { source: 0, target: 2 },  { source: 0, target: 3 },
+        { source: 0, target: 7 },  { source: 0, target: 10 }, { source: 0, target: 14 },
+        { source: 1, target: 2 },  { source: 1, target: 10 }, { source: 1, target: 11 },
+        { source: 2, target: 10 }, { source: 2, target: 15 }, { source: 3, target: 13 },
+        { source: 4, target: 5 },  { source: 4, target: 6 },  { source: 4, target: 10 },
+        { source: 5, target: 7 },  { source: 6, target: 9 },  { source: 7, target: 8 },
+        { source: 7, target: 10 }, { source: 7, target: 11 }, { source: 7, target: 12 },
+        { source: 8, target: 12 }, { source: 9, target: 11 }, { source: 10, target: 16 },
+        { source: 14, target: 1 }, { source: 15, target: 0 }, { source: 16, target: 7 }
+      ];
+    }
+
+    // Compute node degrees (number of links)
+    NODES.forEach(n => n.linksCount = 0);
+    EDGES.forEach(e => {
+      NODES[e.source].linksCount++;
+      NODES[e.target].linksCount++;
+    });
+
+    // Color definitions matching CSS tokens
+    const COLORS = {
+      core: new THREE.Color("#e8634a"),      // amber
+      theory: new THREE.Color("#b85c7a"),    // coral
+      policy: new THREE.Color("#45a884"),    // teal
+      tool: new THREE.Color("#7272c0"),      // lilac
+      atom: new THREE.Color("#5299c8"),      // sky
+      citation: new THREE.Color("#e0e6f0"),  // ink-light
+      author: new THREE.Color("#b85ca2"),    // magenta
+      class: new THREE.Color("#d1b06e"),     // gold
+      audit: new THREE.Color("#8899b8"),     // slate grey
+      notebooklm: new THREE.Color("#7bc2a6") // mint green
+    };
+
+    // ─── 2. WebGL Scene & Camera Setup ───
+    const canvas = document.getElementById("canvas");
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false });
+    renderer.setPixelRatio(1); // Performance-friendly, custom shader handles downsampling
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x05060e, 0.012);
+
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 300);
+    camera.position.set(0, 20, 90);
+
+    // ─── 3. Shader Material for 8-Bit Pixel Stars ───
+    const starVertexShader = `
+      uniform float uStarScale;
+      attribute float aSize;
+      attribute vec3 aColor;
+      varying vec3 vColor;
+      void main() {
+        vColor = aColor;
+        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+        gl_Position = projectionMatrix * mvPosition;
+        // Size attenuates with distance, enforcing a minimum size of 12.0 so 5x5 star is readable
+        gl_PointSize = max(aSize * uStarScale * (350.0 / -mvPosition.z), 12.0);
+      }
+    `;
+
+    const starFragmentShader = `
+      varying vec3 vColor;
+      void main() {
+        vec2 uv = gl_PointCoord;
+        vec2 p = floor(uv * 5.0); // ranges from 0.0 to 4.0
+        float dist = abs(p.x - 2.0) + abs(p.y - 2.0);
+        if (dist > 2.05) discard;
+        gl_FragColor = vec4(vColor * 1.2, 1.0);
+      }
+    `;
+
+    // ─── 4. Particle System for Scrolling Binary Streams ───
+    const binaryVertexShader = `
+      attribute float aBinaryType;
+      attribute float aSpeed;
+      uniform float uTime;
+      varying float vBinaryType;
+      varying float vAlpha;
+      void main() {
+        vBinaryType = aBinaryType;
+        
+        // Continuous wrapping vertical motion
+        vec3 p = position;
+        p.y -= uTime * aSpeed * 2.5;
+        p.y = mod(p.y + 20.0, 40.0) - 20.0;
+        
+        // Fade particles near top and bottom limits
+        vAlpha = smoothstep(-20.0, -10.0, p.y) * (1.0 - smoothstep(10.0, 20.0, p.y));
+
+        vec4 mvPosition = modelViewMatrix * vec4(p, 1.0);
+        gl_Position = projectionMatrix * mvPosition;
+        gl_PointSize = 18.0 * (15.0 / -mvPosition.z);
+      }
+    `;
+
+    const binaryFragmentShader = `
+      varying float vBinaryType;
+      varying float vAlpha;
+      void main() {
+        // Build 3x5 procedural characters "0" and "1"
+        vec2 gp = floor(gl_PointCoord * vec2(3.0, 5.0)); // columns 0.0-2.0, rows 0.0-4.0
+        
+        bool active = false;
+        if (vBinaryType < 0.5) {
+          // Character "0": fill border, leave 1x3 hole inside
+          active = (gp.x == 0.0 || gp.x == 2.0 || gp.y == 0.0 || gp.y == 4.0);
+        } else {
+          // Character "1": fill center column, plus minor top serif
+          active = (gp.x == 1.0 || (gp.x == 0.0 && gp.y == 4.0) || gp.y == 0.0);
+        }
+        
+        if (!active) discard;
+        
+        // Neon green-cyan matrix glow tint
+        vec3 tint = vec3(0.1, 0.9, 0.5) * 0.8;
+        gl_FragColor = vec4(tint, vAlpha * 0.65);
+      }
+    `;
+
+    // ─── 5. Custom Post-Processing CRT Shader ───
+    const postVertexShader = `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = vec4(position, 1.0);
+      }
+    `;
+
+    const postFragmentShader = `
+      uniform sampler2D tDiffuse;
+      uniform vec2 uResolution;
+      uniform float uResScale;
+      uniform float uAberration;
+      uniform float uScanlineOpacity;
+      uniform float uStaticNoise;
+      uniform float uTime;
+      varying vec2 vUv;
+      
+      float random(vec2 p) {
+        return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+      }
+
+      void main() {
+        // Downsample coordinates to generate square pixel blocks
+        float rx = uResScale;
+        float ry = uResScale * (uResolution.y / uResolution.x);
+        vec2 res = vec2(rx, ry);
+        vec2 dUv = floor(vUv * res) / res;
+        
+        // Chromatic Aberration offset (radial shift from screen center)
+        vec2 centerOffset = dUv - 0.5;
+        vec2 rUv = dUv - centerOffset * (uAberration * 0.0035);
+        vec2 bUv = dUv + centerOffset * (uAberration * 0.0035);
+        
+        // Fetch channels with offsets
+        float r = texture2D(tDiffuse, rUv).r;
+        float g = texture2D(tDiffuse, dUv).g;
+        float b = texture2D(tDiffuse, bUv).b;
+        vec3 col = vec3(r, g, b);
+        
+        // Horizontal scanlines based on raw UV
+        float scanline = sin(vUv.y * uResolution.y * 1.5) * 0.5 + 0.5;
+        col = mix(col, col * (1.0 - uScanlineOpacity * 0.45), scanline);
+        
+        // Additive static noise
+        float noise = (random(dUv + uTime) - 0.5) * uStaticNoise;
+        col += vec3(noise);
+        
+        // Vignette effect (retro curvature shadow)
+        float dist = length(centerOffset);
+        float vignette = smoothstep(0.72, 0.28, dist);
+        col *= vignette;
+        
+        gl_FragColor = vec4(col, 1.0);
+      }
+    `;
+
+    // ─── 6. Build the Scene Objects ───
+
+    // A. 3D Vector Grid Helpers (Floor & Ceiling)
+    const gridColor = new THREE.Color("#182030");
+    const gridFloor = new THREE.GridHelper(80, 40, gridColor, gridColor);
+    gridFloor.position.y = -10;
+    scene.add(gridFloor);
+
+    const gridCeil = new THREE.GridHelper(80, 40, gridColor, gridColor);
+    gridCeil.position.y = 10;
+    scene.add(gridCeil);
+
+    // B. Scrolling Binary Rain Streams
+    const numRain = 1200;
+    const rainGeo = new THREE.BufferGeometry();
+    const rainPos = new Float32Array(numRain * 3);
+    const rainType = new Float32Array(numRain);
+    const rainSpd = new Float32Array(numRain);
+
+    for (let i = 0; i < numRain; i++) {
+      rainPos[i*3] = (Math.random() - 0.5) * 60;   // Wide dispersal X
+      rainPos[i*3+1] = (Math.random() - 0.5) * 40; // Height distribution Y
+      rainPos[i*3+2] = (Math.random() - 0.5) * 60; // Deep Z
+      rainType[i] = Math.random() > 0.5 ? 1.0 : 0.0;
+      rainSpd[i] = 0.4 + Math.random() * 0.8;
+    }
+
+    rainGeo.setAttribute("position", new THREE.BufferAttribute(rainPos, 3));
+    rainGeo.setAttribute("aBinaryType", new THREE.BufferAttribute(rainType, 1));
+    rainGeo.setAttribute("aSpeed", new THREE.BufferAttribute(rainSpd, 1));
+
+    const rainMat = new THREE.ShaderMaterial({
+      vertexShader: binaryVertexShader,
+      fragmentShader: binaryFragmentShader,
+      uniforms: { uTime: { value: 0 } },
+      transparent: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending
+    });
+    const rainParticles = new THREE.Points(rainGeo, rainMat);
+    scene.add(rainParticles);
+
+    // C. Node Star Clusters
+    const numNodes = NODES.length;
+    const nodePositions = new Float32Array(numNodes * 3);
+    const nodeColors = new Float32Array(numNodes * 3);
+    const nodeSizes = new Float32Array(numNodes);
+
+    // Assign dynamic 3D physics positions to nodes
+    NODES.forEach((node, i) => {
+      // Use pre-computed NetworkX coordinates if available, otherwise spawn in a spiral layout
+      let posX = node.x !== undefined ? node.x : 0;
+      let posY = node.y !== undefined ? node.y : 0;
+      let posZ = node.z !== undefined ? node.z : 0;
+
+      if (node.x === undefined) {
+        const angle = (i / numNodes) * Math.PI * 4.5;
+        const radius = 4 + (i / numNodes) * 12;
+        posX = Math.cos(angle) * radius;
+        posY = (Math.random() - 0.5) * 4;
+        posZ = Math.sin(angle) * radius;
+      }
+
+      node.pos = new THREE.Vector3(posX, posY, posZ);
+      node.anchor = new THREE.Vector3(posX, posY, posZ); // Store original anchor position
+      node.vel = new THREE.Vector3(0, 0, 0);
+
+      nodePositions[i*3] = node.pos.x;
+      nodePositions[i*3+1] = node.pos.y;
+      nodePositions[i*3+2] = node.pos.z;
+
+      const col = COLORS[node.group] || COLORS.atom;
+      nodeColors[i*3] = col.r;
+      nodeColors[i*3+1] = col.g;
+      nodeColors[i*3+2] = col.b;
+
+      // Density-based size scaling (using square root to prevent high-degree nodes from becoming too massive)
+      nodeSizes[i] = 0.6 + Math.sqrt(node.linksCount) * 0.15;
+    });
+
+    const nodeGeo = new THREE.BufferGeometry();
+    const nodePosAttr = new THREE.BufferAttribute(nodePositions, 3);
+    nodeGeo.setAttribute("position", nodePosAttr);
+    nodeGeo.setAttribute("aColor", new THREE.BufferAttribute(nodeColors, 3));
+    nodeGeo.setAttribute("aSize", new THREE.BufferAttribute(nodeSizes, 1));
+
+    const nodeMat = new THREE.ShaderMaterial({
+      vertexShader: starVertexShader,
+      fragmentShader: starFragmentShader,
+      uniforms: {
+        uStarScale: { value: 1.2 }
+      },
+      transparent: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending
+    });
+    const nodePoints = new THREE.Points(nodeGeo, nodeMat);
+    scene.add(nodePoints);
+
+    // D. Dotted Vector Links (Mesh Segments)
+    const linksGeometry = new THREE.BufferGeometry();
+    const linksPositions = new Float32Array(EDGES.length * 6);
+    const linksColors = new Float32Array(EDGES.length * 6);
+
+    EDGES.forEach((edge, i) => {
+      const srcNode = NODES[edge.source];
+      const tgtNode = NODES[edge.target];
+      
+      linksPositions[i*6] = srcNode.pos.x;
+      linksPositions[i*6+1] = srcNode.pos.y;
+      linksPositions[i*6+2] = srcNode.pos.z;
+      linksPositions[i*6+3] = tgtNode.pos.x;
+      linksPositions[i*6+4] = tgtNode.pos.y;
+      linksPositions[i*6+5] = tgtNode.pos.z;
+
+      const colSrc = COLORS[srcNode.group] || COLORS.atom;
+      const colTgt = COLORS[tgtNode.group] || COLORS.atom;
+
+      linksColors[i*6] = colSrc.r;
+      linksColors[i*6+1] = colSrc.g;
+      linksColors[i*6+2] = colSrc.b;
+      linksColors[i*6+3] = colTgt.r;
+      linksColors[i*6+4] = colTgt.g;
+      linksColors[i*6+5] = colTgt.b;
+    });
+
+    const linkPosAttr = new THREE.BufferAttribute(linksPositions, 3);
+    linksGeometry.setAttribute("position", linkPosAttr);
+    linksGeometry.setAttribute("color", new THREE.BufferAttribute(linksColors, 3));
+
+    const linksMaterial = new THREE.LineBasicMaterial({
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.75,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending
+    });
+    const linkLines = new THREE.LineSegments(linksGeometry, linksMaterial);
+    scene.add(linkLines);
+
+    // E. Sleek Voxel Avatar Probe (Centered relative to Camera)
+    // Draw an double pyramid (octahedron)
+    const avatarGeo = new THREE.OctahedronGeometry(0.18, 0);
+    const avatarMat = new THREE.MeshBasicMaterial({
+      color: 0x45a884,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.85
+    });
+    const avatarMesh = new THREE.Mesh(avatarGeo, avatarMat);
+    
+    // Add directly to camera. Offset 2.2 units forward along camera look vector
+    avatarMesh.position.set(0, 0, -2.2);
+    camera.add(avatarMesh);
+    scene.add(camera); // Add camera to scene since it now hosts the avatar child
+
+    // ─── 7. Navigation Keyboard & Mouse Handlers ───
+    const keys = { w: false, a: false, s: false, d: false, q: false, e: false };
+    window.addEventListener("keydown", (e) => {
+      const k = e.key.toLowerCase();
+      if (k in keys) keys[k] = true;
+    });
+    window.addEventListener("keyup", (e) => {
+      const k = e.key.toLowerCase();
+      if (k in keys) keys[k] = false;
+    });
+
+    // Flight steering parameters
+    let pitch = -0.20;
+    let yaw = 0;
+    const velocity = new THREE.Vector3(0, 0, 0);
+
+    const hudPos = document.getElementById("hud-pos");
+    const hudVel = document.getElementById("hud-vel");
+    const hudFps = document.getElementById("hud-fps");
+    const hudNodes = document.getElementById("hud-nodes");
+    if (hudNodes) {
+      hudNodes.textContent = `${NODES.length} BITS`;
+    }
+
+    // Pointer lock for steering
+    const lockBtn = document.getElementById("lock-btn");
+    const lockAlert = document.getElementById("pointer-lock-alert");
+    let isLocked = false;
+
+    lockBtn.addEventListener("click", () => {
+      canvas.requestPointerLock();
+    });
+
+    document.addEventListener("pointerlockchange", () => {
+      isLocked = (document.pointerLockElement === canvas);
+      lockAlert.style.display = isLocked ? "block" : "none";
+      lockBtn.textContent = isLocked ? "MOUSE STEER LOCKED" : "LOCK MOUSE FOR FLIGHT";
+    });
+
+    // Touch/drag fallback steering
+    let lastMouseX = 0, lastMouseY = 0;
+    let isDragging = false;
+
+    window.addEventListener("mousedown", (e) => {
+      if (e.target !== canvas) return;
+      isDragging = true;
+      lastMouseX = e.clientX;
+      lastMouseY = e.clientY;
+    });
+    window.addEventListener("mouseup", () => isDragging = false);
+
+    window.addEventListener("mousemove", (e) => {
+      if (isLocked) {
+        const sens = parseFloat(document.getElementById("param-spd").value) * 0.0001;
+        yaw -= e.movementX * sens * 12.0;
+        pitch -= e.movementY * sens * 12.0;
+        pitch = Math.max(-Math.PI/2.4, Math.min(Math.PI/2.4, pitch));
+      } else if (isDragging) {
+        const dx = e.clientX - lastMouseX;
+        const dy = e.clientY - lastMouseY;
+        yaw -= dx * 0.004;
+        pitch -= dy * 0.004;
+        pitch = Math.max(-Math.PI/2.4, Math.min(Math.PI/2.4, pitch));
+        lastMouseX = e.clientX;
+        lastMouseY = e.clientY;
+      }
+    });
+
+    // ─── 8. CPU Force-Directed Graph Physics ───
+    const GRAVITY_CONST = 0.015;
+    
+    function updatePhysics(repStrength, sprStrength, centerGrav) {
+      const size = NODES.length;
+      
+      // Calculate world coordinates of avatar
+      const avatarWorldPos = new THREE.Vector3();
+      avatarMesh.getWorldPosition(avatarWorldPos);
+
+      // Determine the single closest node to the avatar
+      let closestNode = null;
+      let minAvatarDist = Infinity;
+
+      for (let i = 0; i < size; i++) {
+        const node = NODES[i];
+        
+        // Distance to avatar
+        const toAvatar = new THREE.Vector3().subVectors(avatarWorldPos, node.pos);
+        const avatarDist = toAvatar.length();
+
+        if (avatarDist < minAvatarDist) {
+          minAvatarDist = avatarDist;
+          closestNode = node;
+        }
+      }
+
+      // Proximity forces: Repel nodes close to avatar, attract closest, and spring back to anchor
+      for (let i = 0; i < size; i++) {
+        const node = NODES[i];
+        
+        // 1. Spring force pulling node back to its original pre-computed anchor position
+        const anchorPos = node.anchor || node.pos;
+        const toAnchor = new THREE.Vector3().subVectors(anchorPos, node.pos);
+        // sprStrength controls the anchor return spring stiffness
+        node.vel.addScaledVector(toAnchor, sprStrength * 0.005);
+
+        // 2. Avatar interaction forces
+        const toAvatar = new THREE.Vector3().subVectors(avatarWorldPos, node.pos);
+        const avatarDist = toAvatar.length();
+
+        if (node === closestNode) {
+          // Special magnetic attraction on the SINGLE closest node
+          if (avatarDist < 12.0) {
+            // Soft pull towards the avatar
+            toAvatar.normalize().multiplyScalar(0.48);
+            node.vel.add(toAvatar);
+            
+            // Open HUD Scanner Panel and populate
+            updateScanner(node, avatarDist);
+          }
+        } else {
+          // Standard repelling force from avatar for other nearby nodes
+          if (avatarDist < 8.0) {
+            // repStrength controls avatar repulsion power
+            const pushForce = -(repStrength * 0.05) / (avatarDist * avatarDist + 0.2);
+            toAvatar.normalize().multiplyScalar(pushForce);
+            node.vel.add(toAvatar);
+          }
+        }
+      }
+
+      if (!closestNode || minAvatarDist >= 12.0) {
+        document.getElementById("scanner-panel").style.display = "none";
+      }
+
+      // D. Integrate velocity & apply damping friction
+      const damping = centerGrav * 0.01;
+      const friction = 0.88 - damping; 
+
+      for (let i = 0; i < size; i++) {
+        const node = NODES[i];
+        node.pos.add(node.vel);
+        node.vel.multiplyScalar(friction);
+
+        // Update vertex buffer positions
+        nodePositions[i*3] = node.pos.x;
+        nodePositions[i*3+1] = node.pos.y;
+        nodePositions[i*3+2] = node.pos.z;
+      }
+
+      nodePosAttr.needsUpdate = true;
+
+      // Update Link Line geometries to lock onto new node points
+      EDGES.forEach((edge, i) => {
+        const srcNode = NODES[edge.source];
+        const tgtNode = NODES[edge.target];
+        
+        linksPositions[i*6] = srcNode.pos.x;
+        linksPositions[i*6+1] = srcNode.pos.y;
+        linksPositions[i*6+2] = srcNode.pos.z;
+        linksPositions[i*6+3] = tgtNode.pos.x;
+        linksPositions[i*6+4] = tgtNode.pos.y;
+        linksPositions[i*6+5] = tgtNode.pos.z;
+      });
+      linkPosAttr.needsUpdate = true;
+    }
+
+    // ─── 9. Scanner HUD Panel Updates ───
+    const scanPanel = document.getElementById("scanner-panel");
+    const scanTitle = document.getElementById("scan-title");
+    const scanGroup = document.getElementById("scan-group");
+    const scanDesc = document.getElementById("scan-desc");
+    const scanAddr = document.getElementById("scan-addr");
+    const scanDegree = document.getElementById("scan-degree");
+    const scanDist = document.getElementById("scan-dist");
+
+    function updateScanner(node, distance) {
+      if (scanPanel.style.display !== "block") {
+        scanPanel.style.display = "block";
+      }
+      scanTitle.textContent = node.title;
+      scanGroup.textContent = node.group;
+      scanGroup.style.borderColor = node.groupColor || "var(--rule)";
+      scanDesc.textContent = node.desc;
+      scanAddr.textContent = node.addr;
+      scanDegree.textContent = node.linksCount + " LINKS";
+      scanDist.textContent = distance.toFixed(2) + "M";
+    }
+
+    // ─── 10. Post-Processing Setup ───
+    const rt = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, {
+      minFilter: THREE.NearestFilter,
+      magFilter: THREE.NearestFilter,
+      format: THREE.RGBAFormat
+    });
+
+    const postScene = new THREE.Scene();
+    const postCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+    const postUniforms = {
+      tDiffuse: { value: rt.texture },
+      uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+      uResScale: { value: 512.0 },
+      uAberration: { value: 8.0 },
+      uScanlineOpacity: { value: 0.7 },
+      uStaticNoise: { value: 0.2 },
+      uTime: { value: 0 }
+    };
+
+    const postMat = new THREE.ShaderMaterial({
+      vertexShader: postVertexShader,
+      fragmentShader: postFragmentShader,
+      uniforms: postUniforms,
+      depthWrite: false,
+      depthTest: false
+    });
+
+    const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), postMat);
+    postScene.add(quad);
+
+    // Resize management
+    function resize() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      renderer.setSize(w, h);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      rt.setSize(w, h);
+      postUniforms.uResolution.value.set(w, h);
+    }
+    window.addEventListener("resize", resize);
+
+    // ─── 11. Custom Interactive BIOS Panel Handlers ───
+    const sliders = {
+      pix: document.getElementById("param-pix"),
+      aberr: document.getElementById("param-aberr"),
+      scan: document.getElementById("param-scan"),
+      noise: document.getElementById("param-noise"),
+      rep: document.getElementById("param-rep"),
+      spr: document.getElementById("param-spr"),
+      grav: document.getElementById("param-grav"),
+      spd: document.getElementById("param-spd"),
+      fog: document.getElementById("param-fog"),
+      size: document.getElementById("param-size"),
+      lopac: document.getElementById("param-lopac")
+    };
+
+    const values = {
+      pix: document.getElementById("val-pix"),
+      aberr: document.getElementById("val-aberr"),
+      scan: document.getElementById("val-scan"),
+      noise: document.getElementById("val-noise"),
+      rep: document.getElementById("val-rep"),
+      spr: document.getElementById("val-spr"),
+      grav: document.getElementById("val-grav"),
+      spd: document.getElementById("val-spd"),
+      fog: document.getElementById("val-fog"),
+      size: document.getElementById("val-size"),
+      lopac: document.getElementById("val-lopac")
+    };
+
+    function updateBiosLabels() {
+      values.pix.textContent = sliders.pix.value + "p";
+      values.aberr.textContent = (sliders.aberr.value / 100).toFixed(2);
+      values.scan.textContent = (sliders.scan.value / 100).toFixed(2);
+      values.noise.textContent = (sliders.noise.value / 100).toFixed(2);
+      values.rep.textContent = parseFloat(sliders.rep.value).toFixed(1);
+      values.spr.textContent = (sliders.spr.value / 100).toFixed(2);
+      values.grav.textContent = (sliders.grav.value / 10).toFixed(1);
+      values.spd.textContent = parseFloat(sliders.spd.value).toFixed(1);
+      values.fog.textContent = (sliders.fog.value / 1000).toFixed(3);
+      values.size.textContent = (sliders.size.value / 10).toFixed(1);
+      values.lopac.textContent = (sliders.lopac.value / 100).toFixed(2);
+      
+      // Update post-processing uniforms directly
+      postUniforms.uResScale.value = parseFloat(sliders.pix.value);
+      postUniforms.uAberration.value = parseFloat(sliders.aberr.value);
+      postUniforms.uScanlineOpacity.value = sliders.scan.value / 100;
+      postUniforms.uStaticNoise.value = sliders.noise.value / 100;
+
+      // Update fog, star size scale, and link opacity
+      if (scene.fog) {
+        scene.fog.density = sliders.fog.value / 1000;
+      }
+      if (nodeMat && nodeMat.uniforms.uStarScale) {
+        nodeMat.uniforms.uStarScale.value = sliders.size.value / 10;
+      }
+      if (linksMaterial) {
+        linksMaterial.opacity = sliders.lopac.value / 100;
+      }
+    }
+
+    Object.keys(sliders).forEach(key => {
+      sliders[key].addEventListener("input", updateBiosLabels);
+    });
+
+    updateBiosLabels();
+
+    // Connection line visibility toggle
+    let showLinks = true;
+    const btnToggleLinks = document.getElementById("btn-toggle-links");
+    if (btnToggleLinks) {
+      btnToggleLinks.addEventListener("click", () => {
+        showLinks = !showLinks;
+        btnToggleLinks.textContent = showLinks ? "ON" : "OFF";
+        if (linkLines) {
+          linkLines.visible = showLinks;
+        }
+      });
+    }
+
+    // ─── 12. Main Rendering Animation Loop ───
+    let lastTime = 0;
+    let frameCount = 0;
+    let fpsInterval = 0;
+
+    function animate(now) {
+      requestAnimationFrame(animate);
+
+      const delta = (now - lastTime) * 0.001;
+      lastTime = now;
+
+      // A. Calculate FPS
+      frameCount++;
+      fpsInterval += delta;
+      if (fpsInterval >= 1.0) {
+        hudFps.textContent = Math.round(frameCount / fpsInterval);
+        frameCount = 0;
+        fpsInterval = 0;
+      }
+
+      // B. Steering movement and orientation calculation
+      // Pitch/Yaw rotation matrix applied to Camera orientation
+      const targetRotation = new THREE.Quaternion().setFromEuler(new THREE.Euler(pitch, yaw, 0, "YXZ"));
+      camera.quaternion.slerp(targetRotation, 0.15); // Smooth orientation tracking
+
+      // Vector speed translation based on active WASD key registers
+      const speed = parseFloat(sliders.spd.value) * 0.015;
+      const moveDir = new THREE.Vector3();
+
+      if (keys.w) moveDir.z -= 1.0;
+      if (keys.s) moveDir.z += 1.0;
+      if (keys.a) moveDir.x -= 1.0;
+      if (keys.d) moveDir.x += 1.0;
+      if (keys.q) moveDir.y += 1.0;
+      if (keys.e) moveDir.y -= 1.0;
+
+      moveDir.normalize();
+      
+      // Translate coordinates relative to active camera rotation
+      moveDir.applyQuaternion(camera.quaternion);
+      
+      // Apply translation force vector to avatar speed with inertia damping
+      velocity.lerp(moveDir.multiplyScalar(speed), 0.1);
+      camera.position.add(velocity);
+
+      // C. Run 3D Force physics iteration
+      const rep = parseFloat(sliders.rep.value);
+      const spr = parseFloat(sliders.spr.value);
+      const grav = parseFloat(sliders.grav.value);
+      updatePhysics(rep, spr, grav);
+
+      // D. Update uniforms
+      const uTime = now * 0.001;
+      rainMat.uniforms.uTime.value = uTime;
+      postUniforms.uTime.value = uTime;
+
+      // E. Render Scene to Custom RenderTarget buffer
+      renderer.setRenderTarget(rt);
+      renderer.render(scene, camera);
+
+      // F. Render Post-processed buffer to window viewport
+      renderer.setRenderTarget(null);
+      renderer.render(postScene, postCamera);
+
+      // G. Update HUD readout coordinates
+      hudPos.textContent = `X:${camera.position.x.toFixed(1)} Y:${camera.position.y.toFixed(1)} Z:${camera.position.z.toFixed(1)}`;
+      hudVel.textContent = (velocity.length() * 60.0).toFixed(2) + " M/S";
+    }
+
+    // Launch simulation loop
+    requestAnimationFrame(animate);
+
+  </script>
+</body>
+</html>
