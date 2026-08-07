@@ -4,16 +4,13 @@
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-07 / 19 {{·}} What I Am Building
+07 / 19 {{·}} Retrieval First
 
 ## [h22] h2
-A brain that {{helps me think}}
+I have to read it {{myself}}
 
-## [blist3] blist
-- Not a fancier filing cabinet. Small notes, one idea each, that connect into *arguments*.
-- Most advice obsesses over capture. Ferreira and colleagues found that the other end mattered more, and that how people plan to retrieve shapes how their knowledge bases get built and used [[(Ferreira et al., 2026, p. 72)]].
-- Memory research points the same way. Retrieval practice beats re-reading for long-term retention [[(Roediger & Karpicke, 2006)]].
-- So I built for retrieval first, then went looking for ways the claim might be wrong.
+## [body3] body
+After that I came upon the concept of retrieval first. It changed how I thought about the whole thing. The core of a knowledge management system, for me, is being able to retrieve the information better. So the system has to be designed for that, and my own actions have to be optimised for it too. Ferreira and colleagues found the same thing in practice. How people plan to retrieve is what shapes how their knowledge bases get built and used [[(Ferreira et al., 2026, p. 72)]].
 
-## [essay4] essay · Field note
-Retrieval-first is a constraint rather than a slogan, and it decides small things. Filenames became full sentences, because I search in sentences. One idea per file, because two ideas in one file means one of them is gone. The test I apply is boring and specific. It is eleven at night, I am writing, and I need the paper I read in April.
+## [body4] body
+If I use AI to read and summarise everything, then when I go back to retrieve that knowledge I will not have any idea what it is about. To retrieve the knowledge I have to read it myself, and organise it in a way that makes it easier for me to get it back. The memory research points the same way. Roediger and Karpicke gave students something to read, then had one group read it again and made the other group try to recall it from memory. Reading it again won on a test taken straight away. But two days later, and a week later, the group who had to pull it back out of their own heads remembered substantially more [[(Roediger & Karpicke, 2006)]].
