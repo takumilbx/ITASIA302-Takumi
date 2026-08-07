@@ -10,7 +10,7 @@
 Everyone is {{selling}} a brain
 
 ## [blist3] blist
-- Forte's book sold well, and there is now a creator economy demonstrating note-taking systems with the energy of a skincare routine.
+- His UK publisher describes the book as a Wall Street Journal bestseller, and Forte reports that it sold more than one hundred thousand copies in its first nine months [[(Forte, 2023; Profile Books, n.d.)]]. There is now a creator economy demonstrating note-taking systems with the energy of a skincare routine.
 - The newest promise is that AI makes all of it effortless. There is already research mapping the path from PKM to second brain to a personal AI companion [[(Aal & Rüller, 2025)]].
 - Whether any of it makes you think *better* gets asked much less often. The movement is practitioner-driven, and the academic literature treats it as information management [[(Jones, 2010)]] or as speculative design [[(Aal & Rüller, 2025)]] rather than as anything measured.
 - Jones puts the deeper problem plainly. "Knowledge can be managed only indirectly, through the management of information" [[(Jones, 2010, Abstract)]]. The knowing stays in a head.
