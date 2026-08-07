@@ -34,16 +34,16 @@ If you read a lot of academic articles, or keep a lot of literature sources, Zot
 Claude Code
 
 ## [gd11] gd
-STILL MINE, REWRITE ME. The operator. It reads the literature note, opens the PDF, runs the extraction, and checks every candidate against the source.
+A command line tool from Anthropic, built for programming. I use it to manage the files on my computer. Claude chat, and other AI tools, cannot reach my local files at all. Claude Cowork can reach them, but it does its work inside a sealed environment and moves the files in and out of it [[(Anthropic, 2026)]]. Claude Code works on the files where they already are [[(Anthropic, n.d.)]]. For me that is noticeably faster, and it is how this website was built.
 
 ## [gk12] gk
 NotebookLM
 
 ## [gd13] gd
-STILL MINE, REWRITE ME. The extractor. Queries that can only answer from the source I hand it, which is what keeps the claims honest.
+I use it to ask questions about a single paper. It is quite common now. People use it to summarise a paper, to find the argument inside it, or to turn something complicated into a video summary or a podcast so it is easier to take in. For me the most powerful part is how it works. It only references what is in the document I gave it, so in my experience I have not caught it inventing anything, unlike other platforms.
 
 ## [gk14] gk
 Notion
 
 ## [gd15] gd
-STILL MINE, REWRITE ME. The calendar. Chapters, milestones and deadlines, linked back by citekey.
+A landing page where I keep everything together. It references the data from my Obsidian vault, and the alloys I have already finalised. The vault has a lot of claims in it. The Notion page only has the selected ones, presented so that you can move around and read them easily.

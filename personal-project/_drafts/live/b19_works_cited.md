@@ -11,6 +11,8 @@ References
 
 ## [refs3] refs
 - Aal, K., & Rüller, S. (2025). From personal knowledge management to the second brain to the personal AI companian [sic]. In *Companion Proceedings of the 2025 ACM International Conference on Supporting Group Work (GROUP '25 Companion)* (pp. 90-93). ACM. https://doi.org/10.1145/3688828.3699647
+- Anthropic. (2026). *Claude Cowork architecture overview.* Claude Help Center. Retrieved August 7, 2026, from https://support.claude.com/en/articles/14479288-claude-cowork-architecture-overview
+- Anthropic. (n.d.). *Claude Code overview.* Claude Code documentation. Retrieved August 7, 2026, from https://code.claude.com/docs/en/overview
 - Archambault, L. M., & Barnett, J. H. (2010). Revisiting technological pedagogical content knowledge: Exploring the TPACK framework. *Computers & Education, 55*(4), 1656-1662. https://doi.org/10.1016/j.compedu.2010.07.009
 - Brantley-Dias, L., & Ertmer, P. A. (2013). Goldilocks and TPACK: Is the construct "just right?" *Journal of Research on Technology in Education, 46*(2), 103-128. https://doi.org/10.1080/15391523.2013.10782615
 - Callister, W. D., Jr., & Rethwisch, D. G. (2018). *Materials science and engineering: An introduction* (10th ed.). Wiley.
