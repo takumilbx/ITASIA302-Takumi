@@ -1,10 +1,10 @@
-# b14 · thesis
+# b13 · thesis
 
 <!-- Rewrite the text. Keep the ## [slot] headings, keep [[citations]] exactly.
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-14 / 16 {{·}} Working Thesis
+13 / 15 {{·}} Working Thesis
 
 ## [h22] h2
 The {{vault}}, and its claim

@@ -4,7 +4,7 @@
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-10 / 16 {{·}} The Workflow
+10 / 15 {{·}} The Workflow
 
 ## [h22] h2
 One paper, {{start to finish}}
@@ -20,3 +20,12 @@ Then I use Claude Code so that Claude can drive NotebookLM directly, instead of 
 
 ## [body6] body
 Then I start to see the connections between the atoms, and I verify the molecules. Combining those molecules, I form the alloys myself.
+
+## [uicap7] uicap
+**Zotero** · the paper arrives
+
+## [uicap8] uicap
+**Obsidian** · the literature note
+
+## [uicap9] uicap
+**The atom** · one idea, one file

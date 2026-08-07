@@ -1,10 +1,10 @@
-# b16 · works cited
+# b15 · works cited
 
 <!-- Rewrite the text. Keep the ## [slot] headings, keep [[citations]] exactly.
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-16 / 16 {{·}} Works Cited
+15 / 15 {{·}} Works Cited
 
 ## [h22] h2
 References

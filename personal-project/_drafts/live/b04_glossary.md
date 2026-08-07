@@ -4,7 +4,7 @@
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-04 / 16 {{·}} Plain Language
+04 / 15 {{·}} Plain Language
 
 ## [h22] h2
 The {{tools}} I use

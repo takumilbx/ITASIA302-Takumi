@@ -4,7 +4,7 @@
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-07 / 16 {{·}} Retrieval First
+07 / 15 {{·}} Retrieval First
 
 ## [h22] h2
 I have to read it {{myself}}

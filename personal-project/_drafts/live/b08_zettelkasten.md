@@ -4,7 +4,7 @@
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-08 / 16 {{·}} Zettelkasten
+08 / 15 {{·}} Zettelkasten
 
 ## [h22] h2
 The {{slip-box}}
