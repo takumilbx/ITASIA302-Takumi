@@ -10,7 +10,7 @@
 What is {{PKM}}?
 
 ## [body3] body
-I cannot remember things. Personal knowledge management is the thing I think could help me.
+I cannot remember things, but I think personal knowledge management is the thing that could help me, and I will try to explore it in this project.
 
 ## [body4] body
 Personal knowledge management has no single agreed definition. One review of a decade of PKM models lists seven of them before offering another [[(Cheong & Tsui, 2011)]]. The one closest to what I am after describes it as managing what you already know so you can retrieve it time-effectively [[(Jain, 2011, pp. 2-3)]].

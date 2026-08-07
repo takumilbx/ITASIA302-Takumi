@@ -15,7 +15,6 @@ References
 - Brantley-Dias, L., & Ertmer, P. A. (2013). Goldilocks and TPACK: Is the construct "just right?" *Journal of Research on Technology in Education, 46*(2), 103-128. https://doi.org/10.1080/15391523.2013.10782615
 - Callister, W. D., Jr., & Rethwisch, D. G. (2018). *Materials science and engineering: An introduction* (10th ed.). Wiley.
 - Cheong, R. K. F., & Tsui, E. (2011). From skills and competencies to outcome-based collaborative work: Tracking a decade's development of personal knowledge management (PKM) models. *Knowledge and Process Management, 18*(3), 175-193. https://doi.org/10.1002/kpm.380
-- Clark, A., & Chalmers, D. (1998). The extended mind. *Analysis, 58*(1), 7-19. https://doi.org/10.1093/analys/58.1.7
 - Ferreira, J. J., Segura, V., Souza, J. G., & Brasil, J. H. G. (2026). How people manage knowledge in their "second brains": A case study with industry researchers using Obsidian. In C. Ardito et al. (Eds.), *Human-computer interaction: INTERACT 2025* (LNCS Vol. 16111, pp. 72-76). Springer. https://doi.org/10.1007/978-3-032-05008-3_15
 - Forte, T. (2022). *Building a second brain: A proven method to organize your digital life and unlock your creative potential.* Profile Books.
 - Graham, C. R. (2011). Theoretical considerations for understanding technological pedagogical content knowledge (TPACK). *Computers & Education, 57*(3), 1953-1960. https://doi.org/10.1016/j.compedu.2011.04.010
