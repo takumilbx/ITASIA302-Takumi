@@ -13,7 +13,7 @@ What is {{Personal Knowledge Management}}?
 I cannot remember things, but I think personal knowledge management is the thing that could help me, and I will try to explore it in this project.
 
 ## [body4] body
-Personal knowledge management (PKM) has no single agreed definition. One review of a decade of personal knowledge management models lists seven of them before offering another [[(Cheong & Tsui, 2011)]]. Among the many, the one closest to what I am after describes it as managing what you already know so you can retrieve it time-effectively [[(Jain, 2011, pp. 2-3)]].
+Personal knowledge management (PKM) has no single agreed definition. One review of a decade of personal knowledge management models compares them before offering another [[(Cheong & Tsui, 2011)]]. Among the many, the one closest to what I am after describes it as managing what you already know so you can retrieve it time-effectively [[(Jain, 2011, pp. 2-3)]].
 
 ## [body5] body
 For me, personal knowledge management is a system that helps me get whatever information I want at the right time, and it might not fit every person. Everyone has different learning styles and different ways of handling information, so a personal knowledge management system is one that fits your own style of managing knowledge. The point of this project is finding out what kind of system suits me, and then trying to build it in the process.
