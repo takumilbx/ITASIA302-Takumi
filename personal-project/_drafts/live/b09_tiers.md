@@ -4,7 +4,7 @@
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-09 / 15 {{·}} The Three Sizes
+09 / 14 {{·}} The Three Sizes
 
 ## [h22] h2
 Atom, molecule, {{alloy}}

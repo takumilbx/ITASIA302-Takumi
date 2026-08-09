@@ -4,7 +4,7 @@
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-10 / 15 {{·}} The Workflow
+10 / 14 {{·}} The Workflow
 
 ## [h22] h2
 One paper, {{start to finish}}

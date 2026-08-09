@@ -4,7 +4,7 @@
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-06 / 15 {{·}} The Trap
+06 / 14 {{·}} The Trap
 
 ## [h22] h2
 I tried to automate what I {{should do myself}}

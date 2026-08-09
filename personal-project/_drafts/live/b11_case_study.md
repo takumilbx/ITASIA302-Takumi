@@ -4,28 +4,25 @@
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-11 / 15 {{·}} Case Study
+11 / 14 {{·}} Case Study
 
 ## [h22] h2
-The method on a {{real thesis problem}}
+Consolidate notes into {{thesis-ready argument}}
 
 ## [body3] body
-My thesis asks how teachers build TPACK, the knowledge that folds technology into real teaching [[(Mishra & Koehler, 2006)]]. I am comparing Japan's GIGA School Program with pilot classrooms run by the Bangkok Metropolitan Administration. I sit in on lessons at what Spradley calls the passive participation level, and interview afterwards [[(Spradley, 1980, pp. 58-59)]]. What follows are live notes from that work, copied out of the vault as they stand.
+Everything before this is the method of how I store my notes and make connections between them. Here is how I pull up those connections on my own thesis, which asks how teachers learn to teach with technology [[(Mishra & Koehler, 2006)]]. Every paper I read comes apart into single claims, one claim per note.
 
-## [ledger4] ledger
-- (row) atom · field :: Teacher A frames science and ICT as well matched because the subject centers on observation and recording.
-- (row) atom · field :: Teacher A can state criteria for choosing analog over digital, but ultimately grounds the preference in tacit sensory judgment.
-- (row) atom · field :: A teaching move the observer read as deliberate pedagogy, Teacher A describes as not consciously intended.
-- (lit) atom · lit :: Expert teachers in one-to-one classrooms give clear reasons for when not to use ICT; novices barely can [[(Yagisawa & Horita, 2017, p. 87)]].
-- (lit) atom · lit :: Japanese experts apply a "harmonious attitude" (調和的態度): switching between traditional and ICT-based instruction as a mature strategy [[(Yagisawa & Horita, 2017)]].
-- (lit) atom · lit :: Novices and veterans alike treat classroom discipline as the prerequisite for ICT integration [[(Yagisawa & Horita, 2017)]].
-- (out) alloy · forming :: Knowing when not to use ICT as the mark of integrated TPACK.~~A chapter-grade argument the system surfaced. No single source contains it.~~
+## [body4] body
+Two of those notes came from different fields, months apart. One counted how often education research looks at a teacher's context, and found it in about a third of studies [[(Rosenberg & Koehler, 2015, p. 194)]]. The other is an anthropologist saying the person being interviewed should decide what matters, not the interviewer [[(Spradley, 1979/2016, p. 29)]]. Apart, they are not related at all, but putting them together, they say the thing my field does not have, which is the thing a questionnaire cannot reach.
 
 ## [body5] body
-*The molecule they form:* selective non-use of ICT is an advanced and partly tacit form of TPACK. Teacher A enacts the discrimination without naming it. Yagisawa's veterans name it, then ground it in the same situational judgment. Same competence, different levels of articulacy. Spradley's warning applies, that "a large part of any culture consists of tacit knowledge" [[(Spradley, 1979/2016, p. 9)]], which would leave this competence invisible to surveys and to formal training design. The discipline finding narrows the claim. Part of knowing when not to use ICT is baseline craft that novices have as well, so only the situational discernment counts as advanced.
+This consolidation of multiple claims from my notes led to my methodology chapter. Teachers hold knowledge they cannot put into words [[(Spradley, 1979/2016, p. 9)]], and the experienced ones explain when not to use a tablet in ways beginners cannot [[(Yagisawa & Horita, 2017, p. 87)]], so I sit in lessons and interview afterwards instead of sending out a survey [[(Spradley, 1980, pp. 58-59)]]. I did not plan that linkage while reading those papers, and it made sense to me the first time I looked at the connection between my notes.
 
-## [body6] body
-The gap shows up in the literature as well. Observed lessons run 64.1 percent technological-pedagogical knowledge, while fully integrated TPCK appears in about 1 percent [[(Yagisawa & Horita, 2019, p. 36)]]. Experience-linked differences in ICT awareness persist into the GIGA era [[(Sakakibara et al., 2025, pp. 51-52)]]. The framework blurs in practice, packaged "much too big" and "too small" at once [[(Brantley-Dias & Ertmer, 2013, p. 104)]]. Empirically only the technology domain separates cleanly [[(Archambault & Barnett, 2010, p. 1659)]], and "very little theoretical development of the model has occurred" [[(Graham, 2011, p. 1954)]]. My molecule sits in that gap.
+## [uicap6] uicap
+**Two atoms** · read months apart
 
-## [essay7] essay · Field note
-This section is why the project exists. I watched Teacher A run a science lesson with the tablets closed, and my first note called it a limitation. The interview corrected me. She could name her criteria for going analog, and then said the real reason was that she could feel it and could not put it into words. Six atoms, one molecule and an alloy that is still forming later, my misreading is turning into a chapter. I would not have caught the mistake without the interview, and I would not have found the literature that agrees with her without the vault.
+## [uicap7] uicap
+**The molecule** · where they met
+
+## [uicap8] uicap
+**The alloy** · now a chapter section

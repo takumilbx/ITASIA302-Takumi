@@ -4,7 +4,7 @@
      *italic*  {{accent}}  **bold**  -->
 
 ## [kick1] kick
-02 / 15 {{·}} Personal Knowledge Management
+02 / 14 {{·}} Personal Knowledge Management
 
 ## [h22] h2
 What is {{PKM}}?
