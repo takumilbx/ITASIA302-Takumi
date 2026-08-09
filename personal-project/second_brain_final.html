@@ -674,11 +674,23 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
   function narrow() { return vw() < 900; }
 
   var NB = 15;
-  var BEAT_NAMES = ["HERO", "THE PROBLEM", "PKM", "SECOND BRAIN", "PLAIN LANGUAGE", "THE HYPE", "THE TRAP",
-                    "RETRIEVAL FIRST", "ZETTELKASTEN", "THREE SIZES", "THE WORKFLOW", "CASE STUDY",
-                    "WHAT IT IS FOR", "END", "WORKS CITED"];
   var panelEls = [];
   for (var pe = 0; pe < NB; pe++) panelEls.push(document.getElementById("b" + pe));
+
+  // Chrome never invents facts: page names and the page count are read out of the
+  // kicks in the prose itself, so a rewrite via prose_io carries straight through.
+  var BEAT_NAMES = [], TOTAL = NB - 1;
+  for (var bn = 0; bn < NB; bn++) {
+    var kEl = panelEls[bn] && panelEls[bn].querySelector(".kick");
+    var kt = kEl ? kEl.textContent.replace(/\s+/g, " ").trim() : "";
+    var km = kt.match(/^(\d+)\s*\/\s*(\d+)\s*·\s*(.+)$/);
+    if (km) { BEAT_NAMES.push(km[3].toUpperCase()); TOTAL = parseInt(km[2], 10) || TOTAL; }
+    else BEAT_NAMES.push(bn === 0 ? "HERO" : "PAGE " + bn);
+  }
+  function secTitle(i) {
+    var h = panelEls[i] && panelEls[i].querySelector("h2");
+    return h ? h.textContent.replace(/\s+/g, " ").trim().toUpperCase() : BEAT_NAMES[i];
+  }
 
   // ---- the vault data ------------------------------------------------------------
   var D = window.__SBF || null;
@@ -853,7 +865,8 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     title: "ESSAY.DOC — TAKUMIWRITE 3.1", glyph: "&#128190;",
     menus: ["File", "Edit", "View", "Insert", "Help"], ruler: true,
     geo: { x: Math.round(W * 0.145), y: 34, w: docW, h: H - 96 },
-    status: ["PAGE 01 / 14", "3,066 NOTES INDEXED", "INS"],
+    status: ["PAGE 01 / " + TOTAL + " · " + BEAT_NAMES[1],
+             N ? N.toLocaleString("en-US") + " NOTES INDEXED" : "VAULT OFFLINE", "INS"],
   });
   var vaultTools = el("div", "vtools");
   var autoLab = el("label", null, "");
@@ -883,9 +896,8 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     for (var i = 0; i < NB; i++) {
       if (!panelEls[i]) continue;
       if (i === 4) {
-        var fl = el("div", "filelink", "<span class='fg'>&#128218;</span> DOUBLE-CLICK: GLOSSARY.HLP — THE SIX TOOLS, DEFINED");
-        fl.addEventListener("dblclick", function () { openWin(winGloss); });
-        fl.addEventListener("click", function () { if (narrow()) openWin(winGloss); });
+        var fl = el("div", "filelink", "<span class='fg'>&#128218;</span> OPEN: GLOSSARY.HLP - " + secTitle(4));
+        fl.addEventListener("click", function () { openWin(winGloss); });
         frag.appendChild(fl);
         winGloss.client.appendChild(panelEls[i]);
         continue;
@@ -896,9 +908,8 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
       }
       frag.appendChild(panelEls[i]);
     }
-    var fl2 = el("div", "filelink", "<span class='fg'>&#128203;</span> DOUBLE-CLICK: REFS.TXT — WORKS CITED");
-    fl2.addEventListener("dblclick", function () { openWin(winRefs); });
-    fl2.addEventListener("click", function () { if (narrow()) openWin(winRefs); });
+    var fl2 = el("div", "filelink", "<span class='fg'>&#128203;</span> OPEN: REFS.TXT - " + secTitle(14));
+    fl2.addEventListener("click", function () { openWin(winRefs); });
     frag.appendChild(fl2);
     winDoc.client.appendChild(frag);
     var main = document.getElementById("panels");
@@ -1060,7 +1071,7 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     var top = winDoc.client.scrollTop + 80, cur = docSecs[0];
     for (var i = 0; i < docSecs.length; i++) { if (docSecs[i].el.offsetTop <= top) cur = docSecs[i]; }
     if (winDoc.status) winDoc.status.children[0].textContent =
-      "PAGE " + String(cur.i).padStart(2, "0") + " / 14 · " + BEAT_NAMES[cur.i];
+      "PAGE " + String(cur.i).padStart(2, "0") + " / " + TOTAL + " · " + BEAT_NAMES[cur.i];
   }, { passive: true });
 
   // ---- term chips: OS tooltips over dashed words ----------------------------------
@@ -1205,12 +1216,13 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
   });
 
   // ---- boot ----------------------------------------------------------------------
+  var SRC_N = document.querySelectorAll(".refs li").length;
   var boot = el("div"); boot.id = "boot";
   boot.innerHTML = "<div class='hd'>TAKUMI OS 2.6 &mdash; ITASIA302 BUILD</div>"
     + "<div class='bl'>MEMORY CHECK ........ FIRST BRAIN <span class='ok'>UNRELIABLE</span></div>"
     + "<div class='bl'>MOUNTING VAULT ...... " + N.toLocaleString("en-US") + " NOTES <span class='ok'>OK</span></div>"
     + "<div class='bl'>LINK TABLE .......... " + (EFULL.length / 2).toLocaleString("en-US") + " EDGES <span class='ok'>OK</span></div>"
-    + "<div class='bl'>WORKS CITED ......... 24 SOURCES <span class='ok'>OK</span></div>"
+    + (SRC_N ? "<div class='bl'>WORKS CITED ......... " + SRC_N + " SOURCES <span class='ok'>OK</span></div>" : "")
     + "<div class='bl'>STARTING WINDOW MANAGER<span class='ok'> _</span></div>"
     + "<div class='skip'>CLICK TO SKIP</div>";
   document.body.appendChild(boot);
@@ -1243,7 +1255,7 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     var w = OWNER[idx];
     openWin(w);
     var sec = panelEls[idx];
-    if (sec) w.client.scrollTop = Math.max(0, sec.offsetTop - 24 - (frac ? frac * sec.offsetHeight * 0.5 : 0));
+    if (sec) w.client.scrollTop = Math.max(0, sec.offsetTop - 24 + (frac ? frac * sec.offsetHeight * 0.6 : 0));
     VS.dirty = true; drawVault();
     return { id: window.__SBF__, beat: idx, name: BEAT_NAMES[idx], win: w.id, open: order.length };
   };
