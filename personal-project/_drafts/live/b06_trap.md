@@ -19,7 +19,7 @@ Both times the effort went into the method instead of into the reading. That is 
 You cannot have a functioning second brain if your first brain is barely functioning.
 
 ## [qsrc6] qsrc
-a widely shared meme; original author unidentified
+a widely shared meme among tech enthusiasts in Thailand
 
 ## [body7] body
 Jones puts the limit of these methods precisely when he says, "Knowledge can be managed only indirectly, through the management of information" [[(Jones, 2010, Abstract)]]. A tool can move my files, name them, link them, and show them back to me, but what it cannot do is understand and transfer that understanding to me, as if I had read it myself.

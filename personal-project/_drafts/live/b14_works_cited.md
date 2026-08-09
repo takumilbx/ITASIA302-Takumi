@@ -29,6 +29,3 @@ References
 - Spradley, J. P. (2016). *The ethnographic interview.* Waveland Press. (Original work published 1979)
 - Wanderloots. (2024, December 13). *What is Zettelkasten note-taking? Why it works & knowledge theory* [Video]. YouTube. https://www.youtube.com/watch?v=00LKsV8h6zY
 - Yagisawa, F., & Horita, T. (2017). Ichinin ichidai tanmatsu no kankyo ni okeru wakate kyoshi to beteran kyoshi no ICT katsuyo ni taisuru ishiki hikaku [Comparison of teachers' awareness for ICT use between novices and experts in 1:1 elementary education]. *Kyoiku Media Kenkyu, 23*(2), 83-94. https://doi.org/10.24458/jaems.23.2_83 [In Japanese]
-
-## [refnote4] refnote
-The car-keys meme in section 05 is paraphrased from a widely shared internet meme; the original author could not be identified. Vault statistics were computed on 2026-07-28 by parse_vault.py over the live Obsidian vault. Claims in this essay were verified against the cited sources; where a figure lives in secondary literature (the 90,000-card count) the secondary source is cited.

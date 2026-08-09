@@ -7,7 +7,7 @@
 03 / 14 {{·}} Second Brain
 
 ## [h22] h2
-And a {{second brain}}?
+And what exactly is a {{second brain}}?
 
 ## [body3] body
 I came across the term on social media. Instagram and TikTok reels kept telling me that the second brain is the future, and that if I was not using one I was being left out. The ones I saw looked very cool, with fancy interfaces, the same Jarvis idea. I wanted to try it myself. That is how I arrived at it. So I looked up what it actually is. The definition is much plainer than the reels made it look.
