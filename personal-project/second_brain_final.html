@@ -1,555 +1,381 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="nojs">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Building a Second Brain · ITASIA302</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Chivo:ital,wght@0,400;0,700;0,900;1,400&family=Tinos:ital,wght@0,400;0,700;1,400;1,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    /* The manuscript. Everything the old page did with darkness and glow, this one does
-       with paper and ink: warm stock, black text, one red pen. The site's amber survives
-       as that pen. */
-    --paper:     #f4eedf;
-    --paper-hi:  #faf6ec;
-    --card:      #fdfcf4;   /* an actual index card */
-    --ink:       #221c12;
-    --ink-2:     #443b2c;
-    --ink-3:     #6d6250;
-    --faint:     #95896f;
-    --ghost:     #b3a88c;
-    --line:      #d8cfb6;
-    --line-soft: #e7e0cc;
+    /* TAKUMI OS. A mid-nineties workstation: teal desktop, grey chrome, navy title bars,
+       one red pen for the vault's best-connected notes. Nothing warm, nothing glowing. */
+    --desk:   #177970;
+    --chrome: #c6c6c6;
+    --chrome-hi: #dedede;
+    --navy:   #10248c;
+    --navy-2: #3a56c4;
+    --red:    #d21f1f;
+    --hl:     #ffffff;
+    --sh:     #7c7c7c;
+    --dk:     #2c2c2c;
+    --paper:  #ffffff;
+    --ink:    #1c1c1c;
+    --ink-2:  #333333;
+    --ink-3:  #555555;
+    --tip:    #ffffe1;
 
-    --red:       #c23a20;   /* the red pen: the section accent, printed */
-    --red-soft:  #c23a2022;
-    --card-rule: #b9c7d6;   /* index-card ruling blue */
-    --card-top:  #d8604a;   /* index-card head rule */
+    --px:   "Silkscreen", monospace;
+    --ui:   "Chivo", "Verdana", sans-serif;
+    --doc:  "Tinos", "Times New Roman", Times, serif;
+    --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
 
-    --display: "Fraunces", "IBM Plex Serif", Georgia, serif;
-    --serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
-    --mono:  "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
-
-    --e-out:   cubic-bezier(0.23, 1, 0.32, 1);
-
-    --topbar-h: 56px;
+    --bevel-out: inset -2px -2px 0 var(--dk), inset 2px 2px 0 var(--hl);
+    --bevel-in:  inset 2px 2px 0 var(--sh), inset -2px -2px 0 var(--hl);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { -webkit-text-size-adjust: 100%; }
+  html, body { height: 100%; }
   body {
-    background: var(--paper); color: var(--ink);
-    font-family: var(--serif); font-weight: 400;
-    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
-    overflow-x: hidden;
+    background: var(--desk); color: var(--ink);
+    font-family: var(--ui); overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* desktop dither */
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; opacity: 0.5;
+    background-image: radial-gradient(rgba(0, 0, 0, 0.16) 1px, transparent 1px);
+    background-size: 4px 4px;
   }
 
-  /* Legacy fixed layers from the field era. The paper needs none of them. */
-  #viz, #scrim, #grid, #readout { display: none; }
+  /* Field-era chrome, retired. The window manager owns the screen now. */
+  #viz, #scrim, #grid, .edge-gradient, .topbar, #rail, #folio, #readout, #hint { display: none; }
 
-  /* Paper tooth: the same grain film, but printed dark and faint. */
+  /* CRT film */
   .grain {
-    position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: 0.05;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/></filter><rect width='256' height='256' filter='url(%23n)'/></svg>");
-    background-size: 220px 220px; mix-blend-mode: multiply;
-  }
-  /* The top bleed: one printed red rule across the sheet. */
-  .edge-gradient {
-    position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 10000;
-    pointer-events: none; background: var(--red); opacity: 0.9;
+    position: fixed; inset: 0; z-index: 9990; pointer-events: none; opacity: 0.06;
+    background: repeating-linear-gradient(to bottom, rgba(0,0,0,0.5) 0 1px, transparent 1px 3px);
   }
 
-  /* ---- masthead ---- */
-  .topbar {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
-    display: flex; justify-content: space-between; align-items: center; gap: 24px;
-    height: var(--topbar-h); padding: 0 clamp(18px, 3vw, 48px);
-    background: color-mix(in srgb, var(--paper) 92%, transparent);
-    backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
-    border-bottom: 1px solid var(--line);
-    box-shadow: 0 3px 0 -2px var(--line-soft);
-  }
-  .topbar-title {
-    font-family: var(--serif); font-weight: 500; font-size: 15px;
-    letter-spacing: -0.01em; color: var(--ink); white-space: nowrap;
-  }
-  .topbar-title em { color: var(--red); font-style: italic; }
-  .topbar-title a { color: inherit; text-decoration: none; border-bottom: 1px dotted var(--faint); }
-  .topbar-title a:hover { color: var(--red); border-bottom-color: var(--red); }
-  .topbar-nav { display: flex; gap: 0; list-style: none; }
-  .topbar-nav button {
-    font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--ink-3); background: none; border: 0; padding: 6px 11px; cursor: pointer;
-    transition: color 150ms ease;
-  }
-  .topbar-nav button:hover, .topbar-nav button:focus-visible { color: var(--red); outline: none; }
-  .topbar-nav button[aria-current="true"] { color: var(--red); text-decoration: underline; text-underline-offset: 4px; }
+  ::selection { background: var(--navy); color: #fff; }
 
-  /* Reading progress: a red line drawn along the underside of the masthead. */
-  #rail {
-    position: fixed; left: 0; right: 0; top: var(--topbar-h); bottom: auto; z-index: 49;
-    height: 2px; background: transparent;
+  /* ---- desktop icons ---- */
+  #icons { position: fixed; left: 22px; top: 24px; z-index: 2; display: flex; flex-direction: column; gap: 26px; }
+  .dicon { width: 100px; text-align: center; cursor: pointer; user-select: none; -webkit-user-select: none; }
+  .dicon .px {
+    width: 46px; height: 42px; margin: 0 auto 7px; background: var(--chrome); position: relative;
+    box-shadow: var(--bevel-out);
   }
-  #rail-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0%; background: var(--red); }
-  #rail .rtick { display: none; }
-
-  /* Folio: a printed page number. */
-  #folio {
-    position: fixed; right: clamp(18px, 3vw, 48px); bottom: 14px; z-index: 6;
-    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.22em;
-    color: var(--faint); text-transform: uppercase; pointer-events: none;
+  .dicon .px::before { content: attr(data-g); position: absolute; inset: 0; font-size: 20px; line-height: 42px; }
+  .dicon u {
+    font-family: var(--px); font-size: 9px; letter-spacing: 0.04em; line-height: 1.5;
+    color: #fff; background: rgba(16, 36, 140, 0.85); text-decoration: none; padding: 1px 4px; display: inline-block;
   }
-  #folio b { color: var(--red); font-weight: 500; }
-  #folio i { color: var(--ink-3); font-style: normal; font-weight: 400; margin-left: 10px; }
+  .dicon:hover .px { background: var(--chrome-hi); }
+  .dicon.sel u { background: var(--navy); outline: 1px dotted #fff; }
 
-  #hint { position: fixed; bottom: clamp(40px, 6vh, 60px); left: 50%; transform: translateX(-50%);
-    z-index: 6; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.34em; text-transform: uppercase;
-    color: var(--ink-3); pointer-events: none; transition: opacity 600ms var(--e-out); }
-  #hint::after { content: ""; display: block; width: 1px; height: 26px; margin: 12px auto 0;
-    background: linear-gradient(to bottom, var(--ink-3), transparent); }
-
-  /* ---- the manuscript flow --------------------------------------------------------
-     One reading column with a notebook margin-rule; the ink figures hang in the outer
-     margin and stay with you (sticky) while their section is read. */
-  #panels { position: relative; z-index: 3; }
-  .panel {
-    position: relative;
-    display: grid; grid-template-columns: minmax(0, 64ch) minmax(0, 1fr);
-    column-gap: clamp(40px, 5vw, 90px);
-    width: min(1440px, 100%); margin: 0 auto;
-    padding: clamp(48px, 9vh, 120px) clamp(20px, 4vw, 64px);
+  /* ---- windows ---- */
+  .win {
+    position: absolute; background: var(--chrome); padding: 3px; z-index: 10;
+    box-shadow: var(--bevel-out), 5px 5px 0 rgba(0, 0, 0, 0.35);
+    display: flex; flex-direction: column;
+    min-width: 320px; min-height: 180px;
   }
-  .panel > .ph { grid-column: 1; }
-  .panel > .inkfig { grid-column: 2; }
-
-  /* a dinkus closes every section, like chapters in a printed essay */
-  .panel::after {
-    content: "\2731 \2003 \2731 \2003 \2731";
-    grid-column: 1; justify-self: center;
-    margin-top: clamp(56px, 9vh, 120px);
-    font-size: 11px; letter-spacing: 0.4em; color: var(--ghost);
+  .win.hidden { display: none; }
+  .tbar {
+    display: flex; align-items: center; gap: 7px; flex: none;
+    background: repeating-linear-gradient(90deg, #6a6a6a 0 2px, #808080 2px 4px);
+    color: #ddd; padding: 4px 6px; cursor: grab;
+    font-family: var(--px); font-size: 10px; letter-spacing: 0.04em; white-space: nowrap;
   }
-  .panel:last-child::after { content: none; }
-
-  /* centred beats: the turns of the piece run full measure, centred like title pages */
-  .side-c { grid-template-columns: minmax(0, 1fr); }
-  .side-c .ph { grid-column: 1; justify-self: center; width: min(72ch, 100%); text-align: center; }
-  .side-c.panel::after { justify-self: center; }
-
-  .ph { position: relative; min-width: 0; }
-  /* the notebook margin rule beside the prose */
-  @media (min-width: 900px) {
-    .panel:not(.side-c) .ph { padding-left: 26px; }
-    .panel:not(.side-c) .ph::before {
-      content: ""; position: absolute; left: 0; top: 0.4em; bottom: 0.2em;
-      width: 2px; background: var(--red); opacity: 0.35;
-    }
+  .win.focus .tbar { background: var(--navy); color: #fff; }
+  .tbar:active { cursor: grabbing; }
+  .tbar .ttext { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; }
+  .tbar .btns { display: flex; gap: 3px; }
+  .tbar button {
+    width: 18px; height: 16px; background: var(--chrome); color: #000; border: 0;
+    font-family: var(--ui); font-size: 10px; font-weight: 700; line-height: 14px;
+    box-shadow: var(--bevel-out); cursor: pointer; padding: 0;
   }
-
-  /* ---- the hero: a frontispiece ---- */
-  #b0 { min-height: 100svh; align-content: center; padding-top: calc(var(--topbar-h) + 4vh); }
-  #b0 .ph { position: relative; z-index: 1; }
-  #b0 .ph h2 {
-    font-family: var(--display); font-weight: 600; font-variation-settings: "opsz" 144;
-    font-size: clamp(58px, 9.6vw, 150px); line-height: 0.98; letter-spacing: -0.03em;
-    color: var(--ink); margin: 18px 0 10px;
+  .tbar button:active { box-shadow: var(--bevel-in); }
+  .menubar {
+    display: flex; gap: 16px; padding: 5px 9px; flex: none;
+    font-size: 12.5px; border-bottom: 1.5px solid var(--sh); user-select: none; -webkit-user-select: none;
   }
-  #b0 .ph h2 .sig { color: var(--red); font-style: italic; font-weight: 480; }
-  /* the aside becomes a rubber stamp */
-  #b0 .note {
-    display: inline-block; margin-top: 26px; padding: 7px 14px 6px;
-    border: 2px solid var(--red); color: var(--red); border-radius: 3px;
-    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.26em; text-transform: uppercase;
-    transform: rotate(-2.2deg); opacity: 0.85;
-    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='128' height='128'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='128' height='128' filter='url(%23n)' opacity='0.55'/><rect width='128' height='128' fill='white' opacity='0.72'/></svg>");
-    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='128' height='128'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='128' height='128' filter='url(%23n)' opacity='0.55'/><rect width='128' height='128' fill='white' opacity='0.72'/></svg>");
+  .menubar span::first-letter { text-decoration: underline; }
+  .ruler {
+    flex: none; height: 14px; margin: 0 1px; background: #e9e9e9; position: relative;
+    border: 1px solid var(--sh); border-top-color: var(--hl);
+    background-image: repeating-linear-gradient(90deg, #999 0 1px, transparent 1px 8px),
+                      repeating-linear-gradient(90deg, #555 0 1px, transparent 1px 64px);
+    background-position: 0 bottom; background-size: 100% 4px, 100% 8px; background-repeat: no-repeat;
   }
-  #b0 .ghost { max-width: 46ch; margin-left: auto; margin-right: auto; }
+  .client {
+    flex: 1 1 auto; min-height: 0; background: var(--paper); overflow-y: auto; overflow-x: hidden;
+    box-shadow: var(--bevel-in); position: relative;
+  }
+  .statusbar {
+    flex: none; display: flex; justify-content: space-between; gap: 10px;
+    font-family: var(--mono); font-size: 10px; padding: 4px 8px; color: #222;
+    border-top: 1.5px solid var(--hl); white-space: nowrap; overflow: hidden;
+  }
+  .statusbar span { box-shadow: var(--bevel-in); padding: 2px 8px; background: var(--chrome); }
 
+  /* square scrollbars */
+  .client::-webkit-scrollbar { width: 16px; }
+  .client::-webkit-scrollbar-track { background: repeating-conic-gradient(#fff 0 25%, #d6d6d6 0 50%) 0 0 / 4px 4px; }
+  .client::-webkit-scrollbar-thumb { background: var(--chrome); box-shadow: var(--bevel-out); }
+  .client { scrollbar-width: auto; scrollbar-color: var(--chrome) #e3e3e3; }
+
+  /* ---- ESSAY.DOC ---- */
+  #win-doc .client { padding: 38px 52px 60px; }
+  .panel { position: relative; }
+  .panel + .panel { margin-top: 34px; padding-top: 30px; border-top: 1.5px dashed #b6b6b6; }
   .kick {
-    font-family: var(--mono); font-weight: 500; font-size: 10px;
-    letter-spacing: 0.3em; text-transform: uppercase; color: var(--red);
-    margin-bottom: 20px;
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: #666; margin-bottom: 10px;
   }
-  .kick::before {
-    content: ""; display: inline-block; width: 34px; height: 2px;
-    background: var(--red); vertical-align: middle; margin-right: 12px;
-  }
-  .side-c .kick::before { display: none; }
-  .kick i { color: var(--faint); font-style: normal; }
-
+  .kick i { color: var(--red); font-style: normal; }
   .ph h2 {
-    font-family: var(--display); font-weight: 560; font-variation-settings: "opsz" 100;
-    letter-spacing: -0.022em; line-height: 1.08; color: var(--ink);
-    font-size: clamp(34px, 4.2vw, 58px); margin-bottom: 8px;
+    font-family: var(--ui); font-weight: 900; font-size: clamp(22px, 2vw, 27px);
+    line-height: 1.15; letter-spacing: -0.01em; color: var(--ink); margin-bottom: 12px;
   }
-  .side-c .ph h2 { font-size: clamp(42px, 6.2vw, 92px); line-height: 1.0; }
-  /* the key word is written in red and underlined by hand */
-  .ph h2 .sig {
-    font-style: italic; font-weight: 500; color: var(--red);
-    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 9' preserveAspectRatio='none'><path d='M2 6 Q 16 1.5, 31 5.5 T 60 5 T 89 5.5 T 118 4.5' fill='none' stroke='%23c23a20' stroke-width='2.6' stroke-linecap='round'/></svg>")
-      no-repeat left 96% / 0% 0.14em;
-    padding-bottom: 0.12em;
-    transition: background-size 900ms var(--e-out) 500ms;
+  .ph h2 .sig { font-style: italic; color: var(--navy); }
+  /* the hero page of the document */
+  #b0 { text-align: left; padding-top: 8px; }
+  #b0 h2 { font-size: clamp(40px, 4vw, 54px); line-height: 1.02; letter-spacing: -0.02em; }
+  #b0 .note {
+    display: inline-block; margin-top: 14px; padding: 6px 10px;
+    font-family: var(--px); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--red); border: 2px double var(--red);
   }
-  .panel.on .ph h2 .sig { background-size: 100% 0.14em; }
-
-  .note {
-    font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em;
-    color: var(--faint); text-transform: uppercase; margin-top: 20px;
-  }
+  #b0 .ghost { margin-top: 16px; }
+  #b0 .kick { color: var(--navy); }
   .ghost {
-    font-family: var(--serif); font-weight: 400; font-style: italic;
-    font-size: clamp(17px, 1.45vw, 21px);
-    line-height: 1.7; color: var(--ink-2); margin-top: 20px; max-width: 52ch;
+    font-family: var(--doc); font-style: italic; font-size: 17px; line-height: 1.6; color: var(--ink-2);
+    max-width: 58ch; margin-top: 10px;
   }
-  .side-c .ghost { margin-left: auto; margin-right: auto; }
-  .side-c .body, .side-c .blist, .side-c .essay { text-align: left; margin-left: auto; margin-right: auto; }
-
-  /* ---- the prose: book measure, book leading ---- */
+  .note { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; color: #666; margin-top: 12px; text-transform: uppercase; }
   .body {
-    font-family: var(--serif); font-weight: 400; font-size: clamp(16px, 1.28vw, 18.5px);
-    line-height: 1.8; color: var(--ink-2); margin-top: 1.2em; max-width: 58ch;
+    font-family: var(--doc); font-size: 16.5px; line-height: 1.66; color: var(--ink);
+    margin-top: 0.95em; max-width: 62ch;
   }
-  .body em { color: var(--ink); }
-  h2 + .body { margin-top: 1.7em; }
-
-  /* the essay opens with an illuminated initial in red */
-  #b1 h2 + .body::first-letter {
-    font-family: var(--display); font-weight: 600;
-    font-size: 3.4em; line-height: 0.8; float: left;
-    padding: 0.06em 0.14em 0 0; color: var(--red);
-  }
-
-  .blist { list-style: none; margin-top: 18px; padding: 0; }
+  .body em { font-style: italic; }
+  .cite { font-family: var(--mono); font-size: 10.5px; color: #777; white-space: nowrap; }
+  .blist { list-style: none; margin-top: 12px; }
   .blist li {
-    position: relative; padding-left: 24px; margin: 12px 0;
-    font-family: var(--serif); font-size: clamp(15px, 1.2vw, 17px);
-    line-height: 1.72; color: var(--ink-2);
+    position: relative; padding-left: 20px; margin: 9px 0;
+    font-family: var(--doc); font-size: 15.5px; line-height: 1.6; color: var(--ink);
   }
-  .blist li::before {
-    content: ""; position: absolute; left: 0; top: 0.8em; width: 13px; height: 2px;
-    background: var(--red);
-  }
-  .blist li em { color: var(--ink); }
-  .cite {
-    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.01em;
-    color: var(--faint); white-space: nowrap;
-  }
+  .blist li::before { content: "\25AA"; position: absolute; left: 2px; color: var(--navy); }
+  .essay { margin-top: 18px; padding: 12px 14px; background: #f2f2f2; box-shadow: var(--bevel-in);
+    font-family: var(--doc); font-size: 14.5px; line-height: 1.62; color: var(--ink-2); max-width: 60ch; }
+  .essay .elabel { display: block; font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--navy); margin-bottom: 6px; }
 
-  .essay {
-    margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--line);
-    font-family: var(--serif); font-size: clamp(14px, 1.1vw, 16px);
-    line-height: 1.74; color: var(--ink-3); max-width: 52ch;
-  }
-  .essay .elabel {
-    display: block; font-family: var(--mono); font-size: 9px; letter-spacing: 0.28em;
-    text-transform: uppercase; color: var(--red); margin-bottom: 8px;
-  }
-
-  /* ---- the quotation: an index card taped into the manuscript ---- */
+  /* the meme: an object embedded in the document */
   blockquote.q {
-    position: relative; margin: 36px 0 8px; padding: 30px 26px 20px;
-    background:
-      repeating-linear-gradient(to bottom, transparent 0 27px, var(--card-rule) 27px 28px),
-      var(--card);
-    background-position: 0 14px;
-    border: 1px solid var(--line); border-radius: 2px;
-    box-shadow: 0 1px 0 var(--paper-hi) inset, 2px 4px 14px rgba(60, 48, 28, 0.18);
-    transform: rotate(-0.8deg);
-    font-family: var(--serif); font-weight: 400; font-style: italic;
-    font-size: clamp(17px, 1.6vw, 22px); line-height: 1.65; color: var(--ink);
+    margin: 22px 0 6px; padding: 3px; background: var(--chrome); box-shadow: var(--bevel-out);
+    max-width: 56ch;
   }
   blockquote.q::before {
-    content: ""; position: absolute; left: 0; right: 0; top: 9px; height: 2px;
-    background: var(--card-top); opacity: 0.7;
+    content: "MEME.BMP - EMBEDDED OBJECT"; display: block;
+    font-family: var(--px); font-size: 8.5px; letter-spacing: 0.06em; color: #ddd;
+    background: var(--navy); padding: 3px 6px; margin-bottom: 3px;
   }
-  /* two strips of tape */
-  blockquote.q::after {
-    content: ""; position: absolute; top: -12px; left: 8%; width: 84px; height: 24px;
-    background: rgba(226, 210, 160, 0.55); border: 1px solid rgba(160, 140, 90, 0.25);
-    transform: rotate(-4deg);
-    box-shadow: 40ch 4px 0 -2px rgba(226, 210, 160, 0.5);
-  }
+  blockquote.q { font-family: var(--doc); font-style: italic; font-size: 18px; line-height: 1.5; color: var(--ink); }
+  /* the shell wraps the quote's text in .qpaper at runtime, so the card reads white-on-chrome */
+  .qpaper { display: block; background: #fff; padding: 12px 14px 2px; }
   blockquote.q .qsrc {
-    display: block; margin-top: 14px; font-style: normal; font-family: var(--mono);
-    font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--faint);
+    display: block; font-style: normal; font-family: var(--mono); font-size: 9.5px;
+    letter-spacing: 0.12em; text-transform: uppercase; color: #666; padding: 8px 14px 12px; background: #fff;
   }
 
-  .acard {
-    margin-top: 20px; padding: 16px 18px;
-    background: var(--card); border: 1px solid var(--line);
-    box-shadow: 2px 3px 10px rgba(60, 48, 28, 0.12);
-  }
-  .acard .ak {
-    display: block; font-family: var(--mono); font-size: 9px; letter-spacing: 0.24em;
-    text-transform: uppercase; color: var(--faint); margin-bottom: 8px;
-  }
-  .acard .ak b { color: var(--red); font-weight: 500; }
-  .acard .aclaim { font-family: var(--serif); font-size: clamp(13px, 1.1vw, 15.5px); line-height: 1.6; color: var(--ink); }
-
-  .ledger { margin-top: 20px; }
-  .lrow {
-    display: grid; grid-template-columns: 8.5em 1fr; gap: 0 18px; align-items: baseline;
-    padding: 10px 0; border-top: 1px solid var(--line);
-  }
-  .lrow .lk { font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--faint); }
-  .lrow .lc { font-family: var(--serif); font-size: clamp(12.5px, 1.02vw, 15px); line-height: 1.62; color: var(--ink-2); }
-  .lrow.lit .lk { color: var(--red); }
-  .lrow.out { border-top: 1px solid var(--red); background: var(--red-soft); padding: 13px 14px 14px; margin-left: -14px; margin-right: -14px; }
+  .acard { margin-top: 16px; padding: 12px 14px; background: #f6f6f6; box-shadow: var(--bevel-in); max-width: 58ch; }
+  .acard .ak { display: block; font-family: var(--mono); font-size: 9px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: #666; margin-bottom: 6px; }
+  .acard .ak b { color: var(--navy); }
+  .acard .aclaim { font-family: var(--doc); font-size: 15px; line-height: 1.55; }
+  .ledger { margin-top: 14px; max-width: 62ch; }
+  .lrow { display: grid; grid-template-columns: 9em 1fr; gap: 0 14px; padding: 8px 0; border-top: 1px solid #ddd; }
+  .lrow .lk { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: #666; }
+  .lrow .lc { font-family: var(--doc); font-size: 14.5px; line-height: 1.55; }
+  .lrow.lit .lk { color: var(--navy); }
+  .lrow.out { background: #eef0fb; box-shadow: var(--bevel-in); padding: 10px 12px; }
   .lrow.out .lk { color: var(--red); }
-  .lrow.out .lc { color: var(--ink); font-style: italic; }
-  .lrow.out .lc small { display: block; margin-top: 6px; font-style: normal; font-size: 12px; line-height: 1.55; color: var(--ink-3); }
 
-  /* ---- glossary: six real index cards on the desk ---- */
-  #b4 { grid-template-columns: minmax(0, 1fr); }
-  #b4 .ph { width: min(94ch, 100%); justify-self: center; }
-  .gloss-grid {
-    margin-top: 30px;
-    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 22px clamp(18px, 2.4vw, 34px);
+  /* in-document file links to the split-out windows (injected by the shell) */
+  .filelink {
+    display: inline-flex; align-items: center; gap: 10px; margin-top: 26px; cursor: pointer;
+    background: var(--chrome); box-shadow: var(--bevel-out); padding: 9px 16px;
+    font-family: var(--px); font-size: 10px; letter-spacing: 0.05em; user-select: none; -webkit-user-select: none;
   }
-  .gterm {
-    position: relative; padding: 34px 20px 18px;
-    background:
-      repeating-linear-gradient(to bottom, transparent 0 24px, var(--card-rule) 24px 25px),
-      var(--card);
-    background-position: 0 12px;
-    border: 1px solid var(--line); border-radius: 2px;
-    box-shadow: 0 1px 0 var(--paper-hi) inset, 2px 5px 16px rgba(60, 48, 28, 0.16);
-  }
-  .gterm::before {
-    content: ""; position: absolute; left: 0; right: 0; top: 8px; height: 2px;
-    background: var(--card-top); opacity: 0.7;
-  }
-  /* one strip of tape at the top of each card */
-  .gterm::after {
-    content: ""; position: absolute; top: -11px; left: 50%; width: 76px; height: 22px;
-    margin-left: -38px; background: rgba(226, 210, 160, 0.55);
-    border: 1px solid rgba(160, 140, 90, 0.25); transform: rotate(-2.5deg);
-  }
-  .gterm:nth-child(odd)  { transform: rotate(-0.7deg); }
-  .gterm:nth-child(even) { transform: rotate(0.6deg); }
-  .gterm .gk {
-    display: block; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.26em;
-    text-transform: uppercase; color: var(--red); margin-bottom: 10px; font-weight: 500;
-  }
-  .gterm .gd {
-    font-family: var(--serif); font-size: clamp(13px, 1.05vw, 14.5px);
-    line-height: 25px; color: var(--ink-2);   /* leading locked to the card ruling */
-  }
+  .filelink:active { box-shadow: var(--bevel-in); }
+  .filelink .fg { font-size: 15px; }
 
-  /* ---- term chips: pulling the card back out of the box ---- */
-  .t {
-    border-bottom: 1px dotted var(--red); cursor: help; position: relative;
-    color: inherit; white-space: nowrap;
-  }
-  .t::after {
-    content: attr(data-def);
-    position: absolute; left: 0; bottom: calc(100% + 10px); z-index: 8;
-    width: max-content; max-width: 34ch; padding: 16px 13px 11px;
-    background:
-      repeating-linear-gradient(to bottom, transparent 0 20px, var(--card-rule) 20px 21px),
-      var(--card);
-    background-position: 0 10px;
-    border: 1px solid var(--line); border-radius: 2px;
-    box-shadow: 3px 5px 18px rgba(60, 48, 28, 0.28);
-    font-family: var(--serif); font-weight: 400; font-style: normal;
-    font-size: 13px; line-height: 21px; letter-spacing: 0; text-transform: none;
-    color: var(--ink-2); white-space: normal;
-    opacity: 0; visibility: hidden; transform: translateY(4px) rotate(-0.6deg);
-    transition: opacity 180ms var(--e-out), transform 180ms var(--e-out), visibility 180ms;
-    pointer-events: none;
-  }
-  .t:hover::after, .t:focus-visible::after, .t.open::after {
-    opacity: 1; visibility: visible; transform: rotate(-0.6deg);
-  }
-
-  /* ---- interface reconstructions: printed figures, not screenshots ---- */
-  .ui-flow { display: flex; flex-direction: column; gap: 22px; margin-top: 28px; }
-  .uipane { margin: 0; position: relative; }
-  .uipane::before {
-    content: attr(data-step); position: absolute; left: -36px; top: 0;
-    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.2em; color: var(--red);
-  }
-  .uicap {
-    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--ink-3); margin-bottom: 7px;
-  }
-  .uicap b { color: var(--red); font-weight: 500; }
-  .ui {
-    border: 1px solid var(--ink-3); border-radius: 2px;
-    background: var(--paper-hi);
-    box-shadow: 3px 4px 0 rgba(34, 28, 18, 0.08);
-    font-family: var(--mono); font-size: 10.5px; line-height: 1.55; color: var(--ink-2);
-    overflow: hidden;
-  }
-  .uibar {
-    display: flex; align-items: center; gap: 6px; padding: 7px 10px;
-    background: var(--paper); border-bottom: 1px solid var(--line);
-  }
-  .uibar .dot { width: 7px; height: 7px; border-radius: 50%; background: none; border: 1.5px solid var(--ink-3); flex: none; }
-  .uibar .uititle {
-    margin-left: 6px; font-size: 9.5px; letter-spacing: 0.06em; color: var(--ink-3);
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  }
-  .uicols { display: grid; grid-template-columns: 0.8fr 1.4fr 1fr; }
+  /* ---- interface reconstructions: windows inside the document ---- */
+  .ui-flow { display: flex; flex-direction: column; gap: 18px; margin-top: 20px; max-width: 60ch; }
+  .uipane { margin: 0; }
+  .uicap { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: #555; margin-bottom: 6px; }
+  .uicap b { color: var(--navy); }
+  .ui { background: var(--chrome); padding: 3px; box-shadow: var(--bevel-out);
+    font-family: var(--mono); font-size: 10.5px; line-height: 1.55; color: var(--ink-2); }
+  .uibar { display: flex; align-items: center; gap: 4px; padding: 3px 5px; background: var(--navy); margin-bottom: 3px; }
+  .uibar .dot { width: 12px; height: 11px; background: var(--chrome); box-shadow: var(--bevel-out); flex: none; }
+  .uibar .uititle { margin-left: 4px; font-family: var(--px); font-size: 8.5px; color: #eee;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; letter-spacing: 0.04em; }
+  .uicols { display: grid; grid-template-columns: 0.8fr 1.4fr 1fr; background: #fff; box-shadow: var(--bevel-in); }
   .ui-obsidian .uicols { grid-template-columns: 1fr 1.6fr; }
-  .uicol { padding: 9px 11px; border-right: 1px solid var(--line); min-width: 0; }
+  .uicol { padding: 8px 10px; border-right: 1px solid #ddd; min-width: 0; }
   .uicol:last-child { border-right: 0; }
-  .uirow {
-    display: flex; justify-content: space-between; gap: 8px; padding: 3px 0;
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  }
+  .uirow { display: flex; justify-content: space-between; gap: 8px; padding: 3px 0;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .uirow span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .uirow.uiind { padding-left: 12px; }
-  .uirow.uihead { color: var(--faint); border-bottom: 1px solid var(--line); margin-bottom: 3px; }
-  .uirow.uion { color: var(--ink); background: var(--red-soft); margin: 0 -11px; padding-left: 11px; padding-right: 11px; box-shadow: inset 2px 0 0 var(--red); }
-  .uirow.uiind.uion { padding-left: 23px; }
+  .uirow.uihead { color: #888; border-bottom: 1px solid #ddd; margin-bottom: 3px; }
+  .uirow.uion { color: #fff; background: var(--navy); margin: 0 -10px; padding-left: 10px; padding-right: 10px; }
+  .uirow.uiind.uion { padding-left: 22px; }
   .uicol-meta { display: grid; grid-template-columns: auto 1fr; gap: 3px 8px; align-content: start; }
-  .uimetak { color: var(--faint); }
+  .uimetak { color: #888; }
   .uimetav { color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; }
-  .uibody { padding: 9px 13px; }
-  .uiyaml { color: var(--faint); border-left: 2px solid var(--line); padding-left: 9px; margin-bottom: 6px; font-size: 10px; }
-  .uih { color: var(--ink-3); margin: 8px 0 4px; font-weight: 500; }
-  .uip { font-family: var(--serif); font-size: 13px; line-height: 1.55; color: var(--ink-2); margin-bottom: 5px; }
-  .uip em { color: var(--ink); }
-  .uilink { color: var(--red); font-family: var(--mono); font-size: 10px; line-height: 1.6; }
-  .uiquote {
-    font-family: var(--serif); font-style: italic; font-size: 12.5px; color: var(--ink-3);
-    margin: 4px 0 5px; padding-left: 10px; border-left: 2px solid var(--line);
-  }
-  .uiquote .mono { font-family: var(--mono); font-style: normal; font-size: 9.5px; color: var(--faint); }
-  .uinote {
-    font-family: var(--serif); font-size: clamp(12.5px, 1vw, 14px);
-    line-height: 1.62; color: var(--ink-3); margin-top: 10px; max-width: 62ch;
-  }
+  .uibody { padding: 8px 12px; background: #fff; box-shadow: var(--bevel-in); }
+  .uiyaml { color: #888; border-left: 2px solid #ddd; padding-left: 8px; margin-bottom: 6px; font-size: 10px; }
+  .uih { color: #555; margin: 8px 0 4px; font-weight: 500; }
+  .uip { font-family: var(--doc); font-size: 13.5px; line-height: 1.5; color: var(--ink); margin-bottom: 5px; }
+  .uilink { color: var(--navy); font-family: var(--mono); font-size: 10px; line-height: 1.6; text-decoration: underline; }
+  .uiquote { font-family: var(--doc); font-style: italic; font-size: 13px; color: var(--ink-2);
+    margin: 4px 0 5px; padding-left: 9px; border-left: 2px solid #ddd; }
+  .uiquote .mono { font-family: var(--mono); font-style: normal; font-size: 9.5px; color: #888; }
+  .uinote { font-family: var(--doc); font-size: 13.5px; line-height: 1.6; color: var(--ink-3); margin-top: 8px; max-width: 62ch; }
 
-  /* workflow + case study run their printed figures beside the prose */
-  @media (min-width: 1140px) {
-    #b10, #b11 { grid-template-columns: minmax(0, 1fr); }
-    #b10 .ph, #b11 .ph {
-      width: min(106ch, 100%); padding-left: 26px;
-      display: grid; grid-template-columns: minmax(0, 48ch) minmax(0, 50ch);
-      column-gap: clamp(36px, 4vw, 72px); grid-auto-flow: row;
-    }
-    #b10 .ph > *, #b11 .ph > * { grid-column: 1; }
-    #b10 .ph > .kick, #b11 .ph > .kick,
-    #b10 .ph > h2,   #b11 .ph > h2 { grid-column: 1 / -1; }
-    #b10 .ph > .ui-flow, #b11 .ph > .ui-flow {
-      grid-column: 2; grid-row: 3 / span 8; align-self: start; margin-top: 12px;
-      padding-left: 40px;
-    }
-    #b10.panel::after, #b11.panel::after { grid-column: 1; }
+  /* ---- GLOSSARY.HLP ---- */
+  #win-gloss .client { padding: 26px 30px 34px; }
+  #win-gloss .kick { color: var(--navy); }
+  .gloss-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 18px; }
+  .gterm { background: #f4f4f4; box-shadow: var(--bevel-in); padding: 0 0 12px; }
+  .gterm .gk {
+    display: block; font-family: var(--px); font-size: 10px; letter-spacing: 0.05em;
+    color: #fff; background: var(--navy-2); padding: 5px 12px; margin-bottom: 9px; text-transform: uppercase;
   }
+  .gterm .gd { font-family: var(--doc); font-size: 14.5px; line-height: 1.6; color: var(--ink); padding: 0 12px; }
 
-  /* ---- references: the archive, printed ---- */
-  #b14 { grid-template-columns: minmax(0, 1fr); }
-  #b14 .ph { width: min(100ch, 100%); justify-self: center; }
-  .refs {
-    list-style: none; margin-top: 26px; padding: 0;
-    columns: 2; column-gap: 52px; column-rule: 1px solid var(--line);
-  }
-  .refs li {
-    font-family: var(--serif); font-size: clamp(12px, 0.95vw, 13.5px);
-    line-height: 1.6; color: var(--ink-2); margin: 0 0 12px;
-    padding-left: 1.5em; text-indent: -1.5em;
-    break-inside: avoid; -webkit-column-break-inside: avoid;
-  }
+  /* ---- REFS.TXT ---- */
+  #win-refs .client { padding: 22px 26px 30px; }
+  #win-refs .kick { color: #666; }
+  #win-refs h2 { font-family: var(--mono); font-weight: 500; font-size: 16px; margin-bottom: 6px; }
+  .refs { list-style: none; margin-top: 14px; }
+  .refs li { font-family: var(--mono); font-size: 11px; line-height: 1.6; color: var(--ink-2);
+    margin: 0 0 12px; padding-left: 2ch; text-indent: -2ch; }
   .refs li i { font-style: italic; color: var(--ink); }
-  .refnote {
-    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.06em;
-    line-height: 1.7; color: var(--faint); margin-top: 20px;
-    padding-top: 14px; border-top: 1px solid var(--line);
-  }
+  .refnote { font-family: var(--mono); font-size: 10px; line-height: 1.7; color: #666;
+    margin-top: 18px; padding-top: 12px; border-top: 1px dashed #bbb; }
 
-  /* ---- the ink figures: drawings in the outer margin ---- */
-  .inkfig {
-    position: relative; align-self: stretch; min-height: 0;
-  }
-  .inkfig canvas { display: block; width: 100%; height: 100%; }
-  @media (min-width: 900px) {
-    .inkfig .stick { position: sticky; top: calc(var(--topbar-h) + 8vh); height: min(66vh, 560px); }
-  }
-  /* narrow screens: the figure sits inline, between headline and prose */
-  .inkfig.inline { grid-column: 1; height: 230px; margin: 18px 0 4px; }
-  .inkfig.inline .stick { height: 100%; }
-  /* the plates: full-measure drawings inside centred beats */
-  .inkplate { width: 100%; margin: 26px 0 10px; }
-  .inkplate canvas { display: block; width: 100%; height: 100%; }
-  #b12 .inkplate {
-    height: clamp(320px, 56vh, 560px);
-    border: 1px solid var(--line); background: var(--paper-hi);
-    box-shadow: 0 0 0 6px var(--paper-hi), 2px 6px 22px rgba(60, 48, 28, 0.14);
-  }
-  #b13 .inkplate { height: 200px; }
-  /* the frontispiece behind the hero */
-  #b0 .inkfront { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
-  #b0 .inkfront canvas { display: block; width: 100%; height: 100%; }
+  /* ---- VAULT.EXE ---- */
+  #win-vault .client { overflow: hidden; }
+  #win-vault canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
+  .vtools { flex: none; display: flex; align-items: center; gap: 10px; padding: 5px 8px;
+    border-bottom: 1.5px solid var(--sh); font-family: var(--mono); font-size: 10px; }
+  .vtools label { display: flex; align-items: center; gap: 5px; cursor: pointer; user-select: none; -webkit-user-select: none; }
+  .vtools input { accent-color: var(--navy); }
+  .vtools button { font-family: var(--px); font-size: 8.5px; padding: 4px 10px; background: var(--chrome);
+    border: 0; box-shadow: var(--bevel-out); cursor: pointer; }
+  .vtools button:active { box-shadow: var(--bevel-in); }
 
-  ::-webkit-scrollbar { width: 10px; }
-  ::-webkit-scrollbar-track { background: var(--paper); }
-  ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 5px; }
-  * { scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
-  ::selection { background: var(--red-soft); }
-
-  /* ---- entrance: the page settles like a laid-down sheet ---- */
-  .panel .ph > * {
-    opacity: 0; transform: translateY(14px);
-    transition: opacity 700ms var(--e-out), transform 700ms var(--e-out);
+  /* ---- term chips: OS tooltips ---- */
+  .t { border-bottom: 1px dashed var(--navy); cursor: help; position: relative; white-space: nowrap; }
+  .t::after {
+    content: attr(data-def);
+    position: absolute; left: 0; bottom: calc(100% + 7px); z-index: 40;
+    width: max-content; max-width: 36ch; padding: 8px 10px;
+    background: var(--tip); border: 1px solid #000; box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
+    font-family: var(--ui); font-weight: 400; font-style: normal; font-size: 12px; line-height: 1.5;
+    letter-spacing: 0; text-transform: none; color: #111; white-space: normal; text-indent: 0;
+    opacity: 0; visibility: hidden; transition: opacity 120ms steps(2, end), visibility 120ms;
+    pointer-events: none;
   }
-  .panel.on .ph > * { opacity: 1; transform: none; }
-  .panel.on .ph > *:nth-child(1) { transition-delay: 40ms; }
-  .panel.on .ph > *:nth-child(2) { transition-delay: 110ms; }
-  .panel.on .ph > *:nth-child(3) { transition-delay: 180ms; }
-  .panel.on .ph > *:nth-child(4) { transition-delay: 250ms; }
-  .panel.on .ph > *:nth-child(5) { transition-delay: 310ms; }
-  .panel.on .ph > *:nth-child(n+6) { transition-delay: 370ms; }
-  .panel .gloss-grid > .gterm, .panel .ui-flow > .uipane {
-    opacity: 0; transform: translateY(12px);
-    transition: opacity 650ms var(--e-out), transform 650ms var(--e-out);
-  }
-  .panel.on .gloss-grid > .gterm:nth-child(odd)  { opacity: 1; transform: rotate(-0.7deg); }
-  .panel.on .gloss-grid > .gterm:nth-child(even) { opacity: 1; transform: rotate(0.6deg); }
-  .panel.on .ui-flow > .uipane { opacity: 1; transform: none; }
-  .panel.on .gloss-grid > .gterm:nth-child(1), .panel.on .ui-flow > .uipane:nth-child(1) { transition-delay: 240ms; }
-  .panel.on .gloss-grid > .gterm:nth-child(2), .panel.on .ui-flow > .uipane:nth-child(2) { transition-delay: 330ms; }
-  .panel.on .gloss-grid > .gterm:nth-child(3), .panel.on .ui-flow > .uipane:nth-child(3) { transition-delay: 420ms; }
-  .panel.on .gloss-grid > .gterm:nth-child(4) { transition-delay: 500ms; }
-  .panel.on .gloss-grid > .gterm:nth-child(5) { transition-delay: 570ms; }
-  .panel.on .gloss-grid > .gterm:nth-child(6) { transition-delay: 640ms; }
+  .t:hover::after, .t:focus-visible::after, .t.open::after { opacity: 1; visibility: visible; }
 
-  @media (max-width: 899px) {
-    .panel { grid-template-columns: minmax(0, 1fr); padding: 44px 20px; }
-    .panel > .inkfig { grid-column: 1; }
-    .topbar-nav { display: none; }
-    .uipane::before { display: none; }
-    .t::after { left: 0; right: auto; max-width: 26ch; }
+  /* ---- taskbar ---- */
+  #taskbar {
+    position: fixed; left: 0; right: 0; bottom: 0; height: 46px; z-index: 500;
+    background: var(--chrome); box-shadow: inset 0 2px 0 var(--hl);
+    display: flex; align-items: center; gap: 8px; padding: 0 8px;
+  }
+  #startbtn {
+    display: flex; align-items: center; gap: 8px; font-family: var(--px); font-size: 11px;
+    padding: 7px 13px; background: var(--chrome); border: 0; box-shadow: var(--bevel-out); cursor: pointer;
+  }
+  #startbtn .sq { width: 15px; height: 15px; background: conic-gradient(#d33 0 25%, #3a3 0 50%, #36c 0 75%, #fc0 0); }
+  #startbtn:active, #startbtn.open { box-shadow: var(--bevel-in); }
+  .tbtn {
+    font-family: var(--px); font-size: 9.5px; padding: 8px 14px; background: var(--chrome); border: 0;
+    box-shadow: var(--bevel-out); cursor: pointer; max-width: 170px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .tbtn.on { box-shadow: var(--bevel-in); background: repeating-conic-gradient(#dcdcdc 0 25%, #d0d0d0 0 50%) 0 0 / 4px 4px; }
+  #clock { margin-left: auto; font-family: var(--mono); font-size: 11.5px; padding: 6px 12px; box-shadow: var(--bevel-in); }
+
+  /* ---- start menu ---- */
+  #startmenu {
+    position: fixed; left: 8px; bottom: 50px; z-index: 600; width: 250px;
+    background: var(--chrome); padding: 3px; box-shadow: var(--bevel-out), 5px 5px 0 rgba(0, 0, 0, 0.35);
+    display: none;
+  }
+  #startmenu.open { display: flex; }
+  #startmenu .side {
+    flex: none; width: 30px; background: var(--navy);
+    display: flex; align-items: flex-end; justify-content: center; padding-bottom: 10px;
+  }
+  #startmenu .side b {
+    font-family: var(--px); font-size: 11px; color: #fff;
+    writing-mode: vertical-rl; transform: rotate(180deg); letter-spacing: 0.12em;
+  }
+  #startmenu .items { flex: 1 1 auto; display: flex; flex-direction: column; padding: 4px; }
+  #startmenu .mi {
+    display: flex; align-items: center; gap: 10px; padding: 8px 10px; cursor: pointer;
+    font-family: var(--ui); font-size: 13px; color: #111; text-decoration: none;
+  }
+  #startmenu .mi:hover { background: var(--navy); color: #fff; }
+  #startmenu .mi .fg { font-size: 15px; width: 20px; text-align: center; }
+  #startmenu hr { border: 0; border-top: 1.5px solid var(--sh); border-bottom: 1.5px solid var(--hl); margin: 4px 2px; }
+
+  /* ---- boot screen ---- */
+  #boot {
+    position: fixed; inset: 0; z-index: 9000; background: #050505; color: #c8c8c8;
+    font-family: var(--mono); font-size: 13px; line-height: 1.9; padding: 44px 52px;
+    cursor: pointer;
+  }
+  #boot.gone { display: none; }
+  #boot .bl { opacity: 0; }
+  #boot .bl.show { opacity: 1; }
+  #boot .ok { color: #4be04b; }
+  #boot .hd { font-family: var(--px); font-size: 13px; color: #fff; margin-bottom: 18px; letter-spacing: 0.06em; }
+  #boot .skip { position: absolute; right: 40px; bottom: 30px; font-size: 10px; color: #666; letter-spacing: 0.2em; }
+
+  /* ---- small screens: one window at a time, maximized ---- */
+  @media (max-width: 900px) {
+    #icons { flex-direction: row; flex-wrap: wrap; left: 12px; right: 12px; top: 14px; gap: 14px; }
+    .dicon { width: 84px; }
+    .win { left: 4px !important; top: 4px !important; right: 4px !important;
+      bottom: 50px !important; width: auto !important; height: auto !important; }
+    #win-doc .client { padding: 22px 18px 40px; }
+    .tbar { cursor: default; }
+    .lrow, .lrow.out { grid-template-columns: 1fr; gap: 3px 0; }
+    .uicols, .ui-obsidian .uicols { grid-template-columns: 1fr; }
+    .uicol { border-right: 0; border-bottom: 1px solid #ddd; }
+    .t::after { max-width: 26ch; }
     .cite { white-space: normal; }
-    .gloss-grid { grid-template-columns: minmax(0, 1fr); }
-    .uicols, .ui-obsidian .uicols { grid-template-columns: minmax(0, 1fr); }
-    .uicol { border-right: 0; border-bottom: 1px solid var(--line); }
-    .refs { columns: 1; column-rule: none; }
-    .refs li { font-size: 13px; }
-    .panel::after { margin-top: 48px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .panel .ph > *, .panel .gloss-grid > .gterm, .panel .ui-flow > .uipane {
-      transition-duration: 1ms; transform: none; opacity: 1;
-    }
-    .ph h2 .sig { transition-duration: 1ms; background-size: 100% 0.14em; }
+    .t::after { transition: none; }
   }
 
-  /* it is an essay: let it print like one */
-  @media print {
-    .topbar, #rail, #folio, #hint, .grain, .edge-gradient, .inkfig, .inkplate, .inkfront { display: none !important; }
-    .panel { display: block; padding: 24px 0; }
-    .panel .ph > * { opacity: 1 !important; transform: none !important; }
-    body { background: #fff; }
-  }
+  /* no-JS fallback: the document simply flows on the desktop */
+  .nojs #panels { max-width: 76ch; margin: 30px auto; background: #fff; padding: 40px 48px; box-shadow: var(--bevel-out); }
+  .nojs body { overflow: auto; }
 </style>
 </head>
 <body>
@@ -832,18 +658,29 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
 <script>
 "use strict";
 (function () {
-  window.__SBF__ = "final-paper"; // identity marker for QA
+  window.__SBF__ = "final-os"; // identity marker for QA
   var RM = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.documentElement.classList.remove("nojs");
 
-  function vw() { return (window.visualViewport && window.visualViewport.width) || window.innerWidth || 1280; }
-  function vh() { return (window.visualViewport && window.visualViewport.height) || window.innerHeight || 800; }
-  function clamp01(t) { return t < 0 ? 0 : t > 1 ? 1 : t; }
-  var outCubic = function (t) { return 1 - Math.pow(1 - t, 3); };
+  function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
+  function el(tag, cls, html) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (html != null) e.innerHTML = html;
+    return e;
+  }
+  function vw() { return window.innerWidth || 1280; }
+  function vh() { return window.innerHeight || 800; }
+  function narrow() { return vw() < 900; }
 
-  // ---- deterministic PRNG: every figure is drawn by the same hand every time ----
-  function rng(seed) { return function () { seed |= 0; seed = (seed + 0x6D2B79F5) | 0; var t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  var NB = 15;
+  var BEAT_NAMES = ["HERO", "THE PROBLEM", "PKM", "SECOND BRAIN", "PLAIN LANGUAGE", "THE HYPE", "THE TRAP",
+                    "RETRIEVAL FIRST", "ZETTELKASTEN", "THREE SIZES", "THE WORKFLOW", "CASE STUDY",
+                    "WHAT IT IS FOR", "END", "WORKS CITED"];
+  var panelEls = [];
+  for (var pe = 0; pe < NB; pe++) panelEls.push(document.getElementById("b" + pe));
 
-  // ---- the vault, kept for the plates: raw 3D positions projected to ink ----
+  // ---- the vault data ------------------------------------------------------------
   var D = window.__SBF || null;
   var N = D ? D.n : 0;
   var PX = new Float32Array(N), PY = new Float32Array(N), PZ = new Float32Array(N);
@@ -857,568 +694,376 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     }
   }
   var SPINE = (D && D.spine && D.spine.length) ? D.spine : [];
+  var EFULL = (D && D.e && D.e.length) ? D.e : SPINE;
   var MAXDEG = D ? D.md : 60;
-  var HOT = [];   // the best-connected notes get the red pen
-  for (var h0 = 0; h0 < N; h0++) if (DEG[h0] / MAXDEG > 0.4) HOT.push(h0);
-
-  // ---- ink helpers: nothing here is ruler-straight unless the point is that it is ----
-  var INK = "38,30,18", RED = "#c23a20", REDA = "194,58,32";
-  function iline(ctx, x1, y1, x2, y2, r, amp) {
-    var seg = 6;
-    ctx.beginPath(); ctx.moveTo(x1 + (r() - 0.5) * amp, y1 + (r() - 0.5) * amp);
-    for (var i = 1; i <= seg; i++) {
-      var t = i / seg;
-      ctx.lineTo(x1 + (x2 - x1) * t + (i === seg ? 0 : (r() - 0.5) * amp),
-                 y1 + (y2 - y1) * t + (i === seg ? 0 : (r() - 0.5) * amp));
-    }
-    ctx.stroke();
-  }
-  function icircle(ctx, cx, cy, rad, r, amp, from, to) {
-    from = from == null ? -0.35 : from; to = to == null ? 6.55 : to;
-    var seg = 26;
-    ctx.beginPath();
-    for (var i = 0; i <= seg; i++) {
-      var a = from + (to - from) * (i / seg);
-      var rr = rad + (r() - 0.5) * amp;
-      var x = cx + Math.cos(a) * rr, y = cy + Math.sin(a) * rr;
-      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-  }
-  function icard(ctx, x, y, w, h, rot, r, amp) {
-    ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
-    iline(ctx, -w / 2, -h / 2, w / 2, -h / 2, r, amp);
-    iline(ctx, w / 2, -h / 2, w / 2, h / 2, r, amp);
-    iline(ctx, w / 2, h / 2, -w / 2, h / 2, r, amp);
-    iline(ctx, -w / 2, h / 2, -w / 2, -h / 2, r, amp);
-    ctx.restore();
-  }
-  function iarrow(ctx, x1, y1, x2, y2, r) {
-    iline(ctx, x1, y1, x2, y2, r, 2);
-    var a = Math.atan2(y2 - y1, x2 - x1);
-    ctx.beginPath();
-    ctx.moveTo(x2, y2); ctx.lineTo(x2 - 8 * Math.cos(a - 0.45), y2 - 8 * Math.sin(a - 0.45));
-    ctx.moveTo(x2, y2); ctx.lineTo(x2 - 8 * Math.cos(a + 0.45), y2 - 8 * Math.sin(a + 0.45));
-    ctx.stroke();
-  }
-  function setInk(ctx, alpha, width) {
-    ctx.strokeStyle = "rgba(" + INK + "," + alpha + ")";
-    ctx.lineWidth = width; ctx.lineCap = "round"; ctx.lineJoin = "round";
-    ctx.setLineDash([]);
-  }
-  function setRed(ctx, alpha, width) {
-    ctx.strokeStyle = "rgba(" + REDA + "," + alpha + ")";
-    ctx.lineWidth = width; ctx.lineCap = "round"; ctx.lineJoin = "round";
-    ctx.setLineDash([]);
-  }
-
-  // project the vault to the page: a slow turntable, tilted a little toward the reader
-  function plotVault(ctx, w, h, t, theta, o) {
-    o = o || {};
-    var scale = Math.min(w, h) * (o.fit || 0.46) / R3D;
-    var cx = w * (o.cx || 0.5), cy = h * (o.cy || 0.5);
-    var ct = Math.cos(theta), st = Math.sin(theta);
-    var eN = SPINE.length / 2, stride = o.stride || 1;
-    var eShow = Math.floor(eN * clamp01(t * 1.25));
-    ctx.strokeStyle = "rgba(" + INK + "," + (o.edgeA || 0.16) + ")";
-    ctx.lineWidth = 0.7; ctx.setLineDash([]);
-    ctx.beginPath();
-    for (var e = 0; e < eShow; e += stride) {
-      var a = SPINE[e * 2], b = SPINE[e * 2 + 1];
-      var ax = PX[a] * ct + PZ[a] * st, ay = PY[a] * 0.92 - (PX[a] * st - PZ[a] * ct) * 0.16;
-      var bx = PX[b] * ct + PZ[b] * st, by = PY[b] * 0.92 - (PX[b] * st - PZ[b] * ct) * 0.16;
-      ctx.moveTo(cx + ax * scale, cy - ay * scale);
-      ctx.lineTo(cx + bx * scale, cy - by * scale);
-    }
-    ctx.stroke();
-    var nShow = Math.floor(N * clamp01(t * 1.1 + 0.05));
-    ctx.fillStyle = "rgba(" + INK + "," + (o.nodeA || 0.5) + ")";
-    for (var i = 0; i < nShow; i++) {
-      var x = PX[i] * ct + PZ[i] * st, y = PY[i] * 0.92 - (PX[i] * st - PZ[i] * ct) * 0.16;
-      var rr = 0.6 + Math.sqrt(DEG[i]) * (o.nodeR || 0.26);
-      ctx.fillRect(cx + x * scale - rr / 2, cy - y * scale - rr / 2, rr, rr);
-    }
-    ctx.fillStyle = "rgba(" + REDA + "," + (o.hotA || 0.85) + ")";
-    for (var k = 0; k < HOT.length; k++) {
-      var j = HOT[k]; if (j >= nShow) continue;
-      var hx = PX[j] * ct + PZ[j] * st, hy = PY[j] * 0.92 - (PX[j] * st - PZ[j] * ct) * 0.16;
-      var hr = Math.min(3.4, 1.2 + Math.sqrt(DEG[j]) * 0.22);
-      ctx.beginPath(); ctx.arc(cx + hx * scale, cy - hy * scale, hr, 0, 6.29); ctx.fill();
+  var GRP = (D && D.grp && D.grp.length === N) ? D.grp : null;
+  var GNAMES = (D && D.g) ? D.g : [];
+  // adjacency index over the full edge list, for the red click-highlight
+  var adjHead = null, adjNext = null, adjEdge = null;
+  if (EFULL.length) {
+    adjHead = new Int32Array(N).fill(-1);
+    adjNext = new Int32Array(EFULL.length);
+    adjEdge = new Int32Array(EFULL.length);
+    var ac = 0;
+    for (var ae = 0; ae < EFULL.length; ae += 2) {
+      var a1 = EFULL[ae], b1 = EFULL[ae + 1];
+      adjEdge[ac] = ae; adjNext[ac] = adjHead[a1]; adjHead[a1] = ac; ac++;
+      adjEdge[ac] = ae; adjNext[ac] = adjHead[b1]; adjHead[b1] = ac; ac++;
     }
   }
 
-  // ---- the figure drawings, one per beat that needs one --------------------------
-  var DRAW = {
+  // ---- window manager ------------------------------------------------------------
+  var zTop = 20;
+  var wins = {};       // id -> win record
+  var order = [];      // open order for taskbar
+  var taskbtns = el("div", "tbtns");
+  taskbtns.style.cssText = "display:flex;gap:6px;overflow:hidden;";
 
-    // 01 · the problem: notes flung from the desk, trailing away
-    scatter: function (ctx, w, h, t) {
-      var r = rng(11), cxx = w * 0.42, cyy = h * 0.42, n = 22;
-      for (var i = 0; i < n; i++) {
-        var show = clamp01(t * n - i);
-        var ang = r() * 6.28, dist = (0.14 + 0.8 * (i / n)) * Math.min(w, h) * 0.52;
-        var rot = (r() - 0.5) * 0.9;
-        var x = cxx + Math.cos(ang) * dist * show, y = cyy + Math.sin(ang) * dist * show * 0.85;
-        if (show <= 0.02) { r(); r(); continue; }
-        ctx.setLineDash([2, 5]);
-        ctx.strokeStyle = "rgba(" + INK + ",0.22)"; ctx.lineWidth = 0.8;
-        ctx.beginPath(); ctx.moveTo(cxx, cyy); ctx.lineTo(x, y); ctx.stroke();
-        if (i % 7 === 3) setRed(ctx, 0.8 * show, 1.3); else setInk(ctx, 0.65 * show, 1.2);
-        icard(ctx, x, y, 22, 14, rot, r, 1.6);
-      }
-    },
+  function makeWin(id, opts) {
+    var root = el("div", "win hidden");
+    root.id = "win-" + id;
+    root.setAttribute("role", "dialog");
+    root.setAttribute("aria-label", opts.title);
+    var tbar = el("div", "tbar");
+    tbar.appendChild(el("span", "ticon", opts.glyph));
+    tbar.appendChild(el("span", "ttext", opts.title));
+    var btns = el("span", "btns");
+    var bMin = el("button", null, "_"); bMin.title = "Minimize";
+    var bMax = el("button", null, "&#9633;"); bMax.title = "Maximize";
+    var bX = el("button", null, "&times;"); bX.title = "Close";
+    btns.appendChild(bMin); btns.appendChild(bMax); btns.appendChild(bX);
+    tbar.appendChild(btns);
+    root.appendChild(tbar);
+    if (opts.menus) {
+      var mb = el("div", "menubar");
+      for (var m = 0; m < opts.menus.length; m++) mb.appendChild(el("span", null, opts.menus[m]));
+      root.appendChild(mb);
+    }
+    if (opts.ruler) root.appendChild(el("div", "ruler"));
+    if (opts.tools) root.appendChild(opts.tools);
+    var client = el("div", "client");
+    root.appendChild(client);
+    var status = null;
+    if (opts.status) {
+      status = el("div", "statusbar");
+      for (var s = 0; s < opts.status.length; s++) status.appendChild(el("span", null, opts.status[s]));
+      root.appendChild(status);
+    }
+    document.body.appendChild(root);
 
-    // 02 · pkm: the same notes, called back into one loose ring
-    gather: function (ctx, w, h, t) {
-      var r = rng(22), cxx = w * 0.5, cyy = h * 0.46, R = Math.min(w, h) * 0.3, n = 30;
-      for (var i = 0; i < n; i++) {
-        var a0 = r() * 6.28, d0 = R * (1.7 + r() * 1.3);
-        var ae = (i / n) * 6.28;
-        var x0 = cxx + Math.cos(a0) * d0, y0 = cyy + Math.sin(a0) * d0 * 0.8;
-        var xe = cxx + Math.cos(ae) * R, ye = cyy + Math.sin(ae) * R * 0.86;
-        var tt = outCubic(clamp01(t * 1.3 - (i / n) * 0.3));
-        var x = x0 + (xe - x0) * tt, y = y0 + (ye - y0) * tt;
-        ctx.setLineDash([1.5, 5]);
-        ctx.strokeStyle = "rgba(" + INK + ",0.14)"; ctx.lineWidth = 0.8;
-        ctx.beginPath(); ctx.moveTo(x0, y0); ctx.quadraticCurveTo((x0 + xe) / 2 + 14, (y0 + ye) / 2 - 10, x, y); ctx.stroke();
-        ctx.fillStyle = "rgba(" + INK + ",0.7)";
-        ctx.fillRect(x - 2.6, y - 1.8, 5.2, 3.6);
-      }
-      if (t > 0.82) { setRed(ctx, (t - 0.82) / 0.18 * 0.6, 1.2); icircle(ctx, cxx, cyy, R * 1.16, r, 3); }
-    },
+    var w = { id: id, root: root, tbar: tbar, client: client, status: status,
+              title: opts.title, glyph: opts.glyph, open: false, min: false, max: false,
+              geo: opts.geo, prevGeo: null, btn: null, onOpen: opts.onOpen || null };
+    wins[id] = w;
 
-    // 03 · second brain: a tidy pile with a social-media orbit sketched around it
-    orbit: function (ctx, w, h, t) {
-      var r = rng(33), cxx = w * 0.5, cyy = h * 0.48;
-      var k = Math.min(w, h);
-      for (var i = 0; i < 8; i++) {
-        var show = clamp01(t * 3 - i * 0.18); if (show <= 0) { r(); r(); r(); continue; }
-        setInk(ctx, 0.7 * show, 1.2);
-        icard(ctx, cxx + (r() - 0.5) * k * 0.16, cyy + (r() - 0.5) * k * 0.14, 26, 16, (r() - 0.5) * 0.7, r, 1.4);
-      }
-      var oshow = clamp01((t - 0.35) / 0.5);
-      if (oshow > 0) {
-        ctx.setLineDash([3, 6]);
-        for (var e = 0; e < 2; e++) {
-          ctx.strokeStyle = "rgba(" + INK + ",0.4)"; ctx.lineWidth = 1;
-          ctx.save(); ctx.translate(cxx, cyy); ctx.rotate(e ? 0.5 : -0.35); ctx.scale(1, 0.38);
-          ctx.beginPath(); ctx.arc(0, 0, k * (0.33 + e * 0.06), -1.5, -1.5 + 6.28 * oshow); ctx.stroke();
-          ctx.restore();
-        }
-        ctx.setLineDash([]);
-        if (oshow > 0.55) {
-          ctx.fillStyle = RED;
-          for (var s = 0; s < 3; s++) {
-            var a = 1.2 + s * 2.1 + oshow * 1.2, rr = k * (0.33 + (s % 2) * 0.06);
-            ctx.save(); ctx.translate(cxx, cyy); ctx.rotate(s % 2 ? 0.5 : -0.35); ctx.scale(1, 0.38);
-            ctx.beginPath(); ctx.arc(Math.cos(a) * rr, Math.sin(a) * rr, 4.5, 0, 6.29); ctx.fill();
-            ctx.restore();
-          }
-        }
-      }
-    },
+    bX.addEventListener("click", function (e) { e.stopPropagation(); closeWin(w); });
+    bMin.addEventListener("click", function (e) { e.stopPropagation(); minWin(w); });
+    bMax.addEventListener("click", function (e) { e.stopPropagation(); maxWin(w); });
+    root.addEventListener("pointerdown", function () { focusWin(w); });
 
-    // 05 · the hype: one long scribble winding itself up
-    storm: function (ctx, w, h, t) {
-      var r = rng(55), cxx = w * 0.5, cyy = h * 0.46;
-      var turns = 6.28 * 4.6 * t, steps = Math.max(2, Math.floor(140 * t));
-      setInk(ctx, 0.62, 1.4);
-      ctx.beginPath();
-      for (var i = 0; i <= steps; i++) {
-        var a = (i / 140) * 6.28 * 4.6;
-        var rad = 3 + a * Math.min(w, h) * 0.0145 + (r() - 0.5) * 7;
-        var x = cxx + Math.cos(a) * rad, y = cyy + Math.sin(a) * rad * 0.88;
-        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-      }
-      ctx.stroke();
-      if (t > 0.55) {
-        setRed(ctx, 0.85, 1.6);
-        var aEnd = turns, rEnd = 3 + aEnd * Math.min(w, h) * 0.0145;
-        for (var f = 0; f < 5; f++) {
-          var fa = aEnd - f * 0.35, fr = rEnd - f * 3;
-          var fx = cxx + Math.cos(fa) * fr, fy = cyy + Math.sin(fa) * fr * 0.88;
-          iline(ctx, fx, fy, fx + (r() - 0.5) * 16, fy + (r() - 0.5) * 16, r, 2);
-        }
-      }
-    },
-
-    // 06 · the trap: a flawless machine-drawn globe, struck through by hand
-    globe: function (ctx, w, h, t) {
-      var r = rng(66), cxx = w * 0.5, cyy = h * 0.46, R = Math.min(w, h) * 0.34;
-      var g = clamp01(t / 0.62);
-      ctx.strokeStyle = "rgba(" + INK + ",0.55)"; ctx.lineWidth = 1; ctx.setLineDash([]);
-      ctx.beginPath(); ctx.arc(cxx, cyy, R, -1.57, -1.57 + 6.29 * g); ctx.stroke();
-      for (var la = 1; la <= 4; la++) {
-        var yy = (la / 5) * 2 - 1, ry = R * Math.sqrt(Math.max(0, 1 - yy * yy));
-        ctx.beginPath(); ctx.save(); ctx.translate(cxx, cyy + yy * R * 0.98); ctx.scale(1, 0.24);
-        ctx.arc(0, 0, ry, 0, 6.29 * clamp01(g * 5 - la)); ctx.restore(); ctx.stroke();
-      }
-      for (var lo = 0; lo < 5; lo++) {
-        ctx.beginPath(); ctx.save(); ctx.translate(cxx, cyy);
-        ctx.scale(Math.abs(Math.cos(lo / 5 * 3.14)) * 0.96 + 0.04, 1);
-        ctx.arc(0, 0, R * 0.99, 0, 6.29 * clamp01(g * 5 - lo)); ctx.restore(); ctx.stroke();
-      }
-      var s = clamp01((t - 0.68) / 0.32);
-      if (s > 0) {   // the red strike: energetic, human, final
-        setRed(ctx, 0.9, 2.6);
-        var px = cxx - R * 1.15, py = cyy + R * 0.5, n = Math.max(2, Math.floor(9 * s));
-        ctx.beginPath(); ctx.moveTo(px, py);
-        for (var z = 1; z <= n; z++) {
-          px = cxx - R * 1.15 + (z / 9) * R * 2.3;
-          py = cyy + ((z % 2) ? -1 : 1) * R * (0.55 - z * 0.03) + (r() - 0.5) * 10;
-          ctx.lineTo(px, py);
-        }
-        ctx.stroke();
-      }
-    },
-
-    // 07 · retrieval first: many cards face down, one picked out in red
-    onecard: function (ctx, w, h, t) {
-      var r = rng(77), k = Math.min(w, h);
-      var cols = 3, rows = 3, pick = 4;
-      for (var i = 0; i < cols * rows; i++) {
-        var show = clamp01(t * 12 - i); if (show <= 0) { r(); r(); continue; }
-        var gx = w * 0.5 + ((i % cols) - 1) * k * 0.3 + (r() - 0.5) * 10;
-        var gy = h * 0.46 + (((i / cols) | 0) - 1) * k * 0.22 + (r() - 0.5) * 8;
-        setInk(ctx, (i === pick ? 0.85 : 0.28) * show, i === pick ? 1.5 : 1);
-        icard(ctx, gx, gy, 34, 21, (r() - 0.5) * 0.4, r, 1.6);
-        if (i === pick) {
-          iline(ctx, gx - 12, gy - 3, gx + 12, gy - 3, r, 1.2);
-          iline(ctx, gx - 12, gy + 2, gx + 6, gy + 2, r, 1.2);
-          var c = clamp01((t - 0.7) / 0.3);
-          if (c > 0) { setRed(ctx, 0.9, 2); icircle(ctx, gx, gy, 30, r, 3.4, -0.6, -0.6 + 7.1 * c); }
-        }
-      }
-    },
-
-    // 08 · zettelkasten: the cabinet itself, drawn drawer by drawer
-    cabinet: function (ctx, w, h, t) {
-      var r = rng(88), k = Math.min(w, h);
-      var cw = k * 0.62, ch = k * 0.78, x0 = w * 0.5 - cw / 2, y0 = h * 0.48 - ch / 2;
-      setInk(ctx, 0.75, 1.6);
-      var frame = clamp01(t / 0.25);
-      if (frame > 0) {
-        icard(ctx, x0 + cw / 2, y0 + ch / 2, cw * frame, ch * frame, 0, r, 2.2);
-      }
-      var cols = 3, rows = 4, dw = cw / cols, dh = ch / rows;
-      for (var i = 0; i < cols * rows; i++) {
-        var show = clamp01((t - 0.25) / 0.6 * (cols * rows) - i); if (show <= 0) { r(); r(); r(); continue; }
-        var dx = x0 + (i % cols) * dw + dw / 2, dy = y0 + ((i / cols) | 0) * dh + dh / 2;
-        setInk(ctx, 0.6 * show, 1.1);
-        icard(ctx, dx, dy, dw * 0.82, dh * 0.68, 0, r, 1.6);
-        setInk(ctx, 0.7 * show, 1.3);
-        iline(ctx, dx - dw * 0.14, dy, dx + dw * 0.14, dy, r, 1);   // the pull
-        setInk(ctx, 0.35 * show, 0.9);
-        iline(ctx, dx - dw * 0.26, dy - dh * 0.2, dx + dw * 0.26, dy - dh * 0.2, r, 1);   // the label slot
-      }
-      var open = clamp01((t - 0.88) / 0.12);
-      if (open > 0) {   // one drawer left open, in red
-        var oi = 4, ox = x0 + (oi % cols) * dw + dw / 2, oy = y0 + ((oi / cols) | 0) * dh + dh / 2 + dh * 0.34 * open;
-        setRed(ctx, 0.9 * open, 1.6);
-        icard(ctx, ox, oy, dw * 0.86, dh * 0.72, 0, r, 1.6);
-      }
-    },
-
-    // 09 · atom, molecule, alloy: the method as a diagram
-    tiers: function (ctx, w, h, t) {
-      var r = rng(99), k = Math.min(w, h), cxx = w * 0.5;
-      var y1 = h * 0.16, y2 = h * 0.5, y3 = h * 0.84;
-      var s1 = clamp01(t / 0.3), s2 = clamp01((t - 0.34) / 0.3), s3 = clamp01((t - 0.68) / 0.32);
-      ctx.fillStyle = "rgba(" + INK + ",0.8)";
-      for (var a = 0; a < 9; a++) {   // atoms
-        if (a / 9 > s1) { r(); r(); continue; }
-        ctx.beginPath();
-        ctx.arc(cxx + (r() - 0.5) * k * 0.6, y1 + (r() - 0.5) * k * 0.14, 2.6, 0, 6.29); ctx.fill();
-      }
-      if (s1 >= 1) { setInk(ctx, 0.5, 1.1); iarrow(ctx, cxx, y1 + k * 0.1, cxx, y2 - k * 0.14, r); }
-      if (s2 > 0) {   // molecules: the same dots, now joined
-        var m1 = rng(991), pts = [];
-        for (var m = 0; m < 9; m++) {
-          var mx = cxx + ((m < 5 ? -1 : 1) * k * 0.16) + (m1() - 0.5) * k * 0.16;
-          var my = y2 + (m1() - 0.5) * k * 0.13;
-          pts.push([mx, my]);
-        }
-        setInk(ctx, 0.4 * s2, 0.9);
-        for (var e1 = 0; e1 < pts.length; e1++) {
-          var e2 = (e1 + 1) % (e1 < 5 ? 5 : pts.length);
-          if (e1 < 4) iline(ctx, pts[e1][0], pts[e1][1], pts[e1 + 1][0], pts[e1 + 1][1], m1, 1.4);
-          else if (e1 >= 5 && e1 < 8) iline(ctx, pts[e1][0], pts[e1][1], pts[e1 + 1][0], pts[e1 + 1][1], m1, 1.4);
-        }
-        ctx.fillStyle = "rgba(" + INK + ",0.85)";
-        for (var mp = 0; mp < pts.length; mp++) {
-          if (mp / pts.length > s2) continue;
-          ctx.beginPath(); ctx.arc(pts[mp][0], pts[mp][1], 2.8, 0, 6.29); ctx.fill();
-        }
-      }
-      if (s2 >= 1) { setInk(ctx, 0.5, 1.1); iarrow(ctx, cxx, y2 + k * 0.12, cxx, y3 - k * 0.13, r); }
-      if (s3 > 0) {   // the alloy: one shape, written in red
-        setRed(ctx, 0.9 * s3, 2);
-        ctx.fillStyle = "rgba(" + REDA + "," + 0.12 * s3 + ")";
-        var hexr = k * 0.1;
-        ctx.beginPath();
-        for (var hx = 0; hx <= 6; hx++) {
-          var ha = hx / 6 * 6.28 - 1.57;
-          var px = cxx + Math.cos(ha) * hexr * (1 + (r() - 0.5) * 0.06);
-          var py = y3 + Math.sin(ha) * hexr * (1 + (r() - 0.5) * 0.06);
-          if (hx === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-        }
-        ctx.closePath(); ctx.fill(); ctx.stroke();
-      }
-    },
-
-    // 13 · the end: the box, open
-    openbox: function (ctx, w, h, t) {
-      var r = rng(1313), cxx = w * 0.5, cyy = h * 0.62, k = Math.min(w, h);
-      var bw = k * 0.5, bh = k * 0.3;
-      var s = clamp01(t / 0.55);
-      setInk(ctx, 0.8, 1.5);
-      if (s > 0) {
-        iline(ctx, cxx - bw / 2, cyy, cxx - bw * 0.1, cyy + bh * 0.4 * s, r, 2);
-        iline(ctx, cxx - bw * 0.1, cyy + bh * 0.4, cxx + bw / 2, cyy + bh * 0.05, r, 2);
-        iline(ctx, cxx + bw / 2, cyy + bh * 0.05, cxx + bw * 0.05, cyy - bh * 0.3, r, 2);
-        iline(ctx, cxx + bw * 0.05, cyy - bh * 0.3, cxx - bw / 2, cyy, r, 2);
-        iline(ctx, cxx - bw / 2, cyy, cxx - bw / 2, cyy + bh * 0.5, r, 2);
-        iline(ctx, cxx - bw / 2, cyy + bh * 0.5, cxx - bw * 0.1, cyy + bh * 0.9, r, 2);
-        iline(ctx, cxx - bw * 0.1, cyy + bh * 0.9, cxx - bw * 0.1, cyy + bh * 0.4, r, 2);
-        iline(ctx, cxx - bw * 0.1, cyy + bh * 0.9, cxx + bw / 2, cyy + bh * 0.55, r, 2);
-        iline(ctx, cxx + bw / 2, cyy + bh * 0.55, cxx + bw / 2, cyy + bh * 0.05, r, 2);
-        iline(ctx, cxx - bw / 2, cyy, cxx - bw * 0.72, cyy - bh * 0.34, r, 2);   // open flap
-        iline(ctx, cxx - bw * 0.72, cyy - bh * 0.34, cxx - bw * 0.32, cyy - bh * 0.62, r, 2);
-      }
-      var fly = clamp01((t - 0.5) / 0.5);
-      if (fly > 0) {
-        for (var f = 0; f < 6; f++) {
-          var fs = clamp01(fly * 6 - f * 0.6); if (fs <= 0) { r(); r(); continue; }
-          var fx = cxx + (r() - 0.5) * bw * 0.7;
-          var fy = cyy - bh * 0.3 - fs * k * (0.24 + r() * 0.2);
-          ctx.setLineDash([1.5, 4]);
-          ctx.strokeStyle = "rgba(" + INK + ",0.2)"; ctx.lineWidth = 0.8;
-          ctx.beginPath(); ctx.moveTo(fx, cyy - bh * 0.1); ctx.lineTo(fx, fy); ctx.stroke();
-          if (f === 2) ctx.fillStyle = RED; else ctx.fillStyle = "rgba(" + INK + ",0.75)";
-          ctx.fillRect(fx - 3, fy - 2, 6, 4);
-        }
-      }
-    },
-
-    // frontispiece + plate: the vault itself
-    herofront: function (ctx, w, h, t) {
-      if (!D) return;
-      plotVault(ctx, w, h, t, 0.6, { fit: 0.5, cy: 0.52, edgeA: 0.05, nodeA: 0.13, hotA: 0.22, nodeR: 0.22, stride: 2 });
-    },
-    vault: function (ctx, w, h, t, time) {
-      if (!D) return;
-      var theta = 0.6 + (RM ? 0 : time * 0.05);
-      plotVault(ctx, w, h, t, theta, { fit: 0.62, edgeA: 0.2, nodeA: 0.75, nodeR: 0.34, hotA: 0.85, stride: 1 });
-    },
-  };
-
-  // ---- figure plumbing -----------------------------------------------------------
-  var NB = 15;
-  var panelEls = [];
-  for (var pe = 0; pe < NB; pe++) panelEls.push(document.getElementById("b" + pe));
-
-  var MARGIN_FIGS = { 1: "scatter", 2: "gather", 3: "orbit", 5: "storm", 6: "globe", 7: "onecard", 8: "cabinet", 9: "tiers" };
-  var figs = [];   // {beat, kind, wrap, stick, canvas, ctx, prog, playing, mode}
-
-  function makeCanvasFig(kind, beat, mode) {
-    var wrap = document.createElement("div");
-    wrap.className = mode === "margin" ? "inkfig" : (mode === "front" ? "inkfront" : "inkplate");
-    wrap.setAttribute("aria-hidden", "true");
-    var stick = wrap;
-    if (mode === "margin") { stick = document.createElement("div"); stick.className = "stick"; wrap.appendChild(stick); }
-    var canvas = document.createElement("canvas");
-    stick.appendChild(canvas);
-    var f = { beat: beat, kind: kind, wrap: wrap, stick: stick, canvas: canvas,
-              ctx: canvas.getContext("2d"), prog: RM ? 1 : 0, playing: false, visible: false, mode: mode };
-    figs.push(f);
-    return f;
+    // drag by the title bar
+    var drag = null;
+    tbar.addEventListener("pointerdown", function (e) {
+      if (e.target.closest("button") || narrow()) return;
+      focusWin(w);
+      var r = root.getBoundingClientRect();
+      drag = { dx: e.clientX - r.left, dy: e.clientY - r.top };
+      tbar.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+    tbar.addEventListener("pointermove", function (e) {
+      if (!drag) return;
+      var x = clamp(e.clientX - drag.dx, -root.offsetWidth + 90, vw() - 90);
+      var y = clamp(e.clientY - drag.dy, 0, vh() - 80);
+      root.style.left = x + "px"; root.style.top = y + "px";
+      w.max = false;
+    });
+    tbar.addEventListener("pointerup", function () { drag = null; });
+    tbar.addEventListener("dblclick", function (e) { if (!e.target.closest("button")) maxWin(w); });
+    return w;
   }
 
-  function sizeFig(f) {
-    var host = f.mode === "margin" ? f.stick : f.wrap;
-    var r = host.getBoundingClientRect();
-    if (!r.width || !r.height) return false;
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    var W = Math.round(r.width * dpr), H = Math.round(r.height * dpr);
-    if (f.canvas.width !== W || f.canvas.height !== H) {
-      f.canvas.width = W; f.canvas.height = H;
-      f.canvas.style.width = r.width + "px"; f.canvas.style.height = r.height + "px";
-      f.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      return true;
-    }
-    return false;
+  function applyGeo(w) {
+    if (narrow()) return; // CSS maximizes everything on small screens
+    var g = w.geo;
+    w.root.style.left = g.x + "px"; w.root.style.top = g.y + "px";
+    w.root.style.width = g.w + "px"; w.root.style.height = g.h + "px";
   }
-
-  function drawFig(f, time) {
-    var r = f.canvas.getBoundingClientRect();
-    if (!r.width) return;
-    f.ctx.clearRect(0, 0, r.width, r.height);
-    DRAW[f.kind](f.ctx, r.width, r.height, f.prog, time || 0);
+  function focusWin(w) {
+    if (!w.open) return;
+    w.root.style.zIndex = ++zTop;
+    for (var k in wins) wins[k].root.classList.toggle("focus", wins[k] === w);
+    if (w.min) { w.min = false; w.root.classList.remove("hidden"); }
+    if (narrow()) { for (var k2 in wins) { if (wins[k2] !== w && wins[k2].open) { wins[k2].min = true; wins[k2].root.classList.add("hidden"); } } }
+    syncTaskbar();
   }
-
-  (function buildFigs() {
-    for (var b in MARGIN_FIGS) {
-      var el = panelEls[b]; if (!el) continue;
-      var f = makeCanvasFig(MARGIN_FIGS[b], +b, "margin");
-      el.appendChild(f.wrap);
+  function openWin(w) {
+    if (!w.open) {
+      w.open = true; w.min = false;
+      order.push(w);
+      w.root.classList.remove("hidden");
+      applyGeo(w);
+      if (w.onOpen) { var f = w.onOpen; w.onOpen = null; f(w); }
     }
-    if (panelEls[0]) {   // frontispiece behind the hero
-      var fh = makeCanvasFig("herofront", 0, "front");
-      panelEls[0].insertBefore(fh.wrap, panelEls[0].firstChild);
+    focusWin(w);
+  }
+  function closeWin(w) {
+    w.open = false; w.min = false;
+    w.root.classList.add("hidden");
+    order = order.filter(function (x) { return x !== w; });
+    syncTaskbar();
+  }
+  function minWin(w) {
+    w.min = true; w.root.classList.add("hidden");
+    syncTaskbar();
+  }
+  function maxWin(w) {
+    if (narrow()) return;
+    if (!w.max) {
+      var r = w.root.getBoundingClientRect();
+      w.prevGeo = { x: r.left, y: r.top, w: r.width, h: r.height };
+      w.root.style.left = "4px"; w.root.style.top = "4px";
+      w.root.style.width = (vw() - 8) + "px"; w.root.style.height = (vh() - 54) + "px";
+      w.max = true;
+    } else if (w.prevGeo) {
+      w.root.style.left = w.prevGeo.x + "px"; w.root.style.top = w.prevGeo.y + "px";
+      w.root.style.width = w.prevGeo.w + "px"; w.root.style.height = w.prevGeo.h + "px";
+      w.max = false;
     }
-    if (panelEls[12]) {  // the plate: the vault, printed and slowly turning
-      var fv = makeCanvasFig("vault", 12, "plate");
-      var ph = panelEls[12].querySelector(".ph"), h2 = ph && ph.querySelector("h2");
-      if (h2 && h2.nextSibling) ph.insertBefore(fv.wrap, h2.nextSibling); else if (ph) ph.appendChild(fv.wrap);
-    }
-    if (panelEls[13]) {  // the open box
-      var fb = makeCanvasFig("openbox", 13, "plate");
-      var ph13 = panelEls[13].querySelector(".ph"), k13 = ph13 && ph13.querySelector(".kick");
-      if (k13) ph13.insertBefore(fb.wrap, k13); else if (ph13) ph13.appendChild(fb.wrap);
-    }
-  })();
-
-  // narrow screens tuck each margin figure into the prose, under its headline
-  var MQ_WIDE = 900;
-  function syncFigs() {
-    var wide = vw() >= MQ_WIDE;
-    for (var i = 0; i < figs.length; i++) {
-      var f = figs[i]; if (f.mode !== "margin") continue;
-      var panel = panelEls[f.beat], ph = panel && panel.querySelector(".ph");
-      if (!panel || !ph) continue;
-      var inPanel = f.wrap.parentNode === panel;
-      if (wide && !inPanel) { f.wrap.classList.remove("inline"); panel.appendChild(f.wrap); sizeFig(f); drawFig(f); }
-      else if (!wide && inPanel) {
-        f.wrap.classList.add("inline");
-        var h2 = ph.querySelector("h2");
-        if (h2 && h2.nextSibling) ph.insertBefore(f.wrap, h2.nextSibling); else ph.appendChild(f.wrap);
-        sizeFig(f); drawFig(f);
-      }
+    focusWin(w);
+  }
+  function syncTaskbar() {
+    taskbtns.innerHTML = "";
+    for (var i = 0; i < order.length; i++) {
+      (function (w) {
+        var b = el("button", "tbtn" + (!w.min && w.root.classList.contains("focus") ? " on" : ""), w.glyph + "&ensp;" + w.title.split(" — ")[0].split(" &mdash; ")[0]);
+        b.addEventListener("click", function () {
+          if (w.min || !w.root.classList.contains("focus")) focusWin(w); else minWin(w);
+        });
+        w.btn = b;
+        taskbtns.appendChild(b);
+      })(order[i]);
     }
   }
 
-  // ---- animation: the only motion on this page is the act of drawing ----
-  var raf = null, last = 0, clock = 0;
-  function anyLive() {
-    for (var i = 0; i < figs.length; i++) {
-      var f = figs[i];
-      if (f.playing) return true;
-      if (f.kind === "vault" && f.visible && !RM) return true;
-    }
-    return false;
-  }
-  function tick(now) {
-    raf = null;
-    var dt = last ? Math.min(0.05, (now - last) / 1000) : 0.016; last = now;
-    clock += dt;
-    for (var i = 0; i < figs.length; i++) {
-      var f = figs[i];
-      if (f.playing) {
-        f.prog = Math.min(1, f.prog + dt / (f.kind === "herofront" ? 2.2 : 1.5));
-        if (f.prog >= 1) f.playing = false;
-        drawFig(f, clock);
-      } else if (f.kind === "vault" && f.visible && !RM) {
-        drawFig(f, clock);
-      }
-    }
-    if (anyLive()) raf = requestAnimationFrame(tick); else last = 0;
-  }
-  function wake() { if (!raf) raf = requestAnimationFrame(tick); }
-
-  var figIO = ("IntersectionObserver" in window) ? new IntersectionObserver(function (entries) {
-    for (var i = 0; i < entries.length; i++) {
-      var f = entries[i].target.__fig; if (!f) continue;
-      f.visible = entries[i].isIntersecting;
-      if (f.visible) {
-        sizeFig(f);
-        if (f.prog < 1 && !RM) f.playing = true;
-        else drawFig(f, clock);
-        wake();
-      }
-    }
-  }, { threshold: 0.15 }) : null;
-  for (var fo = 0; fo < figs.length; fo++) {
-    figs[fo].wrap.__fig = figs[fo];
-    if (figIO) figIO.observe(figs[fo].wrap); else { figs[fo].prog = 1; }
-  }
-  if (!figIO || RM) { for (var fz = 0; fz < figs.length; fz++) { figs[fz].prog = 1; sizeFig(figs[fz]); drawFig(figs[fz]); } }
-
-  document.addEventListener("visibilitychange", function () {
-    if (document.hidden && raf) { cancelAnimationFrame(raf); raf = null; last = 0; }
-    else wake();
+  // ---- build the four applications ------------------------------------------------
+  var W = vw(), H = vh();
+  var docW = clamp(Math.round(W * 0.52), 620, 780);
+  var winDoc = makeWin("doc", {
+    title: "ESSAY.DOC — TAKUMIWRITE 3.1", glyph: "&#128190;",
+    menus: ["File", "Edit", "View", "Insert", "Help"], ruler: true,
+    geo: { x: Math.round(W * 0.145), y: 34, w: docW, h: H - 96 },
+    status: ["PAGE 01 / 14", "3,066 NOTES INDEXED", "INS"],
+  });
+  var vaultTools = el("div", "vtools");
+  var autoLab = el("label", null, "");
+  var autoChk = document.createElement("input"); autoChk.type = "checkbox"; autoChk.checked = !RM;
+  autoLab.appendChild(autoChk); autoLab.appendChild(document.createTextNode(" AUTO-SPIN"));
+  var resetBtn = el("button", null, "RESET");
+  vaultTools.appendChild(autoLab); vaultTools.appendChild(resetBtn);
+  var winVault = makeWin("vault", {
+    title: "VAULT.EXE", glyph: "&#128452;", tools: vaultTools,
+    geo: { x: W - 470, y: 56, w: 430, h: 430 },
+    status: [N.toLocaleString("en-US") + " NOTES", (EFULL.length / 2).toLocaleString("en-US") + " LINKS", "DRAG TO SPIN · CLICK A NOTE"],
+  });
+  var winGloss = makeWin("gloss", {
+    title: "GLOSSARY.HLP", glyph: "&#128218;",
+    menus: ["Contents", "Index", "Back", "Print"],
+    geo: { x: Math.round(W * 0.3), y: 90, w: 560, h: H - 220 },
+  });
+  var winRefs = makeWin("refs", {
+    title: "REFS.TXT — NOTEPAD", glyph: "&#128203;",
+    menus: ["File", "Edit", "Search", "Help"],
+    geo: { x: Math.round(W * 0.34), y: 70, w: 600, h: H - 190 },
   });
 
-  // ---- section geometry, chrome ---------------------------------------------------
-  var anchors = new Float32Array(NB), scrollMax = 1;
-  var BEAT_NAMES = ["HERO", "THE PROBLEM", "PKM", "SECOND BRAIN", "PLAIN LANGUAGE", "THE HYPE", "THE TRAP",
-                    "RETRIEVAL FIRST", "ZETTELKASTEN", "THREE SIZES", "THE WORKFLOW", "CASE STUDY",
-                    "WHAT IT IS FOR", "END", "WORKS CITED"];
-  function scrollY() { return window.scrollY || window.pageYOffset || 0; }
-  function measureAnchors() {
-    var sy = scrollY(), H = vh();
+  // ---- move the essay into its windows (runtime only: the markup stays put) ----
+  (function placeSections() {
+    var frag = document.createDocumentFragment();
     for (var i = 0; i < NB; i++) {
-      var el = panelEls[i]; if (!el) continue;
-      anchors[i] = Math.max(0, el.getBoundingClientRect().top + sy - H * 0.62);
+      if (!panelEls[i]) continue;
+      if (i === 4) {
+        var fl = el("div", "filelink", "<span class='fg'>&#128218;</span> DOUBLE-CLICK: GLOSSARY.HLP — THE SIX TOOLS, DEFINED");
+        fl.addEventListener("dblclick", function () { openWin(winGloss); });
+        fl.addEventListener("click", function () { if (narrow()) openWin(winGloss); });
+        frag.appendChild(fl);
+        winGloss.client.appendChild(panelEls[i]);
+        continue;
+      }
+      if (i === 14) {
+        winRefs.client.appendChild(panelEls[i]);
+        continue;
+      }
+      frag.appendChild(panelEls[i]);
     }
-    anchors[0] = 0;
-    scrollMax = Math.max(1, document.documentElement.scrollHeight - H);
-    placeRailTicks();
-  }
-  function beatAtScroll(sy) {
-    var b = 0;
-    for (var i = 0; i < NB; i++) { if (sy >= anchors[i]) b = i; }
-    return b;
-  }
-
-  var folioNo = document.getElementById("folio-no");
-  var folioName = document.getElementById("folio-name");
-  var railFill = document.getElementById("rail-fill");
-  var hintEl = document.getElementById("hint");
-  var lastActive = -1;
-  function applyChrome() {
-    var sy = scrollY();
-    var beat = beatAtScroll(sy);
-    if (beat !== lastActive) {
-      folioNo.textContent = String(beat).padStart(2, "0");
-      folioName.textContent = BEAT_NAMES[beat];
-      lastActive = beat;
-      markNav(beat);
-    }
-    if (hintEl) hintEl.style.opacity = sy > 60 ? "0" : "0.8";
-    railFill.style.width = (clamp01(sy / scrollMax) * 100).toFixed(2) + "%";
-  }
-  var railTicks = [];
-  (function buildRailTicks() {
-    var rail = document.getElementById("rail");
-    for (var i = 1; i < NB; i++) {
-      var t = document.createElement("span");
-      t.className = "rtick";
-      rail.appendChild(t); railTicks.push(t);
-    }
+    var fl2 = el("div", "filelink", "<span class='fg'>&#128203;</span> DOUBLE-CLICK: REFS.TXT — WORKS CITED");
+    fl2.addEventListener("dblclick", function () { openWin(winRefs); });
+    fl2.addEventListener("click", function () { if (narrow()) openWin(winRefs); });
+    frag.appendChild(fl2);
+    winDoc.client.appendChild(frag);
+    var main = document.getElementById("panels");
+    if (main) main.style.display = "none";
   })();
-  function placeRailTicks() {
-    for (var i = 0; i < railTicks.length; i++) {
-      railTicks[i].style.left = (clamp01(anchors[i + 1] / scrollMax) * 100).toFixed(2) + "%";
+
+  // the meme quote reads as an embedded object: wrap its text on white
+  (function wrapQuote() {
+    var q = document.querySelector("blockquote.q");
+    if (!q) return;
+    var paper = el("span", "qpaper");
+    var kids = [].slice.call(q.childNodes);
+    for (var i = 0; i < kids.length; i++) {
+      if (kids[i].classList && kids[i].classList.contains("qsrc")) break;
+      paper.appendChild(kids[i]);
+    }
+    q.insertBefore(paper, q.firstChild);
+  })();
+
+  // ---- VAULT.EXE ------------------------------------------------------------------
+  var vcanvas = document.createElement("canvas");
+  winVault.client.appendChild(vcanvas);
+  var vctx = vcanvas.getContext("2d");
+  var VS = { theta: 0.6, zoom: 1, auto: !RM, sel: -1, hover: -1, dirty: true, cw: 0, ch: 0 };
+  var SX = new Float32Array(N), SY = new Float32Array(N);
+  function vaultSize() {
+    var r = winVault.client.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    VS.cw = r.width; VS.ch = r.height;
+    if (vcanvas.width !== Math.round(r.width * dpr)) {
+      vcanvas.width = Math.round(r.width * dpr); vcanvas.height = Math.round(r.height * dpr);
+      vctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    VS.dirty = true;
+  }
+  function project() {
+    var ct = Math.cos(VS.theta), st = Math.sin(VS.theta);
+    var s = Math.min(VS.cw, VS.ch) * 0.44 * VS.zoom / R3D;
+    var cx = VS.cw / 2, cy = VS.ch / 2;
+    for (var i = 0; i < N; i++) {
+      var x = PX[i] * ct + PZ[i] * st;
+      var y = PY[i] * 0.92 - (PX[i] * st - PZ[i] * ct) * 0.16;
+      SX[i] = cx + x * s; SY[i] = cy - y * s;
     }
   }
-  var chromeQueued = false;
-  window.addEventListener("scroll", function () {
-    if (chromeQueued) return; chromeQueued = true;
-    requestAnimationFrame(function () { chromeQueued = false; applyChrome(); });
+  function drawVault() {
+    if (!N) return;
+    project();
+    vctx.clearRect(0, 0, VS.cw, VS.ch);
+    vctx.strokeStyle = "rgba(16,36,140,0.3)"; vctx.lineWidth = 0.75;
+    vctx.beginPath();
+    for (var e = 0; e < SPINE.length; e += 2) {
+      var a = SPINE[e], b = SPINE[e + 1];
+      vctx.moveTo(SX[a], SY[a]); vctx.lineTo(SX[b], SY[b]);
+    }
+    vctx.stroke();
+    vctx.fillStyle = "#10248c";
+    for (var i = 0; i < N; i++) {
+      var hot = DEG[i] / MAXDEG > 0.4;
+      if (hot) continue;
+      vctx.fillRect(SX[i] - 1.1, SY[i] - 1.1, 2.2, 2.2);
+    }
+    vctx.fillStyle = "#d21f1f";
+    for (var j = 0; j < N; j++) {
+      if (DEG[j] / MAXDEG <= 0.4) continue;
+      var r2 = Math.min(3.2, 1.6 + Math.sqrt(DEG[j]) * 0.12);
+      vctx.fillRect(SX[j] - r2, SY[j] - r2, r2 * 2, r2 * 2);
+    }
+    if (VS.sel >= 0 && adjHead) {
+      vctx.strokeStyle = "rgba(210,31,31,0.75)"; vctx.lineWidth = 1.2;
+      vctx.beginPath();
+      for (var p = adjHead[VS.sel]; p !== -1; p = adjNext[p]) {
+        var ee = adjEdge[p], sa = EFULL[ee], sb = EFULL[ee + 1];
+        vctx.moveTo(SX[sa], SY[sa]); vctx.lineTo(SX[sb], SY[sb]);
+      }
+      vctx.stroke();
+      vctx.fillStyle = "#d21f1f";
+      vctx.fillRect(SX[VS.sel] - 4, SY[VS.sel] - 4, 8, 8);
+      vctx.strokeStyle = "#10248c"; vctx.lineWidth = 1.5;
+      vctx.strokeRect(SX[VS.sel] - 6.5, SY[VS.sel] - 6.5, 13, 13);
+    }
+    if (VS.hover >= 0 && VS.hover !== VS.sel) {
+      vctx.strokeStyle = "#10248c"; vctx.lineWidth = 1.2;
+      vctx.strokeRect(SX[VS.hover] - 5, SY[VS.hover] - 5, 10, 10);
+    }
+    VS.dirty = false;
+  }
+  function pick(mx, my) {
+    var best = -1, bd = 9 * 9;
+    for (var i = 0; i < N; i++) {
+      var dx = SX[i] - mx, dy = SY[i] - my, d = dx * dx + dy * dy;
+      if (d < bd) { bd = d; best = i; }
+    }
+    return best;
+  }
+  function noteLabel(i) {
+    var g = (GRP && GNAMES[GRP[i]]) ? String(GNAMES[GRP[i]]).toUpperCase() : "NOTE";
+    return g + " #" + i + " · " + DEG[i] + " LINK" + (DEG[i] === 1 ? "" : "S");
+  }
+  function vaultStatus(txt) {
+    if (winVault.status) winVault.status.children[2].textContent = txt;
+  }
+  var vdrag = null, vmoved = 0;
+  vcanvas.addEventListener("pointerdown", function (e) {
+    vdrag = { x: e.clientX, th: VS.theta }; vmoved = 0;
+    vcanvas.setPointerCapture(e.pointerId);
+  });
+  vcanvas.addEventListener("pointermove", function (e) {
+    var r = vcanvas.getBoundingClientRect();
+    if (vdrag) {
+      var dx = e.clientX - vdrag.x;
+      vmoved = Math.max(vmoved, Math.abs(dx));
+      VS.theta = vdrag.th + dx * 0.007; VS.dirty = true;
+      return;
+    }
+    var h = pick(e.clientX - r.left, e.clientY - r.top);
+    if (h !== VS.hover) {
+      VS.hover = h; VS.dirty = true;
+      vaultStatus(h >= 0 ? noteLabel(h) : (VS.sel >= 0 ? noteLabel(VS.sel) + " · SELECTED" : "DRAG TO SPIN · CLICK A NOTE"));
+    }
+  });
+  vcanvas.addEventListener("pointerup", function (e) {
+    if (vdrag && vmoved < 5) {
+      var r = vcanvas.getBoundingClientRect();
+      var h = pick(e.clientX - r.left, e.clientY - r.top);
+      VS.sel = (h === VS.sel) ? -1 : h;
+      vaultStatus(VS.sel >= 0 ? noteLabel(VS.sel) + " · SELECTED" : "DRAG TO SPIN · CLICK A NOTE");
+      VS.dirty = true;
+    }
+    vdrag = null;
+  });
+  vcanvas.addEventListener("wheel", function (e) {
+    e.preventDefault();
+    VS.zoom = clamp(VS.zoom * (e.deltaY > 0 ? 0.9 : 1.1), 0.5, 4);
+    VS.dirty = true;
+  }, { passive: false });
+  autoChk.addEventListener("change", function () { VS.auto = autoChk.checked; });
+  resetBtn.addEventListener("click", function () {
+    VS.theta = 0.6; VS.zoom = 1; VS.sel = -1; VS.dirty = true;
+    vaultStatus("DRAG TO SPIN · CLICK A NOTE");
+  });
+  if ("ResizeObserver" in window) new ResizeObserver(vaultSize).observe(winVault.client);
+
+  var vlast = 0;
+  function vtick(now) {
+    requestAnimationFrame(vtick);
+    var dt = vlast ? Math.min(0.05, (now - vlast) / 1000) : 0.016; vlast = now;
+    if (!winVault.open || winVault.min || document.hidden) return;
+    if (VS.auto && !vdrag) { VS.theta += dt * 0.1; VS.dirty = true; }
+    if (VS.dirty) drawVault();
+  }
+  requestAnimationFrame(vtick);
+
+  // ---- ESSAY.DOC status: which page is under the caret ----
+  var docSecs = [];
+  for (var ds = 0; ds < NB; ds++) { if (ds !== 4 && ds !== 14 && panelEls[ds]) docSecs.push({ i: ds, el: panelEls[ds] }); }
+  winDoc.client.addEventListener("scroll", function () {
+    var top = winDoc.client.scrollTop + 80, cur = docSecs[0];
+    for (var i = 0; i < docSecs.length; i++) { if (docSecs[i].el.offsetTop <= top) cur = docSecs[i]; }
+    if (winDoc.status) winDoc.status.children[0].textContent =
+      "PAGE " + String(cur.i).padStart(2, "0") + " / 14 · " + BEAT_NAMES[cur.i];
   }, { passive: true });
 
-  // ---- section reveals ----
-  if (RM || !("IntersectionObserver" in window)) {
-    for (var ra = 0; ra < NB; ra++) if (panelEls[ra]) panelEls[ra].classList.add("on");
-  } else {
-    var io = new IntersectionObserver(function (entries) {
-      for (var i = 0; i < entries.length; i++) {
-        if (entries[i].isIntersecting) { entries[i].target.classList.add("on"); io.unobserve(entries[i].target); }
-      }
-    }, { threshold: 0.1, rootMargin: "0px 0px -5% 0px" });
-    for (var ro = 0; ro < NB; ro++) if (panelEls[ro]) io.observe(panelEls[ro]);
-  }
-
-  // ---- term chips: the index card comes back out of the box mid-sentence ----
+  // ---- term chips: OS tooltips over dashed words ----------------------------------
   var TERM_DEFS = {};
   (function buildTerms() {
     var g = panelEls[4];
@@ -1439,13 +1084,13 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
   }
   var SKIP = /^(CITE|B|SPAN|CODE)$/;
   function chipBeat(idx) {
-    var el = panelEls[idx];
-    if (!el || el.__chipped) return;
-    el.__chipped = true;
+    var elx = panelEls[idx];
+    if (!elx || elx.__chipped) return;
+    elx.__chipped = true;
     var re = termPattern();
     if (!re) return;
     var seen = {};
-    var hosts = el.querySelectorAll(".blist li, .body, .essay, .aclaim, .lrow .lc, .ghost");
+    var hosts = elx.querySelectorAll(".blist li, .body, .essay, .aclaim, .lrow .lc, .ghost");
     for (var h = 0; h < hosts.length; h++) {
       var walker = document.createTreeWalker(hosts[h], NodeFilter.SHOW_TEXT, {
         acceptNode: function (n) {
@@ -1468,8 +1113,7 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
         seen[key] = true;
         var after = node.splitText(m.index);
         after.nodeValue = after.nodeValue.slice(m[0].length);
-        var chip = document.createElement("span");
-        chip.className = "t";
+        var chip = el("span", "t");
         chip.setAttribute("tabindex", "0");
         chip.setAttribute("data-def", TERM_DEFS[key]);
         chip.textContent = m[0];
@@ -1485,84 +1129,141 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     if (chip) chip.classList.toggle("open");
   });
 
-  // ---- topbar contents index ----
-  var NAV = [
-    { b: 1, t: "Context" }, { b: 2, t: "PKM" }, { b: 5, t: "Hype" },
-    { b: 8, t: "Method" }, { b: 11, t: "Case" }, { b: 12, t: "Thesis" }, { b: 14, t: "Refs" },
+  // ---- desktop icons --------------------------------------------------------------
+  var ICONS = [
+    { w: function () { return winDoc; },   g: "&#128190;", label: "ESSAY.DOC" },
+    { w: function () { return winVault; }, g: "&#128452;", label: "VAULT.EXE" },
+    { w: function () { return winGloss; }, g: "&#128218;", label: "GLOSSARY.HLP" },
+    { w: function () { return winRefs; },  g: "&#128203;", label: "REFS.TXT" },
   ];
-  var navBtns = [];
-  (function buildNav() {
-    var ul = document.getElementById("beatnav");
-    if (!ul) return;
-    for (var i = 0; i < NAV.length; i++) {
-      (function (n) {
-        var li = document.createElement("li");
-        var btn = document.createElement("button");
-        btn.type = "button";
-        btn.textContent = n.t;
-        btn.addEventListener("click", function () { scrollToBeat(n.b); });
-        li.appendChild(btn); ul.appendChild(li); navBtns.push(btn);
-      })(NAV[i]);
-    }
-  })();
-  function scrollToBeat(idx) {
-    idx = Math.max(0, Math.min(NB - 1, idx | 0));
-    var el = panelEls[idx]; if (!el) return;
-    var top = el.getBoundingClientRect().top + scrollY() - vh() * 0.12;
-    window.scrollTo({ top: Math.max(0, Math.round(top)), behavior: RM ? "auto" : "smooth" });
+  var iconsBox = el("div"); iconsBox.id = "icons";
+  for (var ic = 0; ic < ICONS.length; ic++) {
+    (function (def) {
+      var d = el("div", "dicon");
+      d.innerHTML = "<div class='px'></div><u>" + def.label + "</u>";
+      d.querySelector(".px").setAttribute("data-g", String.fromCodePoint(parseInt(def.g.slice(2, -1), 10)));
+      d.addEventListener("click", function () {
+        var was = d.classList.contains("sel");
+        var all = iconsBox.querySelectorAll(".dicon");
+        for (var q = 0; q < all.length; q++) all[q].classList.remove("sel");
+        d.classList.add("sel");
+        if (narrow() || was) openWin(def.w());   // second click opens; touch opens straight away
+      });
+      d.addEventListener("dblclick", function () { openWin(def.w()); });
+      iconsBox.appendChild(d);
+    })(ICONS[ic]);
   }
-  function markNav(beat) {
-    for (var i = 0; i < navBtns.length; i++) {
-      var next = (i + 1 < NAV.length) ? NAV[i + 1].b : NB;
-      navBtns[i].setAttribute("aria-current", (beat >= NAV[i].b && beat < next) ? "true" : "false");
+  document.body.appendChild(iconsBox);
+
+  // ---- taskbar + start menu -------------------------------------------------------
+  var taskbar = el("div"); taskbar.id = "taskbar";
+  var startbtn = el("button", null, "<span class='sq'></span>TAKUMI"); startbtn.id = "startbtn";
+  var clock = el("div"); clock.id = "clock";
+  taskbar.appendChild(startbtn); taskbar.appendChild(taskbtns); taskbar.appendChild(clock);
+  document.body.appendChild(taskbar);
+
+  var startmenu = el("div"); startmenu.id = "startmenu";
+  startmenu.innerHTML = "<div class='side'><b>TAKUMI OS</b></div>";
+  var items = el("div", "items");
+  for (var si = 0; si < ICONS.length; si++) {
+    (function (def) {
+      var mi = el("div", "mi", "<span class='fg'>" + def.g + "</span>" + def.label);
+      mi.addEventListener("click", function () { toggleStart(false); openWin(def.w()); });
+      items.appendChild(mi);
+    })(ICONS[si]);
+  }
+  items.appendChild(el("hr"));
+  var back = el("a", "mi", "<span class='fg'>&#8592;</span>Personal Project");
+  back.href = "index.html";
+  items.appendChild(back);
+  startmenu.appendChild(items);
+  document.body.appendChild(startmenu);
+  function toggleStart(force) {
+    var on = force != null ? force : !startmenu.classList.contains("open");
+    startmenu.classList.toggle("open", on);
+    startbtn.classList.toggle("open", on);
+  }
+  startbtn.addEventListener("click", function (e) { e.stopPropagation(); toggleStart(); });
+  document.addEventListener("pointerdown", function (e) {
+    if (!startmenu.contains(e.target) && e.target !== startbtn && !startbtn.contains(e.target)) toggleStart(false);
+  });
+
+  function tickClock() {
+    var d = new Date();
+    clock.textContent = String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+  }
+  tickClock(); setInterval(tickClock, 20000);
+
+  window.addEventListener("resize", function () {
+    for (var k in wins) {
+      var w = wins[k]; if (!w.open || narrow()) continue;
+      var r = w.root.getBoundingClientRect();
+      w.root.style.left = clamp(r.left, -r.width + 90, vw() - 90) + "px";
+      w.root.style.top = clamp(r.top, 0, vh() - 80) + "px";
     }
+    vaultSize();
+  });
+
+  // ---- boot ----------------------------------------------------------------------
+  var boot = el("div"); boot.id = "boot";
+  boot.innerHTML = "<div class='hd'>TAKUMI OS 2.6 &mdash; ITASIA302 BUILD</div>"
+    + "<div class='bl'>MEMORY CHECK ........ FIRST BRAIN <span class='ok'>UNRELIABLE</span></div>"
+    + "<div class='bl'>MOUNTING VAULT ...... " + N.toLocaleString("en-US") + " NOTES <span class='ok'>OK</span></div>"
+    + "<div class='bl'>LINK TABLE .......... " + (EFULL.length / 2).toLocaleString("en-US") + " EDGES <span class='ok'>OK</span></div>"
+    + "<div class='bl'>WORKS CITED ......... 24 SOURCES <span class='ok'>OK</span></div>"
+    + "<div class='bl'>STARTING WINDOW MANAGER<span class='ok'> _</span></div>"
+    + "<div class='skip'>CLICK TO SKIP</div>";
+  document.body.appendChild(boot);
+  var bootDone = false;
+  function endBoot() {
+    if (bootDone) return;
+    bootDone = true;
+    boot.classList.add("gone");
+    openWin(winDoc);
+    if (!narrow()) openWin(winVault);
+    focusWin(winDoc);
+  }
+  window.__BOOT_SKIP = endBoot;
+  boot.addEventListener("click", endBoot);
+  if (RM) { var bls = boot.querySelectorAll(".bl"); for (var bq = 0; bq < bls.length; bq++) bls[bq].classList.add("show"); setTimeout(endBoot, 150); }
+  else {
+    var lines = boot.querySelectorAll(".bl");
+    for (var li = 0; li < lines.length; li++) {
+      (function (elx, i) { setTimeout(function () { elx.classList.add("show"); }, 160 + i * 210); })(lines[li], li);
+    }
+    setTimeout(endBoot, 160 + lines.length * 210 + 420);
   }
 
-  // ---- boot ----
-  function relayout() { syncFigs(); measureAnchors(); for (var i = 0; i < figs.length; i++) { if (sizeFig(figs[i])) drawFig(figs[i], clock); } applyChrome(); }
-  window.addEventListener("resize", relayout);
-  if (window.visualViewport) window.visualViewport.addEventListener("resize", relayout);
-  syncFigs();
-  measureAnchors();
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { measureAnchors(); applyChrome(); });
-  window.addEventListener("load", function () { relayout(); });
-  if ("ResizeObserver" in window) {
-    var mainEl = document.getElementById("panels");
-    if (mainEl) new ResizeObserver(function () { measureAnchors(); }).observe(mainEl);
-  }
-  applyChrome();
-
-  // ---- synchronous QA hooks --------------------------------------------------------
-  window.__SEEK = function (p) {
-    p = clamp01(p);
-    var x = p * NB, beat = Math.min(NB - 1, x | 0), frac = x - beat;
-    measureAnchors();
-    var s = anchors[beat], e = (beat + 1 < NB) ? anchors[beat + 1] : scrollMax;
-    window.scrollTo(0, Math.round(s + (e - s) * frac));
-    for (var r = 0; r < NB; r++) if (panelEls[r]) panelEls[r].classList.add("on");
-    for (var i = 0; i < figs.length; i++) {
-      var f = figs[i]; f.prog = 1; f.playing = false; sizeFig(f); drawFig(f, 0);
-    }
-    applyChrome();
-    var b2 = beatAtScroll(scrollY());
-    return { id: window.__SBF__, progress: p, beat: b2, frac: +frac.toFixed(3), name: BEAT_NAMES[b2], figs: figs.length };
-  };
+  // ---- QA hooks -------------------------------------------------------------------
+  var OWNER = {};
+  for (var ow = 0; ow < NB; ow++) OWNER[ow] = (ow === 4) ? winGloss : (ow === 14) ? winRefs : winDoc;
   window.__SEEK_BEAT = function (idx, frac) {
-    frac = (frac == null ? 0.6 : frac);
     idx = Math.max(0, Math.min(NB - 1, idx | 0));
-    return window.__SEEK((idx + frac) / NB);
+    endBoot();
+    var w = OWNER[idx];
+    openWin(w);
+    var sec = panelEls[idx];
+    if (sec) w.client.scrollTop = Math.max(0, sec.offsetTop - 24 - (frac ? frac * sec.offsetHeight * 0.5 : 0));
+    VS.dirty = true; drawVault();
+    return { id: window.__SBF__, beat: idx, name: BEAT_NAMES[idx], win: w.id, open: order.length };
   };
-  window.__QA_FP = function (p) {
-    var st = window.__SEEK(p);
-    var a = [];
-    for (var i = 0; i < NB; i++) a.push(Math.round(anchors[i]));
-    return st.beat + ":" + a.join(",") + ":figs" + figs.length;
+  window.__SEEK = function (p) {
+    var idx = Math.min(NB - 1, (Math.max(0, Math.min(1, p)) * NB) | 0);
+    return window.__SEEK_BEAT(idx, (p * NB) - idx);
+  };
+  window.__QA_FP = function () {
+    var out = [];
+    for (var k in wins) {
+      var w = wins[k], r = w.root.getBoundingClientRect();
+      out.push(k + ":" + (w.open ? 1 : 0) + (w.min ? "m" : "") + ":" + Math.round(r.left) + "," + Math.round(r.top));
+    }
+    return out.join("|");
   };
   window.__QA_NAN = function () {
     for (var i = 0; i < N; i++) {
       if (PX[i] !== PX[i] || PY[i] !== PY[i] || PZ[i] !== PZ[i]) return { ok: false, at: i };
     }
-    return { ok: true, n: N, edges: SPINE.length / 2, hasData: !!D };
+    return { ok: true, n: N, edges: EFULL.length / 2, hasData: !!D };
   };
 })();
 </script>
