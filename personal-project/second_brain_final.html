@@ -6,399 +6,398 @@
 <title>Building a Second Brain · ITASIA302</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=IBM+Plex+Sans:wght@400;500;600&family=Geist+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    /* The publication's structure (topbar, rail, survey grid, amber accent) is kept, but the
-       palette turns warm: this page is a personal essay written at a desk lamp, not a control
-       room. Ground is a warm near-black; ink is unbleached paper; the accent stays amber. */
-    --bg:        #080605;
-    --bg-deep:   #060504;
-    --bg-soft:   #0f0c09;
-    --slip:      #141008;   /* archival slip ground */
-    --ink:       #ece7dc;
-    --ink-2:     #cdc6b6;
-    --ink-3:     #a59c89;
-    --faint:     #8d8474;
-    --ghost:     #675f52;
-    --line:      #262019;
-    --line-soft: #1a1510;
+    /* The manuscript. Everything the old page did with darkness and glow, this one does
+       with paper and ink: warm stock, black text, one red pen. The site's amber survives
+       as that pen. */
+    --paper:     #f4eedf;
+    --paper-hi:  #faf6ec;
+    --card:      #fdfcf4;   /* an actual index card */
+    --ink:       #221c12;
+    --ink-2:     #443b2c;
+    --ink-3:     #6d6250;
+    --faint:     #95896f;
+    --ghost:     #b3a88c;
+    --line:      #d8cfb6;
+    --line-soft: #e7e0cc;
 
-    --amber:     #e8634a;   /* personal-project section accent, unchanged */
-    --amber-hi:  #ff8a63;
-    --amber-lo:  #e8634a14;
-    --paper:     #efe7d5;   /* the colour of a pulled index card */
-    --paper-ink: #262019;   /* what is written on it */
-    --sky:       #7d9aa8;   /* damped: links only, never the field */
-    --teal:      #45a884;
+    --red:       #c23a20;   /* the red pen: the section accent, printed */
+    --red-soft:  #c23a2022;
+    --card-rule: #b9c7d6;   /* index-card ruling blue */
+    --card-top:  #d8604a;   /* index-card head rule */
 
+    --display: "Fraunces", "IBM Plex Serif", Georgia, serif;
     --serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
-    --sans:  "IBM Plex Sans", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     --mono:  "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
     --e-out:   cubic-bezier(0.23, 1, 0.32, 1);
-    --e-inout: cubic-bezier(0.77, 0, 0.175, 1);
 
-    --topbar-h: 52px;
-
-    /* Contact shadow for type sitting over the field. Tight and dark: a shadow, never a glow. */
-    --lift:    0 1px 2px rgba(6, 5, 4, 0.9), 0 0 9px rgba(6, 5, 4, 0.75);
-    --lift-lg: 0 2px 6px rgba(6, 5, 4, 0.9), 0 0 28px rgba(6, 5, 4, 0.7);
+    --topbar-h: 56px;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { -webkit-text-size-adjust: 100%; }
   body {
-    background: var(--bg); color: var(--ink);
+    background: var(--paper); color: var(--ink);
     font-family: var(--serif); font-weight: 400;
     -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
     overflow-x: hidden;
   }
 
-  /* Persistent WebGL field behind everything: the vault as paper slips and ink threads. */
-  #viz { position: fixed; inset: 0; z-index: 0; pointer-events: none; display: block; }
+  /* Legacy fixed layers from the field era. The paper needs none of them. */
+  #viz, #scrim, #grid, #readout { display: none; }
 
-  /* Quiet top/bottom fades so the chrome always sits on solid ground. The field itself
-     thins under the prose (uHole in the shaders), so there is no reading-plate here. */
-  #scrim {
-    position: fixed; inset: 0; z-index: 1; pointer-events: none;
-    background:
-      linear-gradient(to bottom, rgba(8, 6, 5, 0.82) 0%, transparent 14%,
-                      transparent 82%, rgba(8, 6, 5, 0.85) 100%);
-  }
-
-  /* Site survey grid, same 52px module as every other ITASIA302 page, masked out of the
-     centre so it only frames the edges. */
-  #grid {
-    position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.8;
-    background-image:
-      linear-gradient(rgba(232, 99, 74, 0.045) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(232, 99, 74, 0.045) 1px, transparent 1px);
-    background-size: 52px 52px;
-    -webkit-mask-image: radial-gradient(120% 100% at 50% 50%, transparent 34%, #000 88%);
-    mask-image: radial-gradient(120% 100% at 50% 50%, transparent 34%, #000 88%);
-  }
-
-  /* Atmospheric film, verbatim from the sibling pages. */
+  /* Paper tooth: the same grain film, but printed dark and faint. */
   .grain {
-    position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: 0.035;
+    position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: 0.05;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/></filter><rect width='256' height='256' filter='url(%23n)'/></svg>");
-    background-size: 220px 220px; mix-blend-mode: overlay;
+    background-size: 220px 220px; mix-blend-mode: multiply;
   }
+  /* The top bleed: one printed red rule across the sheet. */
   .edge-gradient {
-    position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 10000; pointer-events: none;
-    background: linear-gradient(90deg, transparent 0%, var(--amber) 30%, var(--paper) 68%, transparent 100%);
-    opacity: 0.4;
+    position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 10000;
+    pointer-events: none; background: var(--red); opacity: 0.9;
   }
 
-  /* ---- topbar: same shell as personal-project/index.html ---- */
+  /* ---- masthead ---- */
   .topbar {
     position: fixed; top: 0; left: 0; right: 0; z-index: 50;
     display: flex; justify-content: space-between; align-items: center; gap: 24px;
     height: var(--topbar-h); padding: 0 clamp(18px, 3vw, 48px);
-    background: linear-gradient(180deg, rgba(8, 6, 5, 0.96) 0%, rgba(8, 6, 5, 0.78) 70%, transparent 100%);
-    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    background: color-mix(in srgb, var(--paper) 92%, transparent);
+    backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 3px 0 -2px var(--line-soft);
   }
   .topbar-title {
-    font-family: var(--serif); font-weight: 300; font-size: 15px;
+    font-family: var(--serif); font-weight: 500; font-size: 15px;
     letter-spacing: -0.01em; color: var(--ink); white-space: nowrap;
   }
-  .topbar-title em { color: var(--amber); font-style: italic; }
+  .topbar-title em { color: var(--red); font-style: italic; }
   .topbar-title a { color: inherit; text-decoration: none; border-bottom: 1px dotted var(--faint); }
-  .topbar-title a:hover { color: var(--amber); border-bottom-color: var(--amber); }
+  .topbar-title a:hover { color: var(--red); border-bottom-color: var(--red); }
   .topbar-nav { display: flex; gap: 0; list-style: none; }
   .topbar-nav button {
     font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--faint); background: none; border: 0; padding: 6px 11px; cursor: pointer;
+    color: var(--ink-3); background: none; border: 0; padding: 6px 11px; cursor: pointer;
     transition: color 150ms ease;
   }
-  .topbar-nav button:hover, .topbar-nav button:focus-visible { color: var(--amber); outline: none; }
-  .topbar-nav button[aria-current="true"] { color: var(--ink); }
+  .topbar-nav button:hover, .topbar-nav button:focus-visible { color: var(--red); outline: none; }
+  .topbar-nav button[aria-current="true"] { color: var(--red); text-decoration: underline; text-underline-offset: 4px; }
 
-  /* Progress rail: printed scale along the bottom edge, per-beat ticks. */
+  /* Reading progress: a red line drawn along the underside of the masthead. */
   #rail {
-    position: fixed; left: 0; right: 0; bottom: 0; z-index: 6;
-    height: 2px; background: var(--line);
+    position: fixed; left: 0; right: 0; top: var(--topbar-h); bottom: auto; z-index: 49;
+    height: 2px; background: transparent;
   }
-  #rail-fill {
-    position: absolute; left: 0; top: 0; bottom: 0; width: 0%;
-    background: linear-gradient(90deg, var(--amber) 0%, var(--amber-hi) 100%);
-    box-shadow: 0 0 10px rgba(232, 99, 74, 0.5);
-  }
-  #rail .rtick { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--line); }
+  #rail-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0%; background: var(--red); }
+  #rail .rtick { display: none; }
 
-  /* Folio: NN / 14 + beat name */
+  /* Folio: a printed page number. */
   #folio {
     position: fixed; right: clamp(18px, 3vw, 48px); bottom: 14px; z-index: 6;
     font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.22em;
     color: var(--faint); text-transform: uppercase; pointer-events: none;
   }
-  #folio b { color: var(--amber); font-weight: 500; }
-  #folio i { color: var(--ink-2); font-style: normal; font-weight: 400; margin-left: 10px; }
+  #folio b { color: var(--red); font-weight: 500; }
+  #folio i { color: var(--ink-3); font-style: normal; font-weight: 400; margin-left: 10px; }
 
-  /* Left readout: quiet field-state line */
-  #readout {
-    position: fixed; left: clamp(18px, 3vw, 48px); bottom: 14px; z-index: 6;
-    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.22em;
-    color: var(--faint); text-transform: uppercase; pointer-events: none;
-    display: flex; align-items: center; gap: 10px;
-  }
-  #readout .dot { width: 5px; height: 5px; background: var(--amber); border-radius: 50%;
-    box-shadow: 0 0 8px rgba(232, 99, 74, 0.7); }
+  #hint { position: fixed; bottom: clamp(40px, 6vh, 60px); left: 50%; transform: translateX(-50%);
+    z-index: 6; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.34em; text-transform: uppercase;
+    color: var(--ink-3); pointer-events: none; transition: opacity 600ms var(--e-out); }
+  #hint::after { content: ""; display: block; width: 1px; height: 26px; margin: 12px auto 0;
+    background: linear-gradient(to bottom, var(--ink-3), transparent); }
 
-  /* ---- the essay flow -------------------------------------------------------------
-     Beats are ordinary sections in one reading column. The page scrolls like prose,
-     the field morphs behind it, and the gaps between beats are where the field solos. */
+  /* ---- the manuscript flow --------------------------------------------------------
+     One reading column with a notebook margin-rule; the ink figures hang in the outer
+     margin and stay with you (sticky) while their section is read. */
   #panels { position: relative; z-index: 3; }
   .panel {
-    position: relative; display: flex; justify-content: center;
-    padding: clamp(40px, 9vh, 110px) clamp(20px, 4vw, 56px);
-    margin-bottom: clamp(160px, 34vh, 420px);
+    position: relative;
+    display: grid; grid-template-columns: minmax(0, 64ch) minmax(0, 1fr);
+    column-gap: clamp(40px, 5vw, 90px);
+    width: min(1440px, 100%); margin: 0 auto;
+    padding: clamp(48px, 9vh, 120px) clamp(20px, 4vw, 64px);
   }
-  .panel:first-child {
-    min-height: 100svh; align-items: center;
-    padding-top: calc(var(--topbar-h) + 4vh);
+  .panel > .ph { grid-column: 1; }
+  .panel > .inkfig { grid-column: 2; }
+
+  /* a dinkus closes every section, like chapters in a printed essay */
+  .panel::after {
+    content: "\2731 \2003 \2731 \2003 \2731";
+    grid-column: 1; justify-self: center;
+    margin-top: clamp(56px, 9vh, 120px);
+    font-size: 11px; letter-spacing: 0.4em; color: var(--ghost);
   }
-  #b13 { min-height: 72svh; align-items: center; margin-bottom: clamp(120px, 22vh, 300px); }
-  #b14 { margin-bottom: 16vh; }
-  .side-c { text-align: center; }
+  .panel:last-child::after { content: none; }
 
-  .ph { position: relative; width: 100%; max-width: 60ch; min-width: 0; }
-  /* wide beats */
-  #b4 .ph  { max-width: 88ch; }
-  #b14 .ph { max-width: 96ch; }
+  /* centred beats: the turns of the piece run full measure, centred like title pages */
+  .side-c { grid-template-columns: minmax(0, 1fr); }
+  .side-c .ph { grid-column: 1; justify-self: center; width: min(72ch, 100%); text-align: center; }
+  .side-c.panel::after { justify-self: center; }
 
-  /* On wide screens the column steps left or right so the field owns the other half.
-     The camera pans the opposite way per beat, so text and field share the frame. */
-  @media (min-width: 1120px) {
-    .side-l { justify-content: flex-start; padding-left: clamp(56px, 9vw, 150px); }
-    .side-r { justify-content: flex-end;   padding-right: clamp(56px, 9vw, 150px); }
+  .ph { position: relative; min-width: 0; }
+  /* the notebook margin rule beside the prose */
+  @media (min-width: 900px) {
+    .panel:not(.side-c) .ph { padding-left: 26px; }
+    .panel:not(.side-c) .ph::before {
+      content: ""; position: absolute; left: 0; top: 0.4em; bottom: 0.2em;
+      width: 2px; background: var(--red); opacity: 0.35;
+    }
   }
 
-  /* every text element over the field carries its own contact shadow */
-  .kick, .note, .ghost, .body, .blist li, .cite, .essay,
-  blockquote.q, .lrow .lk, .lrow .lc, .refs li, .refnote,
-  .gterm .gk, .gterm .gd, .acard .ak, .acard .aclaim { text-shadow: var(--lift); }
-  .ph h2 { text-shadow: var(--lift-lg); }
+  /* ---- the hero: a frontispiece ---- */
+  #b0 { min-height: 100svh; align-content: center; padding-top: calc(var(--topbar-h) + 4vh); }
+  #b0 .ph { position: relative; z-index: 1; }
+  #b0 .ph h2 {
+    font-family: var(--display); font-weight: 600; font-variation-settings: "opsz" 144;
+    font-size: clamp(58px, 9.6vw, 150px); line-height: 0.98; letter-spacing: -0.03em;
+    color: var(--ink); margin: 18px 0 10px;
+  }
+  #b0 .ph h2 .sig { color: var(--red); font-style: italic; font-weight: 480; }
+  /* the aside becomes a rubber stamp */
+  #b0 .note {
+    display: inline-block; margin-top: 26px; padding: 7px 14px 6px;
+    border: 2px solid var(--red); color: var(--red); border-radius: 3px;
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.26em; text-transform: uppercase;
+    transform: rotate(-2.2deg); opacity: 0.85;
+    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='128' height='128'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='128' height='128' filter='url(%23n)' opacity='0.55'/><rect width='128' height='128' fill='white' opacity='0.72'/></svg>");
+    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='128' height='128'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='128' height='128' filter='url(%23n)' opacity='0.55'/><rect width='128' height='128' fill='white' opacity='0.72'/></svg>");
+  }
+  #b0 .ghost { max-width: 46ch; margin-left: auto; margin-right: auto; }
 
   .kick {
-    font-family: var(--mono); font-weight: 400; font-size: 9.5px;
-    letter-spacing: 0.3em; text-transform: uppercase; color: var(--faint);
-    margin-bottom: 18px;
+    font-family: var(--mono); font-weight: 500; font-size: 10px;
+    letter-spacing: 0.3em; text-transform: uppercase; color: var(--red);
+    margin-bottom: 20px;
   }
   .kick::before {
-    content: ""; display: inline-block; width: 26px; height: 1px;
-    background: var(--amber); vertical-align: middle; margin-right: 12px; opacity: 0.85;
+    content: ""; display: inline-block; width: 34px; height: 2px;
+    background: var(--red); vertical-align: middle; margin-right: 12px;
   }
   .side-c .kick::before { display: none; }
-  .kick i { color: var(--amber); font-style: normal; }
+  .kick i { color: var(--faint); font-style: normal; }
 
-  /* Serif display. The hero and the turns carry more size than the argument beats:
-     that contrast is the rhythm of the piece. */
   .ph h2 {
-    font-family: var(--serif); font-weight: 300; letter-spacing: -0.024em;
-    line-height: 1.12; color: var(--ink);
-    font-size: clamp(30px, 3.6vw, 46px);
-    margin-bottom: 6px;
+    font-family: var(--display); font-weight: 560; font-variation-settings: "opsz" 100;
+    letter-spacing: -0.022em; line-height: 1.08; color: var(--ink);
+    font-size: clamp(34px, 4.2vw, 58px); margin-bottom: 8px;
   }
-  .side-c .ph h2 { font-size: clamp(40px, 5.8vw, 80px); line-height: 1.03; }
-  .ph h2 .sig { font-style: italic; font-weight: 400; color: var(--amber); }
+  .side-c .ph h2 { font-size: clamp(42px, 6.2vw, 92px); line-height: 1.0; }
+  /* the key word is written in red and underlined by hand */
+  .ph h2 .sig {
+    font-style: italic; font-weight: 500; color: var(--red);
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 9' preserveAspectRatio='none'><path d='M2 6 Q 16 1.5, 31 5.5 T 60 5 T 89 5.5 T 118 4.5' fill='none' stroke='%23c23a20' stroke-width='2.6' stroke-linecap='round'/></svg>")
+      no-repeat left 96% / 0% 0.14em;
+    padding-bottom: 0.12em;
+    transition: background-size 900ms var(--e-out) 500ms;
+  }
+  .panel.on .ph h2 .sig { background-size: 100% 0.14em; }
+
   .note {
     font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em;
-    color: var(--faint); text-transform: uppercase; margin-top: 18px;
+    color: var(--faint); text-transform: uppercase; margin-top: 20px;
   }
   .ghost {
-    font-family: var(--serif); font-weight: 300; font-style: italic;
-    font-size: clamp(16px, 1.35vw, 19px);
-    line-height: 1.7; color: var(--ink-2); margin-top: 18px; max-width: 52ch;
+    font-family: var(--serif); font-weight: 400; font-style: italic;
+    font-size: clamp(17px, 1.45vw, 21px);
+    line-height: 1.7; color: var(--ink-2); margin-top: 20px; max-width: 52ch;
   }
   .side-c .ghost { margin-left: auto; margin-right: auto; }
-  /* Centred beats keep a centred head, but running prose reads left-aligned. */
-  .side-c .body, .side-c .blist, .side-c .essay {
-    text-align: left; margin-left: auto; margin-right: auto;
-  }
+  .side-c .body, .side-c .blist, .side-c .essay { text-align: left; margin-left: auto; margin-right: auto; }
 
-  /* ---- the prose itself: essay measure, essay leading ---- */
+  /* ---- the prose: book measure, book leading ---- */
   .body {
-    font-family: var(--serif); font-weight: 400; font-size: clamp(15.5px, 1.22vw, 17.5px);
-    line-height: 1.82; color: var(--ink-2); margin-top: 1.15em; max-width: 58ch;
+    font-family: var(--serif); font-weight: 400; font-size: clamp(16px, 1.28vw, 18.5px);
+    line-height: 1.8; color: var(--ink-2); margin-top: 1.2em; max-width: 58ch;
   }
   .body em { color: var(--ink); }
-  h2 + .body { margin-top: 1.6em; }
+  h2 + .body { margin-top: 1.7em; }
 
-  /* One drop cap, where the essay actually begins. */
+  /* the essay opens with an illuminated initial in red */
   #b1 h2 + .body::first-letter {
-    font-size: 3.05em; line-height: 0.82; float: left;
-    padding: 0.08em 0.12em 0 0; color: var(--amber); font-weight: 300;
+    font-family: var(--display); font-weight: 600;
+    font-size: 3.4em; line-height: 0.8; float: left;
+    padding: 0.06em 0.14em 0 0; color: var(--red);
   }
 
-  /* Argument list: a hairline rule per item instead of a bullet. */
   .blist { list-style: none; margin-top: 18px; padding: 0; }
   .blist li {
-    position: relative; padding-left: 22px; margin: 12px 0;
-    font-family: var(--serif); font-weight: 400; font-size: clamp(14.5px, 1.15vw, 16.5px);
+    position: relative; padding-left: 24px; margin: 12px 0;
+    font-family: var(--serif); font-size: clamp(15px, 1.2vw, 17px);
     line-height: 1.72; color: var(--ink-2);
   }
   .blist li::before {
-    content: ""; position: absolute; left: 0; top: 0.82em; width: 12px; height: 1px;
-    background: var(--amber); opacity: 0.85;
+    content: ""; position: absolute; left: 0; top: 0.8em; width: 13px; height: 2px;
+    background: var(--red);
   }
-  .blist li em, .body em, .q em { font-style: italic; }
   .blist li em { color: var(--ink); }
   .cite {
-    font-family: var(--mono); font-size: 10px; letter-spacing: 0.01em;
-    color: var(--ghost); white-space: nowrap;
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.01em;
+    color: var(--faint); white-space: nowrap;
   }
 
-  /* Author's aside: hanging mono label plus a top hairline. */
   .essay {
-    margin-top: 26px; padding-top: 16px; border-top: 1px solid var(--line);
-    font-family: var(--serif); font-weight: 400; font-size: clamp(13.5px, 1.08vw, 15.5px);
+    margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--line);
+    font-family: var(--serif); font-size: clamp(14px, 1.1vw, 16px);
     line-height: 1.74; color: var(--ink-3); max-width: 52ch;
   }
   .essay .elabel {
     display: block; font-family: var(--mono); font-size: 9px; letter-spacing: 0.28em;
-    text-transform: uppercase; color: var(--amber); margin-bottom: 8px;
+    text-transform: uppercase; color: var(--red); margin-bottom: 8px;
   }
 
-  /* The one quotation: set like a passage copied onto a card, oversized mark in the margin. */
+  /* ---- the quotation: an index card taped into the manuscript ---- */
   blockquote.q {
-    position: relative; margin: 30px 0 0; padding: 4px 0 0 26px;
-    border-left: 1px solid rgba(232, 99, 74, 0.55);
-    font-family: var(--serif); font-weight: 300; font-style: italic;
-    font-size: clamp(18px, 1.7vw, 24px); line-height: 1.55; color: var(--ink);
+    position: relative; margin: 36px 0 8px; padding: 30px 26px 20px;
+    background:
+      repeating-linear-gradient(to bottom, transparent 0 27px, var(--card-rule) 27px 28px),
+      var(--card);
+    background-position: 0 14px;
+    border: 1px solid var(--line); border-radius: 2px;
+    box-shadow: 0 1px 0 var(--paper-hi) inset, 2px 4px 14px rgba(60, 48, 28, 0.18);
+    transform: rotate(-0.8deg);
+    font-family: var(--serif); font-weight: 400; font-style: italic;
+    font-size: clamp(17px, 1.6vw, 22px); line-height: 1.65; color: var(--ink);
   }
   blockquote.q::before {
-    content: "\201C"; position: absolute; left: -14px; top: -22px;
-    font-size: 64px; line-height: 1; color: var(--amber); opacity: 0.35; font-style: normal;
+    content: ""; position: absolute; left: 0; right: 0; top: 9px; height: 2px;
+    background: var(--card-top); opacity: 0.7;
+  }
+  /* two strips of tape */
+  blockquote.q::after {
+    content: ""; position: absolute; top: -12px; left: 8%; width: 84px; height: 24px;
+    background: rgba(226, 210, 160, 0.55); border: 1px solid rgba(160, 140, 90, 0.25);
+    transform: rotate(-4deg);
+    box-shadow: 40ch 4px 0 -2px rgba(226, 210, 160, 0.5);
   }
   blockquote.q .qsrc {
-    display: block; margin-top: 12px; font-style: normal; font-family: var(--mono);
+    display: block; margin-top: 14px; font-style: normal; font-family: var(--mono);
     font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--faint);
   }
 
-  /* A single slip, used once, where the page is literally showing you one index card. */
   .acard {
-    margin-top: 20px; padding: 14px 16px 15px;
-    border: 1px solid var(--line); border-top: 1px solid rgba(232, 99, 74, 0.45);
-    background: linear-gradient(180deg, rgba(20, 16, 8, 0.85) 0%, rgba(15, 12, 9, 0.6) 100%);
+    margin-top: 20px; padding: 16px 18px;
+    background: var(--card); border: 1px solid var(--line);
+    box-shadow: 2px 3px 10px rgba(60, 48, 28, 0.12);
   }
   .acard .ak {
     display: block; font-family: var(--mono); font-size: 9px; letter-spacing: 0.24em;
     text-transform: uppercase; color: var(--faint); margin-bottom: 8px;
   }
-  .acard .ak b { color: var(--amber); font-weight: 400; }
-  .acard .aclaim {
-    font-family: var(--serif); font-weight: 400; font-size: clamp(13px, 1.05vw, 15.5px);
-    line-height: 1.6; color: var(--ink);
-  }
+  .acard .ak b { color: var(--red); font-weight: 500; }
+  .acard .aclaim { font-family: var(--serif); font-size: clamp(13px, 1.1vw, 15.5px); line-height: 1.6; color: var(--ink); }
 
-  /* Case-study ledger: mono address in a fixed left column, claim in serif. */
   .ledger { margin-top: 20px; }
   .lrow {
     display: grid; grid-template-columns: 8.5em 1fr; gap: 0 18px; align-items: baseline;
     padding: 10px 0; border-top: 1px solid var(--line);
   }
-  .lrow .lk {
-    font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--faint); padding-top: 0.35em;
-  }
-  .lrow .lc {
-    font-family: var(--serif); font-weight: 400; font-size: clamp(12.5px, 1.02vw, 15px);
-    line-height: 1.62; color: var(--ink-2);
-  }
-  .lrow.lit .lk { color: var(--amber); }
-  .lrow.out {
-    margin-top: 4px; border-top: 1px solid rgba(232, 99, 74, 0.5);
-    background: linear-gradient(180deg, rgba(232, 99, 74, 0.07) 0%, transparent 100%);
-    padding: 13px 14px 14px; margin-left: -14px; margin-right: -14px;
-  }
-  .lrow.out .lk { color: var(--amber); }
+  .lrow .lk { font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--faint); }
+  .lrow .lc { font-family: var(--serif); font-size: clamp(12.5px, 1.02vw, 15px); line-height: 1.62; color: var(--ink-2); }
+  .lrow.lit .lk { color: var(--red); }
+  .lrow.out { border-top: 1px solid var(--red); background: var(--red-soft); padding: 13px 14px 14px; margin-left: -14px; margin-right: -14px; }
+  .lrow.out .lk { color: var(--red); }
   .lrow.out .lc { color: var(--ink); font-style: italic; }
-  .lrow.out .lc small {
-    display: block; margin-top: 6px; font-style: normal; font-size: 12px;
-    line-height: 1.55; color: var(--ink-3);
-  }
+  .lrow.out .lc small { display: block; margin-top: 6px; font-style: normal; font-size: 12px; line-height: 1.55; color: var(--ink-3); }
 
-  /* ---- glossary: six slips laid out on the desk ---- */
+  /* ---- glossary: six real index cards on the desk ---- */
+  #b4 { grid-template-columns: minmax(0, 1fr); }
+  #b4 .ph { width: min(94ch, 100%); justify-self: center; }
   .gloss-grid {
-    margin-top: 26px;
+    margin-top: 30px;
     display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px clamp(16px, 2vw, 28px);
+    gap: 22px clamp(18px, 2.4vw, 34px);
   }
   .gterm {
-    padding: 14px 16px 15px;
-    border: 1px solid var(--line); border-top: 1px solid rgba(232, 99, 74, 0.4);
-    background: linear-gradient(180deg, rgba(20, 16, 8, 0.72) 0%, rgba(15, 12, 9, 0.45) 100%);
+    position: relative; padding: 34px 20px 18px;
+    background:
+      repeating-linear-gradient(to bottom, transparent 0 24px, var(--card-rule) 24px 25px),
+      var(--card);
+    background-position: 0 12px;
+    border: 1px solid var(--line); border-radius: 2px;
+    box-shadow: 0 1px 0 var(--paper-hi) inset, 2px 5px 16px rgba(60, 48, 28, 0.16);
   }
-  .gterm:nth-child(odd)  { transform: rotate(-0.3deg); }
-  .gterm:nth-child(even) { transform: rotate(0.25deg); }
+  .gterm::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 8px; height: 2px;
+    background: var(--card-top); opacity: 0.7;
+  }
+  /* one strip of tape at the top of each card */
+  .gterm::after {
+    content: ""; position: absolute; top: -11px; left: 50%; width: 76px; height: 22px;
+    margin-left: -38px; background: rgba(226, 210, 160, 0.55);
+    border: 1px solid rgba(160, 140, 90, 0.25); transform: rotate(-2.5deg);
+  }
+  .gterm:nth-child(odd)  { transform: rotate(-0.7deg); }
+  .gterm:nth-child(even) { transform: rotate(0.6deg); }
   .gterm .gk {
-    display: block; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.26em;
-    text-transform: uppercase; color: var(--amber); margin-bottom: 7px;
+    display: block; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.26em;
+    text-transform: uppercase; color: var(--red); margin-bottom: 10px; font-weight: 500;
   }
   .gterm .gd {
-    font-family: var(--serif); font-weight: 400; font-size: clamp(12.5px, 1vw, 14px);
-    line-height: 1.62; color: var(--ink-2);
+    font-family: var(--serif); font-size: clamp(13px, 1.05vw, 14.5px);
+    line-height: 25px; color: var(--ink-2);   /* leading locked to the card ruling */
   }
 
-  /* ---- term chips: every mention after the first is a card pulled from the box ---- */
+  /* ---- term chips: pulling the card back out of the box ---- */
   .t {
-    border-bottom: 1px dotted var(--faint); cursor: help; position: relative;
+    border-bottom: 1px dotted var(--red); cursor: help; position: relative;
     color: inherit; white-space: nowrap;
   }
   .t::after {
     content: attr(data-def);
-    position: absolute; left: 0; bottom: calc(100% + 9px); z-index: 8;
-    width: max-content; max-width: 34ch; padding: 10px 12px 11px;
-    background: var(--paper); border: 1px solid #cdbfa4;
-    box-shadow: 3px 5px 18px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 255, 255, 0.35) inset;
+    position: absolute; left: 0; bottom: calc(100% + 10px); z-index: 8;
+    width: max-content; max-width: 34ch; padding: 16px 13px 11px;
+    background:
+      repeating-linear-gradient(to bottom, transparent 0 20px, var(--card-rule) 20px 21px),
+      var(--card);
+    background-position: 0 10px;
+    border: 1px solid var(--line); border-radius: 2px;
+    box-shadow: 3px 5px 18px rgba(60, 48, 28, 0.28);
     font-family: var(--serif); font-weight: 400; font-style: normal;
-    font-size: 12.5px; line-height: 1.5; letter-spacing: 0; text-transform: none;
-    color: var(--paper-ink); white-space: normal; text-shadow: none;
-    opacity: 0; visibility: hidden; transform: translateY(4px) rotate(-0.5deg);
+    font-size: 13px; line-height: 21px; letter-spacing: 0; text-transform: none;
+    color: var(--ink-2); white-space: normal;
+    opacity: 0; visibility: hidden; transform: translateY(4px) rotate(-0.6deg);
     transition: opacity 180ms var(--e-out), transform 180ms var(--e-out), visibility 180ms;
     pointer-events: none;
   }
   .t:hover::after, .t:focus-visible::after, .t.open::after {
-    opacity: 1; visibility: visible; transform: rotate(-0.5deg);
+    opacity: 1; visibility: visible; transform: rotate(-0.6deg);
   }
-  .side-r .t::after { left: auto; right: 0; }
 
-  /* ---- interface reconstruction: redrawn app panes as index cards, never screenshots ---- */
-  .ui-flow { display: flex; flex-direction: column; gap: 18px; margin-top: 26px; }
+  /* ---- interface reconstructions: printed figures, not screenshots ---- */
+  .ui-flow { display: flex; flex-direction: column; gap: 22px; margin-top: 28px; }
   .uipane { margin: 0; position: relative; }
-  .uipane:nth-child(odd)  { transform: rotate(-0.35deg); }
-  .uipane:nth-child(even) { transform: rotate(0.3deg); }
   .uipane::before {
-    content: attr(data-step); position: absolute; left: -34px; top: 2px;
-    font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; color: var(--ghost);
+    content: attr(data-step); position: absolute; left: -36px; top: 0;
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.2em; color: var(--red);
   }
   .uicap {
-    font-family: var(--mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--faint); margin-bottom: 6px; text-shadow: var(--lift);
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--ink-3); margin-bottom: 7px;
   }
-  .uicap b { color: var(--amber); font-weight: 400; }
+  .uicap b { color: var(--red); font-weight: 500; }
   .ui {
-    border: 1px solid var(--line); border-top: 1px solid rgba(232, 99, 74, 0.35);
-    background: linear-gradient(180deg, rgba(18, 14, 10, 0.92) 0%, rgba(12, 10, 7, 0.85) 100%);
-    box-shadow: 4px 8px 26px rgba(0, 0, 0, 0.45);
-    font-family: var(--mono); font-size: 10px; line-height: 1.5; color: var(--ink-3);
+    border: 1px solid var(--ink-3); border-radius: 2px;
+    background: var(--paper-hi);
+    box-shadow: 3px 4px 0 rgba(34, 28, 18, 0.08);
+    font-family: var(--mono); font-size: 10.5px; line-height: 1.55; color: var(--ink-2);
     overflow: hidden;
   }
   .uibar {
-    display: flex; align-items: center; gap: 6px; padding: 6px 9px;
-    background: rgba(38, 30, 20, 0.55); border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; gap: 6px; padding: 7px 10px;
+    background: var(--paper); border-bottom: 1px solid var(--line);
   }
-  .uibar .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--line); flex: none; }
+  .uibar .dot { width: 7px; height: 7px; border-radius: 50%; background: none; border: 1.5px solid var(--ink-3); flex: none; }
   .uibar .uititle {
-    margin-left: 6px; font-size: 9px; letter-spacing: 0.06em; color: var(--faint);
+    margin-left: 6px; font-size: 9.5px; letter-spacing: 0.06em; color: var(--ink-3);
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
   .uicols { display: grid; grid-template-columns: 0.8fr 1.4fr 1fr; }
   .ui-obsidian .uicols { grid-template-columns: 1fr 1.6fr; }
-  .uicol { padding: 8px 10px; border-right: 1px solid var(--line); min-width: 0; }
+  .uicol { padding: 9px 11px; border-right: 1px solid var(--line); min-width: 0; }
   .uicol:last-child { border-right: 0; }
   .uirow {
     display: flex; justify-content: space-between; gap: 8px; padding: 3px 0;
@@ -406,133 +405,150 @@
   }
   .uirow span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .uirow.uiind { padding-left: 12px; }
-  .uirow.uihead { color: var(--ghost); border-bottom: 1px solid var(--line); margin-bottom: 3px; }
-  .uirow.uion { color: var(--ink); background: rgba(232, 99, 74, 0.10); margin: 0 -10px; padding-left: 10px; padding-right: 10px; }
-  .uirow.uiind.uion { padding-left: 22px; }
+  .uirow.uihead { color: var(--faint); border-bottom: 1px solid var(--line); margin-bottom: 3px; }
+  .uirow.uion { color: var(--ink); background: var(--red-soft); margin: 0 -11px; padding-left: 11px; padding-right: 11px; box-shadow: inset 2px 0 0 var(--red); }
+  .uirow.uiind.uion { padding-left: 23px; }
   .uicol-meta { display: grid; grid-template-columns: auto 1fr; gap: 3px 8px; align-content: start; }
-  .uimetak { color: var(--ghost); }
-  .uimetav { color: var(--ink-3); overflow: hidden; text-overflow: ellipsis; }
-  .uibody { padding: 8px 12px; }
-  .uiyaml {
-    color: var(--ghost); border-left: 1px solid var(--line); padding-left: 9px;
-    margin-bottom: 6px; font-size: 9.5px;
-  }
-  .uih { color: var(--faint); margin: 8px 0 4px; }
-  .uip {
-    font-family: var(--serif); font-size: 12.5px; line-height: 1.5; color: var(--ink-2);
-    margin-bottom: 5px;
-  }
+  .uimetak { color: var(--faint); }
+  .uimetav { color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; }
+  .uibody { padding: 9px 13px; }
+  .uiyaml { color: var(--faint); border-left: 2px solid var(--line); padding-left: 9px; margin-bottom: 6px; font-size: 10px; }
+  .uih { color: var(--ink-3); margin: 8px 0 4px; font-weight: 500; }
+  .uip { font-family: var(--serif); font-size: 13px; line-height: 1.55; color: var(--ink-2); margin-bottom: 5px; }
   .uip em { color: var(--ink); }
-  .uilink { color: var(--sky); font-family: var(--mono); font-size: 9.5px; line-height: 1.55; }
+  .uilink { color: var(--red); font-family: var(--mono); font-size: 10px; line-height: 1.6; }
   .uiquote {
-    font-family: var(--serif); font-style: italic; font-size: 12px; color: var(--ink-3);
-    margin: 4px 0 5px; padding-left: 10px; border-left: 1px solid var(--line);
+    font-family: var(--serif); font-style: italic; font-size: 12.5px; color: var(--ink-3);
+    margin: 4px 0 5px; padding-left: 10px; border-left: 2px solid var(--line);
   }
-  .uiquote .mono { font-family: var(--mono); font-style: normal; font-size: 9px; color: var(--ghost); }
+  .uiquote .mono { font-family: var(--mono); font-style: normal; font-size: 9.5px; color: var(--faint); }
   .uinote {
-    font-family: var(--serif); font-weight: 400; font-size: clamp(12px, 0.95vw, 13.5px);
-    line-height: 1.6; color: var(--ink-3); margin-top: 9px; max-width: 62ch;
-    text-shadow: var(--lift);
+    font-family: var(--serif); font-size: clamp(12.5px, 1vw, 14px);
+    line-height: 1.62; color: var(--ink-3); margin-top: 10px; max-width: 62ch;
   }
 
-  /* The workflow and case-study beats put the cards beside the prose on wide screens. */
+  /* workflow + case study run their printed figures beside the prose */
   @media (min-width: 1140px) {
+    #b10, #b11 { grid-template-columns: minmax(0, 1fr); }
     #b10 .ph, #b11 .ph {
-      max-width: none; width: min(96ch, 100%);
-      display: grid; grid-template-columns: minmax(0, 46ch) minmax(0, 44ch);
-      column-gap: clamp(32px, 3.4vw, 60px); grid-auto-flow: row;
+      width: min(106ch, 100%); padding-left: 26px;
+      display: grid; grid-template-columns: minmax(0, 48ch) minmax(0, 50ch);
+      column-gap: clamp(36px, 4vw, 72px); grid-auto-flow: row;
     }
     #b10 .ph > *, #b11 .ph > * { grid-column: 1; }
     #b10 .ph > .kick, #b11 .ph > .kick,
     #b10 .ph > h2,   #b11 .ph > h2 { grid-column: 1 / -1; }
     #b10 .ph > .ui-flow, #b11 .ph > .ui-flow {
-      grid-column: 2; grid-row: 3 / span 8; align-self: start; margin-top: 10px;
+      grid-column: 2; grid-row: 3 / span 8; align-self: start; margin-top: 12px;
+      padding-left: 40px;
     }
+    #b10.panel::after, #b11.panel::after { grid-column: 1; }
   }
 
-  /* References: two columns where there is room, read as one flowing archive. */
+  /* ---- references: the archive, printed ---- */
+  #b14 { grid-template-columns: minmax(0, 1fr); }
+  #b14 .ph { width: min(100ch, 100%); justify-self: center; }
   .refs {
-    list-style: none; margin-top: 22px; padding: 0;
-    columns: 2; column-gap: 48px; column-rule: 1px solid var(--line);
+    list-style: none; margin-top: 26px; padding: 0;
+    columns: 2; column-gap: 52px; column-rule: 1px solid var(--line);
   }
   .refs li {
-    font-family: var(--serif); font-weight: 400; font-size: clamp(11.5px, 0.9vw, 13px);
-    line-height: 1.58; color: var(--ink-2); margin: 0 0 11px;
+    font-family: var(--serif); font-size: clamp(12px, 0.95vw, 13.5px);
+    line-height: 1.6; color: var(--ink-2); margin: 0 0 12px;
     padding-left: 1.5em; text-indent: -1.5em;
     break-inside: avoid; -webkit-column-break-inside: avoid;
   }
   .refs li i { font-style: italic; color: var(--ink); }
   .refnote {
     font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.06em;
-    line-height: 1.7; color: var(--faint); margin-top: 18px;
-    padding-top: 12px; border-top: 1px solid var(--line);
+    line-height: 1.7; color: var(--faint); margin-top: 20px;
+    padding-top: 14px; border-top: 1px solid var(--line);
   }
 
-  ::-webkit-scrollbar { width: 8px; height: 8px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
+  /* ---- the ink figures: drawings in the outer margin ---- */
+  .inkfig {
+    position: relative; align-self: stretch; min-height: 0;
+  }
+  .inkfig canvas { display: block; width: 100%; height: 100%; }
+  @media (min-width: 900px) {
+    .inkfig .stick { position: sticky; top: calc(var(--topbar-h) + 8vh); height: min(66vh, 560px); }
+  }
+  /* narrow screens: the figure sits inline, between headline and prose */
+  .inkfig.inline { grid-column: 1; height: 230px; margin: 18px 0 4px; }
+  .inkfig.inline .stick { height: 100%; }
+  /* the plates: full-measure drawings inside centred beats */
+  .inkplate { width: 100%; margin: 26px 0 10px; }
+  .inkplate canvas { display: block; width: 100%; height: 100%; }
+  #b12 .inkplate {
+    height: clamp(320px, 56vh, 560px);
+    border: 1px solid var(--line); background: var(--paper-hi);
+    box-shadow: 0 0 0 6px var(--paper-hi), 2px 6px 22px rgba(60, 48, 28, 0.14);
+  }
+  #b13 .inkplate { height: 200px; }
+  /* the frontispiece behind the hero */
+  #b0 .inkfront { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+  #b0 .inkfront canvas { display: block; width: 100%; height: 100%; }
+
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: var(--paper); }
+  ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 5px; }
   * { scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+  ::selection { background: var(--red-soft); }
 
-  /* ---- entrance: each beat settles in once, like a page laid on the desk ---- */
+  /* ---- entrance: the page settles like a laid-down sheet ---- */
   .panel .ph > * {
-    opacity: 0; transform: translateY(18px);
-    transition: opacity 800ms var(--e-out), transform 800ms var(--e-out);
-  }
-  .panel.on .ph > * { opacity: 1; transform: none; }
-  .panel.on .ph > *:nth-child(1) { transition-delay: 40ms; }
-  .panel.on .ph > *:nth-child(2) { transition-delay: 120ms; }
-  .panel.on .ph > *:nth-child(3) { transition-delay: 200ms; }
-  .panel.on .ph > *:nth-child(4) { transition-delay: 280ms; }
-  .panel.on .ph > *:nth-child(5) { transition-delay: 350ms; }
-  .panel.on .ph > *:nth-child(6) { transition-delay: 410ms; }
-  .panel.on .ph > *:nth-child(n+7) { transition-delay: 470ms; }
-  /* the glossary slips and the cards stagger inward as well */
-  .panel .gloss-grid > .gterm, .panel .ui-flow > .uipane {
     opacity: 0; transform: translateY(14px);
     transition: opacity 700ms var(--e-out), transform 700ms var(--e-out);
   }
-  .panel.on .gloss-grid > .gterm:nth-child(odd)  { opacity: 1; transform: rotate(-0.3deg); }
-  .panel.on .gloss-grid > .gterm:nth-child(even) { opacity: 1; transform: rotate(0.25deg); }
-  .panel.on .ui-flow > .uipane:nth-child(odd)  { opacity: 1; transform: rotate(-0.35deg); }
-  .panel.on .ui-flow > .uipane:nth-child(even) { opacity: 1; transform: rotate(0.3deg); }
-  .panel.on .gloss-grid > .gterm:nth-child(1), .panel.on .ui-flow > .uipane:nth-child(1) { transition-delay: 260ms; }
-  .panel.on .gloss-grid > .gterm:nth-child(2), .panel.on .ui-flow > .uipane:nth-child(2) { transition-delay: 350ms; }
-  .panel.on .gloss-grid > .gterm:nth-child(3), .panel.on .ui-flow > .uipane:nth-child(3) { transition-delay: 440ms; }
-  .panel.on .gloss-grid > .gterm:nth-child(4) { transition-delay: 530ms; }
-  .panel.on .gloss-grid > .gterm:nth-child(5) { transition-delay: 610ms; }
-  .panel.on .gloss-grid > .gterm:nth-child(6) { transition-delay: 690ms; }
-
-  #hint { position: fixed; bottom: clamp(44px, 7vh, 66px); left: 50%; transform: translateX(-50%);
-    z-index: 6; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.34em; text-transform: uppercase;
-    color: var(--faint); pointer-events: none; transition: opacity 600ms var(--e-out); }
-  #hint::after { content: ""; display: block; width: 1px; height: 26px; margin: 12px auto 0;
-    background: linear-gradient(to bottom, var(--faint), transparent); }
-
-  @media (max-width: 640px) {
-    #readout { display: none; }   /* the folio keeps the bottom edge; two labels is one too many */
+  .panel.on .ph > * { opacity: 1; transform: none; }
+  .panel.on .ph > *:nth-child(1) { transition-delay: 40ms; }
+  .panel.on .ph > *:nth-child(2) { transition-delay: 110ms; }
+  .panel.on .ph > *:nth-child(3) { transition-delay: 180ms; }
+  .panel.on .ph > *:nth-child(4) { transition-delay: 250ms; }
+  .panel.on .ph > *:nth-child(5) { transition-delay: 310ms; }
+  .panel.on .ph > *:nth-child(n+6) { transition-delay: 370ms; }
+  .panel .gloss-grid > .gterm, .panel .ui-flow > .uipane {
+    opacity: 0; transform: translateY(12px);
+    transition: opacity 650ms var(--e-out), transform 650ms var(--e-out);
   }
+  .panel.on .gloss-grid > .gterm:nth-child(odd)  { opacity: 1; transform: rotate(-0.7deg); }
+  .panel.on .gloss-grid > .gterm:nth-child(even) { opacity: 1; transform: rotate(0.6deg); }
+  .panel.on .ui-flow > .uipane { opacity: 1; transform: none; }
+  .panel.on .gloss-grid > .gterm:nth-child(1), .panel.on .ui-flow > .uipane:nth-child(1) { transition-delay: 240ms; }
+  .panel.on .gloss-grid > .gterm:nth-child(2), .panel.on .ui-flow > .uipane:nth-child(2) { transition-delay: 330ms; }
+  .panel.on .gloss-grid > .gterm:nth-child(3), .panel.on .ui-flow > .uipane:nth-child(3) { transition-delay: 420ms; }
+  .panel.on .gloss-grid > .gterm:nth-child(4) { transition-delay: 500ms; }
+  .panel.on .gloss-grid > .gterm:nth-child(5) { transition-delay: 570ms; }
+  .panel.on .gloss-grid > .gterm:nth-child(6) { transition-delay: 640ms; }
 
-  @media (max-width: 860px) {
-    .panel { padding: 40px 20px; margin-bottom: 22vh; }
-    .panel:first-child { padding-top: calc(var(--topbar-h) + 16px); }
+  @media (max-width: 899px) {
+    .panel { grid-template-columns: minmax(0, 1fr); padding: 44px 20px; }
+    .panel > .inkfig { grid-column: 1; }
     .topbar-nav { display: none; }
-    #grid { display: none; }
-    .lrow, .lrow.out { grid-template-columns: 1fr; gap: 4px 0; }
-    .lrow .lk { padding-top: 0; }
-    .gloss-grid { grid-template-columns: minmax(0, 1fr); }
-    .uicols, .ui-obsidian .uicols { grid-template-columns: minmax(0, 1fr); }
-    .uicol { border-right: 0; border-bottom: 1px solid var(--line); }
     .uipane::before { display: none; }
     .t::after { left: 0; right: auto; max-width: 26ch; }
     .cite { white-space: normal; }
+    .gloss-grid { grid-template-columns: minmax(0, 1fr); }
+    .uicols, .ui-obsidian .uicols { grid-template-columns: minmax(0, 1fr); }
+    .uicol { border-right: 0; border-bottom: 1px solid var(--line); }
     .refs { columns: 1; column-rule: none; }
-    .refs li { font-size: 12.5px; }
+    .refs li { font-size: 13px; }
+    .panel::after { margin-top: 48px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .panel .ph > *, .panel .gloss-grid > .gterm, .panel .ui-flow > .uipane {
       transition-duration: 1ms; transform: none; opacity: 1;
     }
+    .ph h2 .sig { transition-duration: 1ms; background-size: 100% 0.14em; }
+  }
+
+  /* it is an essay: let it print like one */
+  @media print {
+    .topbar, #rail, #folio, #hint, .grain, .edge-gradient, .inkfig, .inkplate, .inkfront { display: none !important; }
+    .panel { display: block; padding: 24px 0; }
+    .panel .ph > * { opacity: 1 !important; transform: none !important; }
+    body { background: #fff; }
   }
 </style>
 </head>
@@ -816,579 +832,526 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
 <script>
 "use strict";
 (function () {
-  window.__SBF__ = "final-essay"; // identity marker for QA
+  window.__SBF__ = "final-paper"; // identity marker for QA
   var RM = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // ---- viewport helpers (window.innerHeight reads 0 in the headless preview) ----
   function vw() { return (window.visualViewport && window.visualViewport.width) || window.innerWidth || 1280; }
   function vh() { return (window.visualViewport && window.visualViewport.height) || window.innerHeight || 800; }
-
-  // ---- easings: entrances outQuart, on-screen moves inOutCubic ----
   function clamp01(t) { return t < 0 ? 0 : t > 1 ? 1 : t; }
-  var outQuart = function (t) { return 1 - Math.pow(1 - t, 4); };
-  var inOutCubic = function (t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
-  var inCubic = function (t) { return t * t * t; };
-  var outBack = function (t) { var c1 = 1.20158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
-  function lerp(a, b, t) { return a + (b - a) * t; }
+  var outCubic = function (t) { return 1 - Math.pow(1 - t, 3); };
 
-  // ---- the beat table -------------------------------------------------------------
-  // One row per beat, narrative order = array order = section order in the markup.
-  // The page reads as a flowing essay; this table tells the field what to do behind
-  // each section. Every beat is addressed by NAME (B.trap, B.thesis), so inserting a
-  // beat is a one-row edit plus one <section> in the markup.
-  //
-  //   id            folio name         state label     form      trans ease         rad  phi   theta lookY lookZ pan    mol
-  var BEATS_DEF = [
-    ["hero",        "HERO",            "drift",         "DRIFT",   1,   outQuart,    126, 1.44, 0.00,  0,    0,    0,     0],
-    ["context",     "THE PROBLEM",     "scatter",       "SCATTER", 0.6, inOutCubic,  110, 1.40, 0.28,  0,    0,    0.16,  0],
-    ["pkm",         "PKM",             "gathering",     "GATHER",  0.55, outQuart,     88, 1.34, 0.58,  0,    0,   -0.16,  0],
-    ["secondbrain", "SECOND BRAIN",    "orbit",         "SHELLR",  0.5, outQuart,     94, 1.30, 0.88,  0,    0,    0.15,  0],
-    ["glossary",    "PLAIN LANGUAGE",  "six tools",     "CLUST6",  0.55, outQuart,    122, 1.42, 1.06,  0,    0,   -0.13,  0],
-    ["hype",        "THE HYPE",        "storm",         "STORM",   0.5, outQuart,    150, 1.50, 1.30,  0,    0,    0.12,  0],
-    ["trap",        "THE TRAP",        "the globe",     "GLOBE",   0.5, outQuart,     96, 1.38, 1.62,  0,    0,   -0.16,  0],
-    ["retrieval",   "RETRIEVAL FIRST", "one slip",      "FOCUSF",  0.5, outQuart,     48, 1.42, 1.96,  0,    0,    0.17,  0],
-    ["zettelkasten","ZETTELKASTEN",    "slip-box",      "CABINET", 0.55, outBack,     126, 1.40, 2.95,  0,    0,   -0.14,  0],
-    ["tiers",       "THREE SIZES",     "three sizes",   "TIERS",   0.55, outQuart,    106, 1.48, 2.86,  0,    0,    0.14,  0],
-    ["stack",       "THE WORKFLOW",    "the stream",    "FLOWS",   0.55, inOutCubic,   92, 1.44, 3.30,  0,    0,   -0.15,  0],
-    ["casestudy",   "CASE STUDY",      "the vault",     "REAL",    0.5, inOutCubic,   56, 1.34, 3.76,  0,    0,    0.15,  0.5],
-    ["thesis",      "WHAT IT IS FOR",  "the vault, lit","REAL",    0.4, outQuart,    150, 1.38, 4.30,  2,    0,    0,     0],
-    ["end",         "END",             "dissolve",      "DRIFT2",  0.7, inOutCubic,  130, 1.44, 4.70,  0,    0,    0,     0],
-    ["works",       "WORKS CITED",     "archive",       "DRIFT2",  0.5, outQuart,    142, 1.47, 4.85,  0,    0,    0.10,  0],
-  ];
-  var NB = BEATS_DEF.length;
-  var B = {};
-  for (var bi = 0; bi < NB; bi++) B[BEATS_DEF[bi][0]] = bi;
-  var col = function (i) { return BEATS_DEF.map(function (r) { return r[i]; }); };
-  var BEAT_NAMES  = col(1);
-  var STATE_LABEL = col(2);
-  var BEAT_FORM   = col(3);
-  var TRANS       = col(4);
-  var MEASE       = col(5);
-
-  // ---- deterministic PRNG ----
+  // ---- deterministic PRNG: every figure is drawn by the same hand every time ----
   function rng(seed) { return function () { seed |= 0; seed = (seed + 0x6D2B79F5) | 0; var t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
-  var rnd = rng(0x53460718);
 
-  // ---- data: real vault via window.__SBF, synthetic 1,400-node cloud fallback ----
+  // ---- the vault, kept for the plates: raw 3D positions projected to ink ----
   var D = window.__SBF || null;
-  var N = D ? D.n : 1400;
-  var MAXDEG = D ? D.md : 60;
-
-  var real = new Float32Array(N * 3);
-  var deg = new Float32Array(N);
+  var N = D ? D.n : 0;
+  var PX = new Float32Array(N), PY = new Float32Array(N), PZ = new Float32Array(N);
+  var DEG = new Float32Array(N), R3D = 1e-6;
   if (D) {
-    var mx = 1e-6;
-    for (var i0 = 0; i0 < N * 3; i0++) { var av = Math.abs(D.pos[i0]); if (av > mx) mx = av; }
-    var sc = 62 / mx;
-    for (var i1 = 0; i1 < N; i1++) {
-      real[i1 * 3] = D.pos[i1 * 3] * sc; real[i1 * 3 + 1] = D.pos[i1 * 3 + 1] * sc; real[i1 * 3 + 2] = D.pos[i1 * 3 + 2] * sc;
-      deg[i1] = D.deg[i1];
-    }
-  } else {
-    for (var i2 = 0; i2 < N; i2++) { real[i2 * 3] = (rnd() - 0.5) * 110; real[i2 * 3 + 1] = (rnd() - 0.5) * 110; real[i2 * 3 + 2] = (rnd() - 0.5) * 110; deg[i2] = (rnd() * 40) | 0; }
-  }
-
-  // ---- pick the retrieval-beat hub (highest degree) and a mid-size molecule cluster ----
-  var hubIdx = 0; { var hd = -1; for (var h = 0; h < N; h++) { if (deg[h] > hd) { hd = deg[h]; hubIdx = h; } } }
-
-  var EFULL = (D && D.e && D.e.length) ? D.e : null;
-  var ESPINE = (D && D.spine && D.spine.length) ? D.spine : null;
-  if (!EFULL) {
-    var fe = new Array(1200 * 2);
-    for (var fi = 0; fi < 1200; fi++) { fe[fi * 2] = (rnd() * N) | 0; fe[fi * 2 + 1] = (rnd() * N) | 0; }
-    EFULL = fe; ESPINE = fe.slice(0, 800 * 2);
-  }
-  if (!ESPINE) ESPINE = EFULL;
-  var molIdx = hubIdx, molEdges = [];
-  (function () {
-    var cnt = new Int16Array(N);
-    var m2 = EFULL.length;
-    for (var k = 0; k < m2; k++) cnt[EFULL[k]]++;
-    for (var n2 = 0; n2 < N; n2++) { if (cnt[n2] >= 5 && cnt[n2] <= 9) { molIdx = n2; break; } }
-    var seen = 0;
-    for (var e2 = 0; e2 < m2; e2 += 2) {
-      if (EFULL[e2] === molIdx || EFULL[e2 + 1] === molIdx) { molEdges.push(EFULL[e2], EFULL[e2 + 1]); seen++; if (seen >= 12) break; }
-    }
-    if (!molEdges.length) molEdges.push(molIdx, hubIdx);
-  })();
-  var molSet = {}; molSet[molIdx] = 1;
-  for (var ms = 0; ms < molEdges.length; ms++) molSet[molEdges[ms]] = 1;
-
-  // ---- formation builders: every one reads as slips of paper, not points in space ----
-  function buildDrift(out, radius, squash, jitter) {
-    var golden = Math.PI * (3 - Math.sqrt(5));
-    for (var i = 0; i < N; i++) {
-      var j = i * 3, y = 1 - (i / (N - 1)) * 2, rr = Math.sqrt(Math.max(0, 1 - y * y)), th = golden * i;
-      var sh = radius + (rnd() - 0.5) * jitter;
-      out[j] = Math.cos(th) * rr * sh; out[j + 1] = y * sh * squash; out[j + 2] = Math.sin(th) * rr * sh;
+    for (var i0 = 0; i0 < N; i0++) {
+      PX[i0] = D.pos[i0 * 3]; PY[i0] = D.pos[i0 * 3 + 1]; PZ[i0] = D.pos[i0 * 3 + 2];
+      DEG[i0] = D.deg[i0];
+      var rr = Math.sqrt(PX[i0] * PX[i0] + PY[i0] * PY[i0] + PZ[i0] * PZ[i0]);
+      if (rr > R3D) R3D = rr;
     }
   }
-  function buildBox(out, w, h) {
-    for (var i = 0; i < N; i++) { var j = i * 3; out[j] = (rnd() - 0.5) * w; out[j + 1] = (rnd() - 0.5) * h; out[j + 2] = (rnd() - 0.5) * w; }
-  }
-  function buildCore(out, radius, exp, squash, focusIdx) {
-    for (var i = 0; i < N; i++) {
-      var j = i * 3, hr = Math.pow(rnd(), exp) * radius, ha = rnd() * 6.283, hb = Math.acos(2 * rnd() - 1);
-      out[j] = Math.sin(hb) * Math.cos(ha) * hr; out[j + 1] = Math.cos(hb) * hr * squash; out[j + 2] = Math.sin(hb) * Math.sin(ha) * hr;
-    }
-    if (focusIdx != null) { out[focusIdx * 3] = 0; out[focusIdx * 3 + 1] = 0; out[focusIdx * 3 + 2] = 0; }
-  }
-  // six tidy piles, one per tool in the glossary: two rows of three
-  var CLUST_Z = [4, -6, 2, -3, 5, -5];
-  function buildClusters(out) {
-    for (var i = 0; i < N; i++) {
-      var j = i * 3, c = i % 6, cx = (c % 3 - 1) * 38, cy = (c < 3 ? 1 : -1) * 15;
-      var hr = Math.pow(rnd(), 0.62) * 11, ha = rnd() * 6.283, hb = Math.acos(2 * rnd() - 1);
-      out[j] = cx + Math.sin(hb) * Math.cos(ha) * hr;
-      out[j + 1] = cy + Math.cos(hb) * hr * 0.78;
-      out[j + 2] = CLUST_Z[c] + Math.sin(hb) * Math.sin(ha) * hr;
-    }
-  }
-  function buildCabinet(out, cols, rows, sx, sy, slabGap) {
-    var perSlab = cols * rows, nSlabs = Math.ceil(N / perSlab);
-    for (var i = 0; i < N; i++) {
-      var j = i * 3, slab = (i / perSlab) | 0, r = i % perSlab, cx = r % cols, cy = (r / cols) | 0;
-      out[j] = (cx - (cols - 1) / 2) * sx;
-      out[j + 1] = (cy - (rows - 1) / 2) * sy;
-      out[j + 2] = ((nSlabs - 1) / 2 - slab) * slabGap + (rnd() - 0.5) * 0.8;
-    }
-  }
-  function buildTiers(out, bands, gap, radius) {
-    for (var i = 0; i < N; i++) {
-      var j = i * 3, band = i % bands, r = Math.sqrt(rnd()) * radius * (1 - band * 0.26), a = rnd() * 6.283;
-      out[j] = Math.cos(a) * r;
-      out[j + 1] = ((bands - 1) / 2 - band) * gap + (rnd() - 0.5) * 2.4;
-      out[j + 2] = Math.sin(a) * r;
-    }
-  }
-  // the workflow: one stream of slips along an S-curve, left to right
-  var flowS = new Float32Array(N);
-  function buildFlow(out) {
-    for (var i = 0; i < N; i++) {
-      var j = i * 3, s = i / (N - 1);
-      flowS[i] = s;
-      out[j] = (s - 0.5) * 150 + (rnd() - 0.5) * 5;
-      out[j + 1] = Math.sin(s * 3.6) * 13 + (rnd() - 0.5) * 8;
-      out[j + 2] = Math.cos(s * 2.2) * 9 + (rnd() - 0.5) * 8;
-    }
-  }
-  // buildReal is the identity: the last formation is the data itself (scaled above).
+  var SPINE = (D && D.spine && D.spine.length) ? D.spine : [];
+  var MAXDEG = D ? D.md : 60;
+  var HOT = [];   // the best-connected notes get the red pen
+  for (var h0 = 0; h0 < N; h0++) if (DEG[h0] / MAXDEG > 0.4) HOT.push(h0);
 
-  var F = {
-    DRIFT:   new Float32Array(N * 3),
-    DRIFT2:  new Float32Array(N * 3),
-    SCATTER: new Float32Array(N * 3),
-    GATHER:  new Float32Array(N * 3),
-    SHELLR:  new Float32Array(N * 3),
-    CLUST6:  new Float32Array(N * 3),
-    STORM:   new Float32Array(N * 3),
-    GLOBE:   new Float32Array(N * 3),
-    FOCUSF:  new Float32Array(N * 3),
-    CABINET: new Float32Array(N * 3),
-    TIERS:   new Float32Array(N * 3),
-    FLOWS:   new Float32Array(N * 3),
-    REAL:    real,
-  };
-  var ringA = new Float32Array(N);      // satellite ring angles (second-brain beat)
-  var turb = new Float32Array(N * 3);   // storm / scatter turbulence axes
-  buildDrift(F.DRIFT, 48, 0.82, 14);
-  buildDrift(F.DRIFT2, 40, 0.9, 9);
-  buildBox(F.SCATTER, 150, 92);
-  buildDrift(F.GATHER, 26, 0.92, 3);
-  buildDrift(F.SHELLR, 28, 0.96, 2);
-  buildClusters(F.CLUST6);
-  buildBox(F.STORM, 170, 100);
-  buildDrift(F.GLOBE, 30, 1.0, 0.5);           // the too-perfect globe
-  buildCore(F.FOCUSF, 9, 1.9, 0.9, hubIdx);    // tight collapse, hub pinned at origin
-  buildCabinet(F.CABINET, 34, 13, 5.0, 5.2, 24);
-  buildTiers(F.TIERS, 3, 32, 48);
-  buildFlow(F.FLOWS);
-  for (var r3 = 0; r3 < N; r3++) ringA[r3] = rnd() * 6.283;
-  for (var t3 = 0; t3 < N * 3; t3 += 3) { turb[t3] = rnd() * 6.283; turb[t3 + 1] = rnd() * 6.283; turb[t3 + 2] = 0.6 + rnd() * 1.1; }
-  var RINGSTEP = 16; // every 16th slip joins the satellite ring on the second-brain beat
-
-  (function checkForms() {
-    for (var i = 0; i < NB; i++) {
-      if (!F[BEAT_FORM[i]]) throw new Error("beat " + i + " (" + BEATS_DEF[i][0] + ") names an unknown formation: " + BEAT_FORM[i]);
+  // ---- ink helpers: nothing here is ruler-straight unless the point is that it is ----
+  var INK = "38,30,18", RED = "#c23a20", REDA = "194,58,32";
+  function iline(ctx, x1, y1, x2, y2, r, amp) {
+    var seg = 6;
+    ctx.beginPath(); ctx.moveTo(x1 + (r() - 0.5) * amp, y1 + (r() - 0.5) * amp);
+    for (var i = 1; i <= seg; i++) {
+      var t = i / seg;
+      ctx.lineTo(x1 + (x2 - x1) * t + (i === seg ? 0 : (r() - 0.5) * amp),
+                 y1 + (y2 - y1) * t + (i === seg ? 0 : (r() - 0.5) * amp));
     }
-  })();
-
-  // ---- THREE setup ----
-  var canvas = document.getElementById("viz");
-  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false, powerPreference: "high-performance" });
-  function dprCap() { return Math.min(window.devicePixelRatio || 1, vw() < 900 ? 1.5 : 2); }
-  renderer.setPixelRatio(dprCap());
-  renderer.setSize(vw(), vh());
-  var BGC = new THREE.Color(0x0a0806);   // warm ground, one step up from the page so the fades read
-  renderer.setClearColor(BGC, 1);
-  var scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x0a0806, 0.0042);
-  var camera = new THREE.PerspectiveCamera(54, vw() / vh(), 0.1, 900);
-
-  // slip attributes: warm paper with subtle luminance variation by degree.
-  // One amber accent, spent on: the retrieval hub, thesis top-degree, thesis edges.
-  var aSize = new Float32Array(N);
-  var aLum = new Float32Array(N);
-  var aHot = new Float32Array(N);   // top-degree amber (tiers / thesis)
-  var aFocA = new Float32Array(N);  // retrieval-beat focus (the single hub)
-  var aFocB = new Float32Array(N);  // case-study molecule focus set
-  for (var p0 = 0; p0 < N; p0++) {
-    var sd = Math.sqrt(deg[p0]);
-    aSize[p0] = 2.0 + Math.min(5.0, sd * 0.62);
-    aLum[p0] = 0.6 + 0.4 * Math.min(1, sd / 12);
-    aHot[p0] = clamp01((deg[p0] / MAXDEG - 0.18) / 0.5);
-    aFocA[p0] = (p0 === hubIdx) ? 1 : 0;
-    aFocB[p0] = molSet[p0] ? 1 : 0;
+    ctx.stroke();
+  }
+  function icircle(ctx, cx, cy, rad, r, amp, from, to) {
+    from = from == null ? -0.35 : from; to = to == null ? 6.55 : to;
+    var seg = 26;
+    ctx.beginPath();
+    for (var i = 0; i <= seg; i++) {
+      var a = from + (to - from) * (i / seg);
+      var rr = rad + (r() - 0.5) * amp;
+      var x = cx + Math.cos(a) * rr, y = cy + Math.sin(a) * rr;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+  function icard(ctx, x, y, w, h, rot, r, amp) {
+    ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
+    iline(ctx, -w / 2, -h / 2, w / 2, -h / 2, r, amp);
+    iline(ctx, w / 2, -h / 2, w / 2, h / 2, r, amp);
+    iline(ctx, w / 2, h / 2, -w / 2, h / 2, r, amp);
+    iline(ctx, -w / 2, h / 2, -w / 2, -h / 2, r, amp);
+    ctx.restore();
+  }
+  function iarrow(ctx, x1, y1, x2, y2, r) {
+    iline(ctx, x1, y1, x2, y2, r, 2);
+    var a = Math.atan2(y2 - y1, x2 - x1);
+    ctx.beginPath();
+    ctx.moveTo(x2, y2); ctx.lineTo(x2 - 8 * Math.cos(a - 0.45), y2 - 8 * Math.sin(a - 0.45));
+    ctx.moveTo(x2, y2); ctx.lineTo(x2 - 8 * Math.cos(a + 0.45), y2 - 8 * Math.sin(a + 0.45));
+    ctx.stroke();
+  }
+  function setInk(ctx, alpha, width) {
+    ctx.strokeStyle = "rgba(" + INK + "," + alpha + ")";
+    ctx.lineWidth = width; ctx.lineCap = "round"; ctx.lineJoin = "round";
+    ctx.setLineDash([]);
+  }
+  function setRed(ctx, alpha, width) {
+    ctx.strokeStyle = "rgba(" + REDA + "," + alpha + ")";
+    ctx.lineWidth = width; ctx.lineCap = "round"; ctx.lineJoin = "round";
+    ctx.setLineDash([]);
   }
 
-  var livePos = new Float32Array(N * 3); livePos.set(F.DRIFT);
-  var geo = new THREE.BufferGeometry();
-  geo.setAttribute("position", new THREE.BufferAttribute(livePos, 3));
-  geo.setAttribute("aSize", new THREE.BufferAttribute(aSize, 1));
-  geo.setAttribute("aLum", new THREE.BufferAttribute(aLum, 1));
-  geo.setAttribute("aHot", new THREE.BufferAttribute(aHot, 1));
-  geo.setAttribute("aFocA", new THREE.BufferAttribute(aFocA, 1));
-  geo.setAttribute("aFocB", new THREE.BufferAttribute(aFocB, 1));
+  // project the vault to the page: a slow turntable, tilted a little toward the reader
+  function plotVault(ctx, w, h, t, theta, o) {
+    o = o || {};
+    var scale = Math.min(w, h) * (o.fit || 0.46) / R3D;
+    var cx = w * (o.cx || 0.5), cy = h * (o.cy || 0.5);
+    var ct = Math.cos(theta), st = Math.sin(theta);
+    var eN = SPINE.length / 2, stride = o.stride || 1;
+    var eShow = Math.floor(eN * clamp01(t * 1.25));
+    ctx.strokeStyle = "rgba(" + INK + "," + (o.edgeA || 0.16) + ")";
+    ctx.lineWidth = 0.7; ctx.setLineDash([]);
+    ctx.beginPath();
+    for (var e = 0; e < eShow; e += stride) {
+      var a = SPINE[e * 2], b = SPINE[e * 2 + 1];
+      var ax = PX[a] * ct + PZ[a] * st, ay = PY[a] * 0.92 - (PX[a] * st - PZ[a] * ct) * 0.16;
+      var bx = PX[b] * ct + PZ[b] * st, by = PY[b] * 0.92 - (PX[b] * st - PZ[b] * ct) * 0.16;
+      ctx.moveTo(cx + ax * scale, cy - ay * scale);
+      ctx.lineTo(cx + bx * scale, cy - by * scale);
+    }
+    ctx.stroke();
+    var nShow = Math.floor(N * clamp01(t * 1.1 + 0.05));
+    ctx.fillStyle = "rgba(" + INK + "," + (o.nodeA || 0.5) + ")";
+    for (var i = 0; i < nShow; i++) {
+      var x = PX[i] * ct + PZ[i] * st, y = PY[i] * 0.92 - (PX[i] * st - PZ[i] * ct) * 0.16;
+      var rr = 0.6 + Math.sqrt(DEG[i]) * (o.nodeR || 0.26);
+      ctx.fillRect(cx + x * scale - rr / 2, cy - y * scale - rr / 2, rr, rr);
+    }
+    ctx.fillStyle = "rgba(" + REDA + "," + (o.hotA || 0.85) + ")";
+    for (var k = 0; k < HOT.length; k++) {
+      var j = HOT[k]; if (j >= nShow) continue;
+      var hx = PX[j] * ct + PZ[j] * st, hy = PY[j] * 0.92 - (PX[j] * st - PZ[j] * ct) * 0.16;
+      var hr = Math.min(3.4, 1.2 + Math.sqrt(DEG[j]) * 0.22);
+      ctx.beginPath(); ctx.arc(cx + hx * scale, cy - hy * scale, hr, 0, 6.29); ctx.fill();
+    }
+  }
 
-  var PAPER = new THREE.Color(0xede4d2);  // unbleached card stock
-  var AMBER = new THREE.Color(0xff8a63);  // --amber-hi, lifted for emissive slips
-  var mat = new THREE.ShaderMaterial({
-    uniforms: {
-      uScale:  { value: vh() * 0.5 },
-      uOpac:   { value: 1.0 },
-      uAmber:  { value: 0.0 },   // top-degree amber
-      uFocus:  { value: 0.0 },   // focus dimming strength (retrieval / case-study)
-      uFocSel: { value: 0.0 },   // 0 = hub, 1 = molecule set
-      uGrey:   { value: 0.0 },   // the trap: the globe drains to grey
-      uInk:    { value: new THREE.Vector3(PAPER.r, PAPER.g, PAPER.b) },
-      uAmberC: { value: new THREE.Vector3(AMBER.r, AMBER.g, AMBER.b) },
-      // the text void: the field thins where the prose sits, instead of a plate over it
-      uHole:   { value: new THREE.Vector4(0, 0, 0, 0) },  // centre.xy, half-extent.xy, in NDC
-      uHoleAmt:{ value: 0.0 },
-      uAspect: { value: vw() / Math.max(1, vh()) },
+  // ---- the figure drawings, one per beat that needs one --------------------------
+  var DRAW = {
+
+    // 01 · the problem: notes flung from the desk, trailing away
+    scatter: function (ctx, w, h, t) {
+      var r = rng(11), cxx = w * 0.42, cyy = h * 0.42, n = 22;
+      for (var i = 0; i < n; i++) {
+        var show = clamp01(t * n - i);
+        var ang = r() * 6.28, dist = (0.14 + 0.8 * (i / n)) * Math.min(w, h) * 0.52;
+        var rot = (r() - 0.5) * 0.9;
+        var x = cxx + Math.cos(ang) * dist * show, y = cyy + Math.sin(ang) * dist * show * 0.85;
+        if (show <= 0.02) { r(); r(); continue; }
+        ctx.setLineDash([2, 5]);
+        ctx.strokeStyle = "rgba(" + INK + ",0.22)"; ctx.lineWidth = 0.8;
+        ctx.beginPath(); ctx.moveTo(cxx, cyy); ctx.lineTo(x, y); ctx.stroke();
+        if (i % 7 === 3) setRed(ctx, 0.8 * show, 1.3); else setInk(ctx, 0.65 * show, 1.2);
+        icard(ctx, x, y, 22, 14, rot, r, 1.6);
+      }
     },
-    vertexShader: [
-      "attribute float aSize; attribute float aLum; attribute float aHot;",
-      "attribute float aFocA; attribute float aFocB;",
-      "uniform float uScale; uniform float uAmber; uniform float uFocus; uniform float uFocSel;",
-      "varying float vLum; varying float vHot; varying float vFoc; varying float vFocA;",
-      "varying vec2 vNdc;",
-      "void main(){",
-      "  vLum = aLum; vHot = aHot;",
-      "  vFoc = mix(aFocA, aFocB, uFocSel);",
-      "  vFocA = aFocA * (1.0 - uFocSel);",
-      "  vec4 mv = modelViewMatrix * vec4(position, 1.0);",
-      "  gl_Position = projectionMatrix * mv;",
-      "  vNdc = gl_Position.xy / max(0.0001, gl_Position.w);",
-      "  float boost = 1.0 + aHot * uAmber * 0.8 + vFocA * uFocus * 2.6;",
-      "  gl_PointSize = clamp(aSize * boost * uScale / max(1.0, -mv.z), 1.5, 34.0);",
-      "}"].join("\n"),
-    fragmentShader: [
-      "precision highp float;",
-      "uniform float uOpac; uniform float uAmber; uniform float uFocus; uniform float uGrey;",
-      "uniform vec3 uInk; uniform vec3 uAmberC;",
-      "uniform vec4 uHole; uniform float uHoleAmt; uniform float uAspect;",
-      "varying float vLum; varying float vHot; varying float vFoc; varying float vFocA;",
-      "varying vec2 vNdc;",
-      // rounded-box signed distance in aspect-corrected NDC: negative inside, positive outside
-      "float holeSDF(vec2 p){",
-      "  vec2 q = abs((p - uHole.xy) * vec2(uAspect, 1.0)) - uHole.zw * vec2(uAspect, 1.0);",
-      "  return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0);",
-      "}",
-      "void main(){",
-      // each sprite is a small paper slip: a rounded rectangle, wider than tall
-      "  vec2 pc = gl_PointCoord - 0.5;",
-      "  vec2 q = abs(pc) - vec2(0.44, 0.27) + 0.08;",
-      "  float d = length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - 0.08;",
-      "  float a = 1.0 - smoothstep(-0.10, 0.02, d);",
-      "  if (a <= 0.01) discard;",
-      "  vec3 col = uInk * vLum;",
-      "  col = mix(col, uAmberC, clamp(vHot * uAmber + vFocA * uFocus, 0.0, 1.0));",
-      "  float g = dot(col, vec3(0.299, 0.587, 0.114));",
-      "  col = mix(col, vec3(g) * 0.82, uGrey);",   // the globe drains of warmth
-      "  float dim = 1.0 - uFocus * (1.0 - vFoc) * 0.92;",   // non-focus slips drop to 8%
-      "  float k = 1.0 - smoothstep(-0.10, 0.52, holeSDF(vNdc));",
-      "  gl_FragColor = vec4(col, a * uOpac * dim * (1.0 - uHoleAmt * k));",
-      "}"].join("\n"),
-    transparent: true, depthWrite: false, depthTest: false, blending: THREE.NormalBlending,
-  });
-  var points = new THREE.Points(geo, mat);
-  points.frustumCulled = false; scene.add(points);
 
-  // ---- edge layer: ink threads, opacity-gated LineSegments with a traveling pulse ----
-  function edgeMaterial() {
-    return new THREE.ShaderMaterial({
-      uniforms: {
-        uOpac:  { value: 0.0 },
-        uPulse: { value: 0.0 },
-        uTime:  { value: 0.0 },
-        uMix:   { value: 0.0 }, // thesis amber tint
-        uCol:   { value: new THREE.Vector3(0.55, 0.46, 0.34) },  // sepia ink, damped
-        uAmberC:{ value: new THREE.Vector3(AMBER.r, AMBER.g, AMBER.b) },
-        uHole:   { value: new THREE.Vector4(0, 0, 0, 0) },
-        uHoleAmt:{ value: 0.0 },
-        uAspect: { value: vw() / Math.max(1, vh()) },
-      },
-      vertexShader: [
-        "attribute float aPhase; varying float vPhase; varying vec2 vNdc;",
-        "void main(){",
-        "  vPhase = aPhase;",
-        "  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);",
-        "  vNdc = gl_Position.xy / max(0.0001, gl_Position.w);",
-        "}"].join("\n"),
-      fragmentShader: [
-        "precision highp float;",
-        "uniform float uOpac; uniform float uPulse; uniform float uTime; uniform float uMix;",
-        "uniform vec3 uCol; uniform vec3 uAmberC;",
-        "uniform vec4 uHole; uniform float uHoleAmt; uniform float uAspect;",
-        "varying float vPhase; varying vec2 vNdc;",
-        "void main(){",
-        "  float pulse = 0.35 + 0.65 * (0.5 + 0.5 * sin(vPhase * 6.2831 + uTime * 2.2));",
-        "  float a = uOpac * mix(1.0, pulse, uPulse);",
-        "  vec3 col = mix(uCol, uAmberC, uMix * 0.45);",
-        "  vec2 q = abs((vNdc - uHole.xy) * vec2(uAspect, 1.0)) - uHole.zw * vec2(uAspect, 1.0);",
-        "  float s = length(max(q, 0.0)) + min(max(q.x, q.y), 0.0);",
-        "  float k = 1.0 - smoothstep(-0.10, 0.52, s);",
-        "  gl_FragColor = vec4(col, a * (1.0 - uHoleAmt * k));",
-        "}"].join("\n"),
-      transparent: true, depthWrite: false, depthTest: false, blending: THREE.NormalBlending,
-    });
-  }
-  var EC_MAX = EFULL.length / 2;
-  var ePos = new Float32Array(EC_MAX * 6);
-  var ePhase = new Float32Array(EC_MAX * 2);
-  for (var ph = 0; ph < EC_MAX; ph++) { var pv = rnd(); ePhase[ph * 2] = pv; ePhase[ph * 2 + 1] = pv + 0.5; }
-  var eGeo = new THREE.BufferGeometry();
-  eGeo.setAttribute("position", new THREE.BufferAttribute(ePos, 3));
-  eGeo.setAttribute("aPhase", new THREE.BufferAttribute(ePhase, 1));
-  var eMat = edgeMaterial();
-  var edges = new THREE.LineSegments(eGeo, eMat);
-  edges.frustumCulled = false; scene.add(edges);
+    // 02 · pkm: the same notes, called back into one loose ring
+    gather: function (ctx, w, h, t) {
+      var r = rng(22), cxx = w * 0.5, cyy = h * 0.46, R = Math.min(w, h) * 0.3, n = 30;
+      for (var i = 0; i < n; i++) {
+        var a0 = r() * 6.28, d0 = R * (1.7 + r() * 1.3);
+        var ae = (i / n) * 6.28;
+        var x0 = cxx + Math.cos(a0) * d0, y0 = cyy + Math.sin(a0) * d0 * 0.8;
+        var xe = cxx + Math.cos(ae) * R, ye = cyy + Math.sin(ae) * R * 0.86;
+        var tt = outCubic(clamp01(t * 1.3 - (i / n) * 0.3));
+        var x = x0 + (xe - x0) * tt, y = y0 + (ye - y0) * tt;
+        ctx.setLineDash([1.5, 5]);
+        ctx.strokeStyle = "rgba(" + INK + ",0.14)"; ctx.lineWidth = 0.8;
+        ctx.beginPath(); ctx.moveTo(x0, y0); ctx.quadraticCurveTo((x0 + xe) / 2 + 14, (y0 + ye) / 2 - 10, x, y); ctx.stroke();
+        ctx.fillStyle = "rgba(" + INK + ",0.7)";
+        ctx.fillRect(x - 2.6, y - 1.8, 5.2, 3.6);
+      }
+      if (t > 0.82) { setRed(ctx, (t - 0.82) / 0.18 * 0.6, 1.2); icircle(ctx, cxx, cyy, R * 1.16, r, 3); }
+    },
 
-  // active edge set: spine by default, full on the thesis beat while FPS is healthy
-  var eIdx = ESPINE, eCount = ESPINE.length / 2, edgesDirty = true;
-  function setEdgeSet(arr) {
-    if (eIdx === arr) return;
-    eIdx = arr; eCount = arr.length / 2;
-    eGeo.setDrawRange(0, eCount * 2);
-    edgesDirty = true;
-  }
-  eGeo.setDrawRange(0, eCount * 2);
-  function syncEdges() {
-    for (var i = 0; i < eCount; i++) {
-      var s = eIdx[i * 2] * 3, t = eIdx[i * 2 + 1] * 3, o = i * 6;
-      ePos[o] = livePos[s]; ePos[o + 1] = livePos[s + 1]; ePos[o + 2] = livePos[s + 2];
-      ePos[o + 3] = livePos[t]; ePos[o + 4] = livePos[t + 1]; ePos[o + 5] = livePos[t + 2];
-    }
-    eGeo.attributes.position.needsUpdate = true;
-    edgesDirty = false;
-  }
-
-  // molecule sub-layer: the real edge subset around the chosen note (case-study beat)
-  var MC = molEdges.length / 2;
-  var mPos = new Float32Array(MC * 6);
-  var mPhase = new Float32Array(MC * 2);
-  for (var mp = 0; mp < MC * 2; mp++) mPhase[mp] = rnd();
-  var mGeo = new THREE.BufferGeometry();
-  mGeo.setAttribute("position", new THREE.BufferAttribute(mPos, 3));
-  mGeo.setAttribute("aPhase", new THREE.BufferAttribute(mPhase, 1));
-  var mMat = edgeMaterial();
-  var molLayer = new THREE.LineSegments(mGeo, mMat);
-  molLayer.frustumCulled = false; scene.add(molLayer);
-  function syncMolEdges() {
-    for (var i = 0; i < MC; i++) {
-      var s = molEdges[i * 2] * 3, t = molEdges[i * 2 + 1] * 3, o = i * 6;
-      mPos[o] = livePos[s]; mPos[o + 1] = livePos[s + 1]; mPos[o + 2] = livePos[s + 2];
-      mPos[o + 3] = livePos[t]; mPos[o + 4] = livePos[t + 1]; mPos[o + 5] = livePos[t + 2];
-    }
-    mGeo.attributes.position.needsUpdate = true;
-  }
-
-  // ---- camera keyframes per beat (chased with damping; anticipates the next beat) ----
-  var molCx = real[molIdx * 3], molCy = real[molIdx * 3 + 1], molCz = real[molIdx * 3 + 2];
-  var CAM = {
-    rad: col(6), phi: col(7), theta: col(8),
-    lookY: BEATS_DEF.map(function (r) { return r[12] ? molCy * r[12] : r[9]; }),
-    lookX: BEATS_DEF.map(function (r) { return r[12] ? molCx * r[12] : 0; }),
-    lookZ: BEATS_DEF.map(function (r) { return r[12] ? molCz * r[12] : r[10]; }),
-    pan: col(11),
-  };
-  (function checkCam() {
-    for (var k in CAM) {
-      if (CAM[k].length !== NB) throw new Error("CAM." + k + " has " + CAM[k].length + " entries, expected " + NB);
-      for (var i = 0; i < NB; i++) {
-        if (typeof CAM[k][i] !== "number" || CAM[k][i] !== CAM[k][i]) {
-          throw new Error("CAM." + k + "[" + i + "] (" + BEATS_DEF[i][0] + ") is not a number");
+    // 03 · second brain: a tidy pile with a social-media orbit sketched around it
+    orbit: function (ctx, w, h, t) {
+      var r = rng(33), cxx = w * 0.5, cyy = h * 0.48;
+      var k = Math.min(w, h);
+      for (var i = 0; i < 8; i++) {
+        var show = clamp01(t * 3 - i * 0.18); if (show <= 0) { r(); r(); r(); continue; }
+        setInk(ctx, 0.7 * show, 1.2);
+        icard(ctx, cxx + (r() - 0.5) * k * 0.16, cyy + (r() - 0.5) * k * 0.14, 26, 16, (r() - 0.5) * 0.7, r, 1.4);
+      }
+      var oshow = clamp01((t - 0.35) / 0.5);
+      if (oshow > 0) {
+        ctx.setLineDash([3, 6]);
+        for (var e = 0; e < 2; e++) {
+          ctx.strokeStyle = "rgba(" + INK + ",0.4)"; ctx.lineWidth = 1;
+          ctx.save(); ctx.translate(cxx, cyy); ctx.rotate(e ? 0.5 : -0.35); ctx.scale(1, 0.38);
+          ctx.beginPath(); ctx.arc(0, 0, k * (0.33 + e * 0.06), -1.5, -1.5 + 6.28 * oshow); ctx.stroke();
+          ctx.restore();
+        }
+        ctx.setLineDash([]);
+        if (oshow > 0.55) {
+          ctx.fillStyle = RED;
+          for (var s = 0; s < 3; s++) {
+            var a = 1.2 + s * 2.1 + oshow * 1.2, rr = k * (0.33 + (s % 2) * 0.06);
+            ctx.save(); ctx.translate(cxx, cyy); ctx.rotate(s % 2 ? 0.5 : -0.35); ctx.scale(1, 0.38);
+            ctx.beginPath(); ctx.arc(Math.cos(a) * rr, Math.sin(a) * rr, 4.5, 0, 6.29); ctx.fill();
+            ctx.restore();
+          }
         }
       }
-    }
-  })();
-  var _look = new THREE.Vector3(), _right = new THREE.Vector3();
-  var cs = { rad: CAM.rad[0], phi: CAM.phi[0], theta: CAM.theta[0], lookY: 0, lookX: 0, lookZ: 0, pan: 0 };
-  var camT = { rad: 0, phi: 0, theta: 0, lookY: 0, lookX: 0, lookZ: 0, pan: 0 };
-  function camTarget(beat, frac) {
-    var a = beat, b = Math.min(NB - 1, beat + 1);
-    // hold the frame while the section is read; ease toward the next key in the gap after it
-    var t = inOutCubic(clamp01((frac - 0.72) / 0.28));
-    camT.rad = lerp(CAM.rad[a], CAM.rad[b], t);
-    camT.phi = lerp(CAM.phi[a], CAM.phi[b], t);
-    camT.theta = lerp(CAM.theta[a], CAM.theta[b], t);
-    camT.lookY = lerp(CAM.lookY[a], CAM.lookY[b], t);
-    camT.lookX = lerp(CAM.lookX[a], CAM.lookX[b], t);
-    camT.lookZ = lerp(CAM.lookZ[a], CAM.lookZ[b], t);
-    camT.pan = lerp(CAM.pan[a], CAM.pan[b], t);
-    return camT;
-  }
-  function applyCam(beat, frac, dt, snap) {
-    var t = camTarget(beat, frac);
-    var k = (RM || snap) ? 1 : 1 - Math.pow(0.0006, dt);
-    cs.rad += (t.rad - cs.rad) * k; cs.phi += (t.phi - cs.phi) * k; cs.theta += (t.theta - cs.theta) * k;
-    cs.lookY += (t.lookY - cs.lookY) * k; cs.lookX += (t.lookX - cs.lookX) * k; cs.lookZ += (t.lookZ - cs.lookZ) * k;
-    cs.pan += (t.pan - cs.pan) * k;
-    var drift = RM ? 0 : Math.sin(time * 0.05) * 0.012;   // barely-there handheld drift
-    var sp = Math.sin(cs.phi + drift * 0.6), cp = Math.cos(cs.phi + drift * 0.6);
-    var th = cs.theta + drift;
-    camera.position.set(cs.rad * sp * Math.sin(th), cs.rad * cp, cs.rad * sp * Math.cos(th));
-    _look.set(cs.lookX, cs.lookY, cs.lookZ);
-    var viewH = 2 * cs.rad * Math.tan((camera.fov * Math.PI / 180) / 2);
-    var panW = cs.pan * viewH * camera.aspect;
-    _right.subVectors(camera.position, _look).cross(camera.up).normalize();
-    camera.position.addScaledVector(_right, panW); _look.addScaledVector(_right, panW);
-    camera.lookAt(_look);
-  }
+    },
 
-  // ---- morph + per-beat formation FX (all buffers hoisted, no per-frame allocation) ----
-  var time = 0;
-  function morph(beat, frac) {
-    var A = F[BEAT_FORM[beat]];
-    var PREV = F[BEAT_FORM[Math.max(0, beat - 1)]];
-    var blend = beat === 0 ? 1 : clamp01(frac / TRANS[beat]);
-    var be = RM ? 1 : MEASE[beat](blend);
-
-    var form = BEAT_FORM[beat];
-    var spin = 0;
-    if (!RM) {
-      if (form === "DRIFT" || form === "DRIFT2" || form === "GATHER") spin = time * 0.04;
-      else if (form === "SHELLR") spin = time * 0.06;
-      else if (form === "GLOBE") spin = time * 0.05;
-      else if (form === "TIERS") spin = time * 0.015;
-      else if (form === "SCATTER") spin = time * 0.02;
-      else if (beat === B.thesis) spin = time * 0.055;  // the payoff reveal: slow auto-rotate
-      else if (form === "REAL") spin = time * 0.02;
-    }
-    var cy = Math.cos(spin), sy = Math.sin(spin);
-
-    // hype storm: turbulence ramps with local progress
-    var stormAmp = (beat === B.hype && !RM) ? (7 + 15 * outQuart(frac)) : 0;
-    // the problem: slips adrift, each floating on its own current
-    var scatterAmp = (beat === B.context && !RM) ? 1.9 : 0;
-    // second-brain satellite ring
-    var ringT = beat === B.secondbrain ? outQuart(clamp01((frac - 0.15) / 0.5)) : 0;
-    var ringSpin = RM ? 0 : time * 0.35;
-    // the tools: each pile bobs gently on its own beat
-    var bobAmp = (beat === B.glossary && !RM) ? 1.3 : 0;
-    // the trap: the globe slowly deflates as the beat argues it means nothing
-    var deflate = beat === B.trap ? 1 - 0.16 * inCubic(clamp01((frac - 0.5) / 0.5)) : 1;
-    // the workflow: a traveling wave runs down the stream
-    var waveAmp = (beat === B.stack && !RM) ? 1.6 : 0;
-    var breathe = (form === "REAL" && !RM) ? (1 + Math.sin(time * 0.5) * 0.010) : 1;
-
-    for (var i = 0; i < N; i++) {
-      var j = i * 3;
-      var x = PREV[j] + (A[j] - PREV[j]) * be;
-      var y = PREV[j + 1] + (A[j + 1] - PREV[j + 1]) * be;
-      var z = PREV[j + 2] + (A[j + 2] - PREV[j + 2]) * be;
-      if (ringT && i % RINGSTEP === 0) {
-        var ra = ringA[i] + ringSpin;
-        x += (Math.cos(ra) * 40 - x) * ringT;
-        y += (Math.sin(ringA[i] * 3) * 4 - y) * ringT;
-        z += (Math.sin(ra) * 40 - z) * ringT;
+    // 05 · the hype: one long scribble winding itself up
+    storm: function (ctx, w, h, t) {
+      var r = rng(55), cxx = w * 0.5, cyy = h * 0.46;
+      var turns = 6.28 * 4.6 * t, steps = Math.max(2, Math.floor(140 * t));
+      setInk(ctx, 0.62, 1.4);
+      ctx.beginPath();
+      for (var i = 0; i <= steps; i++) {
+        var a = (i / 140) * 6.28 * 4.6;
+        var rad = 3 + a * Math.min(w, h) * 0.0145 + (r() - 0.5) * 7;
+        var x = cxx + Math.cos(a) * rad, y = cyy + Math.sin(a) * rad * 0.88;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
       }
-      if (scatterAmp) {
-        x += Math.sin(time * 0.22 + turb[j]) * scatterAmp;
-        y += Math.cos(time * 0.18 + turb[j + 1]) * scatterAmp * 0.8;
+      ctx.stroke();
+      if (t > 0.55) {
+        setRed(ctx, 0.85, 1.6);
+        var aEnd = turns, rEnd = 3 + aEnd * Math.min(w, h) * 0.0145;
+        for (var f = 0; f < 5; f++) {
+          var fa = aEnd - f * 0.35, fr = rEnd - f * 3;
+          var fx = cxx + Math.cos(fa) * fr, fy = cyy + Math.sin(fa) * fr * 0.88;
+          iline(ctx, fx, fy, fx + (r() - 0.5) * 16, fy + (r() - 0.5) * 16, r, 2);
+        }
       }
-      if (bobAmp) y += Math.sin(time * 0.4 + (i % 6)) * bobAmp;
-      if (stormAmp) {
-        x += Math.sin(time * turb[j + 2] + turb[j]) * stormAmp;
-        y += Math.cos(time * turb[j + 2] + turb[j + 1]) * stormAmp * 0.7;
-        z += Math.sin(time * turb[j + 2] * 0.9 + turb[j]) * stormAmp;
+    },
+
+    // 06 · the trap: a flawless machine-drawn globe, struck through by hand
+    globe: function (ctx, w, h, t) {
+      var r = rng(66), cxx = w * 0.5, cyy = h * 0.46, R = Math.min(w, h) * 0.34;
+      var g = clamp01(t / 0.62);
+      ctx.strokeStyle = "rgba(" + INK + ",0.55)"; ctx.lineWidth = 1; ctx.setLineDash([]);
+      ctx.beginPath(); ctx.arc(cxx, cyy, R, -1.57, -1.57 + 6.29 * g); ctx.stroke();
+      for (var la = 1; la <= 4; la++) {
+        var yy = (la / 5) * 2 - 1, ry = R * Math.sqrt(Math.max(0, 1 - yy * yy));
+        ctx.beginPath(); ctx.save(); ctx.translate(cxx, cyy + yy * R * 0.98); ctx.scale(1, 0.24);
+        ctx.arc(0, 0, ry, 0, 6.29 * clamp01(g * 5 - la)); ctx.restore(); ctx.stroke();
       }
-      if (waveAmp) {
-        x += Math.sin(time * 0.8 - flowS[i] * 7) * waveAmp;
-        y += Math.cos(time * 0.8 - flowS[i] * 7) * waveAmp * 0.55;
+      for (var lo = 0; lo < 5; lo++) {
+        ctx.beginPath(); ctx.save(); ctx.translate(cxx, cyy);
+        ctx.scale(Math.abs(Math.cos(lo / 5 * 3.14)) * 0.96 + 0.04, 1);
+        ctx.arc(0, 0, R * 0.99, 0, 6.29 * clamp01(g * 5 - lo)); ctx.restore(); ctx.stroke();
       }
-      if (deflate !== 1) { x *= deflate; y *= deflate; z *= deflate; }
-      if (breathe !== 1) { x *= breathe; y *= breathe; z *= breathe; }
-      if (spin) { var nx = x * cy - z * sy; z = x * sy + z * cy; x = nx; }
-      livePos[j] = x; livePos[j + 1] = y; livePos[j + 2] = z;
-    }
-    geo.attributes.position.needsUpdate = true;
-    edgesDirty = true;
-  }
+      var s = clamp01((t - 0.68) / 0.32);
+      if (s > 0) {   // the red strike: energetic, human, final
+        setRed(ctx, 0.9, 2.6);
+        var px = cxx - R * 1.15, py = cyy + R * 0.5, n = Math.max(2, Math.floor(9 * s));
+        ctx.beginPath(); ctx.moveTo(px, py);
+        for (var z = 1; z <= n; z++) {
+          px = cxx - R * 1.15 + (z / 9) * R * 2.3;
+          py = cyy + ((z % 2) ? -1 : 1) * R * (0.55 - z * 0.03) + (r() - 0.5) * 10;
+          ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+      }
+    },
 
-  // ---- per-beat uniform state: focus, amber, grey, edge opacity, pulse ----
-  var edgeOp = 0, molOp = 0;
-  function reveal(beat, frac) {
-    var focus = 0, focSel = 0, amber = 0, grey = 0, op = 1, eop = 0, mop = 0, pulse = 0, emix = 0;
-    if (beat === B.trap) {              // the globe: beautiful, then drained of warmth
-      grey = 0.75 * outQuart(clamp01((frac - 0.25) / 0.5));
-    } else if (beat === B.retrieval) {  // the field goes dark; one slip stays lit
-      focus = outQuart(clamp01((frac - 0.15) / 0.4)); focSel = 0;
-    } else if (beat === B.zettelkasten) { // release the single slip into the cabinet
-      focus = 1 - outQuart(clamp01(frac / 0.3)); focSel = 0;
-    } else if (beat === B.tiers) {      // top-degree slips warm up: alloys forming
-      amber = 0.35 * outQuart(clamp01((frac - 0.3) / 0.5));
-    } else if (beat === B.casestudy) {  // real graph framed close, the molecule lit
-      eop = outQuart(clamp01((frac - 0.15) / 0.5)) * 0.16;
-      mop = outQuart(clamp01((frac - 0.25) / 0.45)) * 0.8;
-    } else if (beat === B.thesis) {     // full graph, threads lit, accent glow
-      eop = 0.2 + outQuart(clamp01(frac / 0.35)) * 0.3;
-      pulse = outQuart(clamp01((frac - 0.1) / 0.4));
-      emix = outQuart(clamp01((frac - 0.2) / 0.5));
-      amber = 0.5 * outQuart(clamp01((frac - 0.2) / 0.5));
-    } else if (beat === B.end) {        // dissolve back to drift
-      eop = 0.5 * (1 - inOutCubic(clamp01(frac / 0.5)));
-      emix = 1 - clamp01(frac / 0.4);
-      op = 1 - frac * 0.35;
-    } else if (beat === B.works) {      // near-static dim backdrop behind the archive
-      op = 0.55 - frac * 0.1;
-    }
-    mat.uniforms.uFocus.value = focus;
-    mat.uniforms.uFocSel.value = focSel;
-    mat.uniforms.uAmber.value = amber;
-    mat.uniforms.uGrey.value = grey;
-    mat.uniforms.uOpac.value = op;
-    eMat.uniforms.uOpac.value = eop;
-    eMat.uniforms.uPulse.value = pulse;
-    eMat.uniforms.uTime.value = time;
-    eMat.uniforms.uMix.value = emix;
-    mMat.uniforms.uOpac.value = mop;
-    mMat.uniforms.uTime.value = time;
-    edgeOp = eop; molOp = mop;
-  }
+    // 07 · retrieval first: many cards face down, one picked out in red
+    onecard: function (ctx, w, h, t) {
+      var r = rng(77), k = Math.min(w, h);
+      var cols = 3, rows = 3, pick = 4;
+      for (var i = 0; i < cols * rows; i++) {
+        var show = clamp01(t * 12 - i); if (show <= 0) { r(); r(); continue; }
+        var gx = w * 0.5 + ((i % cols) - 1) * k * 0.3 + (r() - 0.5) * 10;
+        var gy = h * 0.46 + (((i / cols) | 0) - 1) * k * 0.22 + (r() - 0.5) * 8;
+        setInk(ctx, (i === pick ? 0.85 : 0.28) * show, i === pick ? 1.5 : 1);
+        icard(ctx, gx, gy, 34, 21, (r() - 0.5) * 0.4, r, 1.6);
+        if (i === pick) {
+          iline(ctx, gx - 12, gy - 3, gx + 12, gy - 3, r, 1.2);
+          iline(ctx, gx - 12, gy + 2, gx + 6, gy + 2, r, 1.2);
+          var c = clamp01((t - 0.7) / 0.3);
+          if (c > 0) { setRed(ctx, 0.9, 2); icircle(ctx, gx, gy, 30, r, 3.4, -0.6, -0.6 + 7.1 * c); }
+        }
+      }
+    },
 
-  // ---- FPS EMA + spine degradation ----
-  var fpsEMA = 60, lowSince = -1, degraded = false;
-  function trackFPS(dt) {
-    if (dt <= 0) return;
-    var inst = 1 / dt; if (inst > 240) inst = 240;
-    fpsEMA += (inst - fpsEMA) * 0.08;
-    if (fpsEMA < 45) {
-      if (lowSince < 0) lowSince = time;
-      else if (time - lowSince > 2) degraded = true;
-    } else { lowSince = -1; }
-  }
-  window.__FPS = function () { return fpsEMA; };
+    // 08 · zettelkasten: the cabinet itself, drawn drawer by drawer
+    cabinet: function (ctx, w, h, t) {
+      var r = rng(88), k = Math.min(w, h);
+      var cw = k * 0.62, ch = k * 0.78, x0 = w * 0.5 - cw / 2, y0 = h * 0.48 - ch / 2;
+      setInk(ctx, 0.75, 1.6);
+      var frame = clamp01(t / 0.25);
+      if (frame > 0) {
+        icard(ctx, x0 + cw / 2, y0 + ch / 2, cw * frame, ch * frame, 0, r, 2.2);
+      }
+      var cols = 3, rows = 4, dw = cw / cols, dh = ch / rows;
+      for (var i = 0; i < cols * rows; i++) {
+        var show = clamp01((t - 0.25) / 0.6 * (cols * rows) - i); if (show <= 0) { r(); r(); r(); continue; }
+        var dx = x0 + (i % cols) * dw + dw / 2, dy = y0 + ((i / cols) | 0) * dh + dh / 2;
+        setInk(ctx, 0.6 * show, 1.1);
+        icard(ctx, dx, dy, dw * 0.82, dh * 0.68, 0, r, 1.6);
+        setInk(ctx, 0.7 * show, 1.3);
+        iline(ctx, dx - dw * 0.14, dy, dx + dw * 0.14, dy, r, 1);   // the pull
+        setInk(ctx, 0.35 * show, 0.9);
+        iline(ctx, dx - dw * 0.26, dy - dh * 0.2, dx + dw * 0.26, dy - dh * 0.2, r, 1);   // the label slot
+      }
+      var open = clamp01((t - 0.88) / 0.12);
+      if (open > 0) {   // one drawer left open, in red
+        var oi = 4, ox = x0 + (oi % cols) * dw + dw / 2, oy = y0 + ((oi / cols) | 0) * dh + dh / 2 + dh * 0.34 * open;
+        setRed(ctx, 0.9 * open, 1.6);
+        icard(ctx, ox, oy, dw * 0.86, dh * 0.72, 0, r, 1.6);
+      }
+    },
 
-  // ---- scroll geometry: the essay flows, the field follows --------------------------
-  // Beat i is active from the moment its section top crosses ~62% of the viewport until
-  // the next one does; frac runs 0..1 over that span, gaps included, so the field morphs
-  // across the breathing room between sections.
+    // 09 · atom, molecule, alloy: the method as a diagram
+    tiers: function (ctx, w, h, t) {
+      var r = rng(99), k = Math.min(w, h), cxx = w * 0.5;
+      var y1 = h * 0.16, y2 = h * 0.5, y3 = h * 0.84;
+      var s1 = clamp01(t / 0.3), s2 = clamp01((t - 0.34) / 0.3), s3 = clamp01((t - 0.68) / 0.32);
+      ctx.fillStyle = "rgba(" + INK + ",0.8)";
+      for (var a = 0; a < 9; a++) {   // atoms
+        if (a / 9 > s1) { r(); r(); continue; }
+        ctx.beginPath();
+        ctx.arc(cxx + (r() - 0.5) * k * 0.6, y1 + (r() - 0.5) * k * 0.14, 2.6, 0, 6.29); ctx.fill();
+      }
+      if (s1 >= 1) { setInk(ctx, 0.5, 1.1); iarrow(ctx, cxx, y1 + k * 0.1, cxx, y2 - k * 0.14, r); }
+      if (s2 > 0) {   // molecules: the same dots, now joined
+        var m1 = rng(991), pts = [];
+        for (var m = 0; m < 9; m++) {
+          var mx = cxx + ((m < 5 ? -1 : 1) * k * 0.16) + (m1() - 0.5) * k * 0.16;
+          var my = y2 + (m1() - 0.5) * k * 0.13;
+          pts.push([mx, my]);
+        }
+        setInk(ctx, 0.4 * s2, 0.9);
+        for (var e1 = 0; e1 < pts.length; e1++) {
+          var e2 = (e1 + 1) % (e1 < 5 ? 5 : pts.length);
+          if (e1 < 4) iline(ctx, pts[e1][0], pts[e1][1], pts[e1 + 1][0], pts[e1 + 1][1], m1, 1.4);
+          else if (e1 >= 5 && e1 < 8) iline(ctx, pts[e1][0], pts[e1][1], pts[e1 + 1][0], pts[e1 + 1][1], m1, 1.4);
+        }
+        ctx.fillStyle = "rgba(" + INK + ",0.85)";
+        for (var mp = 0; mp < pts.length; mp++) {
+          if (mp / pts.length > s2) continue;
+          ctx.beginPath(); ctx.arc(pts[mp][0], pts[mp][1], 2.8, 0, 6.29); ctx.fill();
+        }
+      }
+      if (s2 >= 1) { setInk(ctx, 0.5, 1.1); iarrow(ctx, cxx, y2 + k * 0.12, cxx, y3 - k * 0.13, r); }
+      if (s3 > 0) {   // the alloy: one shape, written in red
+        setRed(ctx, 0.9 * s3, 2);
+        ctx.fillStyle = "rgba(" + REDA + "," + 0.12 * s3 + ")";
+        var hexr = k * 0.1;
+        ctx.beginPath();
+        for (var hx = 0; hx <= 6; hx++) {
+          var ha = hx / 6 * 6.28 - 1.57;
+          var px = cxx + Math.cos(ha) * hexr * (1 + (r() - 0.5) * 0.06);
+          var py = y3 + Math.sin(ha) * hexr * (1 + (r() - 0.5) * 0.06);
+          if (hx === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.closePath(); ctx.fill(); ctx.stroke();
+      }
+    },
+
+    // 13 · the end: the box, open
+    openbox: function (ctx, w, h, t) {
+      var r = rng(1313), cxx = w * 0.5, cyy = h * 0.62, k = Math.min(w, h);
+      var bw = k * 0.5, bh = k * 0.3;
+      var s = clamp01(t / 0.55);
+      setInk(ctx, 0.8, 1.5);
+      if (s > 0) {
+        iline(ctx, cxx - bw / 2, cyy, cxx - bw * 0.1, cyy + bh * 0.4 * s, r, 2);
+        iline(ctx, cxx - bw * 0.1, cyy + bh * 0.4, cxx + bw / 2, cyy + bh * 0.05, r, 2);
+        iline(ctx, cxx + bw / 2, cyy + bh * 0.05, cxx + bw * 0.05, cyy - bh * 0.3, r, 2);
+        iline(ctx, cxx + bw * 0.05, cyy - bh * 0.3, cxx - bw / 2, cyy, r, 2);
+        iline(ctx, cxx - bw / 2, cyy, cxx - bw / 2, cyy + bh * 0.5, r, 2);
+        iline(ctx, cxx - bw / 2, cyy + bh * 0.5, cxx - bw * 0.1, cyy + bh * 0.9, r, 2);
+        iline(ctx, cxx - bw * 0.1, cyy + bh * 0.9, cxx - bw * 0.1, cyy + bh * 0.4, r, 2);
+        iline(ctx, cxx - bw * 0.1, cyy + bh * 0.9, cxx + bw / 2, cyy + bh * 0.55, r, 2);
+        iline(ctx, cxx + bw / 2, cyy + bh * 0.55, cxx + bw / 2, cyy + bh * 0.05, r, 2);
+        iline(ctx, cxx - bw / 2, cyy, cxx - bw * 0.72, cyy - bh * 0.34, r, 2);   // open flap
+        iline(ctx, cxx - bw * 0.72, cyy - bh * 0.34, cxx - bw * 0.32, cyy - bh * 0.62, r, 2);
+      }
+      var fly = clamp01((t - 0.5) / 0.5);
+      if (fly > 0) {
+        for (var f = 0; f < 6; f++) {
+          var fs = clamp01(fly * 6 - f * 0.6); if (fs <= 0) { r(); r(); continue; }
+          var fx = cxx + (r() - 0.5) * bw * 0.7;
+          var fy = cyy - bh * 0.3 - fs * k * (0.24 + r() * 0.2);
+          ctx.setLineDash([1.5, 4]);
+          ctx.strokeStyle = "rgba(" + INK + ",0.2)"; ctx.lineWidth = 0.8;
+          ctx.beginPath(); ctx.moveTo(fx, cyy - bh * 0.1); ctx.lineTo(fx, fy); ctx.stroke();
+          if (f === 2) ctx.fillStyle = RED; else ctx.fillStyle = "rgba(" + INK + ",0.75)";
+          ctx.fillRect(fx - 3, fy - 2, 6, 4);
+        }
+      }
+    },
+
+    // frontispiece + plate: the vault itself
+    herofront: function (ctx, w, h, t) {
+      if (!D) return;
+      plotVault(ctx, w, h, t, 0.6, { fit: 0.5, cy: 0.52, edgeA: 0.05, nodeA: 0.13, hotA: 0.22, nodeR: 0.22, stride: 2 });
+    },
+    vault: function (ctx, w, h, t, time) {
+      if (!D) return;
+      var theta = 0.6 + (RM ? 0 : time * 0.05);
+      plotVault(ctx, w, h, t, theta, { fit: 0.62, edgeA: 0.2, nodeA: 0.75, nodeR: 0.34, hotA: 0.85, stride: 1 });
+    },
+  };
+
+  // ---- figure plumbing -----------------------------------------------------------
+  var NB = 15;
   var panelEls = [];
   for (var pe = 0; pe < NB; pe++) panelEls.push(document.getElementById("b" + pe));
-  var anchors = new Float32Array(NB);
-  var scrollMax = 1;
+
+  var MARGIN_FIGS = { 1: "scatter", 2: "gather", 3: "orbit", 5: "storm", 6: "globe", 7: "onecard", 8: "cabinet", 9: "tiers" };
+  var figs = [];   // {beat, kind, wrap, stick, canvas, ctx, prog, playing, mode}
+
+  function makeCanvasFig(kind, beat, mode) {
+    var wrap = document.createElement("div");
+    wrap.className = mode === "margin" ? "inkfig" : (mode === "front" ? "inkfront" : "inkplate");
+    wrap.setAttribute("aria-hidden", "true");
+    var stick = wrap;
+    if (mode === "margin") { stick = document.createElement("div"); stick.className = "stick"; wrap.appendChild(stick); }
+    var canvas = document.createElement("canvas");
+    stick.appendChild(canvas);
+    var f = { beat: beat, kind: kind, wrap: wrap, stick: stick, canvas: canvas,
+              ctx: canvas.getContext("2d"), prog: RM ? 1 : 0, playing: false, visible: false, mode: mode };
+    figs.push(f);
+    return f;
+  }
+
+  function sizeFig(f) {
+    var host = f.mode === "margin" ? f.stick : f.wrap;
+    var r = host.getBoundingClientRect();
+    if (!r.width || !r.height) return false;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var W = Math.round(r.width * dpr), H = Math.round(r.height * dpr);
+    if (f.canvas.width !== W || f.canvas.height !== H) {
+      f.canvas.width = W; f.canvas.height = H;
+      f.canvas.style.width = r.width + "px"; f.canvas.style.height = r.height + "px";
+      f.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return true;
+    }
+    return false;
+  }
+
+  function drawFig(f, time) {
+    var r = f.canvas.getBoundingClientRect();
+    if (!r.width) return;
+    f.ctx.clearRect(0, 0, r.width, r.height);
+    DRAW[f.kind](f.ctx, r.width, r.height, f.prog, time || 0);
+  }
+
+  (function buildFigs() {
+    for (var b in MARGIN_FIGS) {
+      var el = panelEls[b]; if (!el) continue;
+      var f = makeCanvasFig(MARGIN_FIGS[b], +b, "margin");
+      el.appendChild(f.wrap);
+    }
+    if (panelEls[0]) {   // frontispiece behind the hero
+      var fh = makeCanvasFig("herofront", 0, "front");
+      panelEls[0].insertBefore(fh.wrap, panelEls[0].firstChild);
+    }
+    if (panelEls[12]) {  // the plate: the vault, printed and slowly turning
+      var fv = makeCanvasFig("vault", 12, "plate");
+      var ph = panelEls[12].querySelector(".ph"), h2 = ph && ph.querySelector("h2");
+      if (h2 && h2.nextSibling) ph.insertBefore(fv.wrap, h2.nextSibling); else if (ph) ph.appendChild(fv.wrap);
+    }
+    if (panelEls[13]) {  // the open box
+      var fb = makeCanvasFig("openbox", 13, "plate");
+      var ph13 = panelEls[13].querySelector(".ph"), k13 = ph13 && ph13.querySelector(".kick");
+      if (k13) ph13.insertBefore(fb.wrap, k13); else if (ph13) ph13.appendChild(fb.wrap);
+    }
+  })();
+
+  // narrow screens tuck each margin figure into the prose, under its headline
+  var MQ_WIDE = 900;
+  function syncFigs() {
+    var wide = vw() >= MQ_WIDE;
+    for (var i = 0; i < figs.length; i++) {
+      var f = figs[i]; if (f.mode !== "margin") continue;
+      var panel = panelEls[f.beat], ph = panel && panel.querySelector(".ph");
+      if (!panel || !ph) continue;
+      var inPanel = f.wrap.parentNode === panel;
+      if (wide && !inPanel) { f.wrap.classList.remove("inline"); panel.appendChild(f.wrap); sizeFig(f); drawFig(f); }
+      else if (!wide && inPanel) {
+        f.wrap.classList.add("inline");
+        var h2 = ph.querySelector("h2");
+        if (h2 && h2.nextSibling) ph.insertBefore(f.wrap, h2.nextSibling); else ph.appendChild(f.wrap);
+        sizeFig(f); drawFig(f);
+      }
+    }
+  }
+
+  // ---- animation: the only motion on this page is the act of drawing ----
+  var raf = null, last = 0, clock = 0;
+  function anyLive() {
+    for (var i = 0; i < figs.length; i++) {
+      var f = figs[i];
+      if (f.playing) return true;
+      if (f.kind === "vault" && f.visible && !RM) return true;
+    }
+    return false;
+  }
+  function tick(now) {
+    raf = null;
+    var dt = last ? Math.min(0.05, (now - last) / 1000) : 0.016; last = now;
+    clock += dt;
+    for (var i = 0; i < figs.length; i++) {
+      var f = figs[i];
+      if (f.playing) {
+        f.prog = Math.min(1, f.prog + dt / (f.kind === "herofront" ? 2.2 : 1.5));
+        if (f.prog >= 1) f.playing = false;
+        drawFig(f, clock);
+      } else if (f.kind === "vault" && f.visible && !RM) {
+        drawFig(f, clock);
+      }
+    }
+    if (anyLive()) raf = requestAnimationFrame(tick); else last = 0;
+  }
+  function wake() { if (!raf) raf = requestAnimationFrame(tick); }
+
+  var figIO = ("IntersectionObserver" in window) ? new IntersectionObserver(function (entries) {
+    for (var i = 0; i < entries.length; i++) {
+      var f = entries[i].target.__fig; if (!f) continue;
+      f.visible = entries[i].isIntersecting;
+      if (f.visible) {
+        sizeFig(f);
+        if (f.prog < 1 && !RM) f.playing = true;
+        else drawFig(f, clock);
+        wake();
+      }
+    }
+  }, { threshold: 0.15 }) : null;
+  for (var fo = 0; fo < figs.length; fo++) {
+    figs[fo].wrap.__fig = figs[fo];
+    if (figIO) figIO.observe(figs[fo].wrap); else { figs[fo].prog = 1; }
+  }
+  if (!figIO || RM) { for (var fz = 0; fz < figs.length; fz++) { figs[fz].prog = 1; sizeFig(figs[fz]); drawFig(figs[fz]); } }
+
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden && raf) { cancelAnimationFrame(raf); raf = null; last = 0; }
+    else wake();
+  });
+
+  // ---- section geometry, chrome ---------------------------------------------------
+  var anchors = new Float32Array(NB), scrollMax = 1;
+  var BEAT_NAMES = ["HERO", "THE PROBLEM", "PKM", "SECOND BRAIN", "PLAIN LANGUAGE", "THE HYPE", "THE TRAP",
+                    "RETRIEVAL FIRST", "ZETTELKASTEN", "THREE SIZES", "THE WORKFLOW", "CASE STUDY",
+                    "WHAT IT IS FOR", "END", "WORKS CITED"];
   function scrollY() { return window.scrollY || window.pageYOffset || 0; }
   function measureAnchors() {
     var sy = scrollY(), H = vh();
@@ -1400,31 +1363,27 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     scrollMax = Math.max(1, document.documentElement.scrollHeight - H);
     placeRailTicks();
   }
-  var SB = { beat: 0, frac: 0 };
   function beatAtScroll(sy) {
     var b = 0;
     for (var i = 0; i < NB; i++) { if (sy >= anchors[i]) b = i; }
-    var s = anchors[b], e = (b + 1 < NB) ? anchors[b + 1] : scrollMax;
-    SB.beat = b; SB.frac = clamp01((sy - s) / Math.max(1, e - s));
-    return SB;
+    return b;
   }
 
-  // ---- chrome: folio, rail, readout, hint, nav ----
   var folioNo = document.getElementById("folio-no");
   var folioName = document.getElementById("folio-name");
   var railFill = document.getElementById("rail-fill");
-  var rstate = document.getElementById("rstate");
   var hintEl = document.getElementById("hint");
   var lastActive = -1;
-  function applyChrome(sy, beat) {
+  function applyChrome() {
+    var sy = scrollY();
+    var beat = beatAtScroll(sy);
     if (beat !== lastActive) {
       folioNo.textContent = String(beat).padStart(2, "0");
       folioName.textContent = BEAT_NAMES[beat];
-      rstate.textContent = "field · " + STATE_LABEL[beat];
       lastActive = beat;
       markNav(beat);
     }
-    if (hintEl) hintEl.style.opacity = sy > 60 ? "0" : "0.75";
+    if (hintEl) hintEl.style.opacity = sy > 60 ? "0" : "0.8";
     railFill.style.width = (clamp01(sy / scrollMax) * 100).toFixed(2) + "%";
   }
   var railTicks = [];
@@ -1441,127 +1400,44 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
       railTicks[i].style.left = (clamp01(anchors[i + 1] / scrollMax) * 100).toFixed(2) + "%";
     }
   }
+  var chromeQueued = false;
+  window.addEventListener("scroll", function () {
+    if (chromeQueued) return; chromeQueued = true;
+    requestAnimationFrame(function () { chromeQueued = false; applyChrome(); });
+  }, { passive: true });
 
-  // ---- the text void ---------------------------------------------------------
-  // The prose does not sit on a plate. The field itself thins where the active section's
-  // text is, measured from the live .ph box and eased so the void travels with the scroll.
-  var holeT = [0, 0, 0, 0], holeC = [0, 0, 0, 0];
-  var holeAmtT = 0, holeAmtC = 0, holeReady = false;
-  function measureHole(beat) {
-    var el = panelEls[beat]; if (!el) return;
-    var box = el.querySelector(".ph"); if (!box) return;
-    var r = box.getBoundingClientRect();
-    if (!r.width || !r.height) return;
-    var W = vw(), H = vh();
-    holeT[0] = (r.left + r.width * 0.5) / W * 2 - 1;
-    holeT[1] = 1 - (r.top + r.height * 0.5) / H * 2;
-    holeT[2] = (r.width / W) * 0.88;
-    holeT[3] = (r.height / H) * 0.86;
-    holeAmtT = el.classList.contains("side-c") ? 0.8 : 0.86;
-    if (!holeReady) {
-      holeC[0] = holeT[0]; holeC[1] = holeT[1]; holeC[2] = holeT[2]; holeC[3] = holeT[3];
-      holeAmtC = holeAmtT; holeReady = true;
-    }
-  }
-  function writeHole(dt, snap) {
-    var e = snap ? 1 : Math.min(1, dt * 6.5);
-    for (var i = 0; i < 4; i++) holeC[i] += (holeT[i] - holeC[i]) * e;
-    holeAmtC += (holeAmtT - holeAmtC) * e;
-    var m = [mat, eMat, mMat];
-    for (var j = 0; j < 3; j++) {
-      m[j].uniforms.uHole.value.set(holeC[0], holeC[1], holeC[2], holeC[3]);
-      m[j].uniforms.uHoleAmt.value = holeAmtC;
-    }
-  }
-
-  // ---- master apply: one function drives the field from the scroll position ----
-  var seeking = false;
-  function applyAll(dt) {
-    var sy = scrollY();
-    var bb = beatAtScroll(sy);
-    var beat = bb.beat, frac = bb.frac;
-    setEdgeSet((beat === B.thesis && !degraded) ? EFULL : ESPINE);
-    morph(beat, frac);
-    reveal(beat, frac);
-    if (edgeOp > 0.001 && edgesDirty) syncEdges();      // skipped entirely on no-edge beats
-    if (molOp > 0.001) syncMolEdges();
-    applyCam(beat, frac, dt, seeking);
-    applyChrome(sy, beat);
-    measureHole(beat);
-    writeHole(dt, seeking);
-    renderer.render(scene, camera);
-  }
-
-  // ---- render loop ----
-  var raf = null, last = (typeof performance !== "undefined" ? performance.now() : 0);
-  function tick(now) {
-    raf = requestAnimationFrame(tick);
-    var dt = Math.min(0.05, (now - last) / 1000); last = now;
-    time += dt;
-    trackFPS(dt);
-    applyAll(dt);
-  }
-
-  function onResize() {
-    renderer.setPixelRatio(dprCap());
-    renderer.setSize(vw(), vh());
-    camera.aspect = vw() / vh(); camera.updateProjectionMatrix();
-    mat.uniforms.uScale.value = vh() * 0.5;
-    var asp = vw() / Math.max(1, vh());
-    mat.uniforms.uAspect.value = asp;
-    eMat.uniforms.uAspect.value = asp;
-    mMat.uniforms.uAspect.value = asp;
-    measureAnchors();
-  }
-  window.addEventListener("resize", onResize);
-  if (window.visualViewport) window.visualViewport.addEventListener("resize", onResize);
-
-  // cancel rAF while the tab is hidden
-  document.addEventListener("visibilitychange", function () {
-    if (document.hidden) { if (raf) { cancelAnimationFrame(raf); raf = null; } }
-    else if (!raf) { last = (typeof performance !== "undefined" ? performance.now() : 0); raf = requestAnimationFrame(tick); }
-  });
-
-  // ---- entrance reveals: each section settles in once, then stays ----
-  function revealNow(el) { el.classList.add("on"); }
+  // ---- section reveals ----
   if (RM || !("IntersectionObserver" in window)) {
-    for (var ra = 0; ra < NB; ra++) if (panelEls[ra]) revealNow(panelEls[ra]);
+    for (var ra = 0; ra < NB; ra++) if (panelEls[ra]) panelEls[ra].classList.add("on");
   } else {
     var io = new IntersectionObserver(function (entries) {
       for (var i = 0; i < entries.length; i++) {
-        if (entries[i].isIntersecting) { revealNow(entries[i].target); io.unobserve(entries[i].target); }
+        if (entries[i].isIntersecting) { entries[i].target.classList.add("on"); io.unobserve(entries[i].target); }
       }
-    }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
+    }, { threshold: 0.1, rootMargin: "0px 0px -5% 0px" });
     for (var ro = 0; ro < NB; ro++) if (panelEls[ro]) io.observe(panelEls[ro]);
   }
 
-  // ---- term chips ------------------------------------------------------------
-  // The glossary beat is the single source of truth: its six definitions are read out of
-  // the markup, then the first mention of each term in every later beat becomes a chip
-  // carrying that definition — a card pulled from the box, mid-sentence.
+  // ---- term chips: the index card comes back out of the box mid-sentence ----
   var TERM_DEFS = {};
   (function buildTerms() {
-    var g = panelEls[B.glossary];
+    var g = panelEls[4];
     if (!g) return;
     var items = g.querySelectorAll(".gterm");
     for (var i = 0; i < items.length; i++) {
       var k = items[i].querySelector(".gk"), d = items[i].querySelector(".gd");
       if (!k || !d) continue;
       var word = k.textContent.trim().toLowerCase();
-      var def = d.textContent.trim();
-      if (word) TERM_DEFS[word] = def;
+      if (word) TERM_DEFS[word] = d.textContent.trim();
     }
   })();
-
-  // singular and plural, longest first so "molecules" never matches as "molecule" + "s"
   function termPattern() {
     var words = Object.keys(TERM_DEFS);
     if (!words.length) return null;
     words.sort(function (a, b) { return b.length - a.length; });
     return new RegExp("\\b(" + words.join("|") + ")(s)?\\b", "i");
   }
-
-  var SKIP = /^(CITE|B|SPAN|CODE)$/;   // never chip inside a citation or a UI mock label
+  var SKIP = /^(CITE|B|SPAN|CODE)$/;
   function chipBeat(idx) {
     var el = panelEls[idx];
     if (!el || el.__chipped) return;
@@ -1601,9 +1477,7 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
       }
     }
   }
-  // terms are defined by the glossary, so every beat after it can recall them
-  for (var cb = B.glossary + 1; cb < NB; cb++) chipBeat(cb);
-  // tap to open on touch, where there is no hover
+  for (var cb = 5; cb < NB; cb++) chipBeat(cb);
   document.addEventListener("click", function (e) {
     var chip = e.target.closest && e.target.closest(".t");
     var open = document.querySelector(".t.open");
@@ -1611,12 +1485,10 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     if (chip) chip.classList.toggle("open");
   });
 
-  // ---- topbar beat index ----------------------------------------------------
-  // Seven landmarks. These seek the document itself, so the scroll position stays truthful.
+  // ---- topbar contents index ----
   var NAV = [
-    { b: B.context,      t: "Context" }, { b: B.pkm,       t: "PKM" },    { b: B.hype,   t: "Hype" },
-    { b: B.zettelkasten, t: "Method" },  { b: B.casestudy, t: "Case" },   { b: B.thesis, t: "Thesis" },
-    { b: B.works,        t: "Refs" },
+    { b: 1, t: "Context" }, { b: 2, t: "PKM" }, { b: 5, t: "Hype" },
+    { b: 8, t: "Method" }, { b: 11, t: "Case" }, { b: 12, t: "Thesis" }, { b: 14, t: "Refs" },
   ];
   var navBtns = [];
   (function buildNav() {
@@ -1636,7 +1508,7 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
   function scrollToBeat(idx) {
     idx = Math.max(0, Math.min(NB - 1, idx | 0));
     var el = panelEls[idx]; if (!el) return;
-    var top = el.getBoundingClientRect().top + scrollY() - vh() * 0.16;
+    var top = el.getBoundingClientRect().top + scrollY() - vh() * 0.12;
     window.scrollTo({ top: Math.max(0, Math.round(top)), behavior: RM ? "auto" : "smooth" });
   }
   function markNav(beat) {
@@ -1646,58 +1518,51 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     }
   }
 
-  // ---- boot: measure once now, again when fonts land, again if content reflows ----
+  // ---- boot ----
+  function relayout() { syncFigs(); measureAnchors(); for (var i = 0; i < figs.length; i++) { if (sizeFig(figs[i])) drawFig(figs[i], clock); } applyChrome(); }
+  window.addEventListener("resize", relayout);
+  if (window.visualViewport) window.visualViewport.addEventListener("resize", relayout);
+  syncFigs();
   measureAnchors();
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(measureAnchors);
-  window.addEventListener("load", measureAnchors);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { measureAnchors(); applyChrome(); });
+  window.addEventListener("load", function () { relayout(); });
   if ("ResizeObserver" in window) {
     var mainEl = document.getElementById("panels");
     if (mainEl) new ResizeObserver(function () { measureAnchors(); }).observe(mainEl);
   }
-  applyAll(0.05);
-  raf = requestAnimationFrame(tick);
+  applyChrome();
 
-  // ---- synchronous QA hooks: fully apply scroll state without rAF ----
+  // ---- synchronous QA hooks --------------------------------------------------------
   window.__SEEK = function (p) {
     p = clamp01(p);
     var x = p * NB, beat = Math.min(NB - 1, x | 0), frac = x - beat;
     measureAnchors();
     var s = anchors[beat], e = (beat + 1 < NB) ? anchors[beat + 1] : scrollMax;
     window.scrollTo(0, Math.round(s + (e - s) * frac));
-    for (var r = 0; r <= beat; r++) if (panelEls[r]) panelEls[r].classList.add("on");
-    seeking = true;
-    for (var i = 0; i < 3; i++) { time += 0.05; applyAll(0.05); }
-    seeking = false;
-    var bb = beatAtScroll(scrollY());
-    return { id: window.__SBF__, progress: p, beat: bb.beat, frac: +bb.frac.toFixed(3),
-      name: BEAT_NAMES[bb.beat], edgeOp: +edgeOp.toFixed(3), fps: +fpsEMA.toFixed(1) };
+    for (var r = 0; r < NB; r++) if (panelEls[r]) panelEls[r].classList.add("on");
+    for (var i = 0; i < figs.length; i++) {
+      var f = figs[i]; f.prog = 1; f.playing = false; sizeFig(f); drawFig(f, 0);
+    }
+    applyChrome();
+    var b2 = beatAtScroll(scrollY());
+    return { id: window.__SBF__, progress: p, beat: b2, frac: +frac.toFixed(3), name: BEAT_NAMES[b2], figs: figs.length };
   };
   window.__SEEK_BEAT = function (idx, frac) {
     frac = (frac == null ? 0.6 : frac);
     idx = Math.max(0, Math.min(NB - 1, idx | 0));
     return window.__SEEK((idx + frac) / NB);
   };
-  // Deterministic fingerprint of the whole visual state at a given progress. `time` is
-  // pinned so the spin-driven particle hash does not depend on wall clock.
   window.__QA_FP = function (p) {
-    time = 12.34;
-    window.__SEEK(p);
-    var h = 0;
-    for (var i = 0; i < livePos.length; i += 97) {
-      h = (h * 31 + Math.round(livePos[i] * 100)) | 0;
-    }
-    var r = function (v) { return Math.round(v * 1000) / 1000; };
-    return [r(cs.rad), r(cs.phi), r(cs.theta), r(cs.pan),
-            r(cs.lookX), r(cs.lookY), r(cs.lookZ),
-            h, r(mat.uniforms.uOpac.value), r(mat.uniforms.uAmber.value),
-            r(mat.uniforms.uFocus.value), r(mat.uniforms.uGrey.value),
-            r(eMat.uniforms.uOpac.value), r(eMat.uniforms.uPulse.value),
-            r(eMat.uniforms.uMix.value), r(mMat.uniforms.uOpac.value), eCount].join(",");
+    var st = window.__SEEK(p);
+    var a = [];
+    for (var i = 0; i < NB; i++) a.push(Math.round(anchors[i]));
+    return st.beat + ":" + a.join(",") + ":figs" + figs.length;
   };
-  // NaN guard for QA: scans the live position buffer
   window.__QA_NAN = function () {
-    for (var i = 0; i < livePos.length; i++) { if (livePos[i] !== livePos[i]) return { ok: false, at: i }; }
-    return { ok: true, n: N, edges: eCount, hasData: !!D };
+    for (var i = 0; i < N; i++) {
+      if (PX[i] !== PX[i] || PY[i] !== PY[i] || PZ[i] !== PZ[i]) return { ok: false, at: i };
+    }
+    return { ok: true, n: N, edges: SPINE.length / 2, hasData: !!D };
   };
 })();
 </script>
