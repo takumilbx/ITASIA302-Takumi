@@ -1,579 +1,381 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="nojs">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Building a Second Brain · ITASIA302</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=IBM+Plex+Sans:wght@400;500;600&family=Geist+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Chivo:ital,wght@0,400;0,700;0,900;1,400&family=Tinos:ital,wght@0,400;0,700;1,400;1,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    /* Shared ITASIA302 tokens. Identical ground, ink and accent as personal-project/index.html
-       so this page reads as the same publication, not a second site. */
-    --bg:        #05060e;
-    --bg-deep:   #05060e;
-    --bg-soft:   #0b0d1a;
-    --slip:      #0f1322;   /* archival slip ground */
-    --ink:       #e0e6f0;
-    --ink-2:     #b8c4dc;
-    --ink-3:     #8e9bb8;
-    --faint:     #7c8aa8;
-    --ghost:     #5d6a86;
-    --line:      #182030;
-    --line-soft: #10151f;
+    /* TAKUMI OS. A mid-nineties workstation: teal desktop, grey chrome, navy title bars,
+       one red pen for the vault's best-connected notes. Nothing warm, nothing glowing. */
+    --desk:   #177970;
+    --chrome: #c6c6c6;
+    --chrome-hi: #dedede;
+    --navy:   #10248c;
+    --navy-2: #3a56c4;
+    --red:    #d21f1f;
+    --hl:     #ffffff;
+    --sh:     #7c7c7c;
+    --dk:     #2c2c2c;
+    --paper:  #ffffff;
+    --ink:    #1c1c1c;
+    --ink-2:  #333333;
+    --ink-3:  #555555;
+    --tip:    #ffffe1;
 
-    --amber:     #e8634a;   /* personal-project section accent */
-    --amber-hi:  #ff8a63;
-    --amber-lo:  #e8634a14;
-    --sky:       #5299c8;
-    --teal:      #45a884;
-    --lilac:     #7272c0;
+    --px:   "Silkscreen", monospace;
+    --ui:   "Chivo", "Verdana", sans-serif;
+    --doc:  "Tinos", "Times New Roman", Times, serif;
+    --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
 
-    --serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
-    --sans:  "IBM Plex Sans", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    --mono:  "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
-
-    --e-out:   cubic-bezier(0.23, 1, 0.32, 1);
-    --e-inout: cubic-bezier(0.77, 0, 0.175, 1);
-
-    --topbar-h: 52px;
-
-    /* Contact shadow for type sitting on the field. Per glyph, so it separates the letters
-       without drawing a box around the paragraph. Tight and dark: a shadow, never a glow. */
-    --lift:    0 1px 2px rgba(5, 6, 14, 0.95), 0 0 9px rgba(5, 6, 14, 0.85);
-    --lift-lg: 0 2px 6px rgba(5, 6, 14, 0.95), 0 0 28px rgba(5, 6, 14, 0.80);
+    --bevel-out: inset -2px -2px 0 var(--dk), inset 2px 2px 0 var(--hl);
+    --bevel-in:  inset 2px 2px 0 var(--sh), inset -2px -2px 0 var(--hl);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: auto; -webkit-text-size-adjust: 100%; }
+  html, body { height: 100%; }
   body {
-    background: var(--bg); color: var(--ink);
-    font-family: var(--sans); font-weight: 300;
-    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
-    overflow-x: hidden;
+    background: var(--desk); color: var(--ink);
+    font-family: var(--ui); overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* desktop dither */
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; opacity: 0.5;
+    background-image: radial-gradient(rgba(0, 0, 0, 0.16) 1px, transparent 1px);
+    background-size: 4px 4px;
   }
 
-  /* Persistent WebGL field behind everything */
-  #viz { position: fixed; inset: 0; z-index: 0; pointer-events: none; display: block; }
+  /* Field-era chrome, retired. The window manager owns the screen now. */
+  #viz, #scrim, #grid, .edge-gradient, .topbar, #rail, #folio, #readout, #hint { display: none; }
 
-  /* Global vignette scrim: focuses the eye, lifts type off the field. Not a card, not glass. */
-  #scrim {
-    position: fixed; inset: 0; z-index: 1; pointer-events: none;
-    background:
-      radial-gradient(125% 95% at 50% 48%, transparent 38%, rgba(5, 6, 14, 0.62) 100%),
-      linear-gradient(to bottom, rgba(5, 6, 14, 0.55) 0%, transparent 16%, transparent 78%, rgba(5, 6, 14, 0.62) 100%);
-  }
-
-  /* Site survey grid, same 52px module as every other ITASIA302 page. Masked out of the
-     centre so it never competes with the field or the prose: it only frames the edges. */
-  #grid {
-    position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.9;
-    background-image:
-      linear-gradient(rgba(232, 99, 74, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(232, 99, 74, 0.05) 1px, transparent 1px);
-    background-size: 52px 52px;
-    -webkit-mask-image: radial-gradient(120% 100% at 50% 50%, transparent 34%, #000 88%);
-    mask-image: radial-gradient(120% 100% at 50% 50%, transparent 34%, #000 88%);
-  }
-
-  /* Atmospheric film, verbatim from the sibling pages. */
+  /* CRT film */
   .grain {
-    position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: 0.03;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/></filter><rect width='256' height='256' filter='url(%23n)'/></svg>");
-    background-size: 220px 220px; mix-blend-mode: overlay;
-  }
-  .edge-gradient {
-    position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 10000; pointer-events: none;
-    background: linear-gradient(90deg, transparent 0%, var(--sky) 22%, var(--lilac) 62%, transparent 100%);
-    opacity: 0.5;
+    position: fixed; inset: 0; z-index: 9990; pointer-events: none; opacity: 0.06;
+    background: repeating-linear-gradient(to bottom, rgba(0,0,0,0.5) 0 1px, transparent 1px 3px);
   }
 
-  /* ---- topbar: same shell as personal-project/index.html, wired to beat seeks ---- */
-  .topbar {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
-    display: flex; justify-content: space-between; align-items: center; gap: 24px;
-    height: var(--topbar-h); padding: 0 clamp(18px, 3vw, 48px);
-    background: linear-gradient(180deg, rgba(5, 6, 14, 0.97) 0%, rgba(5, 6, 14, 0.80) 70%, transparent 100%);
-    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-  }
-  .topbar-title {
-    font-family: var(--serif); font-weight: 300; font-size: 15px;
-    letter-spacing: -0.01em; color: var(--ink); white-space: nowrap;
-  }
-  .topbar-title em { color: var(--amber); font-style: italic; }
-  .topbar-title a { color: inherit; text-decoration: none; border-bottom: 1px dotted var(--faint); }
-  .topbar-title a:hover { color: var(--amber); border-bottom-color: var(--amber); }
-  .topbar-nav { display: flex; gap: 0; list-style: none; }
-  .topbar-nav button {
-    font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--faint); background: none; border: 0; padding: 6px 11px; cursor: pointer;
-    transition: color 150ms ease;
-  }
-  .topbar-nav button:hover, .topbar-nav button:focus-visible { color: var(--amber); outline: none; }
-  .topbar-nav button[aria-current="true"] { color: var(--ink); }
+  ::selection { background: var(--navy); color: #fff; }
 
-  /* Progress rail: printed scale along the bottom edge, per-beat ticks. */
-  #rail {
-    position: fixed; left: 0; right: 0; bottom: 0; z-index: 6;
-    height: 2px; background: var(--line);
+  /* ---- desktop icons ---- */
+  #icons { position: fixed; left: 22px; top: 24px; z-index: 2; display: flex; flex-direction: column; gap: 26px; }
+  .dicon { width: 100px; text-align: center; cursor: pointer; user-select: none; -webkit-user-select: none; }
+  .dicon .px {
+    width: 46px; height: 42px; margin: 0 auto 7px; background: var(--chrome); position: relative;
+    box-shadow: var(--bevel-out);
   }
-  #rail-fill {
-    position: absolute; left: 0; top: 0; bottom: 0; width: 0%;
-    background: linear-gradient(90deg, var(--amber) 0%, var(--amber-hi) 100%);
-    box-shadow: 0 0 10px rgba(232, 99, 74, 0.5);
+  .dicon .px::before { content: attr(data-g); position: absolute; inset: 0; font-size: 20px; line-height: 42px; }
+  .dicon u {
+    font-family: var(--px); font-size: 9px; letter-spacing: 0.04em; line-height: 1.5;
+    color: #fff; background: rgba(16, 36, 140, 0.85); text-decoration: none; padding: 1px 4px; display: inline-block;
   }
-  #rail .rtick { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--line); }
+  .dicon:hover .px { background: var(--chrome-hi); }
+  .dicon.sel u { background: var(--navy); outline: 1px dotted #fff; }
 
-  /* Folio: NN / 17 + beat name */
-  #folio {
-    position: fixed; right: clamp(18px, 3vw, 48px); bottom: 14px; z-index: 6;
-    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.22em;
-    color: var(--faint); text-transform: uppercase; pointer-events: none;
+  /* ---- windows ---- */
+  .win {
+    position: absolute; background: var(--chrome); padding: 3px; z-index: 10;
+    box-shadow: var(--bevel-out), 5px 5px 0 rgba(0, 0, 0, 0.35);
+    display: flex; flex-direction: column;
+    min-width: 320px; min-height: 180px;
   }
-  #folio b { color: var(--amber); font-weight: 500; }
-  #folio i { color: var(--ink-2); font-style: normal; font-weight: 400; margin-left: 10px; }
+  .win.hidden { display: none; }
+  .tbar {
+    display: flex; align-items: center; gap: 7px; flex: none;
+    background: repeating-linear-gradient(90deg, #6a6a6a 0 2px, #808080 2px 4px);
+    color: #ddd; padding: 4px 6px; cursor: grab;
+    font-family: var(--px); font-size: 10px; letter-spacing: 0.04em; white-space: nowrap;
+  }
+  .win.focus .tbar { background: var(--navy); color: #fff; }
+  .tbar:active { cursor: grabbing; }
+  .tbar .ttext { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; }
+  .tbar .btns { display: flex; gap: 3px; }
+  .tbar button {
+    width: 18px; height: 16px; background: var(--chrome); color: #000; border: 0;
+    font-family: var(--ui); font-size: 10px; font-weight: 700; line-height: 14px;
+    box-shadow: var(--bevel-out); cursor: pointer; padding: 0;
+  }
+  .tbar button:active { box-shadow: var(--bevel-in); }
+  .menubar {
+    display: flex; gap: 16px; padding: 5px 9px; flex: none;
+    font-size: 12.5px; border-bottom: 1.5px solid var(--sh); user-select: none; -webkit-user-select: none;
+  }
+  .menubar span::first-letter { text-decoration: underline; }
+  .ruler {
+    flex: none; height: 14px; margin: 0 1px; background: #e9e9e9; position: relative;
+    border: 1px solid var(--sh); border-top-color: var(--hl);
+    background-image: repeating-linear-gradient(90deg, #999 0 1px, transparent 1px 8px),
+                      repeating-linear-gradient(90deg, #555 0 1px, transparent 1px 64px);
+    background-position: 0 bottom; background-size: 100% 4px, 100% 8px; background-repeat: no-repeat;
+  }
+  .client {
+    flex: 1 1 auto; min-height: 0; background: var(--paper); overflow-y: auto; overflow-x: hidden;
+    box-shadow: var(--bevel-in); position: relative;
+  }
+  .statusbar {
+    flex: none; display: flex; justify-content: space-between; gap: 10px;
+    font-family: var(--mono); font-size: 10px; padding: 4px 8px; color: #222;
+    border-top: 1.5px solid var(--hl); white-space: nowrap; overflow: hidden;
+  }
+  .statusbar span { box-shadow: var(--bevel-in); padding: 2px 8px; background: var(--chrome); }
 
-  /* Left readout: quiet field-state line */
-  #readout {
-    position: fixed; left: clamp(18px, 3vw, 48px); bottom: 14px; z-index: 6;
-    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.22em;
-    color: var(--faint); text-transform: uppercase; pointer-events: none;
-    display: flex; align-items: center; gap: 10px;
-  }
-  #readout .dot { width: 5px; height: 5px; background: var(--amber); border-radius: 50%;
-    box-shadow: 0 0 8px rgba(232, 99, 74, 0.7); }
+  /* square scrollbars */
+  .client::-webkit-scrollbar { width: 16px; }
+  .client::-webkit-scrollbar-track { background: repeating-conic-gradient(#fff 0 25%, #d6d6d6 0 50%) 0 0 / 4px 4px; }
+  .client::-webkit-scrollbar-thumb { background: var(--chrome); box-shadow: var(--bevel-out); }
+  .client { scrollbar-width: auto; scrollbar-color: var(--chrome) #e3e3e3; }
 
-  /* Beat panels: fixed, mutually exclusive, opacity driven by JS (crossfade band). */
-  .panel {
-    position: fixed; inset: 0; z-index: 3;
-    display: flex; align-items: center; padding: clamp(24px, 5vw, 96px);
-    opacity: 0; visibility: hidden; pointer-events: none;
-    padding-top: calc(var(--topbar-h) + clamp(16px, 3vh, 40px));
-    padding-bottom: clamp(52px, 8vh, 96px);
-  }
-  .panel.live { visibility: visible; }
-  .side-l { justify-content: flex-start; }
-  .side-r { justify-content: flex-end; }
-  .side-c { justify-content: center; text-align: center; }
-
-  /* Text block. Edge-anchored, feathered dark scrim behind it so type never floats on raw
-     particles. Soft radial, not a box, not glass. Height is capped to the panel so long
-     beats can never bleed past the rail. */
-  .ph {
-    position: relative; max-width: 50ch;
-    max-height: 100%; display: flex; flex-direction: column; min-height: 0;
-  }
-  /* The field itself opens up behind the prose (see uHole in the point and edge shaders),
-     so this is only a whisper of extra separation, not the dark plate it used to be.
-     Peak alpha stays low and the falloff is long, so no edge is ever findable. */
-  .ph::before {
-    content: ""; position: absolute; z-index: -1; inset: -30% -26%;
-    background: radial-gradient(ellipse at 48% 50%,
-      rgba(5, 6, 14, 0.34) 0%, rgba(5, 6, 14, 0.27) 34%,
-      rgba(5, 6, 14, 0.14) 58%, rgba(5, 6, 14, 0.05) 76%, transparent 92%);
-  }
-  /* centred beats put type on the densest part of the field, so they carry a little more */
-  .side-c .ph::before {
-    inset: -34% -30%;
-    background: radial-gradient(ellipse at 48% 50%,
-      rgba(5, 6, 14, 0.46) 0%, rgba(5, 6, 14, 0.38) 34%,
-      rgba(5, 6, 14, 0.20) 58%, rgba(5, 6, 14, 0.07) 76%, transparent 92%);
-  }
-  /* every text element on the field carries its own contact shadow */
-  .kick, .note, .ghost, .body, .blist li, .cite, .essay,
-  blockquote.q, .lrow .lk, .lrow .lc, .refs li, .refnote,
-  .acard .ak, .acard .aclaim { text-shadow: var(--lift); }
-  .ph h2 { text-shadow: var(--lift-lg); }
-
+  /* ---- ESSAY.DOC ---- */
+  #win-doc .client { padding: 38px 52px 60px; }
+  .panel { position: relative; }
+  .panel + .panel { margin-top: 34px; padding-top: 30px; border-top: 1.5px dashed #b6b6b6; }
   .kick {
-    font-family: var(--mono); font-weight: 400; font-size: 9.5px;
-    letter-spacing: 0.28em; text-transform: uppercase; color: var(--faint);
-    margin-bottom: 16px; flex: none;
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: #666; margin-bottom: 10px;
   }
-  .kick i { color: var(--amber); font-style: normal; }
-
-  /* Serif display, matching the section headings on every sibling page.
-     Argument beats sit calmer than the hero and turn beats: that contrast is the rhythm. */
+  .kick i { color: var(--red); font-style: normal; }
   .ph h2 {
-    font-family: var(--serif); font-weight: 300; letter-spacing: -0.028em;
-    line-height: 1.06; color: var(--ink);
-    font-size: clamp(30px, 3.9vw, 50px); flex: none;
+    font-family: var(--ui); font-weight: 900; font-size: clamp(22px, 2vw, 27px);
+    line-height: 1.15; letter-spacing: -0.01em; color: var(--ink); margin-bottom: 12px;
   }
-  .side-c .ph h2 { font-size: clamp(38px, 5.6vw, 76px); line-height: 1.02; }
-  .ph h2 .sig { font-style: italic; font-weight: 400; color: var(--amber); }
-  .note {
-    font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em;
-    color: var(--faint); text-transform: uppercase; margin-top: 18px; flex: none;
+  .ph h2 .sig { font-style: italic; color: var(--navy); }
+  /* the hero page of the document */
+  #b0 { text-align: left; padding-top: 8px; }
+  #b0 h2 { font-size: clamp(40px, 4vw, 54px); line-height: 1.02; letter-spacing: -0.02em; }
+  #b0 .note {
+    display: inline-block; margin-top: 14px; padding: 6px 10px;
+    font-family: var(--px); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--red); border: 2px double var(--red);
   }
+  #b0 .ghost { margin-top: 16px; }
+  #b0 .kick { color: var(--navy); }
   .ghost {
-    font-family: var(--serif); font-weight: 300; font-size: clamp(14.5px, 1.2vw, 17.5px);
-    line-height: 1.65; color: var(--ink-2); margin-top: 16px; max-width: 52ch; flex: none;
+    font-family: var(--doc); font-style: italic; font-size: 17px; line-height: 1.6; color: var(--ink-2);
+    max-width: 58ch; margin-top: 10px;
   }
-  .side-c .ghost { margin-left: auto; margin-right: auto; }
-  /* Centred beats keep a centred head and pull quote, but running prose reads left-aligned:
-     a ragged left edge on six lines of argument is a legibility tax, not a flourish. */
-  .side-c .body, .side-c .blist, .side-c .essay {
-    text-align: left; margin-left: auto; margin-right: auto;
-  }
-  .side-c .flow { align-items: center; }
-
-  /* Staggered child reveal on the active beat. */
-  .panel .ph > * {
-    opacity: 0; transform: translateY(14px); filter: blur(7px);
-    transition: opacity 720ms var(--e-out), transform 720ms var(--e-out), filter 720ms var(--e-out);
-  }
-  .panel.on .ph > * { opacity: 1; transform: none; filter: none; }
-  .panel.on .ph > *:nth-child(1) { transition-delay: 60ms; }
-  .panel.on .ph > *:nth-child(2) { transition-delay: 140ms; }
-  .panel.on .ph > *:nth-child(3) { transition-delay: 230ms; }
-  .panel.on .ph > *:nth-child(4) { transition-delay: 320ms; }
-  /* the flow wrapper reveals as one, so its own children carry the stagger inward */
-  .panel .flow > * {
-    opacity: 0; transform: translateY(10px);
-    transition: opacity 620ms var(--e-out), transform 620ms var(--e-out);
-  }
-  .panel.on .flow > * { opacity: 1; transform: none; }
-  .panel.on .flow > *:nth-child(1) { transition-delay: 250ms; }
-  .panel.on .flow > *:nth-child(2) { transition-delay: 330ms; }
-  .panel.on .flow > *:nth-child(3) { transition-delay: 400ms; }
-  .panel.on .flow > *:nth-child(n+4) { transition-delay: 460ms; }
-
-  /* ---- baked content styles ---- */
+  .note { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; color: #666; margin-top: 12px; text-transform: uppercase; }
   .body {
-    font-family: var(--serif); font-weight: 300; font-size: clamp(14px, 1.15vw, 16.5px);
-    line-height: 1.68; color: var(--ink-2); margin-top: 14px; max-width: 54ch; flex: none;
+    font-family: var(--doc); font-size: 16.5px; line-height: 1.66; color: var(--ink);
+    margin-top: 0.95em; max-width: 62ch;
   }
-  .body em { color: var(--ink); }
-
-  /* Argument list. A hairline rule per item instead of a bullet: the same quiet
-     register as the rules on the sibling pages, and it survives long wrapped lines. */
-  .blist { list-style: none; margin-top: 16px; padding: 0; flex: 1 1 auto; min-height: 0; }
+  .body em { font-style: italic; }
+  .cite { font-family: var(--mono); font-size: 10.5px; color: #777; white-space: nowrap; }
+  .blist { list-style: none; margin-top: 12px; }
   .blist li {
-    position: relative; padding-left: 22px; margin: 11px 0;
-    font-family: var(--serif); font-weight: 300; font-size: clamp(13.5px, 1.1vw, 16px);
-    line-height: 1.62; color: var(--ink-2);
+    position: relative; padding-left: 20px; margin: 9px 0;
+    font-family: var(--doc); font-size: 15.5px; line-height: 1.6; color: var(--ink);
   }
-  .blist li::before {
-    content: ""; position: absolute; left: 0; top: 0.78em; width: 12px; height: 1px;
-    background: var(--amber); opacity: 0.85;
-  }
-  .blist li:last-child { margin-bottom: 0; }
-  .blist li em, .body em, .q em { font-style: italic; }
-  .blist li em { color: var(--ink); }
-  .cite {
-    font-family: var(--mono); font-size: 10px; letter-spacing: 0.01em;
-    color: var(--ghost); white-space: nowrap;
-  }
+  .blist li::before { content: "\25AA"; position: absolute; left: 2px; color: var(--navy); }
+  .essay { margin-top: 18px; padding: 12px 14px; background: #f2f2f2; box-shadow: var(--bevel-in);
+    font-family: var(--doc); font-size: 14.5px; line-height: 1.62; color: var(--ink-2); max-width: 60ch; }
+  .essay .elabel { display: block; font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--navy); margin-bottom: 6px; }
 
-  /* Author's aside. Hanging mono label plus a top hairline, no side stripe. */
-  .essay {
-    margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--line);
-    font-family: var(--serif); font-weight: 300; font-size: clamp(13px, 1.05vw, 15px);
-    line-height: 1.66; color: var(--ink-3); max-width: 50ch; flex: none;
-  }
-
-  /* Two-column beat. The field note is an aside, so it takes the margin rather than
-     eating the argument's vertical space. Below the breakpoint it stacks back under. */
-  .ph.split {
-    display: grid; max-width: none;
-    grid-template-columns: minmax(0, 40ch) minmax(0, 26ch);
-    grid-template-rows: auto auto minmax(0, 1fr);
-    column-gap: clamp(24px, 2.6vw, 44px);
-  }
-  .ph.split > .kick { grid-area: 1 / 1; }
-  .ph.split > h2    { grid-area: 2 / 1; }
-  .ph.split > .flow, .ph.split > .scrollbox { grid-area: 3 / 1; }
-  /* a beat that shows screens puts them beside the prose, not under it */
-  .ph.split > .ui-flow {
-    grid-area: 3 / 2; align-self: start; margin-top: 6px;
-    max-height: 100%; min-height: 0; overflow-y: auto;
-  }
-  .ph.split:has(> .ui-flow), .tall .ph.split:has(> .ui-flow) {
-    grid-template-columns: minmax(0, 38ch) minmax(0, 48ch); max-width: none;
-  }
-  /* the panes are wide, so give them room and let them breathe vertically */
-  .ph.split > .ui-flow { gap: 16px; }
-  .ph.split > .ui-flow .uipane::before { display: none; }
-  .tall .ph.split { max-width: none; grid-template-columns: minmax(0, 54ch) minmax(0, 26ch); }
-  .ph.split > .essay {
-    grid-area: 3 / 2; align-self: start; margin-top: 6px;
-    max-width: none; max-height: 100%; min-height: 0; overflow-y: auto;
-  }
-  .flow { display: flex; flex-direction: column; min-height: 0; overflow-y: auto; }
-  /* .flow is the only scroll region in a beat, so nothing inside it shrinks or scrolls itself */
-  .flow > * { flex: none; }
-  .flow > .blist, .flow > .ledger, .flow > .refs { overflow: visible; padding-right: 0; }
-  .essay .elabel {
-    display: block; font-family: var(--mono); font-size: 9px; letter-spacing: 0.28em;
-    text-transform: uppercase; color: var(--amber); margin-bottom: 8px;
-  }
+  /* the meme: an object embedded in the document */
   blockquote.q {
-    margin: 18px 0 0; font-family: var(--serif); font-weight: 300; font-style: italic;
-    font-size: clamp(16px, 1.5vw, 21px); line-height: 1.5; color: var(--ink); flex: none;
+    margin: 22px 0 6px; padding: 3px; background: var(--chrome); box-shadow: var(--bevel-out);
+    max-width: 56ch;
   }
+  blockquote.q::before {
+    content: "MEME.BMP - EMBEDDED OBJECT"; display: block;
+    font-family: var(--px); font-size: 8.5px; letter-spacing: 0.06em; color: #ddd;
+    background: var(--navy); padding: 3px 6px; margin-bottom: 3px;
+  }
+  blockquote.q { font-family: var(--doc); font-style: italic; font-size: 18px; line-height: 1.5; color: var(--ink); }
+  /* the shell wraps the quote's text in .qpaper at runtime, so the card reads white-on-chrome */
+  .qpaper { display: block; background: #fff; padding: 12px 14px 2px; }
   blockquote.q .qsrc {
-    display: block; margin-top: 10px; font-style: normal; font-family: var(--mono);
-    font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--faint);
+    display: block; font-style: normal; font-family: var(--mono); font-size: 9.5px;
+    letter-spacing: 0.12em; text-transform: uppercase; color: #666; padding: 8px 14px 12px; background: #fff;
   }
 
-  /* A single slip, used once, where the page is literally showing you one index card. */
-  .acard {
-    margin-top: 18px; padding: 14px 16px 15px; flex: none;
-    border: 1px solid var(--line); border-top: 1px solid rgba(232, 99, 74, 0.45);
-    background: linear-gradient(180deg, rgba(15, 19, 34, 0.86) 0%, rgba(11, 13, 26, 0.62) 100%);
-  }
-  .acard .ak {
-    display: block; font-family: var(--mono); font-size: 9px; letter-spacing: 0.24em;
-    text-transform: uppercase; color: var(--faint); margin-bottom: 8px;
-  }
-  .acard .ak b { color: var(--amber); font-weight: 400; }
-  .acard .aclaim {
-    font-family: var(--serif); font-weight: 300; font-size: clamp(13px, 1.05vw, 15.5px);
-    line-height: 1.55; color: var(--ink);
-  }
+  .acard { margin-top: 16px; padding: 12px 14px; background: #f6f6f6; box-shadow: var(--bevel-in); max-width: 58ch; }
+  .acard .ak { display: block; font-family: var(--mono); font-size: 9px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: #666; margin-bottom: 6px; }
+  .acard .ak b { color: var(--navy); }
+  .acard .aclaim { font-family: var(--doc); font-size: 15px; line-height: 1.55; }
+  .ledger { margin-top: 14px; max-width: 62ch; }
+  .lrow { display: grid; grid-template-columns: 9em 1fr; gap: 0 14px; padding: 8px 0; border-top: 1px solid #ddd; }
+  .lrow .lk { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: #666; }
+  .lrow .lc { font-family: var(--doc); font-size: 14.5px; line-height: 1.55; }
+  .lrow.lit .lk { color: var(--navy); }
+  .lrow.out { background: #eef0fb; box-shadow: var(--bevel-in); padding: 10px 12px; }
+  .lrow.out .lk { color: var(--red); }
 
-  /* Case-study ledger. The vault's own index, not a deck of identical cards:
-     mono address in a fixed left column, claim in serif, one hairline between rows. */
-  .ledger { flex: 1 1 auto; min-height: 0; margin-top: 18px; }
-  .lrow {
-    display: grid; grid-template-columns: 8.5em 1fr; gap: 0 18px; align-items: baseline;
-    padding: 10px 0; border-top: 1px solid var(--line);
+  /* in-document file links to the split-out windows (injected by the shell) */
+  .filelink {
+    display: inline-flex; align-items: center; gap: 10px; margin-top: 26px; cursor: pointer;
+    background: var(--chrome); box-shadow: var(--bevel-out); padding: 9px 16px;
+    font-family: var(--px); font-size: 10px; letter-spacing: 0.05em; user-select: none; -webkit-user-select: none;
   }
-  .lrow:first-child { border-top: 1px solid var(--rule-lit, var(--line)); }
-  .lrow .lk {
-    font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--faint); padding-top: 0.35em;
-  }
-  .lrow .lc {
-    font-family: var(--serif); font-weight: 300; font-size: clamp(12.5px, 1.02vw, 15px);
-    line-height: 1.58; color: var(--ink-2);
-  }
-  .lrow.lit .lk { color: var(--sky); }
-  .lrow.out {
-    margin-top: 4px; border-top: 1px solid rgba(232, 99, 74, 0.5);
-    background: linear-gradient(180deg, rgba(232, 99, 74, 0.07) 0%, transparent 100%);
-    padding: 13px 14px 14px; margin-left: -14px; margin-right: -14px;
-    grid-template-columns: 8.5em 1fr;
-  }
-  .lrow.out .lk { color: var(--amber); }
-  .lrow.out .lc { color: var(--ink); font-style: italic; font-size: clamp(13.5px, 1.12vw, 16.5px); }
-  .lrow.out .lc small {
-    display: block; margin-top: 6px; font-style: normal; font-size: 12px;
-    line-height: 1.55; color: var(--ink-3);
-  }
+  .filelink:active { box-shadow: var(--bevel-in); }
+  .filelink .fg { font-size: 15px; }
 
-  /* ---- glossary: six terms, defined once, before anything depends on them ---- */
-  .gloss-grid {
-    flex: 1 1 auto; min-height: 0; margin-top: 18px;
-    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: clamp(20px, 2.4vw, 40px);
-  }
-  .gterm { padding: 11px 0; border-top: 1px solid var(--line); }
-  .gterm .gk {
-    display: block; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.24em;
-    text-transform: uppercase; color: var(--amber); margin-bottom: 6px;
-  }
-  .gterm .gd {
-    font-family: var(--serif); font-weight: 300; font-size: clamp(12.5px, 1vw, 14.5px);
-    line-height: 1.55; color: var(--ink-2);
-  }
-
-  /* ---- term chips: every mention after the first is a quiet lookup ---- */
-  .t {
-    border-bottom: 1px dotted var(--faint); cursor: help; position: relative;
-    color: inherit; white-space: nowrap;
-  }
-  .t::after {
-    content: attr(data-def);
-    position: absolute; left: 0; bottom: calc(100% + 8px); z-index: 8;
-    width: max-content; max-width: 34ch; padding: 9px 11px;
-    background: var(--bg-soft); border: 1px solid var(--line);
-    border-top: 1px solid rgba(232, 99, 74, 0.5);
-    font-family: var(--serif); font-weight: 300; font-style: normal;
-    font-size: 12.5px; line-height: 1.5; letter-spacing: 0; text-transform: none;
-    color: var(--ink-2); white-space: normal; text-shadow: none;
-    opacity: 0; visibility: hidden; transform: translateY(4px);
-    transition: opacity 180ms var(--e-out), transform 180ms var(--e-out), visibility 180ms;
-    pointer-events: none;
-  }
-  .t:hover::after, .t:focus-visible::after, .t.open::after {
-    opacity: 1; visibility: visible; transform: none;
-  }
-  .side-r .t::after, .tall .t::after { left: auto; right: 0; }
-
-  /* ---- interface reconstruction: redrawn app panes, never a screenshot ---- */
-  .ui-flow { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
-  .uipane { margin: 0; position: relative; }
-  .uipane::before {
-    content: attr(data-step); position: absolute; left: -34px; top: 2px;
-    font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; color: var(--ghost);
-  }
-  .uicap {
-    font-family: var(--mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--faint); margin-bottom: 5px; text-shadow: var(--lift);
-  }
-  .uicap b { color: var(--amber); font-weight: 400; }
-  .ui {
-    border: 1px solid var(--line); background: var(--bg-soft);
-    font-family: var(--mono); font-size: 10px; line-height: 1.5; color: var(--ink-3);
-    overflow: hidden;
-  }
-  .uibar {
-    display: flex; align-items: center; gap: 6px; padding: 6px 9px;
-    background: oklch(0.20 0.02 262 / 0.6); border-bottom: 1px solid var(--line);
-  }
-  .uibar .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--line); flex: none; }
-  .uibar .uititle {
-    margin-left: 6px; font-size: 9px; letter-spacing: 0.06em; color: var(--faint);
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  }
-  .uicols { display: grid; grid-template-columns: 0.8fr 1.4fr 1fr; }
+  /* ---- interface reconstructions: windows inside the document ---- */
+  .ui-flow { display: flex; flex-direction: column; gap: 18px; margin-top: 20px; max-width: 60ch; }
+  .uipane { margin: 0; }
+  .uicap { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: #555; margin-bottom: 6px; }
+  .uicap b { color: var(--navy); }
+  .ui { background: var(--chrome); padding: 3px; box-shadow: var(--bevel-out);
+    font-family: var(--mono); font-size: 10.5px; line-height: 1.55; color: var(--ink-2); }
+  .uibar { display: flex; align-items: center; gap: 4px; padding: 3px 5px; background: var(--navy); margin-bottom: 3px; }
+  .uibar .dot { width: 12px; height: 11px; background: var(--chrome); box-shadow: var(--bevel-out); flex: none; }
+  .uibar .uititle { margin-left: 4px; font-family: var(--px); font-size: 8.5px; color: #eee;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; letter-spacing: 0.04em; }
+  .uicols { display: grid; grid-template-columns: 0.8fr 1.4fr 1fr; background: #fff; box-shadow: var(--bevel-in); }
   .ui-obsidian .uicols { grid-template-columns: 1fr 1.6fr; }
-  .uicol { padding: 8px 10px; border-right: 1px solid var(--line); min-width: 0; }
+  .uicol { padding: 8px 10px; border-right: 1px solid #ddd; min-width: 0; }
   .uicol:last-child { border-right: 0; }
-  .uirow {
-    display: flex; justify-content: space-between; gap: 8px; padding: 3px 0;
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  }
+  .uirow { display: flex; justify-content: space-between; gap: 8px; padding: 3px 0;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .uirow span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .uirow.uiind { padding-left: 12px; }
-  .uirow.uihead { color: var(--ghost); border-bottom: 1px solid var(--line); margin-bottom: 3px; }
-  .uirow.uion { color: var(--ink); background: rgba(232, 99, 74, 0.10); margin: 0 -10px; padding-left: 10px; padding-right: 10px; }
+  .uirow.uihead { color: #888; border-bottom: 1px solid #ddd; margin-bottom: 3px; }
+  .uirow.uion { color: #fff; background: var(--navy); margin: 0 -10px; padding-left: 10px; padding-right: 10px; }
   .uirow.uiind.uion { padding-left: 22px; }
   .uicol-meta { display: grid; grid-template-columns: auto 1fr; gap: 3px 8px; align-content: start; }
-  .uimetak { color: var(--ghost); }
-  .uimetav { color: var(--ink-3); overflow: hidden; text-overflow: ellipsis; }
-  .uibody { padding: 8px 12px; }
-  .uiyaml {
-    color: var(--ghost); border-left: 1px solid var(--line); padding-left: 9px;
-    margin-bottom: 6px; font-size: 9.5px;
-  }
-  .uih { color: var(--faint); margin: 8px 0 4px; }
-  .uip {
-    font-family: var(--serif); font-size: 12.5px; line-height: 1.5; color: var(--ink-2);
-    margin-bottom: 5px;
-  }
-  .uip em { color: var(--ink); }
-  .uilink { color: var(--sky); font-family: var(--mono); font-size: 9.5px; line-height: 1.55; }
-  .uiquote {
-    font-family: var(--serif); font-style: italic; font-size: 12px; color: var(--ink-3);
-    margin: 4px 0 5px; padding-left: 10px; border-left: 1px solid var(--line);
-  }
-  .uiquote .mono { font-family: var(--mono); font-style: normal; font-size: 9px; color: var(--ghost); }
-  .uinote {
-    font-family: var(--serif); font-weight: 300; font-size: clamp(12px, 0.95vw, 13.5px);
-    line-height: 1.6; color: var(--ink-3); margin-top: 9px; max-width: 62ch;
-    text-shadow: var(--lift);
-  }
+  .uimetak { color: #888; }
+  .uimetav { color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; }
+  .uibody { padding: 8px 12px; background: #fff; box-shadow: var(--bevel-in); }
+  .uiyaml { color: #888; border-left: 2px solid #ddd; padding-left: 8px; margin-bottom: 6px; font-size: 10px; }
+  .uih { color: #555; margin: 8px 0 4px; font-weight: 500; }
+  .uip { font-family: var(--doc); font-size: 13.5px; line-height: 1.5; color: var(--ink); margin-bottom: 5px; }
+  .uilink { color: var(--navy); font-family: var(--mono); font-size: 10px; line-height: 1.6; text-decoration: underline; }
+  .uiquote { font-family: var(--doc); font-style: italic; font-size: 13px; color: var(--ink-2);
+    margin: 4px 0 5px; padding-left: 9px; border-left: 2px solid #ddd; }
+  .uiquote .mono { font-family: var(--mono); font-style: normal; font-size: 9.5px; color: #888; }
+  .uinote { font-family: var(--doc); font-size: 13.5px; line-height: 1.6; color: var(--ink-3); margin-top: 8px; max-width: 62ch; }
 
-  /* References. Two columns where there is room, so all twenty-four are readable at once. */
-  .refs {
-    list-style: none; margin-top: 18px; padding: 0; flex: 1 1 auto; min-height: 0;
-    columns: 2; column-gap: 44px; column-rule: 1px solid var(--line);
+  /* ---- GLOSSARY.HLP ---- */
+  #win-gloss .client { padding: 26px 30px 34px; }
+  #win-gloss .kick { color: var(--navy); }
+  .gloss-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 18px; }
+  .gterm { background: #f4f4f4; box-shadow: var(--bevel-in); padding: 0 0 12px; }
+  .gterm .gk {
+    display: block; font-family: var(--px); font-size: 10px; letter-spacing: 0.05em;
+    color: #fff; background: var(--navy-2); padding: 5px 12px; margin-bottom: 9px; text-transform: uppercase;
   }
-  .refs li {
-    font-family: var(--serif); font-weight: 300; font-size: clamp(11px, 0.85vw, 12.5px);
-    line-height: 1.5; color: var(--ink-2); margin: 0 0 10px;
-    padding-left: 1.5em; text-indent: -1.5em;
-    break-inside: avoid; -webkit-column-break-inside: avoid;
-  }
+  .gterm .gd { font-family: var(--doc); font-size: 14.5px; line-height: 1.6; color: var(--ink); padding: 0 12px; }
+
+  /* ---- REFS.TXT ---- */
+  #win-refs .client { padding: 22px 26px 30px; }
+  #win-refs .kick { color: #666; }
+  #win-refs h2 { font-family: var(--mono); font-weight: 500; font-size: 16px; margin-bottom: 6px; }
+  .refs { list-style: none; margin-top: 14px; }
+  .refs li { font-family: var(--mono); font-size: 11px; line-height: 1.6; color: var(--ink-2);
+    margin: 0 0 12px; padding-left: 2ch; text-indent: -2ch; }
   .refs li i { font-style: italic; color: var(--ink); }
-  .refnote {
-    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.06em;
-    line-height: 1.7; color: var(--faint); margin-top: 16px;
-    padding-top: 12px; border-top: 1px solid var(--line); flex: none;
-  }
-  .tall .ph { max-width: 62ch; }
-  #b12 .ph { max-width: 72ch; }   /* five sources in one centred column need the width */
-  #b12 .body { max-width: 64ch; }  /* .body caps at ~36ch by default, which is what forced the overflow */
-  #b14 .ph { max-width: 94ch; }   /* two reference columns need the width */
+  .refnote { font-family: var(--mono); font-size: 10px; line-height: 1.7; color: #666;
+    margin-top: 18px; padding-top: 12px; border-top: 1px dashed #bbb; }
 
-  /* Any region that can outrun the viewport scrolls in place. Pointer events are handed
-     to it only while its beat is live, so the page scroll is never hijacked. */
-  .blist, .ledger, .refs, .scrollbox, .flow, .ph.split > .essay, .ph.split > .ui-flow {
-    overflow-y: auto; scrollbar-width: thin;
-    scrollbar-color: var(--line) transparent; padding-right: 4px;
-  }
-  .scrollbox { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
-  /* One scroll region per beat: anything already inside a scrollbox lays out at full height. */
-  .scrollbox .blist, .scrollbox .ledger, .scrollbox .refs {
-    flex: none; overflow: visible; min-height: auto; padding-right: 0;
-  }
-  .panel.on .blist, .panel.on .ledger, .panel.on .refs,
-  .panel.on .scrollbox, .panel.on .flow, .panel.on .essay,
-  .panel.on .ui-flow { pointer-events: auto; }
-  .can-scroll {
-    -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 40px), transparent 100%);
-    mask-image: linear-gradient(to bottom, #000 calc(100% - 40px), transparent 100%);
-  }
-  .can-scroll.at-end { -webkit-mask-image: none; mask-image: none; }
-  .ph.has-overflow::after {
-    content: "scroll this column";
-    flex: none; margin-top: 8px; font-family: var(--mono); font-size: 8.5px;
-    letter-spacing: 0.24em; text-transform: uppercase; color: var(--ghost);
-  }
-  .side-r .ph.has-overflow::after { text-align: right; }
-  .ph.split.has-overflow::after { grid-row: 4; grid-column: 1; text-align: left; }
-  ::-webkit-scrollbar { width: 4px; height: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 2px; }
-  .panel.on .ph > *:nth-child(5) { transition-delay: 400ms; }
-  .panel.on .ph > *:nth-child(6) { transition-delay: 470ms; }
-  .panel.on .ph > *:nth-child(7) { transition-delay: 540ms; }
-  .panel.on .ph > *:nth-child(8) { transition-delay: 600ms; }
+  /* ---- VAULT.EXE ---- */
+  #win-vault .client { overflow: hidden; }
+  #win-vault canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
+  .vtools { flex: none; display: flex; align-items: center; gap: 10px; padding: 5px 8px;
+    border-bottom: 1.5px solid var(--sh); font-family: var(--mono); font-size: 10px; }
+  .vtools label { display: flex; align-items: center; gap: 5px; cursor: pointer; user-select: none; -webkit-user-select: none; }
+  .vtools input { accent-color: var(--navy); }
+  .vtools button { font-family: var(--px); font-size: 8.5px; padding: 4px 10px; background: var(--chrome);
+    border: 0; box-shadow: var(--bevel-out); cursor: pointer; }
+  .vtools button:active { box-shadow: var(--bevel-in); }
 
-  #hint { position: fixed; bottom: clamp(44px, 7vh, 66px); left: 50%; transform: translateX(-50%);
-    z-index: 6; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.34em; text-transform: uppercase;
-    color: var(--faint); pointer-events: none; transition: opacity 600ms var(--e-out); }
-  #hint::after { content: ""; display: block; width: 1px; height: 26px; margin: 12px auto 0;
-    background: linear-gradient(to bottom, var(--faint), transparent); }
-
-  #scroll-root { position: relative; width: 100%; }
-
-  @media (max-width: 1180px) {
-    .ph.split, .tall .ph.split {
-      display: flex; flex-direction: column; max-width: 54ch;
-      grid-template-columns: none; grid-template-rows: none;
-    }
-    .ph.split > .essay { margin-top: 22px; max-width: none; overflow: visible; }
-    #b14 .ph { max-width: 62ch; }
+  /* ---- term chips: OS tooltips ---- */
+  .t { border-bottom: 1px dashed var(--navy); cursor: help; position: relative; white-space: nowrap; }
+  .t::after {
+    content: attr(data-def);
+    position: absolute; left: 0; bottom: calc(100% + 7px); z-index: 40;
+    width: max-content; max-width: 36ch; padding: 8px 10px;
+    background: var(--tip); border: 1px solid #000; box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
+    font-family: var(--ui); font-weight: 400; font-style: normal; font-size: 12px; line-height: 1.5;
+    letter-spacing: 0; text-transform: none; color: #111; white-space: normal; text-indent: 0;
+    opacity: 0; visibility: hidden; transition: opacity 120ms steps(2, end), visibility 120ms;
+    pointer-events: none;
   }
+  .t:hover::after, .t:focus-visible::after, .t.open::after { opacity: 1; visibility: visible; }
 
-  @media (max-width: 1180px) {
-    .refs { columns: 1; column-rule: none; }
-    .refs li { font-size: 12px; }
+  /* ---- taskbar ---- */
+  #taskbar {
+    position: fixed; left: 0; right: 0; bottom: 0; height: 46px; z-index: 500;
+    background: var(--chrome); box-shadow: inset 0 2px 0 var(--hl);
+    display: flex; align-items: center; gap: 8px; padding: 0 8px;
   }
+  #startbtn {
+    display: flex; align-items: center; gap: 8px; font-family: var(--px); font-size: 11px;
+    padding: 7px 13px; background: var(--chrome); border: 0; box-shadow: var(--bevel-out); cursor: pointer;
+  }
+  #startbtn .sq { width: 15px; height: 15px; background: conic-gradient(#d33 0 25%, #3a3 0 50%, #36c 0 75%, #fc0 0); }
+  #startbtn:active, #startbtn.open { box-shadow: var(--bevel-in); }
+  .tbtn {
+    font-family: var(--px); font-size: 9.5px; padding: 8px 14px; background: var(--chrome); border: 0;
+    box-shadow: var(--bevel-out); cursor: pointer; max-width: 170px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .tbtn.on { box-shadow: var(--bevel-in); background: repeating-conic-gradient(#dcdcdc 0 25%, #d0d0d0 0 50%) 0 0 / 4px 4px; }
+  #clock { margin-left: auto; font-family: var(--mono); font-size: 11.5px; padding: 6px 12px; box-shadow: var(--bevel-in); }
 
-  @media (max-width: 860px) {
-    .panel { padding: 20px; padding-top: calc(var(--topbar-h) + 16px); padding-bottom: 76px; }
-    .side-l, .side-r { justify-content: flex-start; }
-    .ph, .tall .ph { max-width: none; }
-    .topbar-nav { display: none; }
-    #grid { display: none; }
-    .lrow, .lrow.out { grid-template-columns: 1fr; gap: 4px 0; }
-    .lrow .lk { padding-top: 0; }
-    .gloss-grid { grid-template-columns: minmax(0, 1fr); }
-    .uicols, .ui-obsidian .uicols { grid-template-columns: minmax(0, 1fr); }
-    .uicol { border-right: 0; border-bottom: 1px solid var(--line); }
-    .uipane::before { display: none; }
-    .t::after { left: 0; right: auto; max-width: 26ch; }
+  /* ---- start menu ---- */
+  #startmenu {
+    position: fixed; left: 8px; bottom: 50px; z-index: 600; width: 250px;
+    background: var(--chrome); padding: 3px; box-shadow: var(--bevel-out), 5px 5px 0 rgba(0, 0, 0, 0.35);
+    display: none;
+  }
+  #startmenu.open { display: flex; }
+  #startmenu .side {
+    flex: none; width: 30px; background: var(--navy);
+    display: flex; align-items: flex-end; justify-content: center; padding-bottom: 10px;
+  }
+  #startmenu .side b {
+    font-family: var(--px); font-size: 11px; color: #fff;
+    writing-mode: vertical-rl; transform: rotate(180deg); letter-spacing: 0.12em;
+  }
+  #startmenu .items { flex: 1 1 auto; display: flex; flex-direction: column; padding: 4px; }
+  #startmenu .mi {
+    display: flex; align-items: center; gap: 10px; padding: 8px 10px; cursor: pointer;
+    font-family: var(--ui); font-size: 13px; color: #111; text-decoration: none;
+  }
+  #startmenu .mi:hover { background: var(--navy); color: #fff; }
+  #startmenu .mi .fg { font-size: 15px; width: 20px; text-align: center; }
+  #startmenu hr { border: 0; border-top: 1.5px solid var(--sh); border-bottom: 1.5px solid var(--hl); margin: 4px 2px; }
+
+  /* ---- boot screen ---- */
+  #boot {
+    position: fixed; inset: 0; z-index: 9000; background: #050505; color: #c8c8c8;
+    font-family: var(--mono); font-size: 13px; line-height: 1.9; padding: 44px 52px;
+    cursor: pointer;
+  }
+  #boot.gone { display: none; }
+  #boot .bl { opacity: 0; }
+  #boot .bl.show { opacity: 1; }
+  #boot .ok { color: #4be04b; }
+  #boot .hd { font-family: var(--px); font-size: 13px; color: #fff; margin-bottom: 18px; letter-spacing: 0.06em; }
+  #boot .skip { position: absolute; right: 40px; bottom: 30px; font-size: 10px; color: #666; letter-spacing: 0.2em; }
+
+  /* ---- small screens: one window at a time, maximized ---- */
+  @media (max-width: 900px) {
+    #icons { flex-direction: row; flex-wrap: wrap; left: 12px; right: 12px; top: 14px; gap: 14px; }
+    .dicon { width: 84px; }
+    .win { left: 4px !important; top: 4px !important; right: 4px !important;
+      bottom: 50px !important; width: auto !important; height: auto !important; }
+    #win-doc .client { padding: 22px 18px 40px; }
+    .tbar { cursor: default; }
+    .lrow, .lrow.out { grid-template-columns: 1fr; gap: 3px 0; }
+    .uicols, .ui-obsidian .uicols { grid-template-columns: 1fr; }
+    .uicol { border-right: 0; border-bottom: 1px solid #ddd; }
+    .t::after { max-width: 26ch; }
     .cite { white-space: normal; }
-    /* a phone column is nearly the whole viewport, so the shader void cannot open far
-       enough around it: the scrim carries more of the load here */
-    .ph::before, .side-c .ph::before {
-      inset: -8% -18%;   /* bleeds past both edges, so the band never shows a vertical seam */
-      background: linear-gradient(180deg,
-        transparent 0%, rgba(5, 6, 14, 0.74) 8%, rgba(5, 6, 14, 0.74) 92%, transparent 100%);
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .panel .ph > *, .panel .flow > * { transition-duration: 1ms; filter: none; transform: none; }
+    .t::after { transition: none; }
   }
+
+  /* no-JS fallback: the document simply flows on the desktop */
+  .nojs #panels { max-width: 76ch; margin: 30px auto; background: #fff; padding: 40px 48px; box-shadow: var(--bevel-out); }
+  .nojs body { overflow: auto; }
 </style>
 </head>
 <body>
@@ -595,7 +397,8 @@
 <div id="hint">Scroll</div>
 
 <main id="panels">
-  <!-- 18 placeholder beat panels, narrative order = index order. Prose lands in a later phase. -->
+  <!-- 15 beats in one flowing essay column, narrative order = index order. The prose in these
+       sections round-trips through prose_io.py: keep the markup, edit only via _drafts/live. -->
   <section class="panel side-c" id="b0" data-beat="0"><div class="ph">
     <p class="kick">ITASIA302 <i>·</i> Final Project</p>
     <h2>Building a<br><span class="sig">Second Brain</span></h2>
@@ -845,7 +648,6 @@
   </div></section>
 </main>
 
-<div id="scroll-root"></div>
 
 <!-- Real vault graph payload, inlined for the single-file deliverable. -->
 <script id="sbf-data">
@@ -855,836 +657,450 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
 <script>
 "use strict";
 (function () {
-  window.__SBF__ = "final"; // identity marker for QA
+  window.__SBF__ = "final-os"; // identity marker for QA
   var RM = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.documentElement.classList.remove("nojs");
 
-  // ---- viewport helpers (window.innerHeight reads 0 in the headless preview) ----
-  function vw() { return (window.visualViewport && window.visualViewport.width) || window.innerWidth || 1280; }
-  function vh() { return (window.visualViewport && window.visualViewport.height) || window.innerHeight || 800; }
-
-  // ---- easings: entrances outQuart, on-screen moves inOutCubic. Never ease-in alone
-  // (the one sanctioned exception: the meme beat's gravity drop uses inCubic by spec). ----
-  function clamp01(t) { return t < 0 ? 0 : t > 1 ? 1 : t; }
-  var outQuart = function (t) { return 1 - Math.pow(1 - t, 4); };
-  var inOutCubic = function (t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
-  var inCubic = function (t) { return t * t * t; };
-  var outExpo = function (t) { return t >= 1 ? 1 : 1 - Math.pow(2, -10 * t); };
-  var outBack = function (t) { var c1 = 1.20158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
-
-  // ---- the beat table -------------------------------------------------------------
-  // One row per beat, narrative order = array order. Everything the engine needs per
-  // beat lives here, and every beat is addressed by NAME (B.thesis, B.atom) rather than
-  // by a bare number, so inserting a beat is a one-row edit plus one <section> in the
-  // markup. `mol` scales the camera's look-at toward the demonstrated molecule; it is
-  // resolved once the real graph positions exist.
-  //
-  //   id            name            state         form      w    trans ease         rad  phi   theta lookY lookZ pan    hold  mol
-  var BEATS_DEF = [
-    ["hero",        "HERO",         "drift",      "DRIFT",   1,   1,    outQuart,    128, 1.45, 0.00,  0,    0,    0,     0.55, 0],
-    ["context",     "CONTEXT",      "drift",      "DRIFT2",  1.2, 0.5,  inOutCubic,  108, 1.42, 0.18,  0,    0,    0.16,  0.05, 0],
-    ["pkm",         "PKM",          "converge",   "SHELL",   1,   0.5,  outQuart,     82, 1.36, 0.38,  0,    0,   -0.18,  0.55, 0],
-    ["secondbrain", "SECOND BRAIN", "orbit",      "SHELL",   1,   0.4,  outQuart,     88, 1.30, 0.72,  0,    0,    0.10,  0.55, 0],
-    ["glossary",    "PLAIN LANGUAGE","hold",      "SHELL",    1.6, 0.5,  outQuart,     124, 1.40, 0.87,  0,    0,   -0.26,  0.5,  0],
-    ["hype",        "HYPE",         "storm",      "STORM",   1,   0.5,  outQuart,    152, 1.52, 1.02,  0,    0,    0,     0.5,  0],
-    ["trap",        "THE TRAP",     "storm",      "STORM",   1.4, 0.5,  outQuart,    160, 1.45, 1.15,  0,    0,   -0.20,  0.5,  0],
-    ["building",    "BUILDING",     "lattice",    "LATTICE", 1,   0.9,  outExpo,     122, 1.12, 1.35,  -4,   0,    0.18,  0.5,  0],
-    ["zettelkasten","ZETTELKASTEN", "cabinet",    "CABINET", 1.4, 0.5,  outBack,      74, 1.46, 2.35,  0,  -46,    0.12,  0.55, 0],
-    ["tiers",       "THE THREE SIZES","tiers",     "TIERS",   1.4, 0.5,  outQuart,     95, 1.35, 2.60,  0,    0,    0.10,  0.5,  0],
-    ["stack",       "STACK",        "strata",     "STRATA",  1.6, 0.5,  inOutCubic,   80, 1.46, 3.63,  0,    0,    0.22,  0.08, 0],
-    ["casestudy",   "CASE STUDY",   "case",       "REAL",    2.2, 0.45, inOutCubic,   58, 1.34, 3.80,  0,    0,   -0.16,  0.55, 0.5],
-    ["thesis",      "THESIS",       "the vault",  "REAL",    1.6, 0.35, outQuart,    150, 1.38, 4.40,  2,    0,    0,     0.6,  0],
-    ["end",         "END",          "dissolve",   "DRIFT",   0.8, 0.75, inOutCubic,  132, 1.44, 4.75,  0,    0,    0,     0.3,  0],
-    ["works",       "WORKS CITED",  "archive",    "DRIFT",   1.4, 0.4,  outQuart,    142, 1.46, 4.85,  0,    0,    0,     0.9,  0],
-  ];
-  var NB = BEATS_DEF.length;
-  var B = {};                       // B.thesis === 15, and stays right if a beat is inserted
-  for (var bi = 0; bi < NB; bi++) B[BEATS_DEF[bi][0]] = bi;
-  var col = function (i) { return BEATS_DEF.map(function (r) { return r[i]; }); };
-  var BEAT_NAMES  = col(1);
-  var STATE_LABEL = col(2);
-  var BEAT_FORM   = col(3);
-  var WEIGHTS     = col(4);
-  var TRANS       = col(5);
-  var MEASE       = col(6);
-
-  var totalW = 0; for (var wi = 0; wi < NB; wi++) totalW += WEIGHTS[wi];
-  var BEATS = [];
-  (function () { var acc = 0; for (var i = 0; i < NB; i++) { var seg = WEIGHTS[i] / totalW; BEATS.push({ in: acc, out: acc + seg }); acc += seg; } BEATS[NB - 1].out = 1.0000001; })();
-  function lerp(a, b, t) { return a + (b - a) * t; }
-
-  // resolved beat state, reused every frame (zero per-frame allocation)
-  var BB = { beat: 0, frac: 0 };
-  function beatAt(p) {
-    p = clamp01(p);
-    var b = 0;
-    for (var i = 0; i < NB; i++) { if (p >= BEATS[i].in) b = i; }
-    var s = BEATS[b].in, e = BEATS[b].out;
-    BB.beat = b; BB.frac = clamp01((p - s) / (e - s));
-    return BB;
+  function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
+  function el(tag, cls, html) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (html != null) e.innerHTML = html;
+    return e;
   }
+  function vw() { return window.innerWidth || 1280; }
+  function vh() { return window.innerHeight || 800; }
+  function narrow() { return vw() < 900; }
 
-  // ---- deterministic PRNG ----
-  function rng(seed) { return function () { seed |= 0; seed = (seed + 0x6D2B79F5) | 0; var t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
-  var rnd = rng(0x53460718);
-
-  // ---- data: real vault via window.__SBF, synthetic 1,400-node cloud fallback ----
-  var D = window.__SBF || null;
-  var N = D ? D.n : 1400;
-  var MAXDEG = D ? D.md : 60;
-
-  var real = new Float32Array(N * 3);
-  var deg = new Float32Array(N);
-  if (D) {
-    var mx = 1e-6;
-    for (var i0 = 0; i0 < N * 3; i0++) { var av = Math.abs(D.pos[i0]); if (av > mx) mx = av; }
-    var sc = 62 / mx;
-    for (var i1 = 0; i1 < N; i1++) {
-      real[i1 * 3] = D.pos[i1 * 3] * sc; real[i1 * 3 + 1] = D.pos[i1 * 3 + 1] * sc; real[i1 * 3 + 2] = D.pos[i1 * 3 + 2] * sc;
-      deg[i1] = D.deg[i1];
-    }
-  } else {
-    for (var i2 = 0; i2 < N; i2++) { real[i2 * 3] = (rnd() - 0.5) * 110; real[i2 * 3 + 1] = (rnd() - 0.5) * 110; real[i2 * 3 + 2] = (rnd() - 0.5) * 110; deg[i2] = (rnd() * 40) | 0; }
-  }
-
-  // ---- pick the atom-beat hub (highest degree) and a mid-size molecule cluster ----
-  var hubIdx = 0; { var hd = -1; for (var h = 0; h < N; h++) { if (deg[h] > hd) { hd = deg[h]; hubIdx = h; } } }
-
-  // adjacency scan over the full edge list to find a small real cluster
-  var EFULL = (D && D.e && D.e.length) ? D.e : null;
-  var ESPINE = (D && D.spine && D.spine.length) ? D.spine : null;
-  if (!EFULL) { // synthetic fallback edges: chain a sparse random set
-    var fe = new Array(1200 * 2);
-    for (var fi = 0; fi < 1200; fi++) { fe[fi * 2] = (rnd() * N) | 0; fe[fi * 2 + 1] = (rnd() * N) | 0; }
-    EFULL = fe; ESPINE = fe.slice(0, 800 * 2);
-  }
-  if (!ESPINE) ESPINE = EFULL;
-  var molIdx = hubIdx, molEdges = [];
-  (function () {
-    var cnt = new Int16Array(N);
-    var m2 = EFULL.length;
-    for (var k = 0; k < m2; k++) cnt[EFULL[k]]++;
-    // prefer a node with 5 to 9 incident edges: a legible ~7-node neighborhood
-    for (var n2 = 0; n2 < N; n2++) { if (cnt[n2] >= 5 && cnt[n2] <= 9) { molIdx = n2; break; } }
-    var seen = 0;
-    for (var e2 = 0; e2 < m2; e2 += 2) {
-      if (EFULL[e2] === molIdx || EFULL[e2 + 1] === molIdx) { molEdges.push(EFULL[e2], EFULL[e2 + 1]); seen++; if (seen >= 12) break; }
-    }
-    if (!molEdges.length) molEdges.push(molIdx, hubIdx);
-  })();
-  var molSet = {}; molSet[molIdx] = 1;
-  for (var ms = 0; ms < molEdges.length; ms++) molSet[molEdges[ms]] = 1;
-
-  // ---- 9 parameterized formation builders, reused across the 18 beats ----
-  function buildDrift(out, radius, squash, jitter) {
-    var golden = Math.PI * (3 - Math.sqrt(5));
-    for (var i = 0; i < N; i++) {
-      var j = i * 3, y = 1 - (i / (N - 1)) * 2, rr = Math.sqrt(Math.max(0, 1 - y * y)), th = golden * i;
-      var sh = radius + (rnd() - 0.5) * jitter;
-      out[j] = Math.cos(th) * rr * sh; out[j + 1] = y * sh * squash; out[j + 2] = Math.sin(th) * rr * sh;
-    }
-  }
-  function buildCore(out, radius, exp, squash, focusIdx) {
-    for (var i = 0; i < N; i++) {
-      var j = i * 3, hr = Math.pow(rnd(), exp) * radius, ha = rnd() * 6.283, hb = Math.acos(2 * rnd() - 1);
-      out[j] = Math.sin(hb) * Math.cos(ha) * hr; out[j + 1] = Math.cos(hb) * hr * squash; out[j + 2] = Math.sin(hb) * Math.sin(ha) * hr;
-    }
-    if (focusIdx != null) { out[focusIdx * 3] = 0; out[focusIdx * 3 + 1] = 0; out[focusIdx * 3 + 2] = 0; }
-  }
-  function buildStorm(out, w, h) {
-    for (var i = 0; i < N; i++) { var j = i * 3; out[j] = (rnd() - 0.5) * w; out[j + 1] = (rnd() - 0.5) * h; out[j + 2] = (rnd() - 0.5) * w; }
-  }
-  function buildGrid(out, y, size) {
-    var cols = Math.ceil(Math.sqrt(N));
-    for (var i = 0; i < N; i++) {
-      var j = i * 3, cx = i % cols, cz = (i / cols) | 0;
-      out[j] = (cx / (cols - 1) - 0.5) * size;
-      out[j + 1] = y + (rnd() - 0.5) * 1.2;
-      out[j + 2] = (cz / (cols - 1) - 0.5) * size;
-    }
-  }
-  function buildLattice(out, rowOut, size, ny) {
-    var nx = Math.ceil(Math.cbrt(N)), nz = nx;
-    var perLayer = nx * nz;
-    for (var i = 0; i < N; i++) {
-      var j = i * 3, layer = (i / perLayer) | 0, r = i % perLayer, cx = r % nx, cz = (r / nx) | 0;
-      if (layer >= ny) layer = ny - 1;
-      out[j] = (cx / (nx - 1) - 0.5) * size + (rnd() - 0.5) * 1.4;
-      out[j + 1] = -30 + (layer / (ny - 1)) * 58;
-      out[j + 2] = (cz / (nz - 1) - 0.5) * size + (rnd() - 0.5) * 1.4;
-      rowOut[i] = layer / (ny - 1);
-    }
-  }
-  function buildStrata(out, layers, gap, w, h) {
-    for (var i = 0; i < N; i++) {
-      var j = i * 3, L = i % layers;
-      out[j] = (rnd() - 0.5) * w;
-      out[j + 1] = (rnd() - 0.5) * h;
-      out[j + 2] = (L - (layers - 1) / 2) * gap + (rnd() - 0.5) * 3;
-    }
-  }
-  function buildCabinet(out, cols, rows, sx, sy, slabGap) {
-    var perSlab = cols * rows;
-    for (var i = 0; i < N; i++) {
-      var j = i * 3, slab = (i / perSlab) | 0, r = i % perSlab, cx = r % cols, cy = (r / cols) | 0;
-      out[j] = (cx - (cols - 1) / 2) * sx;
-      out[j + 1] = (cy - (rows - 1) / 2) * sy;
-      out[j + 2] = -slab * slabGap + (rnd() - 0.5) * 0.8;
-    }
-  }
-  function buildTiers(out, bands, gap, radius) {
-    for (var i = 0; i < N; i++) {
-      var j = i * 3, band = i % bands, r = Math.sqrt(rnd()) * radius, a = rnd() * 6.283;
-      out[j] = Math.cos(a) * r;
-      out[j + 1] = (band - (bands - 1) / 2) * gap + (rnd() - 0.5) * 2.4;
-      out[j + 2] = Math.sin(a) * r;
-    }
-  }
-  // buildReal is the identity: the ninth builder is the data itself (scaled above).
-
-  var F = {
-    DRIFT:  new Float32Array(N * 3),
-    DRIFT2: new Float32Array(N * 3),
-    SHELL:  new Float32Array(N * 3),
-    STORM:  new Float32Array(N * 3),
-    GRID:   new Float32Array(N * 3),
-    LATTICE:new Float32Array(N * 3),
-    STRATA: new Float32Array(N * 3),
-    CABINET:new Float32Array(N * 3),
-    TIERS:  new Float32Array(N * 3),
-    ATOMC:  new Float32Array(N * 3),
-    ALLOYM: new Float32Array(N * 3),
-    REAL:   real,
-  };
-  var rowDelay = new Float32Array(N);   // lattice rise stagger, per node
-  var ringA = new Float32Array(N);      // satellite ring angles (beat 3)
-  var turb = new Float32Array(N * 3);   // storm turbulence axes
-  var lobe = new Float32Array(N);       // alloy lobe sign
-  buildDrift(F.DRIFT, 40, 0.86, 7);
-  buildDrift(F.DRIFT2, 29, 0.82, 4);
-  buildDrift(F.SHELL, 23, 0.95, 2.4);           // thin sphere shell: shell = drift builder, tiny jitter
-  buildStorm(F.STORM, 168, 104);
-  buildGrid(F.GRID, -34, 148);
-  buildLattice(F.LATTICE, rowDelay, 92, 13);
-  buildStrata(F.STRATA, 5, 34, 84, 48);
-  buildCabinet(F.CABINET, 22, 10, 5.4, 5.8, 14);
-  buildTiers(F.TIERS, 3, 27, 55);
-  buildCore(F.ATOMC, 8, 1.8, 0.9, hubIdx);      // tight collapse, hub pinned at origin
-  buildCore(F.ALLOYM, 15, 1.4, 0.85, null);     // merged alloy core; lobes split at runtime
-  for (var r3 = 0; r3 < N; r3++) { ringA[r3] = rnd() * 6.283; lobe[r3] = (r3 & 1) ? 1 : -1; }
-  for (var t3 = 0; t3 < N * 3; t3 += 3) { turb[t3] = rnd() * 6.283; turb[t3 + 1] = rnd() * 6.283; turb[t3 + 2] = 0.6 + rnd() * 1.1; }
-  var RINGSTEP = 16; // every 16th node joins the satellite ring on beat 3
-
-  // formation per beat + morph-in window (fraction of the beat spent morphing)
-  // BEAT_FORM / TRANS / MEASE are columns of BEATS_DEF, derived above.
-  (function checkForms() {
-    for (var i = 0; i < NB; i++) {
-      if (!F[BEAT_FORM[i]]) throw new Error("beat " + i + " (" + BEATS_DEF[i][0] + ") names an unknown formation: " + BEAT_FORM[i]);
-    }
-  })();
-
-  // ---- THREE setup ----
-  var canvas = document.getElementById("viz");
-  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false, powerPreference: "high-performance" });
-  function dprCap() { return Math.min(window.devicePixelRatio || 1, vw() < 900 ? 1.5 : 2); }
-  renderer.setPixelRatio(dprCap());
-  renderer.setSize(vw(), vh());
-  var BGC = new THREE.Color(0x080a16);   // site ground, one step up from #05060e so the vignette still reads
-  renderer.setClearColor(BGC, 1);
-  var scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x080a16, 0.0042);
-  var camera = new THREE.PerspectiveCamera(54, vw() / vh(), 0.1, 900);
-
-  // particle attributes: near-white with subtle luminance variation by degree.
-  // No group hues. One amber accent, spent on: the atom hub, alloy top-degree, thesis edges.
-  var aSize = new Float32Array(N);
-  var aLum = new Float32Array(N);
-  var aHot = new Float32Array(N);   // alloy-beat top-degree amber
-  var aFocA = new Float32Array(N);  // atom-beat focus (the single hub)
-  var aFocB = new Float32Array(N);  // molecule-beat focus set
-  for (var p0 = 0; p0 < N; p0++) {
-    var sd = Math.sqrt(deg[p0]);
-    aSize[p0] = 1.6 + Math.min(4.4, sd * 0.55);
-    aLum[p0] = 0.62 + 0.38 * Math.min(1, sd / 12);
-    aHot[p0] = clamp01((deg[p0] / MAXDEG - 0.18) / 0.5);
-    aFocA[p0] = (p0 === hubIdx) ? 1 : 0;
-    aFocB[p0] = molSet[p0] ? 1 : 0;
-  }
-
-  var livePos = new Float32Array(N * 3); livePos.set(F.DRIFT);
-  var geo = new THREE.BufferGeometry();
-  geo.setAttribute("position", new THREE.BufferAttribute(livePos, 3));
-  geo.setAttribute("aSize", new THREE.BufferAttribute(aSize, 1));
-  geo.setAttribute("aLum", new THREE.BufferAttribute(aLum, 1));
-  geo.setAttribute("aHot", new THREE.BufferAttribute(aHot, 1));
-  geo.setAttribute("aFocA", new THREE.BufferAttribute(aFocA, 1));
-  geo.setAttribute("aFocB", new THREE.BufferAttribute(aFocB, 1));
-
-  var INK = new THREE.Color(0xe0e6f0);   // --ink
-  var AMBER = new THREE.Color(0xff8a63); // --amber-hi: the section accent, lifted for emissive points
-  var mat = new THREE.ShaderMaterial({
-    uniforms: {
-      uScale:  { value: vh() * 0.5 },
-      uOpac:   { value: 1.0 },
-      uAmber:  { value: 0.0 },   // alloy top-degree amber
-      uFocus:  { value: 0.0 },   // focus dimming strength (atom / molecule beats)
-      uFocSel: { value: 0.0 },   // 0 = atom set, 1 = molecule set
-      uInk:    { value: new THREE.Vector3(INK.r, INK.g, INK.b) },
-      uAmberC: { value: new THREE.Vector3(AMBER.r, AMBER.g, AMBER.b) },
-      // the text void: the field thins where the prose sits, instead of a plate sitting on it
-      uHole:   { value: new THREE.Vector4(0, 0, 0, 0) },  // centre.xy, half-extent.xy, in NDC
-      uHoleAmt:{ value: 0.0 },
-      uAspect: { value: vw() / Math.max(1, vh()) },
-    },
-    vertexShader: [
-      "attribute float aSize; attribute float aLum; attribute float aHot;",
-      "attribute float aFocA; attribute float aFocB;",
-      "uniform float uScale; uniform float uAmber; uniform float uFocus; uniform float uFocSel;",
-      "varying float vLum; varying float vHot; varying float vFoc; varying float vFocA;",
-      "varying vec2 vNdc;",
-      "void main(){",
-      "  vLum = aLum; vHot = aHot;",
-      "  vFoc = mix(aFocA, aFocB, uFocSel);",
-      "  vFocA = aFocA * (1.0 - uFocSel);",
-      "  vec4 mv = modelViewMatrix * vec4(position, 1.0);",
-      "  gl_Position = projectionMatrix * mv;",
-      "  vNdc = gl_Position.xy / max(0.0001, gl_Position.w);",
-      "  float boost = 1.0 + aHot * uAmber * 0.8 + vFocA * uFocus * 2.6;",
-      "  gl_PointSize = clamp(aSize * boost * uScale / max(1.0, -mv.z), 1.5, 30.0);",
-      "}"].join("\n"),
-    fragmentShader: [
-      "precision highp float;",
-      "uniform float uOpac; uniform float uAmber; uniform float uFocus;",
-      "uniform vec3 uInk; uniform vec3 uAmberC;",
-      "uniform vec4 uHole; uniform float uHoleAmt; uniform float uAspect;",
-      "varying float vLum; varying float vHot; varying float vFoc; varying float vFocA;",
-      "varying vec2 vNdc;",
-      // rounded-box signed distance in aspect-corrected NDC: negative inside, positive outside
-      "float holeSDF(vec2 p){",
-      "  vec2 q = abs((p - uHole.xy) * vec2(uAspect, 1.0)) - uHole.zw * vec2(uAspect, 1.0);",
-      "  return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0);",
-      "}",
-      "void main(){",
-      "  vec2 d = abs(gl_PointCoord - 0.5);",
-      "  float m = max(d.x, d.y);",
-      "  float a = smoothstep(0.5, 0.43, m);",
-      "  if (a <= 0.01) discard;",
-      "  vec3 col = uInk * vLum;",
-      "  col = mix(col, uAmberC, clamp(vHot * uAmber + vFocA * uFocus, 0.0, 1.0));",
-      "  float dim = 1.0 - uFocus * (1.0 - vFoc) * 0.92;",   // non-focus nodes drop to 8%
-      "  float k = 1.0 - smoothstep(-0.10, 0.52, holeSDF(vNdc));",   // 1 under the prose, 0 well clear of it
-      "  gl_FragColor = vec4(col, a * uOpac * dim * (1.0 - uHoleAmt * k));",
-      "}"].join("\n"),
-    transparent: true, depthWrite: false, depthTest: false, blending: THREE.NormalBlending,
-  });
-  var points = new THREE.Points(geo, mat);
-  points.frustumCulled = false; scene.add(points);
-
-  // ---- edge layer: opacity-gated LineSegments with a traveling-pulse shader ----
-  function edgeMaterial() {
-    return new THREE.ShaderMaterial({
-      uniforms: {
-        uOpac:  { value: 0.0 },
-        uPulse: { value: 0.0 },
-        uTime:  { value: 0.0 },
-        uMix:   { value: 0.0 }, // thesis amber tint
-        uCol:   { value: new THREE.Vector3(0.244, 0.408, 0.545) },  // --sky #5299c8, damped
-        uAmberC:{ value: new THREE.Vector3(AMBER.r, AMBER.g, AMBER.b) },
-        uHole:   { value: new THREE.Vector4(0, 0, 0, 0) },
-        uHoleAmt:{ value: 0.0 },
-        uAspect: { value: vw() / Math.max(1, vh()) },
-      },
-      vertexShader: [
-        "attribute float aPhase; varying float vPhase; varying vec2 vNdc;",
-        "void main(){",
-        "  vPhase = aPhase;",
-        "  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);",
-        "  vNdc = gl_Position.xy / max(0.0001, gl_Position.w);",
-        "}"].join("\n"),
-      fragmentShader: [
-        "precision highp float;",
-        "uniform float uOpac; uniform float uPulse; uniform float uTime; uniform float uMix;",
-        "uniform vec3 uCol; uniform vec3 uAmberC;",
-        "uniform vec4 uHole; uniform float uHoleAmt; uniform float uAspect;",
-        "varying float vPhase; varying vec2 vNdc;",
-        "void main(){",
-        "  float pulse = 0.35 + 0.65 * (0.5 + 0.5 * sin(vPhase * 6.2831 + uTime * 2.2));",
-        "  float a = uOpac * mix(1.0, pulse, uPulse);",
-        "  vec3 col = mix(uCol, uAmberC, uMix * 0.45);",
-        "  vec2 q = abs((vNdc - uHole.xy) * vec2(uAspect, 1.0)) - uHole.zw * vec2(uAspect, 1.0);",
-        "  float s = length(max(q, 0.0)) + min(max(q.x, q.y), 0.0);",
-        "  float k = 1.0 - smoothstep(-0.10, 0.52, s);",
-        "  gl_FragColor = vec4(col, a * (1.0 - uHoleAmt * k));",
-        "}"].join("\n"),
-      transparent: true, depthWrite: false, depthTest: false, blending: THREE.NormalBlending,
-    });
-  }
-  var EC_MAX = EFULL.length / 2;
-  var ePos = new Float32Array(EC_MAX * 6);
-  var ePhase = new Float32Array(EC_MAX * 2);
-  for (var ph = 0; ph < EC_MAX; ph++) { var pv = rnd(); ePhase[ph * 2] = pv; ePhase[ph * 2 + 1] = pv + 0.5; }
-  var eGeo = new THREE.BufferGeometry();
-  eGeo.setAttribute("position", new THREE.BufferAttribute(ePos, 3));
-  eGeo.setAttribute("aPhase", new THREE.BufferAttribute(ePhase, 1));
-  var eMat = edgeMaterial();
-  var edges = new THREE.LineSegments(eGeo, eMat);
-  edges.frustumCulled = false; scene.add(edges);
-
-  // active edge set: spine by default on graph beats, full on beat 15 when FPS is healthy
-  var eIdx = ESPINE, eCount = ESPINE.length / 2, edgesDirty = true;
-  function setEdgeSet(arr) {
-    if (eIdx === arr) return;
-    eIdx = arr; eCount = arr.length / 2;
-    eGeo.setDrawRange(0, eCount * 2);
-    edgesDirty = true;
-  }
-  eGeo.setDrawRange(0, eCount * 2);
-  function syncEdges() {
-    for (var i = 0; i < eCount; i++) {
-      var s = eIdx[i * 2] * 3, t = eIdx[i * 2 + 1] * 3, o = i * 6;
-      ePos[o] = livePos[s]; ePos[o + 1] = livePos[s + 1]; ePos[o + 2] = livePos[s + 2];
-      ePos[o + 3] = livePos[t]; ePos[o + 4] = livePos[t + 1]; ePos[o + 5] = livePos[t + 2];
-    }
-    eGeo.attributes.position.needsUpdate = true;
-    edgesDirty = false;
-  }
-
-  // molecule sub-layer: the real edge subset around the chosen node (beat 11)
-  var MC = molEdges.length / 2;
-  var mPos = new Float32Array(MC * 6);
-  var mPhase = new Float32Array(MC * 2);
-  for (var mp = 0; mp < MC * 2; mp++) mPhase[mp] = rnd();
-  var mGeo = new THREE.BufferGeometry();
-  mGeo.setAttribute("position", new THREE.BufferAttribute(mPos, 3));
-  mGeo.setAttribute("aPhase", new THREE.BufferAttribute(mPhase, 1));
-  var mMat = edgeMaterial();
-  var molLayer = new THREE.LineSegments(mGeo, mMat);
-  molLayer.frustumCulled = false; scene.add(molLayer);
-  function syncMolEdges() {
-    for (var i = 0; i < MC; i++) {
-      var s = molEdges[i * 2] * 3, t = molEdges[i * 2 + 1] * 3, o = i * 6;
-      mPos[o] = livePos[s]; mPos[o + 1] = livePos[s + 1]; mPos[o + 2] = livePos[s + 2];
-      mPos[o + 3] = livePos[t]; mPos[o + 4] = livePos[t + 1]; mPos[o + 5] = livePos[t + 2];
-    }
-    mGeo.attributes.position.needsUpdate = true;
-  }
-
-  // ---- camera keyframes per beat (interpolated beat -> beat+1 by eased frac) ----
-  var molCx = real[molIdx * 3], molCy = real[molIdx * 3 + 1], molCz = real[molIdx * 3 + 2];
-  // Camera keys are columns 7..14 of BEATS_DEF. `mol` (column 14) resolves here, now that
-  // the real graph positions exist: a non-zero value aims the look-at at the demonstrated
-  // molecule, scaled, which is how the molecule and case-study beats frame it.
-  // `hold` is the fraction of the beat the camera keeps its own frame before easing to the
-  // next key; low values create intra-beat moves (the context push-in, the stack dolly).
-  var CAM = {
-    rad: col(7), phi: col(8), theta: col(9),
-    lookY: BEATS_DEF.map(function (r) { return r[14] ? molCy * r[14] : r[10]; }),
-    lookX: BEATS_DEF.map(function (r) { return r[14] ? molCx * r[14] : 0; }),
-    lookZ: BEATS_DEF.map(function (r) { return r[14] ? molCz * r[14] : r[11]; }),
-    pan: col(12), hold: col(13),
-  };
-  (function checkCam() {
-    for (var k in CAM) {
-      if (CAM[k].length !== NB) throw new Error("CAM." + k + " has " + CAM[k].length + " entries, expected " + NB);
-      for (var i = 0; i < NB; i++) {
-        if (typeof CAM[k][i] !== "number" || CAM[k][i] !== CAM[k][i]) {
-          throw new Error("CAM." + k + "[" + i + "] (" + BEATS_DEF[i][0] + ") is not a number");
-        }
-      }
-    }
-  })();
-  var _look = new THREE.Vector3(), _right = new THREE.Vector3();
-  var cs = { rad: CAM.rad[0], phi: CAM.phi[0], theta: CAM.theta[0], lookY: 0, lookX: 0, lookZ: 0, pan: 0 };
-  var camT = { rad: 0, phi: 0, theta: 0, lookY: 0, lookX: 0, lookZ: 0, pan: 0 }; // reused target
-  function camTarget(beat, frac) {
-    var a = beat, b = Math.min(NB - 1, beat + 1), hold = CAM.hold[beat];
-    var t = inOutCubic(clamp01((frac - hold) / Math.max(0.0001, 1 - hold)));
-    camT.rad = lerp(CAM.rad[a], CAM.rad[b], t);
-    camT.phi = lerp(CAM.phi[a], CAM.phi[b], t);
-    camT.theta = lerp(CAM.theta[a], CAM.theta[b], t);
-    camT.lookY = lerp(CAM.lookY[a], CAM.lookY[b], t);
-    camT.lookX = lerp(CAM.lookX[a], CAM.lookX[b], t);
-    camT.lookZ = lerp(CAM.lookZ[a], CAM.lookZ[b], t);
-    camT.pan = lerp(CAM.pan[a], CAM.pan[b], t);
-    return camT;
-  }
-  function applyCam(beat, frac, dt, snap) {
-    var t = camTarget(beat, frac);
-    var k = (RM || snap) ? 1 : 1 - Math.pow(0.0006, dt);
-    cs.rad += (t.rad - cs.rad) * k; cs.phi += (t.phi - cs.phi) * k; cs.theta += (t.theta - cs.theta) * k;
-    cs.lookY += (t.lookY - cs.lookY) * k; cs.lookX += (t.lookX - cs.lookX) * k; cs.lookZ += (t.lookZ - cs.lookZ) * k;
-    cs.pan += (t.pan - cs.pan) * k;
-    var sp = Math.sin(cs.phi), cp = Math.cos(cs.phi);
-    camera.position.set(cs.rad * sp * Math.sin(cs.theta), cs.rad * cp, cs.rad * sp * Math.cos(cs.theta));
-    _look.set(cs.lookX, cs.lookY, cs.lookZ);
-    var viewH = 2 * cs.rad * Math.tan((camera.fov * Math.PI / 180) / 2);
-    var panW = cs.pan * viewH * camera.aspect;
-    _right.subVectors(camera.position, _look).cross(camera.up).normalize();
-    camera.position.addScaledVector(_right, panW); _look.addScaledVector(_right, panW);
-    camera.lookAt(_look);
-  }
-
-  // ---- morph + per-beat formation FX (all buffers hoisted, no per-frame allocation) ----
-  var time = 0;
-  function morph(beat, frac) {
-    var A = F[BEAT_FORM[beat]];
-    var PREV = F[BEAT_FORM[Math.max(0, beat - 1)]];
-    var blend = beat === 0 ? 1 : clamp01(frac / TRANS[beat]);
-    var be = RM ? 1 : MEASE[beat](blend);
-
-    var form = BEAT_FORM[beat];
-    var isDrift = form === "DRIFT" || form === "DRIFT2";
-    var isShell = form === "SHELL";
-    var isReal = form === "REAL";
-    var spin = 0;
-    if (!RM) {
-      if (isDrift) spin = time * 0.045;
-      else if (isShell) spin = time * 0.06;
-      else if (beat === B.thesis) spin = time * 0.06;  // the payoff reveal: slow auto-rotate
-      else if (isReal) spin = time * 0.025;
-    }
-    var cy = Math.cos(spin), sy = Math.sin(spin);
-
-    // hype storm: turbulence ramps with local progress
-    var stormAmp = (beat === B.hype && !RM) ? (6 + 16 * outQuart(frac)) : 0;
-    // second-brain satellite ring
-    var ringT = beat === B.secondbrain ? outQuart(clamp01((frac - 0.15) / 0.5)) : 0;
-    var ringSpin = RM ? 0 : time * 0.35;
-    // building lattice: rows rise with outExpo stagger (per-node blend overrides global)
-    var lattice = beat === B.building;
-    // alloy: two lobes merge toward the shared core
-    var mergeT = beat === B.alloy ? inOutCubic(clamp01((frac - 0.15) / 0.6)) : 1;
-    var lobeOff = beat === B.alloy ? 30 * (1 - mergeT) : 0;
-    var breathe = (isReal && !RM) ? (1 + Math.sin(time * 0.5) * 0.010) : 1;
-
-    for (var i = 0; i < N; i++) {
-      var j = i * 3;
-      var t = be;
-      if (lattice) t = RM ? 1 : outExpo(clamp01((frac * 1.7 - rowDelay[i] * 0.9) / 0.55));
-      var x = PREV[j] + (A[j] - PREV[j]) * t;
-      var y = PREV[j + 1] + (A[j + 1] - PREV[j + 1]) * t;
-      var z = PREV[j + 2] + (A[j + 2] - PREV[j + 2]) * t;
-      if (ringT && i % RINGSTEP === 0) {
-        var ra = ringA[i] + ringSpin;
-        x += (Math.cos(ra) * 36 - x) * ringT;
-        y += (Math.sin(ringA[i] * 3) * 4 - y) * ringT;
-        z += (Math.sin(ra) * 36 - z) * ringT;
-      }
-      if (lobeOff) x += lobe[i] * lobeOff;
-      if (stormAmp) {
-        x += Math.sin(time * turb[j + 2] + turb[j]) * stormAmp;
-        y += Math.cos(time * turb[j + 2] + turb[j + 1]) * stormAmp * 0.7;
-        z += Math.sin(time * turb[j + 2] * 0.9 + turb[j]) * stormAmp;
-      }
-      if (breathe !== 1) { x *= breathe; y *= breathe; z *= breathe; }
-      if (spin) { var nx = x * cy - z * sy; z = x * sy + z * cy; x = nx; }
-      livePos[j] = x; livePos[j + 1] = y; livePos[j + 2] = z;
-    }
-    geo.attributes.position.needsUpdate = true;
-    edgesDirty = true;
-  }
-
-  // ---- per-beat uniform state: focus, amber, edge opacity, pulse ----
-  var edgeOp = 0, molOp = 0;
-  function reveal(beat, frac) {
-    var focus = 0, focSel = 0, amber = 0, op = 1, eop = 0, mop = 0, pulse = 0, emix = 0;
-    if (beat === B.atom) {              // collapse, single accent hub, rest at 8%
-      focus = outQuart(clamp01((frac - 0.2) / 0.4)); focSel = 0;
-    } else if (beat === B.molecule) {   // spotlight the real cluster, edges draw in
-      focus = 1; focSel = outQuart(clamp01(frac / 0.25));
-      mop = outQuart(clamp01((frac - 0.3) / 0.45)) * 0.75;
-    } else if (beat === B.alloy) {      // release focus, ignite top-degree accent
-      focus = 1 - outQuart(clamp01(frac / 0.3)); focSel = 1;
-      mop = (1 - clamp01(frac / 0.2)) * 0.75;
-      amber = outQuart(clamp01((frac - 0.35) / 0.4));
-    } else if (beat === B.casestudy) {  // real graph framed close, light edges
-      amber = 1 - clamp01(frac / 0.3);
-      eop = outQuart(clamp01((frac - 0.2) / 0.5)) * 0.14;
-    } else if (beat === B.pipeline) {   // edge pulse traveling
-      eop = 0.14 + outQuart(clamp01(frac / 0.4)) * 0.10;
-      pulse = outQuart(clamp01((frac - 0.15) / 0.4));
-    } else if (beat === B.thesis) {     // full graph, edges at full opacity, accent glow
-      eop = 0.24 + outQuart(clamp01(frac / 0.35)) * 0.28;
-      pulse = 1 - clamp01(frac / 0.3);
-      emix = outQuart(clamp01((frac - 0.2) / 0.5));
-    } else if (beat === B.end) {        // dissolve back to drift
-      eop = 0.52 * (1 - inOutCubic(clamp01(frac / 0.5)));
-      emix = 1 - clamp01(frac / 0.4);
-      op = 1 - frac * 0.4;
-    } else if (beat === B.works) {      // near-static dim backdrop
-      op = 0.6 - frac * 0.15;
-    }
-    mat.uniforms.uFocus.value = focus;
-    mat.uniforms.uFocSel.value = focSel;
-    mat.uniforms.uAmber.value = amber;
-    mat.uniforms.uOpac.value = op;
-    eMat.uniforms.uOpac.value = eop;
-    eMat.uniforms.uPulse.value = pulse;
-    eMat.uniforms.uTime.value = time;
-    eMat.uniforms.uMix.value = emix;
-    mMat.uniforms.uOpac.value = mop;
-    mMat.uniforms.uTime.value = time;
-    edgeOp = eop; molOp = mop;
-  }
-
-  // ---- FPS EMA + spine degradation ----
-  var fpsEMA = 60, lowSince = -1, degraded = false;
-  function trackFPS(dt) {
-    if (dt <= 0) return;
-    var inst = 1 / dt; if (inst > 240) inst = 240;
-    fpsEMA += (inst - fpsEMA) * 0.08;
-    if (fpsEMA < 45) {
-      if (lowSince < 0) lowSince = time;
-      else if (time - lowSince > 2) degraded = true;
-    } else { lowSince = -1; }
-  }
-  window.__FPS = function () { return fpsEMA; };
-
-  // ---- panels, folio, rail (crossfade band at boundaries, direct indexing) ----
+  var NB = 15;
   var panelEls = [];
   for (var pe = 0; pe < NB; pe++) panelEls.push(document.getElementById("b" + pe));
-  var folioNo = document.getElementById("folio-no");
-  var folioName = document.getElementById("folio-name");
-  var railFill = document.getElementById("rail-fill");
-  var rstate = document.getElementById("rstate");
-  var hintEl = document.getElementById("hint");
-  var XFADE = 0.012;
-  var lastActive = -1;
-  var panelOp = new Float32Array(NB); // scratch, reused
-  function applyPanels(p, beat) {
-    for (var i = 0; i < NB; i++) panelOp[i] = 0;
-    var dist = p - BEATS[beat].in;
-    if (dist < XFADE && beat > 0) {
-      var f = outQuart(clamp01(dist / XFADE));
-      panelOp[beat] = f; panelOp[beat - 1] = 1 - f;
-    } else { panelOp[beat] = 1; }
-    for (var b = 0; b < NB; b++) {
-      var el = panelEls[b], o = panelOp[b];
-      if (o > 0.001) {
-        el.classList.add("live");
-        el.classList.toggle("on", b === beat);
-        el.style.opacity = o.toFixed(3);
-      } else if (el.style.opacity !== "0") {
-        el.style.opacity = "0";
-        el.classList.remove("live"); el.classList.remove("on");
-      }
-    }
-    if (beat !== lastActive) {
-      folioNo.textContent = String(beat).padStart(2, "0");
-      folioName.textContent = BEAT_NAMES[beat];
-      rstate.textContent = "field · " + STATE_LABEL[beat];
-      if (hintEl) hintEl.style.opacity = beat === 0 ? "0.75" : "0";
-      lastActive = beat;
-      markNav(beat);
-      if (beat > B.glossary) chipBeat(beat);   // terms are defined by then, so they can be recalled
-      measureHole(beat);
-      requestAnimationFrame(function () { markOverflow(beat); measureHole(beat); });
-    }
-    railFill.style.width = (p * 100).toFixed(2) + "%";
+
+  // Chrome never invents facts: page names and the page count are read out of the
+  // kicks in the prose itself, so a rewrite via prose_io carries straight through.
+  var BEAT_NAMES = [], TOTAL = NB - 1;
+  for (var bn = 0; bn < NB; bn++) {
+    var kEl = panelEls[bn] && panelEls[bn].querySelector(".kick");
+    var kt = kEl ? kEl.textContent.replace(/\s+/g, " ").trim() : "";
+    var km = kt.match(/^(\d+)\s*\/\s*(\d+)\s*·\s*(.+)$/);
+    if (km) { BEAT_NAMES.push(km[3].toUpperCase()); TOTAL = parseInt(km[2], 10) || TOTAL; }
+    else BEAT_NAMES.push(bn === 0 ? "HERO" : "PAGE " + bn);
+  }
+  function secTitle(i) {
+    var h = panelEls[i] && panelEls[i].querySelector("h2");
+    return h ? h.textContent.replace(/\s+/g, " ").trim().toUpperCase() : BEAT_NAMES[i];
   }
 
-  // ---- the text void ---------------------------------------------------------
-  // The prose does not sit on a plate. The field itself thins where the prose is, measured
-  // from the live .ph box and eased so the void travels with the beat instead of cutting in.
-  var holeT = [0, 0, 0, 0], holeC = [0, 0, 0, 0];
-  var holeAmtT = 0, holeAmtC = 0, holeReady = false;
-  function measureHole(beat) {
-    var el = panelEls[beat]; if (!el) return;
-    var box = el.querySelector(".ph"); if (!box) return;
-    var r = box.getBoundingClientRect();
-    if (!r.width || !r.height) return;
-    var W = vw(), H = vh();
-    holeT[0] = (r.left + r.width * 0.5) / W * 2 - 1;
-    holeT[1] = 1 - (r.top + r.height * 0.5) / H * 2;
-    holeT[2] = (r.width / W) * 0.88;
-    holeT[3] = (r.height / H) * 0.86;
-    // centred beats are the airy turns: there the field steps back rather than clearing out
-    holeAmtT = el.classList.contains("side-c") ? 0.76 : 0.88;
-    if (!holeReady) {
-      holeC[0] = holeT[0]; holeC[1] = holeT[1]; holeC[2] = holeT[2]; holeC[3] = holeT[3];
-      holeAmtC = holeAmtT; holeReady = true;
+  // ---- the vault data ------------------------------------------------------------
+  var D = window.__SBF || null;
+  var N = D ? D.n : 0;
+  var PX = new Float32Array(N), PY = new Float32Array(N), PZ = new Float32Array(N);
+  var DEG = new Float32Array(N), R3D = 1e-6;
+  if (D) {
+    for (var i0 = 0; i0 < N; i0++) {
+      PX[i0] = D.pos[i0 * 3]; PY[i0] = D.pos[i0 * 3 + 1]; PZ[i0] = D.pos[i0 * 3 + 2];
+      DEG[i0] = D.deg[i0];
+      var rr = Math.sqrt(PX[i0] * PX[i0] + PY[i0] * PY[i0] + PZ[i0] * PZ[i0]);
+      if (rr > R3D) R3D = rr;
     }
   }
-  function writeHole(dt, snap) {
-    var e = snap ? 1 : Math.min(1, dt * 6.5);
-    for (var i = 0; i < 4; i++) holeC[i] += (holeT[i] - holeC[i]) * e;
-    holeAmtC += (holeAmtT - holeAmtC) * e;
-    var m = [mat, eMat, mMat];
-    for (var j = 0; j < 3; j++) {
-      m[j].uniforms.uHole.value.set(holeC[0], holeC[1], holeC[2], holeC[3]);
-      m[j].uniforms.uHoleAmt.value = holeAmtC;
+  var SPINE = (D && D.spine && D.spine.length) ? D.spine : [];
+  var EFULL = (D && D.e && D.e.length) ? D.e : SPINE;
+  var MAXDEG = D ? D.md : 60;
+  var GRP = (D && D.grp && D.grp.length === N) ? D.grp : null;
+  var GNAMES = (D && D.g) ? D.g : [];
+  // adjacency index over the full edge list, for the red click-highlight
+  var adjHead = null, adjNext = null, adjEdge = null;
+  if (EFULL.length) {
+    adjHead = new Int32Array(N).fill(-1);
+    adjNext = new Int32Array(EFULL.length);
+    adjEdge = new Int32Array(EFULL.length);
+    var ac = 0;
+    for (var ae = 0; ae < EFULL.length; ae += 2) {
+      var a1 = EFULL[ae], b1 = EFULL[ae + 1];
+      adjEdge[ac] = ae; adjNext[ac] = adjHead[a1]; adjHead[a1] = ac; ac++;
+      adjEdge[ac] = ae; adjNext[ac] = adjHead[b1]; adjHead[b1] = ac; ac++;
     }
   }
 
-  // ---- master apply: one function drives everything from global progress ----
-  var progress = 0, seeking = false;
-  function applyAll(p, dt) {
-    var bb = beatAt(p);
-    var beat = bb.beat, frac = bb.frac;
-    // edge set choice: full only on the thesis beat and only while FPS is healthy
-    setEdgeSet((beat === B.thesis && !degraded) ? EFULL : ESPINE);
-    morph(beat, frac);
-    reveal(beat, frac);
-    if (edgeOp > 0.001 && edgesDirty) syncEdges();      // skipped entirely on no-edge beats
-    if (molOp > 0.001) syncMolEdges();
-    applyCam(beat, frac, dt, seeking);
-    applyPanels(p, beat);
-    writeHole(dt, seeking);
-    renderer.render(scene, camera);
-  }
+  // ---- window manager ------------------------------------------------------------
+  var zTop = 20;
+  var wins = {};       // id -> win record
+  var order = [];      // open order for taskbar
+  var taskbtns = el("div", "tbtns");
+  taskbtns.style.cssText = "display:flex;gap:6px;overflow:hidden;";
 
-  // ---- render loop ----
-  var raf = null, last = (typeof performance !== "undefined" ? performance.now() : 0);
-  function tick(now) {
-    raf = requestAnimationFrame(tick);
-    var dt = Math.min(0.05, (now - last) / 1000); last = now;
-    time += dt;
-    trackFPS(dt);
-    applyAll(progress, dt);
-  }
-
-  // ---- scroll wiring ----
-  var scrollRoot = document.getElementById("scroll-root");
-  function sizeScroll() { scrollRoot.style.height = Math.round(vh() * totalW * 1.05) + "px"; }
-  sizeScroll();
-
-  // per-beat ticks on the rail: the printed scale
-  (function buildRailTicks() {
-    var rail = document.getElementById("rail");
-    for (var i = 1; i < NB; i++) {
-      var t = document.createElement("span");
-      t.className = "rtick";
-      t.style.left = (BEATS[i].in * 100).toFixed(2) + "%";
-      rail.appendChild(t);
+  function makeWin(id, opts) {
+    var root = el("div", "win hidden");
+    root.id = "win-" + id;
+    root.setAttribute("role", "dialog");
+    root.setAttribute("aria-label", opts.title);
+    var tbar = el("div", "tbar");
+    tbar.appendChild(el("span", "ticon", opts.glyph));
+    tbar.appendChild(el("span", "ttext", opts.title));
+    var btns = el("span", "btns");
+    var bMin = el("button", null, "_"); bMin.title = "Minimize";
+    var bMax = el("button", null, "&#9633;"); bMax.title = "Maximize";
+    var bX = el("button", null, "&times;"); bX.title = "Close";
+    btns.appendChild(bMin); btns.appendChild(bMax); btns.appendChild(bX);
+    tbar.appendChild(btns);
+    root.appendChild(tbar);
+    if (opts.menus) {
+      var mb = el("div", "menubar");
+      for (var m = 0; m < opts.menus.length; m++) mb.appendChild(el("span", null, opts.menus[m]));
+      root.appendChild(mb);
     }
-  })();
-
-  function nativeScrollFallback() {
-    function onScroll() {
-      var m = document.documentElement.scrollHeight - vh();
-      progress = m > 0 ? clamp01((window.scrollY || window.pageYOffset || 0) / m) : 0;
+    if (opts.ruler) root.appendChild(el("div", "ruler"));
+    if (opts.tools) root.appendChild(opts.tools);
+    var client = el("div", "client");
+    root.appendChild(client);
+    var status = null;
+    if (opts.status) {
+      status = el("div", "statusbar");
+      for (var s = 0; s < opts.status.length; s++) status.appendChild(el("span", null, opts.status[s]));
+      root.appendChild(status);
     }
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-  }
-  if (window.gsap && window.ScrollTrigger && !RM) {
-    gsap.registerPlugin(ScrollTrigger);
-    ScrollTrigger.create({
-      trigger: "#scroll-root", start: "top top", end: "bottom bottom",
-      scrub: 0.5,
-      onUpdate: function (self) { if (!seeking) progress = self.progress; },
+    document.body.appendChild(root);
+
+    var w = { id: id, root: root, tbar: tbar, client: client, status: status,
+              title: opts.title, glyph: opts.glyph, open: false, min: false, max: false,
+              geo: opts.geo, prevGeo: null, btn: null, onOpen: opts.onOpen || null };
+    wins[id] = w;
+
+    bX.addEventListener("click", function (e) { e.stopPropagation(); closeWin(w); });
+    bMin.addEventListener("click", function (e) { e.stopPropagation(); minWin(w); });
+    bMax.addEventListener("click", function (e) { e.stopPropagation(); maxWin(w); });
+    root.addEventListener("pointerdown", function () { focusWin(w); });
+
+    // drag by the title bar
+    var drag = null;
+    tbar.addEventListener("pointerdown", function (e) {
+      if (e.target.closest("button") || narrow()) return;
+      focusWin(w);
+      var r = root.getBoundingClientRect();
+      drag = { dx: e.clientX - r.left, dy: e.clientY - r.top };
+      tbar.setPointerCapture(e.pointerId);
+      e.preventDefault();
     });
-  } else {
-    // reduced motion, or libs missing: native scroll still drives the piece,
-    // formations jump instantly (RM branch in morph), opacity fades kept.
-    nativeScrollFallback();
+    tbar.addEventListener("pointermove", function (e) {
+      if (!drag) return;
+      var x = clamp(e.clientX - drag.dx, -root.offsetWidth + 90, vw() - 90);
+      var y = clamp(e.clientY - drag.dy, 0, vh() - 80);
+      root.style.left = x + "px"; root.style.top = y + "px";
+      w.max = false;
+    });
+    tbar.addEventListener("pointerup", function () { drag = null; });
+    tbar.addEventListener("dblclick", function (e) { if (!e.target.closest("button")) maxWin(w); });
+    return w;
   }
 
-  function onResize() {
-    renderer.setPixelRatio(dprCap());
-    renderer.setSize(vw(), vh());
-    camera.aspect = vw() / vh(); camera.updateProjectionMatrix();
-    mat.uniforms.uScale.value = vh() * 0.5;
-    var asp = vw() / Math.max(1, vh());
-    mat.uniforms.uAspect.value = asp;
-    eMat.uniforms.uAspect.value = asp;
-    mMat.uniforms.uAspect.value = asp;
-    syncTallAsides();
-    if (lastActive >= 0) { markOverflow(lastActive); measureHole(lastActive); }
-    sizeScroll();
-    if (window.ScrollTrigger) ScrollTrigger.refresh();
+  function applyGeo(w) {
+    if (narrow()) return; // CSS maximizes everything on small screens
+    var g = w.geo;
+    w.root.style.left = g.x + "px"; w.root.style.top = g.y + "px";
+    w.root.style.width = g.w + "px"; w.root.style.height = g.h + "px";
   }
-  window.addEventListener("resize", onResize);
-  if (window.visualViewport) window.visualViewport.addEventListener("resize", onResize);
+  function focusWin(w) {
+    if (!w.open) return;
+    w.root.style.zIndex = ++zTop;
+    for (var k in wins) wins[k].root.classList.toggle("focus", wins[k] === w);
+    if (w.min) { w.min = false; w.root.classList.remove("hidden"); }
+    if (narrow()) { for (var k2 in wins) { if (wins[k2] !== w && wins[k2].open) { wins[k2].min = true; wins[k2].root.classList.add("hidden"); } } }
+    syncTaskbar();
+  }
+  function openWin(w) {
+    if (!w.open) {
+      w.open = true; w.min = false;
+      order.push(w);
+      w.root.classList.remove("hidden");
+      applyGeo(w);
+      if (w.onOpen) { var f = w.onOpen; w.onOpen = null; f(w); }
+    }
+    focusWin(w);
+  }
+  function closeWin(w) {
+    w.open = false; w.min = false;
+    w.root.classList.add("hidden");
+    order = order.filter(function (x) { return x !== w; });
+    syncTaskbar();
+  }
+  function minWin(w) {
+    w.min = true; w.root.classList.add("hidden");
+    syncTaskbar();
+  }
+  function maxWin(w) {
+    if (narrow()) return;
+    if (!w.max) {
+      var r = w.root.getBoundingClientRect();
+      w.prevGeo = { x: r.left, y: r.top, w: r.width, h: r.height };
+      w.root.style.left = "4px"; w.root.style.top = "4px";
+      w.root.style.width = (vw() - 8) + "px"; w.root.style.height = (vh() - 54) + "px";
+      w.max = true;
+    } else if (w.prevGeo) {
+      w.root.style.left = w.prevGeo.x + "px"; w.root.style.top = w.prevGeo.y + "px";
+      w.root.style.width = w.prevGeo.w + "px"; w.root.style.height = w.prevGeo.h + "px";
+      w.max = false;
+    }
+    focusWin(w);
+  }
+  function syncTaskbar() {
+    taskbtns.innerHTML = "";
+    for (var i = 0; i < order.length; i++) {
+      (function (w) {
+        var b = el("button", "tbtn" + (!w.min && w.root.classList.contains("focus") ? " on" : ""), w.glyph + "&ensp;" + w.title.split(" — ")[0].split(" &mdash; ")[0]);
+        b.addEventListener("click", function () {
+          if (w.min || !w.root.classList.contains("focus")) focusWin(w); else minWin(w);
+        });
+        w.btn = b;
+        taskbtns.appendChild(b);
+      })(order[i]);
+    }
+  }
 
-  // cancel rAF while the tab is hidden
-  document.addEventListener("visibilitychange", function () {
-    if (document.hidden) { if (raf) { cancelAnimationFrame(raf); raf = null; } }
-    else if (!raf) { last = (typeof performance !== "undefined" ? performance.now() : 0); raf = requestAnimationFrame(tick); }
+  // ---- build the four applications ------------------------------------------------
+  var W = vw(), H = vh();
+  var docW = clamp(Math.round(W * 0.52), 620, 780);
+  var winDoc = makeWin("doc", {
+    title: "ESSAY.DOC — TAKUMIWRITE 3.1", glyph: "&#128190;",
+    menus: ["File", "Edit", "View", "Insert", "Help"], ruler: true,
+    geo: { x: Math.round(W * 0.145), y: 34, w: docW, h: H - 96 },
+    status: ["PAGE 01 / " + TOTAL + " · " + BEAT_NAMES[1],
+             N ? N.toLocaleString("en-US") + " NOTES INDEXED" : "VAULT OFFLINE", "INS"],
+  });
+  var vaultTools = el("div", "vtools");
+  var autoLab = el("label", null, "");
+  var autoChk = document.createElement("input"); autoChk.type = "checkbox"; autoChk.checked = !RM;
+  autoLab.appendChild(autoChk); autoLab.appendChild(document.createTextNode(" AUTO-SPIN"));
+  var resetBtn = el("button", null, "RESET");
+  vaultTools.appendChild(autoLab); vaultTools.appendChild(resetBtn);
+  var winVault = makeWin("vault", {
+    title: "VAULT.EXE", glyph: "&#128452;", tools: vaultTools,
+    geo: { x: W - 470, y: 56, w: 430, h: 430 },
+    status: [N.toLocaleString("en-US") + " NOTES", (EFULL.length / 2).toLocaleString("en-US") + " LINKS", "DRAG TO SPIN · CLICK A NOTE"],
+  });
+  var winGloss = makeWin("gloss", {
+    title: "GLOSSARY.HLP", glyph: "&#128218;",
+    menus: ["Contents", "Index", "Back", "Print"],
+    geo: { x: Math.round(W * 0.3), y: 90, w: 560, h: H - 220 },
+  });
+  var winRefs = makeWin("refs", {
+    title: "REFS.TXT — NOTEPAD", glyph: "&#128203;",
+    menus: ["File", "Edit", "Search", "Help"],
+    geo: { x: Math.round(W * 0.34), y: 70, w: 600, h: H - 190 },
   });
 
-  // ---- one flow column per beat ---------------------------------------------
-  // Everything under the heading is collected into a single scrolling column, and the
-  // field note is lifted out beside it. Done here rather than in the markup so all
-  // eighteen beats stay editable as flat prose.
-  var SPLIT_MIN = 1181;              // matches the .ph.split collapse breakpoint in CSS
-  var TALL_ASIDES = [];
-  function syncTallAsides() {
-    var wide = vw() >= SPLIT_MIN;
-    for (var i = 0; i < TALL_ASIDES.length; i++) {
-      var t = TALL_ASIDES[i], inBox = t.aside.parentNode === t.box;
-      if (wide && inBox) { t.ph.appendChild(t.aside); t.ph.classList.add("split"); }
-      else if (!wide && !inBox) { t.box.appendChild(t.aside); t.ph.classList.remove("split"); }
-    }
-  }
-  (function buildFlow() {
-    for (var i = 0; i < panelEls.length; i++) {
-      var ph = panelEls[i] && panelEls[i].querySelector(".ph");
-      if (!ph) continue;
-      var box = ph.querySelector(":scope > .scrollbox");
-      if (box) {
-        // tall beats already own their scroll: only lift the field note out beside it,
-        // and only while there is width for two columns (see syncTallAsides)
-        var inner = box.querySelector(".essay");
-        if (inner) TALL_ASIDES.push({ ph: ph, box: box, aside: inner });
+  // ---- move the essay into its windows (runtime only: the markup stays put) ----
+  (function placeSections() {
+    var frag = document.createDocumentFragment();
+    for (var i = 0; i < NB; i++) {
+      if (!panelEls[i]) continue;
+      if (i === 4) {
+        var fl = el("div", "filelink", "<span class='fg'>&#128218;</span> OPEN: GLOSSARY.HLP - " + secTitle(4));
+        fl.addEventListener("click", function () { openWin(winGloss); });
+        frag.appendChild(fl);
+        winGloss.client.appendChild(panelEls[i]);
         continue;
       }
-      var kids = [].slice.call(ph.children);
-      var head = 0;
-      while (head < kids.length && (kids[head].classList.contains("kick") || kids[head].tagName === "H2")) head++;
-      // screens win the margin over the field note: a beat that shows the vault puts the
-      // vault beside the prose, and the field note rejoins the argument column
-      var aside = ph.querySelector(":scope > .ui-flow") || ph.querySelector(":scope > .essay");
-      var flow = document.createElement("div");
-      flow.className = "flow";
-      for (var k = head; k < kids.length; k++) { if (kids[k] !== aside) flow.appendChild(kids[k]); }
-      // centred beats are the turns: they stay one airy column, never a two-column spread,
-      // so their field note joins the flow rather than competing with it for height
-      if (aside && !panelEls[i].classList.contains("side-c")) {
-        ph.insertBefore(flow, aside); ph.classList.add("split");
-      } else {
-        if (aside) flow.appendChild(aside);
-        ph.appendChild(flow);
+      if (i === 14) {
+        winRefs.client.appendChild(panelEls[i]);
+        continue;
       }
+      frag.appendChild(panelEls[i]);
     }
-    syncTallAsides();
+    var fl2 = el("div", "filelink", "<span class='fg'>&#128203;</span> OPEN: REFS.TXT - " + secTitle(14));
+    fl2.addEventListener("click", function () { openWin(winRefs); });
+    frag.appendChild(fl2);
+    winDoc.client.appendChild(frag);
+    var main = document.getElementById("panels");
+    if (main) main.style.display = "none";
   })();
 
-  // ---- term chips ------------------------------------------------------------
-  // The glossary beat is the single source of truth: its six definitions are read out of
-  // the markup, then the first mention of each term in every later beat becomes a chip
-  // carrying that definition. Done at runtime rather than in the prose so the copy stays
-  // plain text and a rewrite cannot break, or forget to re-apply, the markup.
+  // the meme quote reads as an embedded object: wrap its text on white
+  (function wrapQuote() {
+    var q = document.querySelector("blockquote.q");
+    if (!q) return;
+    var paper = el("span", "qpaper");
+    var kids = [].slice.call(q.childNodes);
+    for (var i = 0; i < kids.length; i++) {
+      if (kids[i].classList && kids[i].classList.contains("qsrc")) break;
+      paper.appendChild(kids[i]);
+    }
+    q.insertBefore(paper, q.firstChild);
+  })();
+
+  // ---- VAULT.EXE ------------------------------------------------------------------
+  var vcanvas = document.createElement("canvas");
+  winVault.client.appendChild(vcanvas);
+  var vctx = vcanvas.getContext("2d");
+  var VS = { theta: 0.6, zoom: 1, auto: !RM, sel: -1, hover: -1, dirty: true, cw: 0, ch: 0 };
+  var SX = new Float32Array(N), SY = new Float32Array(N);
+  function vaultSize() {
+    var r = winVault.client.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    VS.cw = r.width; VS.ch = r.height;
+    if (vcanvas.width !== Math.round(r.width * dpr)) {
+      vcanvas.width = Math.round(r.width * dpr); vcanvas.height = Math.round(r.height * dpr);
+      vctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    VS.dirty = true;
+  }
+  function project() {
+    var ct = Math.cos(VS.theta), st = Math.sin(VS.theta);
+    var s = Math.min(VS.cw, VS.ch) * 0.44 * VS.zoom / R3D;
+    var cx = VS.cw / 2, cy = VS.ch / 2;
+    for (var i = 0; i < N; i++) {
+      var x = PX[i] * ct + PZ[i] * st;
+      var y = PY[i] * 0.92 - (PX[i] * st - PZ[i] * ct) * 0.16;
+      SX[i] = cx + x * s; SY[i] = cy - y * s;
+    }
+  }
+  function drawVault() {
+    if (!N) return;
+    project();
+    vctx.clearRect(0, 0, VS.cw, VS.ch);
+    vctx.strokeStyle = "rgba(16,36,140,0.3)"; vctx.lineWidth = 0.75;
+    vctx.beginPath();
+    for (var e = 0; e < SPINE.length; e += 2) {
+      var a = SPINE[e], b = SPINE[e + 1];
+      vctx.moveTo(SX[a], SY[a]); vctx.lineTo(SX[b], SY[b]);
+    }
+    vctx.stroke();
+    vctx.fillStyle = "#10248c";
+    for (var i = 0; i < N; i++) {
+      var hot = DEG[i] / MAXDEG > 0.4;
+      if (hot) continue;
+      vctx.fillRect(SX[i] - 1.1, SY[i] - 1.1, 2.2, 2.2);
+    }
+    vctx.fillStyle = "#d21f1f";
+    for (var j = 0; j < N; j++) {
+      if (DEG[j] / MAXDEG <= 0.4) continue;
+      var r2 = Math.min(3.2, 1.6 + Math.sqrt(DEG[j]) * 0.12);
+      vctx.fillRect(SX[j] - r2, SY[j] - r2, r2 * 2, r2 * 2);
+    }
+    if (VS.sel >= 0 && adjHead) {
+      vctx.strokeStyle = "rgba(210,31,31,0.75)"; vctx.lineWidth = 1.2;
+      vctx.beginPath();
+      for (var p = adjHead[VS.sel]; p !== -1; p = adjNext[p]) {
+        var ee = adjEdge[p], sa = EFULL[ee], sb = EFULL[ee + 1];
+        vctx.moveTo(SX[sa], SY[sa]); vctx.lineTo(SX[sb], SY[sb]);
+      }
+      vctx.stroke();
+      vctx.fillStyle = "#d21f1f";
+      vctx.fillRect(SX[VS.sel] - 4, SY[VS.sel] - 4, 8, 8);
+      vctx.strokeStyle = "#10248c"; vctx.lineWidth = 1.5;
+      vctx.strokeRect(SX[VS.sel] - 6.5, SY[VS.sel] - 6.5, 13, 13);
+    }
+    if (VS.hover >= 0 && VS.hover !== VS.sel) {
+      vctx.strokeStyle = "#10248c"; vctx.lineWidth = 1.2;
+      vctx.strokeRect(SX[VS.hover] - 5, SY[VS.hover] - 5, 10, 10);
+    }
+    VS.dirty = false;
+  }
+  function pick(mx, my) {
+    var best = -1, bd = 9 * 9;
+    for (var i = 0; i < N; i++) {
+      var dx = SX[i] - mx, dy = SY[i] - my, d = dx * dx + dy * dy;
+      if (d < bd) { bd = d; best = i; }
+    }
+    return best;
+  }
+  function noteLabel(i) {
+    var g = (GRP && GNAMES[GRP[i]]) ? String(GNAMES[GRP[i]]).toUpperCase() : "NOTE";
+    return g + " #" + i + " · " + DEG[i] + " LINK" + (DEG[i] === 1 ? "" : "S");
+  }
+  function vaultStatus(txt) {
+    if (winVault.status) winVault.status.children[2].textContent = txt;
+  }
+  var vdrag = null, vmoved = 0;
+  vcanvas.addEventListener("pointerdown", function (e) {
+    vdrag = { x: e.clientX, th: VS.theta }; vmoved = 0;
+    vcanvas.setPointerCapture(e.pointerId);
+  });
+  vcanvas.addEventListener("pointermove", function (e) {
+    var r = vcanvas.getBoundingClientRect();
+    if (vdrag) {
+      var dx = e.clientX - vdrag.x;
+      vmoved = Math.max(vmoved, Math.abs(dx));
+      VS.theta = vdrag.th + dx * 0.007; VS.dirty = true;
+      return;
+    }
+    var h = pick(e.clientX - r.left, e.clientY - r.top);
+    if (h !== VS.hover) {
+      VS.hover = h; VS.dirty = true;
+      vaultStatus(h >= 0 ? noteLabel(h) : (VS.sel >= 0 ? noteLabel(VS.sel) + " · SELECTED" : "DRAG TO SPIN · CLICK A NOTE"));
+    }
+  });
+  vcanvas.addEventListener("pointerup", function (e) {
+    if (vdrag && vmoved < 5) {
+      var r = vcanvas.getBoundingClientRect();
+      var h = pick(e.clientX - r.left, e.clientY - r.top);
+      VS.sel = (h === VS.sel) ? -1 : h;
+      vaultStatus(VS.sel >= 0 ? noteLabel(VS.sel) + " · SELECTED" : "DRAG TO SPIN · CLICK A NOTE");
+      VS.dirty = true;
+    }
+    vdrag = null;
+  });
+  vcanvas.addEventListener("wheel", function (e) {
+    e.preventDefault();
+    VS.zoom = clamp(VS.zoom * (e.deltaY > 0 ? 0.9 : 1.1), 0.5, 4);
+    VS.dirty = true;
+  }, { passive: false });
+  autoChk.addEventListener("change", function () { VS.auto = autoChk.checked; });
+  resetBtn.addEventListener("click", function () {
+    VS.theta = 0.6; VS.zoom = 1; VS.sel = -1; VS.dirty = true;
+    vaultStatus("DRAG TO SPIN · CLICK A NOTE");
+  });
+  if ("ResizeObserver" in window) new ResizeObserver(vaultSize).observe(winVault.client);
+
+  var vlast = 0;
+  function vtick(now) {
+    requestAnimationFrame(vtick);
+    var dt = vlast ? Math.min(0.05, (now - vlast) / 1000) : 0.016; vlast = now;
+    if (!winVault.open || winVault.min || document.hidden) return;
+    if (VS.auto && !vdrag) { VS.theta += dt * 0.1; VS.dirty = true; }
+    if (VS.dirty) drawVault();
+  }
+  requestAnimationFrame(vtick);
+
+  // ---- ESSAY.DOC status: which page is under the caret ----
+  var docSecs = [];
+  for (var ds = 0; ds < NB; ds++) { if (ds !== 4 && ds !== 14 && panelEls[ds]) docSecs.push({ i: ds, el: panelEls[ds] }); }
+  winDoc.client.addEventListener("scroll", function () {
+    var top = winDoc.client.scrollTop + 80, cur = docSecs[0];
+    for (var i = 0; i < docSecs.length; i++) { if (docSecs[i].el.offsetTop <= top) cur = docSecs[i]; }
+    if (winDoc.status) winDoc.status.children[0].textContent =
+      "PAGE " + String(cur.i).padStart(2, "0") + " / " + TOTAL + " · " + BEAT_NAMES[cur.i];
+  }, { passive: true });
+
+  // ---- term chips: OS tooltips over dashed words ----------------------------------
   var TERM_DEFS = {};
   (function buildTerms() {
-    var g = panelEls[B.glossary];
+    var g = panelEls[4];
     if (!g) return;
     var items = g.querySelectorAll(".gterm");
     for (var i = 0; i < items.length; i++) {
       var k = items[i].querySelector(".gk"), d = items[i].querySelector(".gd");
       if (!k || !d) continue;
       var word = k.textContent.trim().toLowerCase();
-      var def = d.textContent.replace(/^DRAFT, REWRITE ME\.\s*/, "").trim();
-      if (word) TERM_DEFS[word] = def;
+      if (word) TERM_DEFS[word] = d.textContent.trim();
     }
   })();
-
-  // singular and plural, longest first so "molecules" never matches as "molecule" + "s"
   function termPattern() {
     var words = Object.keys(TERM_DEFS);
     if (!words.length) return null;
     words.sort(function (a, b) { return b.length - a.length; });
     return new RegExp("\\b(" + words.join("|") + ")(s)?\\b", "i");
   }
-
-  var SKIP = /^(CITE|B|SPAN|CODE)$/;   // never chip inside a citation or a UI mock label
+  var SKIP = /^(CITE|B|SPAN|CODE)$/;
   function chipBeat(idx) {
-    var el = panelEls[idx];
-    if (!el || el.__chipped) return;
-    el.__chipped = true;
+    var elx = panelEls[idx];
+    if (!elx || elx.__chipped) return;
+    elx.__chipped = true;
     var re = termPattern();
     if (!re) return;
     var seen = {};
-    var hosts = el.querySelectorAll(".blist li, .body, .essay, .aclaim, .lrow .lc, .ghost");
+    var hosts = elx.querySelectorAll(".blist li, .body, .essay, .aclaim, .lrow .lc, .ghost");
     for (var h = 0; h < hosts.length; h++) {
       var walker = document.createTreeWalker(hosts[h], NodeFilter.SHOW_TEXT, {
         acceptNode: function (n) {
@@ -1707,8 +1123,7 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
         seen[key] = true;
         var after = node.splitText(m.index);
         after.nodeValue = after.nodeValue.slice(m[0].length);
-        var chip = document.createElement("span");
-        chip.className = "t";
+        var chip = el("span", "t");
         chip.setAttribute("tabindex", "0");
         chip.setAttribute("data-def", TERM_DEFS[key]);
         chip.textContent = m[0];
@@ -1716,7 +1131,7 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
       }
     }
   }
-  // tap to open on touch, where there is no hover
+  for (var cb = 5; cb < NB; cb++) chipBeat(cb);
   document.addEventListener("click", function (e) {
     var chip = e.target.closest && e.target.closest(".t");
     var open = document.querySelector(".t.open");
@@ -1724,109 +1139,142 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     if (chip) chip.classList.toggle("open");
   });
 
-  // ---- topbar beat index ----------------------------------------------------
-  // Seven landmarks. An eighteen-beat scroll piece with no way in but the wheel is a trap;
-  // these seek the document, not the engine, so the scroll position stays truthful.
-  var NAV = [
-    { b: B.context, t: "Context" }, { b: B.pkm,      t: "PKM" },     { b: B.hype,   t: "Hype" },
-    { b: B.method,  t: "Method" },  { b: B.casestudy, t: "Case" },   { b: B.thesis, t: "Thesis" },
-    { b: B.works,   t: "Refs" },
+  // ---- desktop icons --------------------------------------------------------------
+  var ICONS = [
+    { w: function () { return winDoc; },   g: "&#128190;", label: "ESSAY.DOC" },
+    { w: function () { return winVault; }, g: "&#128452;", label: "VAULT.EXE" },
+    { w: function () { return winGloss; }, g: "&#128218;", label: "GLOSSARY.HLP" },
+    { w: function () { return winRefs; },  g: "&#128203;", label: "REFS.TXT" },
   ];
-  var navBtns = [];
-  (function buildNav() {
-    var ul = document.getElementById("beatnav");
-    if (!ul) return;
-    for (var i = 0; i < NAV.length; i++) {
-      (function (n) {
-        var li = document.createElement("li");
-        var btn = document.createElement("button");
-        btn.type = "button";
-        btn.textContent = n.t;
-        btn.addEventListener("click", function () { scrollToBeat(n.b); });
-        li.appendChild(btn); ul.appendChild(li); navBtns.push(btn);
-      })(NAV[i]);
-    }
-  })();
-  function scrollToBeat(idx) {
-    var b = BEATS[Math.max(0, Math.min(NB - 1, idx | 0))];
-    var p = b.in + (Math.min(b.out, 1) - b.in) * 0.5;
-    var m = document.documentElement.scrollHeight - vh();
-    if (m <= 0) return;
-    window.scrollTo({ top: Math.round(p * m), behavior: RM ? "auto" : "smooth" });
+  var iconsBox = el("div"); iconsBox.id = "icons";
+  for (var ic = 0; ic < ICONS.length; ic++) {
+    (function (def) {
+      var d = el("div", "dicon");
+      d.innerHTML = "<div class='px'></div><u>" + def.label + "</u>";
+      d.querySelector(".px").setAttribute("data-g", String.fromCodePoint(parseInt(def.g.slice(2, -1), 10)));
+      d.addEventListener("click", function () {
+        var was = d.classList.contains("sel");
+        var all = iconsBox.querySelectorAll(".dicon");
+        for (var q = 0; q < all.length; q++) all[q].classList.remove("sel");
+        d.classList.add("sel");
+        if (narrow() || was) openWin(def.w());   // second click opens; touch opens straight away
+      });
+      d.addEventListener("dblclick", function () { openWin(def.w()); });
+      iconsBox.appendChild(d);
+    })(ICONS[ic]);
   }
-  function markNav(beat) {
-    for (var i = 0; i < navBtns.length; i++) {
-      var next = (i + 1 < NAV.length) ? NAV[i + 1].b : NB;
-      navBtns[i].setAttribute("aria-current", (beat >= NAV[i].b && beat < next) ? "true" : "false");
+  document.body.appendChild(iconsBox);
+
+  // ---- taskbar + start menu -------------------------------------------------------
+  var taskbar = el("div"); taskbar.id = "taskbar";
+  var startbtn = el("button", null, "<span class='sq'></span>TAKUMI"); startbtn.id = "startbtn";
+  var clock = el("div"); clock.id = "clock";
+  taskbar.appendChild(startbtn); taskbar.appendChild(taskbtns); taskbar.appendChild(clock);
+  document.body.appendChild(taskbar);
+
+  var startmenu = el("div"); startmenu.id = "startmenu";
+  startmenu.innerHTML = "<div class='side'><b>TAKUMI OS</b></div>";
+  var items = el("div", "items");
+  for (var si = 0; si < ICONS.length; si++) {
+    (function (def) {
+      var mi = el("div", "mi", "<span class='fg'>" + def.g + "</span>" + def.label);
+      mi.addEventListener("click", function () { toggleStart(false); openWin(def.w()); });
+      items.appendChild(mi);
+    })(ICONS[si]);
+  }
+  items.appendChild(el("hr"));
+  var back = el("a", "mi", "<span class='fg'>&#8592;</span>Personal Project");
+  back.href = "index.html";
+  items.appendChild(back);
+  startmenu.appendChild(items);
+  document.body.appendChild(startmenu);
+  function toggleStart(force) {
+    var on = force != null ? force : !startmenu.classList.contains("open");
+    startmenu.classList.toggle("open", on);
+    startbtn.classList.toggle("open", on);
+  }
+  startbtn.addEventListener("click", function (e) { e.stopPropagation(); toggleStart(); });
+  document.addEventListener("pointerdown", function (e) {
+    if (!startmenu.contains(e.target) && e.target !== startbtn && !startbtn.contains(e.target)) toggleStart(false);
+  });
+
+  function tickClock() {
+    var d = new Date();
+    clock.textContent = String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+  }
+  tickClock(); setInterval(tickClock, 20000);
+
+  window.addEventListener("resize", function () {
+    for (var k in wins) {
+      var w = wins[k]; if (!w.open || narrow()) continue;
+      var r = w.root.getBoundingClientRect();
+      w.root.style.left = clamp(r.left, -r.width + 90, vw() - 90) + "px";
+      w.root.style.top = clamp(r.top, 0, vh() - 80) + "px";
     }
+    vaultSize();
+  });
+
+  // ---- boot ----------------------------------------------------------------------
+  var SRC_N = document.querySelectorAll(".refs li").length;
+  var boot = el("div"); boot.id = "boot";
+  boot.innerHTML = "<div class='hd'>TAKUMI OS 2.6 &mdash; ITASIA302 BUILD</div>"
+    + "<div class='bl'>MEMORY CHECK ........ FIRST BRAIN <span class='ok'>UNRELIABLE</span></div>"
+    + "<div class='bl'>MOUNTING VAULT ...... " + N.toLocaleString("en-US") + " NOTES <span class='ok'>OK</span></div>"
+    + "<div class='bl'>LINK TABLE .......... " + (EFULL.length / 2).toLocaleString("en-US") + " EDGES <span class='ok'>OK</span></div>"
+    + (SRC_N ? "<div class='bl'>WORKS CITED ......... " + SRC_N + " SOURCES <span class='ok'>OK</span></div>" : "")
+    + "<div class='bl'>STARTING WINDOW MANAGER<span class='ok'> _</span></div>"
+    + "<div class='skip'>CLICK TO SKIP</div>";
+  document.body.appendChild(boot);
+  var bootDone = false;
+  function endBoot() {
+    if (bootDone) return;
+    bootDone = true;
+    boot.classList.add("gone");
+    openWin(winDoc);
+    if (!narrow()) openWin(winVault);
+    focusWin(winDoc);
+  }
+  window.__BOOT_SKIP = endBoot;
+  boot.addEventListener("click", endBoot);
+  if (RM) { var bls = boot.querySelectorAll(".bl"); for (var bq = 0; bq < bls.length; bq++) bls[bq].classList.add("show"); setTimeout(endBoot, 150); }
+  else {
+    var lines = boot.querySelectorAll(".bl");
+    for (var li = 0; li < lines.length; li++) {
+      (function (elx, i) { setTimeout(function () { elx.classList.add("show"); }, 160 + i * 210); })(lines[li], li);
+    }
+    setTimeout(endBoot, 160 + lines.length * 210 + 420);
   }
 
-  // ---- overflow affordance ---------------------------------------------------
-  // A column that outruns the panel gets a bottom fade, a cue, and working wheel scroll.
-  // Without this the references beat silently swallowed fifteen of its twenty-four entries.
-  function onRegionScroll(e) {
-    var r = e.currentTarget;
-    r.classList.toggle("at-end", r.scrollTop + r.clientHeight >= r.scrollHeight - 4);
-  }
-  function markOverflow(beat) {
-    var el = panelEls[beat]; if (!el) return;
-    var ph = el.querySelector(".ph");
-    var regions = el.querySelectorAll(".flow, .scrollbox, .ph.split > .essay, .ph.split > .ui-flow");
-    var any = false;
-    for (var i = 0; i < regions.length; i++) {
-      var r = regions[i];
-      var over = (r.scrollHeight - r.clientHeight) > 12;   // above sub-pixel and trailing-margin noise
-      if (over) any = true;
-      r.classList.toggle("can-scroll", over);
-      r.classList.toggle("at-end", false);
-      if (over && !r.__wired) { r.__wired = true; r.addEventListener("scroll", onRegionScroll, { passive: true }); }
-    }
-    if (ph) ph.classList.toggle("has-overflow", any);
-  }
-  applyAll(0, 0.05);
-  raf = requestAnimationFrame(tick);
-
-  // ---- synchronous QA hooks: fully apply scroll state without rAF ----
-  window.__SEEK = function (p) {
-    seeking = true;
-    progress = clamp01(p);
-    // a few fixed-dt frames so morph, camera snap, uniforms, panels, folio all settle
-    for (var i = 0; i < 3; i++) { time += 0.05; applyAll(progress, 0.05); }
-    seeking = false;
-    var bb = beatAt(progress);
-    return { id: window.__SBF__, progress: progress, beat: bb.beat, frac: +bb.frac.toFixed(3),
-      name: BEAT_NAMES[bb.beat], edgeOp: +edgeOp.toFixed(3), fps: +fpsEMA.toFixed(1) };
-  };
+  // ---- QA hooks -------------------------------------------------------------------
+  var OWNER = {};
+  for (var ow = 0; ow < NB; ow++) OWNER[ow] = (ow === 4) ? winGloss : (ow === 14) ? winRefs : winDoc;
   window.__SEEK_BEAT = function (idx, frac) {
-    frac = (frac == null ? 0.6 : frac);
     idx = Math.max(0, Math.min(NB - 1, idx | 0));
-    var b = BEATS[idx];
-    return window.__SEEK(b.in + (Math.min(b.out, 1) - b.in) * frac);
+    endBoot();
+    var w = OWNER[idx];
+    openWin(w);
+    var sec = panelEls[idx];
+    if (sec) w.client.scrollTop = Math.max(0, sec.offsetTop - 24 + (frac ? frac * sec.offsetHeight * 0.6 : 0));
+    VS.dirty = true; drawVault();
+    return { id: window.__SBF__, beat: idx, name: BEAT_NAMES[idx], win: w.id, open: order.length };
   };
-  // Deterministic fingerprint of the whole visual state at a given progress. Used to prove
-  // that a refactor of the beat tables changed nothing: same input scroll, same numbers out.
-  // Reports the camera in its own spherical state, not world position: world position folds
-  // in a pan term scaled by viewport aspect, which would make the probe depend on window
-  // size. `time` is pinned so the spin-driven particle hash does not depend on wall clock.
-  window.__QA_FP = function (p) {
-    time = 12.34;
-    window.__SEEK(p);
-    var h = 0;
-    for (var i = 0; i < livePos.length; i += 97) {
-      h = (h * 31 + Math.round(livePos[i] * 100)) | 0;
+  window.__SEEK = function (p) {
+    var idx = Math.min(NB - 1, (Math.max(0, Math.min(1, p)) * NB) | 0);
+    return window.__SEEK_BEAT(idx, (p * NB) - idx);
+  };
+  window.__QA_FP = function () {
+    var out = [];
+    for (var k in wins) {
+      var w = wins[k], r = w.root.getBoundingClientRect();
+      out.push(k + ":" + (w.open ? 1 : 0) + (w.min ? "m" : "") + ":" + Math.round(r.left) + "," + Math.round(r.top));
     }
-    var r = function (v) { return Math.round(v * 1000) / 1000; };
-    return [r(cs.rad), r(cs.phi), r(cs.theta), r(cs.pan),
-            r(cs.lookX), r(cs.lookY), r(cs.lookZ),
-            h, r(mat.uniforms.uOpac.value), r(mat.uniforms.uAmber.value),
-            r(mat.uniforms.uFocus.value), r(mat.uniforms.uFocSel.value),
-            r(eMat.uniforms.uOpac.value), r(eMat.uniforms.uPulse.value),
-            r(eMat.uniforms.uMix.value), r(mMat.uniforms.uOpac.value), eCount].join(",");
+    return out.join("|");
   };
-  // NaN guard for QA: scans the live position buffer
   window.__QA_NAN = function () {
-    for (var i = 0; i < livePos.length; i++) { if (livePos[i] !== livePos[i]) return { ok: false, at: i }; }
-    return { ok: true, n: N, edges: eCount, hasData: !!D };
+    for (var i = 0; i < N; i++) {
+      if (PX[i] !== PX[i] || PY[i] !== PY[i] || PZ[i] !== PZ[i]) return { ok: false, at: i };
+    }
+    return { ok: true, n: N, edges: EFULL.length / 2, hasData: !!D };
   };
 })();
 </script>
