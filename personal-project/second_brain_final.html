@@ -8,30 +8,30 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=IBM+Plex+Sans:wght@400;500;600&family=Geist+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <style>
   :root {
-    /* Shared ITASIA302 tokens. Identical ground, ink and accent as personal-project/index.html
-       so this page reads as the same publication, not a second site. */
-    --bg:        #05060e;
-    --bg-deep:   #05060e;
-    --bg-soft:   #0b0d1a;
-    --slip:      #0f1322;   /* archival slip ground */
-    --ink:       #e0e6f0;
-    --ink-2:     #b8c4dc;
-    --ink-3:     #8e9bb8;
-    --faint:     #7c8aa8;
-    --ghost:     #5d6a86;
-    --line:      #182030;
-    --line-soft: #10151f;
+    /* The publication's structure (topbar, rail, survey grid, amber accent) is kept, but the
+       palette turns warm: this page is a personal essay written at a desk lamp, not a control
+       room. Ground is a warm near-black; ink is unbleached paper; the accent stays amber. */
+    --bg:        #080605;
+    --bg-deep:   #060504;
+    --bg-soft:   #0f0c09;
+    --slip:      #141008;   /* archival slip ground */
+    --ink:       #ece7dc;
+    --ink-2:     #cdc6b6;
+    --ink-3:     #a59c89;
+    --faint:     #8d8474;
+    --ghost:     #675f52;
+    --line:      #262019;
+    --line-soft: #1a1510;
 
-    --amber:     #e8634a;   /* personal-project section accent */
+    --amber:     #e8634a;   /* personal-project section accent, unchanged */
     --amber-hi:  #ff8a63;
     --amber-lo:  #e8634a14;
-    --sky:       #5299c8;
+    --paper:     #efe7d5;   /* the colour of a pulled index card */
+    --paper-ink: #262019;   /* what is written on it */
+    --sky:       #7d9aa8;   /* damped: links only, never the field */
     --teal:      #45a884;
-    --lilac:     #7272c0;
 
     --serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
     --sans:  "IBM Plex Sans", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
@@ -42,39 +42,39 @@
 
     --topbar-h: 52px;
 
-    /* Contact shadow for type sitting on the field. Per glyph, so it separates the letters
-       without drawing a box around the paragraph. Tight and dark: a shadow, never a glow. */
-    --lift:    0 1px 2px rgba(5, 6, 14, 0.95), 0 0 9px rgba(5, 6, 14, 0.85);
-    --lift-lg: 0 2px 6px rgba(5, 6, 14, 0.95), 0 0 28px rgba(5, 6, 14, 0.80);
+    /* Contact shadow for type sitting over the field. Tight and dark: a shadow, never a glow. */
+    --lift:    0 1px 2px rgba(6, 5, 4, 0.9), 0 0 9px rgba(6, 5, 4, 0.75);
+    --lift-lg: 0 2px 6px rgba(6, 5, 4, 0.9), 0 0 28px rgba(6, 5, 4, 0.7);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: auto; -webkit-text-size-adjust: 100%; }
+  html { -webkit-text-size-adjust: 100%; }
   body {
     background: var(--bg); color: var(--ink);
-    font-family: var(--sans); font-weight: 300;
+    font-family: var(--serif); font-weight: 400;
     -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
     overflow-x: hidden;
   }
 
-  /* Persistent WebGL field behind everything */
+  /* Persistent WebGL field behind everything: the vault as paper slips and ink threads. */
   #viz { position: fixed; inset: 0; z-index: 0; pointer-events: none; display: block; }
 
-  /* Global vignette scrim: focuses the eye, lifts type off the field. Not a card, not glass. */
+  /* Quiet top/bottom fades so the chrome always sits on solid ground. The field itself
+     thins under the prose (uHole in the shaders), so there is no reading-plate here. */
   #scrim {
     position: fixed; inset: 0; z-index: 1; pointer-events: none;
     background:
-      radial-gradient(125% 95% at 50% 48%, transparent 38%, rgba(5, 6, 14, 0.62) 100%),
-      linear-gradient(to bottom, rgba(5, 6, 14, 0.55) 0%, transparent 16%, transparent 78%, rgba(5, 6, 14, 0.62) 100%);
+      linear-gradient(to bottom, rgba(8, 6, 5, 0.82) 0%, transparent 14%,
+                      transparent 82%, rgba(8, 6, 5, 0.85) 100%);
   }
 
-  /* Site survey grid, same 52px module as every other ITASIA302 page. Masked out of the
-     centre so it never competes with the field or the prose: it only frames the edges. */
+  /* Site survey grid, same 52px module as every other ITASIA302 page, masked out of the
+     centre so it only frames the edges. */
   #grid {
-    position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.9;
+    position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.8;
     background-image:
-      linear-gradient(rgba(232, 99, 74, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(232, 99, 74, 0.05) 1px, transparent 1px);
+      linear-gradient(rgba(232, 99, 74, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232, 99, 74, 0.045) 1px, transparent 1px);
     background-size: 52px 52px;
     -webkit-mask-image: radial-gradient(120% 100% at 50% 50%, transparent 34%, #000 88%);
     mask-image: radial-gradient(120% 100% at 50% 50%, transparent 34%, #000 88%);
@@ -82,22 +82,22 @@
 
   /* Atmospheric film, verbatim from the sibling pages. */
   .grain {
-    position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: 0.03;
+    position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: 0.035;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/></filter><rect width='256' height='256' filter='url(%23n)'/></svg>");
     background-size: 220px 220px; mix-blend-mode: overlay;
   }
   .edge-gradient {
     position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 10000; pointer-events: none;
-    background: linear-gradient(90deg, transparent 0%, var(--sky) 22%, var(--lilac) 62%, transparent 100%);
-    opacity: 0.5;
+    background: linear-gradient(90deg, transparent 0%, var(--amber) 30%, var(--paper) 68%, transparent 100%);
+    opacity: 0.4;
   }
 
-  /* ---- topbar: same shell as personal-project/index.html, wired to beat seeks ---- */
+  /* ---- topbar: same shell as personal-project/index.html ---- */
   .topbar {
     position: fixed; top: 0; left: 0; right: 0; z-index: 50;
     display: flex; justify-content: space-between; align-items: center; gap: 24px;
     height: var(--topbar-h); padding: 0 clamp(18px, 3vw, 48px);
-    background: linear-gradient(180deg, rgba(5, 6, 14, 0.97) 0%, rgba(5, 6, 14, 0.80) 70%, transparent 100%);
+    background: linear-gradient(180deg, rgba(8, 6, 5, 0.96) 0%, rgba(8, 6, 5, 0.78) 70%, transparent 100%);
     backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
   }
   .topbar-title {
@@ -128,7 +128,7 @@
   }
   #rail .rtick { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--line); }
 
-  /* Folio: NN / 17 + beat name */
+  /* Folio: NN / 14 + beat name */
   #folio {
     position: fixed; right: clamp(18px, 3vw, 48px); bottom: 14px; z-index: 6;
     font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.22em;
@@ -147,121 +147,103 @@
   #readout .dot { width: 5px; height: 5px; background: var(--amber); border-radius: 50%;
     box-shadow: 0 0 8px rgba(232, 99, 74, 0.7); }
 
-  /* Beat panels: fixed, mutually exclusive, opacity driven by JS (crossfade band). */
+  /* ---- the essay flow -------------------------------------------------------------
+     Beats are ordinary sections in one reading column. The page scrolls like prose,
+     the field morphs behind it, and the gaps between beats are where the field solos. */
+  #panels { position: relative; z-index: 3; }
   .panel {
-    position: fixed; inset: 0; z-index: 3;
-    display: flex; align-items: center; padding: clamp(24px, 5vw, 96px);
-    opacity: 0; visibility: hidden; pointer-events: none;
-    padding-top: calc(var(--topbar-h) + clamp(16px, 3vh, 40px));
-    padding-bottom: clamp(52px, 8vh, 96px);
+    position: relative; display: flex; justify-content: center;
+    padding: clamp(40px, 9vh, 110px) clamp(20px, 4vw, 56px);
+    margin-bottom: clamp(160px, 34vh, 420px);
   }
-  .panel.live { visibility: visible; }
-  .side-l { justify-content: flex-start; }
-  .side-r { justify-content: flex-end; }
-  .side-c { justify-content: center; text-align: center; }
+  .panel:first-child {
+    min-height: 100svh; align-items: center;
+    padding-top: calc(var(--topbar-h) + 4vh);
+  }
+  #b13 { min-height: 72svh; align-items: center; margin-bottom: clamp(120px, 22vh, 300px); }
+  #b14 { margin-bottom: 16vh; }
+  .side-c { text-align: center; }
 
-  /* Text block. Edge-anchored, feathered dark scrim behind it so type never floats on raw
-     particles. Soft radial, not a box, not glass. Height is capped to the panel so long
-     beats can never bleed past the rail. */
-  .ph {
-    position: relative; max-width: 50ch;
-    max-height: 100%; display: flex; flex-direction: column; min-height: 0;
+  .ph { position: relative; width: 100%; max-width: 60ch; min-width: 0; }
+  /* wide beats */
+  #b4 .ph  { max-width: 88ch; }
+  #b14 .ph { max-width: 96ch; }
+
+  /* On wide screens the column steps left or right so the field owns the other half.
+     The camera pans the opposite way per beat, so text and field share the frame. */
+  @media (min-width: 1120px) {
+    .side-l { justify-content: flex-start; padding-left: clamp(56px, 9vw, 150px); }
+    .side-r { justify-content: flex-end;   padding-right: clamp(56px, 9vw, 150px); }
   }
-  /* The field itself opens up behind the prose (see uHole in the point and edge shaders),
-     so this is only a whisper of extra separation, not the dark plate it used to be.
-     Peak alpha stays low and the falloff is long, so no edge is ever findable. */
-  .ph::before {
-    content: ""; position: absolute; z-index: -1; inset: -30% -26%;
-    background: radial-gradient(ellipse at 48% 50%,
-      rgba(5, 6, 14, 0.34) 0%, rgba(5, 6, 14, 0.27) 34%,
-      rgba(5, 6, 14, 0.14) 58%, rgba(5, 6, 14, 0.05) 76%, transparent 92%);
-  }
-  /* centred beats put type on the densest part of the field, so they carry a little more */
-  .side-c .ph::before {
-    inset: -34% -30%;
-    background: radial-gradient(ellipse at 48% 50%,
-      rgba(5, 6, 14, 0.46) 0%, rgba(5, 6, 14, 0.38) 34%,
-      rgba(5, 6, 14, 0.20) 58%, rgba(5, 6, 14, 0.07) 76%, transparent 92%);
-  }
-  /* every text element on the field carries its own contact shadow */
+
+  /* every text element over the field carries its own contact shadow */
   .kick, .note, .ghost, .body, .blist li, .cite, .essay,
   blockquote.q, .lrow .lk, .lrow .lc, .refs li, .refnote,
-  .acard .ak, .acard .aclaim { text-shadow: var(--lift); }
+  .gterm .gk, .gterm .gd, .acard .ak, .acard .aclaim { text-shadow: var(--lift); }
   .ph h2 { text-shadow: var(--lift-lg); }
 
   .kick {
     font-family: var(--mono); font-weight: 400; font-size: 9.5px;
-    letter-spacing: 0.28em; text-transform: uppercase; color: var(--faint);
-    margin-bottom: 16px; flex: none;
+    letter-spacing: 0.3em; text-transform: uppercase; color: var(--faint);
+    margin-bottom: 18px;
   }
+  .kick::before {
+    content: ""; display: inline-block; width: 26px; height: 1px;
+    background: var(--amber); vertical-align: middle; margin-right: 12px; opacity: 0.85;
+  }
+  .side-c .kick::before { display: none; }
   .kick i { color: var(--amber); font-style: normal; }
 
-  /* Serif display, matching the section headings on every sibling page.
-     Argument beats sit calmer than the hero and turn beats: that contrast is the rhythm. */
+  /* Serif display. The hero and the turns carry more size than the argument beats:
+     that contrast is the rhythm of the piece. */
   .ph h2 {
-    font-family: var(--serif); font-weight: 300; letter-spacing: -0.028em;
-    line-height: 1.06; color: var(--ink);
-    font-size: clamp(30px, 3.9vw, 50px); flex: none;
+    font-family: var(--serif); font-weight: 300; letter-spacing: -0.024em;
+    line-height: 1.12; color: var(--ink);
+    font-size: clamp(30px, 3.6vw, 46px);
+    margin-bottom: 6px;
   }
-  .side-c .ph h2 { font-size: clamp(38px, 5.6vw, 76px); line-height: 1.02; }
+  .side-c .ph h2 { font-size: clamp(40px, 5.8vw, 80px); line-height: 1.03; }
   .ph h2 .sig { font-style: italic; font-weight: 400; color: var(--amber); }
   .note {
     font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em;
-    color: var(--faint); text-transform: uppercase; margin-top: 18px; flex: none;
+    color: var(--faint); text-transform: uppercase; margin-top: 18px;
   }
   .ghost {
-    font-family: var(--serif); font-weight: 300; font-size: clamp(14.5px, 1.2vw, 17.5px);
-    line-height: 1.65; color: var(--ink-2); margin-top: 16px; max-width: 52ch; flex: none;
+    font-family: var(--serif); font-weight: 300; font-style: italic;
+    font-size: clamp(16px, 1.35vw, 19px);
+    line-height: 1.7; color: var(--ink-2); margin-top: 18px; max-width: 52ch;
   }
   .side-c .ghost { margin-left: auto; margin-right: auto; }
-  /* Centred beats keep a centred head and pull quote, but running prose reads left-aligned:
-     a ragged left edge on six lines of argument is a legibility tax, not a flourish. */
+  /* Centred beats keep a centred head, but running prose reads left-aligned. */
   .side-c .body, .side-c .blist, .side-c .essay {
     text-align: left; margin-left: auto; margin-right: auto;
   }
-  .side-c .flow { align-items: center; }
 
-  /* Staggered child reveal on the active beat. */
-  .panel .ph > * {
-    opacity: 0; transform: translateY(14px); filter: blur(7px);
-    transition: opacity 720ms var(--e-out), transform 720ms var(--e-out), filter 720ms var(--e-out);
-  }
-  .panel.on .ph > * { opacity: 1; transform: none; filter: none; }
-  .panel.on .ph > *:nth-child(1) { transition-delay: 60ms; }
-  .panel.on .ph > *:nth-child(2) { transition-delay: 140ms; }
-  .panel.on .ph > *:nth-child(3) { transition-delay: 230ms; }
-  .panel.on .ph > *:nth-child(4) { transition-delay: 320ms; }
-  /* the flow wrapper reveals as one, so its own children carry the stagger inward */
-  .panel .flow > * {
-    opacity: 0; transform: translateY(10px);
-    transition: opacity 620ms var(--e-out), transform 620ms var(--e-out);
-  }
-  .panel.on .flow > * { opacity: 1; transform: none; }
-  .panel.on .flow > *:nth-child(1) { transition-delay: 250ms; }
-  .panel.on .flow > *:nth-child(2) { transition-delay: 330ms; }
-  .panel.on .flow > *:nth-child(3) { transition-delay: 400ms; }
-  .panel.on .flow > *:nth-child(n+4) { transition-delay: 460ms; }
-
-  /* ---- baked content styles ---- */
+  /* ---- the prose itself: essay measure, essay leading ---- */
   .body {
-    font-family: var(--serif); font-weight: 300; font-size: clamp(14px, 1.15vw, 16.5px);
-    line-height: 1.68; color: var(--ink-2); margin-top: 14px; max-width: 54ch; flex: none;
+    font-family: var(--serif); font-weight: 400; font-size: clamp(15.5px, 1.22vw, 17.5px);
+    line-height: 1.82; color: var(--ink-2); margin-top: 1.15em; max-width: 58ch;
   }
   .body em { color: var(--ink); }
+  h2 + .body { margin-top: 1.6em; }
 
-  /* Argument list. A hairline rule per item instead of a bullet: the same quiet
-     register as the rules on the sibling pages, and it survives long wrapped lines. */
-  .blist { list-style: none; margin-top: 16px; padding: 0; flex: 1 1 auto; min-height: 0; }
+  /* One drop cap, where the essay actually begins. */
+  #b1 h2 + .body::first-letter {
+    font-size: 3.05em; line-height: 0.82; float: left;
+    padding: 0.08em 0.12em 0 0; color: var(--amber); font-weight: 300;
+  }
+
+  /* Argument list: a hairline rule per item instead of a bullet. */
+  .blist { list-style: none; margin-top: 18px; padding: 0; }
   .blist li {
-    position: relative; padding-left: 22px; margin: 11px 0;
-    font-family: var(--serif); font-weight: 300; font-size: clamp(13.5px, 1.1vw, 16px);
-    line-height: 1.62; color: var(--ink-2);
+    position: relative; padding-left: 22px; margin: 12px 0;
+    font-family: var(--serif); font-weight: 400; font-size: clamp(14.5px, 1.15vw, 16.5px);
+    line-height: 1.72; color: var(--ink-2);
   }
   .blist li::before {
-    content: ""; position: absolute; left: 0; top: 0.78em; width: 12px; height: 1px;
+    content: ""; position: absolute; left: 0; top: 0.82em; width: 12px; height: 1px;
     background: var(--amber); opacity: 0.85;
   }
-  .blist li:last-child { margin-bottom: 0; }
   .blist li em, .body em, .q em { font-style: italic; }
   .blist li em { color: var(--ink); }
   .cite {
@@ -269,62 +251,38 @@
     color: var(--ghost); white-space: nowrap;
   }
 
-  /* Author's aside. Hanging mono label plus a top hairline, no side stripe. */
+  /* Author's aside: hanging mono label plus a top hairline. */
   .essay {
-    margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--line);
-    font-family: var(--serif); font-weight: 300; font-size: clamp(13px, 1.05vw, 15px);
-    line-height: 1.66; color: var(--ink-3); max-width: 50ch; flex: none;
+    margin-top: 26px; padding-top: 16px; border-top: 1px solid var(--line);
+    font-family: var(--serif); font-weight: 400; font-size: clamp(13.5px, 1.08vw, 15.5px);
+    line-height: 1.74; color: var(--ink-3); max-width: 52ch;
   }
-
-  /* Two-column beat. The field note is an aside, so it takes the margin rather than
-     eating the argument's vertical space. Below the breakpoint it stacks back under. */
-  .ph.split {
-    display: grid; max-width: none;
-    grid-template-columns: minmax(0, 40ch) minmax(0, 26ch);
-    grid-template-rows: auto auto minmax(0, 1fr);
-    column-gap: clamp(24px, 2.6vw, 44px);
-  }
-  .ph.split > .kick { grid-area: 1 / 1; }
-  .ph.split > h2    { grid-area: 2 / 1; }
-  .ph.split > .flow, .ph.split > .scrollbox { grid-area: 3 / 1; }
-  /* a beat that shows screens puts them beside the prose, not under it */
-  .ph.split > .ui-flow {
-    grid-area: 3 / 2; align-self: start; margin-top: 6px;
-    max-height: 100%; min-height: 0; overflow-y: auto;
-  }
-  .ph.split:has(> .ui-flow), .tall .ph.split:has(> .ui-flow) {
-    grid-template-columns: minmax(0, 38ch) minmax(0, 48ch); max-width: none;
-  }
-  /* the panes are wide, so give them room and let them breathe vertically */
-  .ph.split > .ui-flow { gap: 16px; }
-  .ph.split > .ui-flow .uipane::before { display: none; }
-  .tall .ph.split { max-width: none; grid-template-columns: minmax(0, 54ch) minmax(0, 26ch); }
-  .ph.split > .essay {
-    grid-area: 3 / 2; align-self: start; margin-top: 6px;
-    max-width: none; max-height: 100%; min-height: 0; overflow-y: auto;
-  }
-  .flow { display: flex; flex-direction: column; min-height: 0; overflow-y: auto; }
-  /* .flow is the only scroll region in a beat, so nothing inside it shrinks or scrolls itself */
-  .flow > * { flex: none; }
-  .flow > .blist, .flow > .ledger, .flow > .refs { overflow: visible; padding-right: 0; }
   .essay .elabel {
     display: block; font-family: var(--mono); font-size: 9px; letter-spacing: 0.28em;
     text-transform: uppercase; color: var(--amber); margin-bottom: 8px;
   }
+
+  /* The one quotation: set like a passage copied onto a card, oversized mark in the margin. */
   blockquote.q {
-    margin: 18px 0 0; font-family: var(--serif); font-weight: 300; font-style: italic;
-    font-size: clamp(16px, 1.5vw, 21px); line-height: 1.5; color: var(--ink); flex: none;
+    position: relative; margin: 30px 0 0; padding: 4px 0 0 26px;
+    border-left: 1px solid rgba(232, 99, 74, 0.55);
+    font-family: var(--serif); font-weight: 300; font-style: italic;
+    font-size: clamp(18px, 1.7vw, 24px); line-height: 1.55; color: var(--ink);
+  }
+  blockquote.q::before {
+    content: "\201C"; position: absolute; left: -14px; top: -22px;
+    font-size: 64px; line-height: 1; color: var(--amber); opacity: 0.35; font-style: normal;
   }
   blockquote.q .qsrc {
-    display: block; margin-top: 10px; font-style: normal; font-family: var(--mono);
+    display: block; margin-top: 12px; font-style: normal; font-family: var(--mono);
     font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--faint);
   }
 
   /* A single slip, used once, where the page is literally showing you one index card. */
   .acard {
-    margin-top: 18px; padding: 14px 16px 15px; flex: none;
+    margin-top: 20px; padding: 14px 16px 15px;
     border: 1px solid var(--line); border-top: 1px solid rgba(232, 99, 74, 0.45);
-    background: linear-gradient(180deg, rgba(15, 19, 34, 0.86) 0%, rgba(11, 13, 26, 0.62) 100%);
+    background: linear-gradient(180deg, rgba(20, 16, 8, 0.85) 0%, rgba(15, 12, 9, 0.6) 100%);
   }
   .acard .ak {
     display: block; font-family: var(--mono); font-size: 9px; letter-spacing: 0.24em;
@@ -332,99 +290,106 @@
   }
   .acard .ak b { color: var(--amber); font-weight: 400; }
   .acard .aclaim {
-    font-family: var(--serif); font-weight: 300; font-size: clamp(13px, 1.05vw, 15.5px);
-    line-height: 1.55; color: var(--ink);
+    font-family: var(--serif); font-weight: 400; font-size: clamp(13px, 1.05vw, 15.5px);
+    line-height: 1.6; color: var(--ink);
   }
 
-  /* Case-study ledger. The vault's own index, not a deck of identical cards:
-     mono address in a fixed left column, claim in serif, one hairline between rows. */
-  .ledger { flex: 1 1 auto; min-height: 0; margin-top: 18px; }
+  /* Case-study ledger: mono address in a fixed left column, claim in serif. */
+  .ledger { margin-top: 20px; }
   .lrow {
     display: grid; grid-template-columns: 8.5em 1fr; gap: 0 18px; align-items: baseline;
     padding: 10px 0; border-top: 1px solid var(--line);
   }
-  .lrow:first-child { border-top: 1px solid var(--rule-lit, var(--line)); }
   .lrow .lk {
     font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
     color: var(--faint); padding-top: 0.35em;
   }
   .lrow .lc {
-    font-family: var(--serif); font-weight: 300; font-size: clamp(12.5px, 1.02vw, 15px);
-    line-height: 1.58; color: var(--ink-2);
+    font-family: var(--serif); font-weight: 400; font-size: clamp(12.5px, 1.02vw, 15px);
+    line-height: 1.62; color: var(--ink-2);
   }
-  .lrow.lit .lk { color: var(--sky); }
+  .lrow.lit .lk { color: var(--amber); }
   .lrow.out {
     margin-top: 4px; border-top: 1px solid rgba(232, 99, 74, 0.5);
     background: linear-gradient(180deg, rgba(232, 99, 74, 0.07) 0%, transparent 100%);
     padding: 13px 14px 14px; margin-left: -14px; margin-right: -14px;
-    grid-template-columns: 8.5em 1fr;
   }
   .lrow.out .lk { color: var(--amber); }
-  .lrow.out .lc { color: var(--ink); font-style: italic; font-size: clamp(13.5px, 1.12vw, 16.5px); }
+  .lrow.out .lc { color: var(--ink); font-style: italic; }
   .lrow.out .lc small {
     display: block; margin-top: 6px; font-style: normal; font-size: 12px;
     line-height: 1.55; color: var(--ink-3);
   }
 
-  /* ---- glossary: six terms, defined once, before anything depends on them ---- */
+  /* ---- glossary: six slips laid out on the desk ---- */
   .gloss-grid {
-    flex: 1 1 auto; min-height: 0; margin-top: 18px;
+    margin-top: 26px;
     display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: clamp(20px, 2.4vw, 40px);
+    gap: 14px clamp(16px, 2vw, 28px);
   }
-  .gterm { padding: 11px 0; border-top: 1px solid var(--line); }
+  .gterm {
+    padding: 14px 16px 15px;
+    border: 1px solid var(--line); border-top: 1px solid rgba(232, 99, 74, 0.4);
+    background: linear-gradient(180deg, rgba(20, 16, 8, 0.72) 0%, rgba(15, 12, 9, 0.45) 100%);
+  }
+  .gterm:nth-child(odd)  { transform: rotate(-0.3deg); }
+  .gterm:nth-child(even) { transform: rotate(0.25deg); }
   .gterm .gk {
-    display: block; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.24em;
-    text-transform: uppercase; color: var(--amber); margin-bottom: 6px;
+    display: block; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.26em;
+    text-transform: uppercase; color: var(--amber); margin-bottom: 7px;
   }
   .gterm .gd {
-    font-family: var(--serif); font-weight: 300; font-size: clamp(12.5px, 1vw, 14.5px);
-    line-height: 1.55; color: var(--ink-2);
+    font-family: var(--serif); font-weight: 400; font-size: clamp(12.5px, 1vw, 14px);
+    line-height: 1.62; color: var(--ink-2);
   }
 
-  /* ---- term chips: every mention after the first is a quiet lookup ---- */
+  /* ---- term chips: every mention after the first is a card pulled from the box ---- */
   .t {
     border-bottom: 1px dotted var(--faint); cursor: help; position: relative;
     color: inherit; white-space: nowrap;
   }
   .t::after {
     content: attr(data-def);
-    position: absolute; left: 0; bottom: calc(100% + 8px); z-index: 8;
-    width: max-content; max-width: 34ch; padding: 9px 11px;
-    background: var(--bg-soft); border: 1px solid var(--line);
-    border-top: 1px solid rgba(232, 99, 74, 0.5);
-    font-family: var(--serif); font-weight: 300; font-style: normal;
+    position: absolute; left: 0; bottom: calc(100% + 9px); z-index: 8;
+    width: max-content; max-width: 34ch; padding: 10px 12px 11px;
+    background: var(--paper); border: 1px solid #cdbfa4;
+    box-shadow: 3px 5px 18px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 255, 255, 0.35) inset;
+    font-family: var(--serif); font-weight: 400; font-style: normal;
     font-size: 12.5px; line-height: 1.5; letter-spacing: 0; text-transform: none;
-    color: var(--ink-2); white-space: normal; text-shadow: none;
-    opacity: 0; visibility: hidden; transform: translateY(4px);
+    color: var(--paper-ink); white-space: normal; text-shadow: none;
+    opacity: 0; visibility: hidden; transform: translateY(4px) rotate(-0.5deg);
     transition: opacity 180ms var(--e-out), transform 180ms var(--e-out), visibility 180ms;
     pointer-events: none;
   }
   .t:hover::after, .t:focus-visible::after, .t.open::after {
-    opacity: 1; visibility: visible; transform: none;
+    opacity: 1; visibility: visible; transform: rotate(-0.5deg);
   }
-  .side-r .t::after, .tall .t::after { left: auto; right: 0; }
+  .side-r .t::after { left: auto; right: 0; }
 
-  /* ---- interface reconstruction: redrawn app panes, never a screenshot ---- */
-  .ui-flow { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+  /* ---- interface reconstruction: redrawn app panes as index cards, never screenshots ---- */
+  .ui-flow { display: flex; flex-direction: column; gap: 18px; margin-top: 26px; }
   .uipane { margin: 0; position: relative; }
+  .uipane:nth-child(odd)  { transform: rotate(-0.35deg); }
+  .uipane:nth-child(even) { transform: rotate(0.3deg); }
   .uipane::before {
     content: attr(data-step); position: absolute; left: -34px; top: 2px;
     font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; color: var(--ghost);
   }
   .uicap {
     font-family: var(--mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--faint); margin-bottom: 5px; text-shadow: var(--lift);
+    color: var(--faint); margin-bottom: 6px; text-shadow: var(--lift);
   }
   .uicap b { color: var(--amber); font-weight: 400; }
   .ui {
-    border: 1px solid var(--line); background: var(--bg-soft);
+    border: 1px solid var(--line); border-top: 1px solid rgba(232, 99, 74, 0.35);
+    background: linear-gradient(180deg, rgba(18, 14, 10, 0.92) 0%, rgba(12, 10, 7, 0.85) 100%);
+    box-shadow: 4px 8px 26px rgba(0, 0, 0, 0.45);
     font-family: var(--mono); font-size: 10px; line-height: 1.5; color: var(--ink-3);
     overflow: hidden;
   }
   .uibar {
     display: flex; align-items: center; gap: 6px; padding: 6px 9px;
-    background: oklch(0.20 0.02 262 / 0.6); border-bottom: 1px solid var(--line);
+    background: rgba(38, 30, 20, 0.55); border-bottom: 1px solid var(--line);
   }
   .uibar .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--line); flex: none; }
   .uibar .uititle {
@@ -465,66 +430,77 @@
   }
   .uiquote .mono { font-family: var(--mono); font-style: normal; font-size: 9px; color: var(--ghost); }
   .uinote {
-    font-family: var(--serif); font-weight: 300; font-size: clamp(12px, 0.95vw, 13.5px);
+    font-family: var(--serif); font-weight: 400; font-size: clamp(12px, 0.95vw, 13.5px);
     line-height: 1.6; color: var(--ink-3); margin-top: 9px; max-width: 62ch;
     text-shadow: var(--lift);
   }
 
-  /* References. Two columns where there is room, so all twenty-four are readable at once. */
+  /* The workflow and case-study beats put the cards beside the prose on wide screens. */
+  @media (min-width: 1140px) {
+    #b10 .ph, #b11 .ph {
+      max-width: none; width: min(96ch, 100%);
+      display: grid; grid-template-columns: minmax(0, 46ch) minmax(0, 44ch);
+      column-gap: clamp(32px, 3.4vw, 60px); grid-auto-flow: row;
+    }
+    #b10 .ph > *, #b11 .ph > * { grid-column: 1; }
+    #b10 .ph > .kick, #b11 .ph > .kick,
+    #b10 .ph > h2,   #b11 .ph > h2 { grid-column: 1 / -1; }
+    #b10 .ph > .ui-flow, #b11 .ph > .ui-flow {
+      grid-column: 2; grid-row: 3 / span 8; align-self: start; margin-top: 10px;
+    }
+  }
+
+  /* References: two columns where there is room, read as one flowing archive. */
   .refs {
-    list-style: none; margin-top: 18px; padding: 0; flex: 1 1 auto; min-height: 0;
-    columns: 2; column-gap: 44px; column-rule: 1px solid var(--line);
+    list-style: none; margin-top: 22px; padding: 0;
+    columns: 2; column-gap: 48px; column-rule: 1px solid var(--line);
   }
   .refs li {
-    font-family: var(--serif); font-weight: 300; font-size: clamp(11px, 0.85vw, 12.5px);
-    line-height: 1.5; color: var(--ink-2); margin: 0 0 10px;
+    font-family: var(--serif); font-weight: 400; font-size: clamp(11.5px, 0.9vw, 13px);
+    line-height: 1.58; color: var(--ink-2); margin: 0 0 11px;
     padding-left: 1.5em; text-indent: -1.5em;
     break-inside: avoid; -webkit-column-break-inside: avoid;
   }
   .refs li i { font-style: italic; color: var(--ink); }
   .refnote {
     font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.06em;
-    line-height: 1.7; color: var(--faint); margin-top: 16px;
-    padding-top: 12px; border-top: 1px solid var(--line); flex: none;
+    line-height: 1.7; color: var(--faint); margin-top: 18px;
+    padding-top: 12px; border-top: 1px solid var(--line);
   }
-  .tall .ph { max-width: 62ch; }
-  #b12 .ph { max-width: 72ch; }   /* five sources in one centred column need the width */
-  #b12 .body { max-width: 64ch; }  /* .body caps at ~36ch by default, which is what forced the overflow */
-  #b14 .ph { max-width: 94ch; }   /* two reference columns need the width */
 
-  /* Any region that can outrun the viewport scrolls in place. Pointer events are handed
-     to it only while its beat is live, so the page scroll is never hijacked. */
-  .blist, .ledger, .refs, .scrollbox, .flow, .ph.split > .essay, .ph.split > .ui-flow {
-    overflow-y: auto; scrollbar-width: thin;
-    scrollbar-color: var(--line) transparent; padding-right: 4px;
-  }
-  .scrollbox { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
-  /* One scroll region per beat: anything already inside a scrollbox lays out at full height. */
-  .scrollbox .blist, .scrollbox .ledger, .scrollbox .refs {
-    flex: none; overflow: visible; min-height: auto; padding-right: 0;
-  }
-  .panel.on .blist, .panel.on .ledger, .panel.on .refs,
-  .panel.on .scrollbox, .panel.on .flow, .panel.on .essay,
-  .panel.on .ui-flow { pointer-events: auto; }
-  .can-scroll {
-    -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 40px), transparent 100%);
-    mask-image: linear-gradient(to bottom, #000 calc(100% - 40px), transparent 100%);
-  }
-  .can-scroll.at-end { -webkit-mask-image: none; mask-image: none; }
-  .ph.has-overflow::after {
-    content: "scroll this column";
-    flex: none; margin-top: 8px; font-family: var(--mono); font-size: 8.5px;
-    letter-spacing: 0.24em; text-transform: uppercase; color: var(--ghost);
-  }
-  .side-r .ph.has-overflow::after { text-align: right; }
-  .ph.split.has-overflow::after { grid-row: 4; grid-column: 1; text-align: left; }
-  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 2px; }
-  .panel.on .ph > *:nth-child(5) { transition-delay: 400ms; }
-  .panel.on .ph > *:nth-child(6) { transition-delay: 470ms; }
-  .panel.on .ph > *:nth-child(7) { transition-delay: 540ms; }
-  .panel.on .ph > *:nth-child(8) { transition-delay: 600ms; }
+  ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
+  * { scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+
+  /* ---- entrance: each beat settles in once, like a page laid on the desk ---- */
+  .panel .ph > * {
+    opacity: 0; transform: translateY(18px);
+    transition: opacity 800ms var(--e-out), transform 800ms var(--e-out);
+  }
+  .panel.on .ph > * { opacity: 1; transform: none; }
+  .panel.on .ph > *:nth-child(1) { transition-delay: 40ms; }
+  .panel.on .ph > *:nth-child(2) { transition-delay: 120ms; }
+  .panel.on .ph > *:nth-child(3) { transition-delay: 200ms; }
+  .panel.on .ph > *:nth-child(4) { transition-delay: 280ms; }
+  .panel.on .ph > *:nth-child(5) { transition-delay: 350ms; }
+  .panel.on .ph > *:nth-child(6) { transition-delay: 410ms; }
+  .panel.on .ph > *:nth-child(n+7) { transition-delay: 470ms; }
+  /* the glossary slips and the cards stagger inward as well */
+  .panel .gloss-grid > .gterm, .panel .ui-flow > .uipane {
+    opacity: 0; transform: translateY(14px);
+    transition: opacity 700ms var(--e-out), transform 700ms var(--e-out);
+  }
+  .panel.on .gloss-grid > .gterm:nth-child(odd)  { opacity: 1; transform: rotate(-0.3deg); }
+  .panel.on .gloss-grid > .gterm:nth-child(even) { opacity: 1; transform: rotate(0.25deg); }
+  .panel.on .ui-flow > .uipane:nth-child(odd)  { opacity: 1; transform: rotate(-0.35deg); }
+  .panel.on .ui-flow > .uipane:nth-child(even) { opacity: 1; transform: rotate(0.3deg); }
+  .panel.on .gloss-grid > .gterm:nth-child(1), .panel.on .ui-flow > .uipane:nth-child(1) { transition-delay: 260ms; }
+  .panel.on .gloss-grid > .gterm:nth-child(2), .panel.on .ui-flow > .uipane:nth-child(2) { transition-delay: 350ms; }
+  .panel.on .gloss-grid > .gterm:nth-child(3), .panel.on .ui-flow > .uipane:nth-child(3) { transition-delay: 440ms; }
+  .panel.on .gloss-grid > .gterm:nth-child(4) { transition-delay: 530ms; }
+  .panel.on .gloss-grid > .gterm:nth-child(5) { transition-delay: 610ms; }
+  .panel.on .gloss-grid > .gterm:nth-child(6) { transition-delay: 690ms; }
 
   #hint { position: fixed; bottom: clamp(44px, 7vh, 66px); left: 50%; transform: translateX(-50%);
     z-index: 6; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.34em; text-transform: uppercase;
@@ -532,26 +508,13 @@
   #hint::after { content: ""; display: block; width: 1px; height: 26px; margin: 12px auto 0;
     background: linear-gradient(to bottom, var(--faint), transparent); }
 
-  #scroll-root { position: relative; width: 100%; }
-
-  @media (max-width: 1180px) {
-    .ph.split, .tall .ph.split {
-      display: flex; flex-direction: column; max-width: 54ch;
-      grid-template-columns: none; grid-template-rows: none;
-    }
-    .ph.split > .essay { margin-top: 22px; max-width: none; overflow: visible; }
-    #b14 .ph { max-width: 62ch; }
-  }
-
-  @media (max-width: 1180px) {
-    .refs { columns: 1; column-rule: none; }
-    .refs li { font-size: 12px; }
+  @media (max-width: 640px) {
+    #readout { display: none; }   /* the folio keeps the bottom edge; two labels is one too many */
   }
 
   @media (max-width: 860px) {
-    .panel { padding: 20px; padding-top: calc(var(--topbar-h) + 16px); padding-bottom: 76px; }
-    .side-l, .side-r { justify-content: flex-start; }
-    .ph, .tall .ph { max-width: none; }
+    .panel { padding: 40px 20px; margin-bottom: 22vh; }
+    .panel:first-child { padding-top: calc(var(--topbar-h) + 16px); }
     .topbar-nav { display: none; }
     #grid { display: none; }
     .lrow, .lrow.out { grid-template-columns: 1fr; gap: 4px 0; }
@@ -562,17 +525,14 @@
     .uipane::before { display: none; }
     .t::after { left: 0; right: auto; max-width: 26ch; }
     .cite { white-space: normal; }
-    /* a phone column is nearly the whole viewport, so the shader void cannot open far
-       enough around it: the scrim carries more of the load here */
-    .ph::before, .side-c .ph::before {
-      inset: -8% -18%;   /* bleeds past both edges, so the band never shows a vertical seam */
-      background: linear-gradient(180deg,
-        transparent 0%, rgba(5, 6, 14, 0.74) 8%, rgba(5, 6, 14, 0.74) 92%, transparent 100%);
-    }
+    .refs { columns: 1; column-rule: none; }
+    .refs li { font-size: 12.5px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .panel .ph > *, .panel .flow > * { transition-duration: 1ms; filter: none; transform: none; }
+    .panel .ph > *, .panel .gloss-grid > .gterm, .panel .ui-flow > .uipane {
+      transition-duration: 1ms; transform: none; opacity: 1;
+    }
   }
 </style>
 </head>
@@ -595,7 +555,8 @@
 <div id="hint">Scroll</div>
 
 <main id="panels">
-  <!-- 18 placeholder beat panels, narrative order = index order. Prose lands in a later phase. -->
+  <!-- 15 beats in one flowing essay column, narrative order = index order. The prose in these
+       sections round-trips through prose_io.py: keep the markup, edit only via _drafts/live. -->
   <section class="panel side-c" id="b0" data-beat="0"><div class="ph">
     <p class="kick">ITASIA302 <i>·</i> Final Project</p>
     <h2>Building a<br><span class="sig">Second Brain</span></h2>
@@ -846,7 +807,6 @@
   </div></section>
 </main>
 
-<div id="scroll-root"></div>
 
 <!-- Real vault graph payload, inlined for the single-file deliverable. -->
 <script id="sbf-data">
@@ -856,73 +816,54 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
 <script>
 "use strict";
 (function () {
-  window.__SBF__ = "final"; // identity marker for QA
+  window.__SBF__ = "final-essay"; // identity marker for QA
   var RM = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // ---- viewport helpers (window.innerHeight reads 0 in the headless preview) ----
   function vw() { return (window.visualViewport && window.visualViewport.width) || window.innerWidth || 1280; }
   function vh() { return (window.visualViewport && window.visualViewport.height) || window.innerHeight || 800; }
 
-  // ---- easings: entrances outQuart, on-screen moves inOutCubic. Never ease-in alone
-  // (the one sanctioned exception: the meme beat's gravity drop uses inCubic by spec). ----
+  // ---- easings: entrances outQuart, on-screen moves inOutCubic ----
   function clamp01(t) { return t < 0 ? 0 : t > 1 ? 1 : t; }
   var outQuart = function (t) { return 1 - Math.pow(1 - t, 4); };
   var inOutCubic = function (t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
   var inCubic = function (t) { return t * t * t; };
-  var outExpo = function (t) { return t >= 1 ? 1 : 1 - Math.pow(2, -10 * t); };
   var outBack = function (t) { var c1 = 1.20158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
+  function lerp(a, b, t) { return a + (b - a) * t; }
 
   // ---- the beat table -------------------------------------------------------------
-  // One row per beat, narrative order = array order. Everything the engine needs per
-  // beat lives here, and every beat is addressed by NAME (B.thesis, B.atom) rather than
-  // by a bare number, so inserting a beat is a one-row edit plus one <section> in the
-  // markup. `mol` scales the camera's look-at toward the demonstrated molecule; it is
-  // resolved once the real graph positions exist.
+  // One row per beat, narrative order = array order = section order in the markup.
+  // The page reads as a flowing essay; this table tells the field what to do behind
+  // each section. Every beat is addressed by NAME (B.trap, B.thesis), so inserting a
+  // beat is a one-row edit plus one <section> in the markup.
   //
-  //   id            name            state         form      w    trans ease         rad  phi   theta lookY lookZ pan    hold  mol
+  //   id            folio name         state label     form      trans ease         rad  phi   theta lookY lookZ pan    mol
   var BEATS_DEF = [
-    ["hero",        "HERO",         "drift",      "DRIFT",   1,   1,    outQuart,    128, 1.45, 0.00,  0,    0,    0,     0.55, 0],
-    ["context",     "CONTEXT",      "drift",      "DRIFT2",  1.2, 0.5,  inOutCubic,  108, 1.42, 0.18,  0,    0,    0.16,  0.05, 0],
-    ["pkm",         "PKM",          "converge",   "SHELL",   1,   0.5,  outQuart,     82, 1.36, 0.38,  0,    0,   -0.18,  0.55, 0],
-    ["secondbrain", "SECOND BRAIN", "orbit",      "SHELL",   1,   0.4,  outQuart,     88, 1.30, 0.72,  0,    0,    0.10,  0.55, 0],
-    ["glossary",    "PLAIN LANGUAGE","hold",      "SHELL",    1.6, 0.5,  outQuart,     124, 1.40, 0.87,  0,    0,   -0.26,  0.5,  0],
-    ["hype",        "HYPE",         "storm",      "STORM",   1,   0.5,  outQuart,    152, 1.52, 1.02,  0,    0,    0,     0.5,  0],
-    ["trap",        "THE TRAP",     "storm",      "STORM",   1.4, 0.5,  outQuart,    160, 1.45, 1.15,  0,    0,   -0.20,  0.5,  0],
-    ["building",    "BUILDING",     "lattice",    "LATTICE", 1,   0.9,  outExpo,     122, 1.12, 1.35,  -4,   0,    0.18,  0.5,  0],
-    ["zettelkasten","ZETTELKASTEN", "cabinet",    "CABINET", 1.4, 0.5,  outBack,      74, 1.46, 2.35,  0,  -46,    0.12,  0.55, 0],
-    ["tiers",       "THE THREE SIZES","tiers",     "TIERS",   1.4, 0.5,  outQuart,     95, 1.35, 2.60,  0,    0,    0.10,  0.5,  0],
-    ["stack",       "STACK",        "strata",     "STRATA",  1.6, 0.5,  inOutCubic,   80, 1.46, 3.63,  0,    0,    0.22,  0.08, 0],
-    ["casestudy",   "CASE STUDY",   "case",       "REAL",    2.2, 0.45, inOutCubic,   58, 1.34, 3.80,  0,    0,   -0.16,  0.55, 0.5],
-    ["thesis",      "THESIS",       "the vault",  "REAL",    1.6, 0.35, outQuart,    150, 1.38, 4.40,  2,    0,    0,     0.6,  0],
-    ["end",         "END",          "dissolve",   "DRIFT",   0.8, 0.75, inOutCubic,  132, 1.44, 4.75,  0,    0,    0,     0.3,  0],
-    ["works",       "WORKS CITED",  "archive",    "DRIFT",   1.4, 0.4,  outQuart,    142, 1.46, 4.85,  0,    0,    0,     0.9,  0],
+    ["hero",        "HERO",            "drift",         "DRIFT",   1,   outQuart,    126, 1.44, 0.00,  0,    0,    0,     0],
+    ["context",     "THE PROBLEM",     "scatter",       "SCATTER", 0.6, inOutCubic,  110, 1.40, 0.28,  0,    0,    0.16,  0],
+    ["pkm",         "PKM",             "gathering",     "GATHER",  0.55, outQuart,     88, 1.34, 0.58,  0,    0,   -0.16,  0],
+    ["secondbrain", "SECOND BRAIN",    "orbit",         "SHELLR",  0.5, outQuart,     94, 1.30, 0.88,  0,    0,    0.15,  0],
+    ["glossary",    "PLAIN LANGUAGE",  "six tools",     "CLUST6",  0.55, outQuart,    122, 1.42, 1.06,  0,    0,   -0.13,  0],
+    ["hype",        "THE HYPE",        "storm",         "STORM",   0.5, outQuart,    150, 1.50, 1.30,  0,    0,    0.12,  0],
+    ["trap",        "THE TRAP",        "the globe",     "GLOBE",   0.5, outQuart,     96, 1.38, 1.62,  0,    0,   -0.16,  0],
+    ["retrieval",   "RETRIEVAL FIRST", "one slip",      "FOCUSF",  0.5, outQuart,     48, 1.42, 1.96,  0,    0,    0.17,  0],
+    ["zettelkasten","ZETTELKASTEN",    "slip-box",      "CABINET", 0.55, outBack,     126, 1.40, 2.95,  0,    0,   -0.14,  0],
+    ["tiers",       "THREE SIZES",     "three sizes",   "TIERS",   0.55, outQuart,    106, 1.48, 2.86,  0,    0,    0.14,  0],
+    ["stack",       "THE WORKFLOW",    "the stream",    "FLOWS",   0.55, inOutCubic,   92, 1.44, 3.30,  0,    0,   -0.15,  0],
+    ["casestudy",   "CASE STUDY",      "the vault",     "REAL",    0.5, inOutCubic,   56, 1.34, 3.76,  0,    0,    0.15,  0.5],
+    ["thesis",      "WHAT IT IS FOR",  "the vault, lit","REAL",    0.4, outQuart,    150, 1.38, 4.30,  2,    0,    0,     0],
+    ["end",         "END",             "dissolve",      "DRIFT2",  0.7, inOutCubic,  130, 1.44, 4.70,  0,    0,    0,     0],
+    ["works",       "WORKS CITED",     "archive",       "DRIFT2",  0.5, outQuart,    142, 1.47, 4.85,  0,    0,    0.10,  0],
   ];
   var NB = BEATS_DEF.length;
-  var B = {};                       // B.thesis === 15, and stays right if a beat is inserted
+  var B = {};
   for (var bi = 0; bi < NB; bi++) B[BEATS_DEF[bi][0]] = bi;
   var col = function (i) { return BEATS_DEF.map(function (r) { return r[i]; }); };
   var BEAT_NAMES  = col(1);
   var STATE_LABEL = col(2);
   var BEAT_FORM   = col(3);
-  var WEIGHTS     = col(4);
-  var TRANS       = col(5);
-  var MEASE       = col(6);
-
-  var totalW = 0; for (var wi = 0; wi < NB; wi++) totalW += WEIGHTS[wi];
-  var BEATS = [];
-  (function () { var acc = 0; for (var i = 0; i < NB; i++) { var seg = WEIGHTS[i] / totalW; BEATS.push({ in: acc, out: acc + seg }); acc += seg; } BEATS[NB - 1].out = 1.0000001; })();
-  function lerp(a, b, t) { return a + (b - a) * t; }
-
-  // resolved beat state, reused every frame (zero per-frame allocation)
-  var BB = { beat: 0, frac: 0 };
-  function beatAt(p) {
-    p = clamp01(p);
-    var b = 0;
-    for (var i = 0; i < NB; i++) { if (p >= BEATS[i].in) b = i; }
-    var s = BEATS[b].in, e = BEATS[b].out;
-    BB.beat = b; BB.frac = clamp01((p - s) / (e - s));
-    return BB;
-  }
+  var TRANS       = col(4);
+  var MEASE       = col(5);
 
   // ---- deterministic PRNG ----
   function rng(seed) { return function () { seed |= 0; seed = (seed + 0x6D2B79F5) | 0; var t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
@@ -947,13 +888,12 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     for (var i2 = 0; i2 < N; i2++) { real[i2 * 3] = (rnd() - 0.5) * 110; real[i2 * 3 + 1] = (rnd() - 0.5) * 110; real[i2 * 3 + 2] = (rnd() - 0.5) * 110; deg[i2] = (rnd() * 40) | 0; }
   }
 
-  // ---- pick the atom-beat hub (highest degree) and a mid-size molecule cluster ----
+  // ---- pick the retrieval-beat hub (highest degree) and a mid-size molecule cluster ----
   var hubIdx = 0; { var hd = -1; for (var h = 0; h < N; h++) { if (deg[h] > hd) { hd = deg[h]; hubIdx = h; } } }
 
-  // adjacency scan over the full edge list to find a small real cluster
   var EFULL = (D && D.e && D.e.length) ? D.e : null;
   var ESPINE = (D && D.spine && D.spine.length) ? D.spine : null;
-  if (!EFULL) { // synthetic fallback edges: chain a sparse random set
+  if (!EFULL) {
     var fe = new Array(1200 * 2);
     for (var fi = 0; fi < 1200; fi++) { fe[fi * 2] = (rnd() * N) | 0; fe[fi * 2 + 1] = (rnd() * N) | 0; }
     EFULL = fe; ESPINE = fe.slice(0, 800 * 2);
@@ -964,7 +904,6 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     var cnt = new Int16Array(N);
     var m2 = EFULL.length;
     for (var k = 0; k < m2; k++) cnt[EFULL[k]]++;
-    // prefer a node with 5 to 9 incident edges: a legible ~7-node neighborhood
     for (var n2 = 0; n2 < N; n2++) { if (cnt[n2] >= 5 && cnt[n2] <= 9) { molIdx = n2; break; } }
     var seen = 0;
     for (var e2 = 0; e2 < m2; e2 += 2) {
@@ -975,7 +914,7 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
   var molSet = {}; molSet[molIdx] = 1;
   for (var ms = 0; ms < molEdges.length; ms++) molSet[molEdges[ms]] = 1;
 
-  // ---- 9 parameterized formation builders, reused across the 18 beats ----
+  // ---- formation builders: every one reads as slips of paper, not points in space ----
   function buildDrift(out, radius, squash, jitter) {
     var golden = Math.PI * (3 - Math.sqrt(5));
     for (var i = 0; i < N; i++) {
@@ -984,6 +923,9 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
       out[j] = Math.cos(th) * rr * sh; out[j + 1] = y * sh * squash; out[j + 2] = Math.sin(th) * rr * sh;
     }
   }
+  function buildBox(out, w, h) {
+    for (var i = 0; i < N; i++) { var j = i * 3; out[j] = (rnd() - 0.5) * w; out[j + 1] = (rnd() - 0.5) * h; out[j + 2] = (rnd() - 0.5) * w; }
+  }
   function buildCore(out, radius, exp, squash, focusIdx) {
     for (var i = 0; i < N; i++) {
       var j = i * 3, hr = Math.pow(rnd(), exp) * radius, ha = rnd() * 6.283, hb = Math.acos(2 * rnd() - 1);
@@ -991,92 +933,80 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     }
     if (focusIdx != null) { out[focusIdx * 3] = 0; out[focusIdx * 3 + 1] = 0; out[focusIdx * 3 + 2] = 0; }
   }
-  function buildStorm(out, w, h) {
-    for (var i = 0; i < N; i++) { var j = i * 3; out[j] = (rnd() - 0.5) * w; out[j + 1] = (rnd() - 0.5) * h; out[j + 2] = (rnd() - 0.5) * w; }
-  }
-  function buildGrid(out, y, size) {
-    var cols = Math.ceil(Math.sqrt(N));
+  // six tidy piles, one per tool in the glossary: two rows of three
+  var CLUST_Z = [4, -6, 2, -3, 5, -5];
+  function buildClusters(out) {
     for (var i = 0; i < N; i++) {
-      var j = i * 3, cx = i % cols, cz = (i / cols) | 0;
-      out[j] = (cx / (cols - 1) - 0.5) * size;
-      out[j + 1] = y + (rnd() - 0.5) * 1.2;
-      out[j + 2] = (cz / (cols - 1) - 0.5) * size;
-    }
-  }
-  function buildLattice(out, rowOut, size, ny) {
-    var nx = Math.ceil(Math.cbrt(N)), nz = nx;
-    var perLayer = nx * nz;
-    for (var i = 0; i < N; i++) {
-      var j = i * 3, layer = (i / perLayer) | 0, r = i % perLayer, cx = r % nx, cz = (r / nx) | 0;
-      if (layer >= ny) layer = ny - 1;
-      out[j] = (cx / (nx - 1) - 0.5) * size + (rnd() - 0.5) * 1.4;
-      out[j + 1] = -30 + (layer / (ny - 1)) * 58;
-      out[j + 2] = (cz / (nz - 1) - 0.5) * size + (rnd() - 0.5) * 1.4;
-      rowOut[i] = layer / (ny - 1);
-    }
-  }
-  function buildStrata(out, layers, gap, w, h) {
-    for (var i = 0; i < N; i++) {
-      var j = i * 3, L = i % layers;
-      out[j] = (rnd() - 0.5) * w;
-      out[j + 1] = (rnd() - 0.5) * h;
-      out[j + 2] = (L - (layers - 1) / 2) * gap + (rnd() - 0.5) * 3;
+      var j = i * 3, c = i % 6, cx = (c % 3 - 1) * 38, cy = (c < 3 ? 1 : -1) * 15;
+      var hr = Math.pow(rnd(), 0.62) * 11, ha = rnd() * 6.283, hb = Math.acos(2 * rnd() - 1);
+      out[j] = cx + Math.sin(hb) * Math.cos(ha) * hr;
+      out[j + 1] = cy + Math.cos(hb) * hr * 0.78;
+      out[j + 2] = CLUST_Z[c] + Math.sin(hb) * Math.sin(ha) * hr;
     }
   }
   function buildCabinet(out, cols, rows, sx, sy, slabGap) {
-    var perSlab = cols * rows;
+    var perSlab = cols * rows, nSlabs = Math.ceil(N / perSlab);
     for (var i = 0; i < N; i++) {
       var j = i * 3, slab = (i / perSlab) | 0, r = i % perSlab, cx = r % cols, cy = (r / cols) | 0;
       out[j] = (cx - (cols - 1) / 2) * sx;
       out[j + 1] = (cy - (rows - 1) / 2) * sy;
-      out[j + 2] = -slab * slabGap + (rnd() - 0.5) * 0.8;
+      out[j + 2] = ((nSlabs - 1) / 2 - slab) * slabGap + (rnd() - 0.5) * 0.8;
     }
   }
   function buildTiers(out, bands, gap, radius) {
     for (var i = 0; i < N; i++) {
-      var j = i * 3, band = i % bands, r = Math.sqrt(rnd()) * radius, a = rnd() * 6.283;
+      var j = i * 3, band = i % bands, r = Math.sqrt(rnd()) * radius * (1 - band * 0.26), a = rnd() * 6.283;
       out[j] = Math.cos(a) * r;
-      out[j + 1] = (band - (bands - 1) / 2) * gap + (rnd() - 0.5) * 2.4;
+      out[j + 1] = ((bands - 1) / 2 - band) * gap + (rnd() - 0.5) * 2.4;
       out[j + 2] = Math.sin(a) * r;
     }
   }
-  // buildReal is the identity: the ninth builder is the data itself (scaled above).
+  // the workflow: one stream of slips along an S-curve, left to right
+  var flowS = new Float32Array(N);
+  function buildFlow(out) {
+    for (var i = 0; i < N; i++) {
+      var j = i * 3, s = i / (N - 1);
+      flowS[i] = s;
+      out[j] = (s - 0.5) * 150 + (rnd() - 0.5) * 5;
+      out[j + 1] = Math.sin(s * 3.6) * 13 + (rnd() - 0.5) * 8;
+      out[j + 2] = Math.cos(s * 2.2) * 9 + (rnd() - 0.5) * 8;
+    }
+  }
+  // buildReal is the identity: the last formation is the data itself (scaled above).
 
   var F = {
-    DRIFT:  new Float32Array(N * 3),
-    DRIFT2: new Float32Array(N * 3),
-    SHELL:  new Float32Array(N * 3),
-    STORM:  new Float32Array(N * 3),
-    GRID:   new Float32Array(N * 3),
-    LATTICE:new Float32Array(N * 3),
-    STRATA: new Float32Array(N * 3),
-    CABINET:new Float32Array(N * 3),
-    TIERS:  new Float32Array(N * 3),
-    ATOMC:  new Float32Array(N * 3),
-    ALLOYM: new Float32Array(N * 3),
-    REAL:   real,
+    DRIFT:   new Float32Array(N * 3),
+    DRIFT2:  new Float32Array(N * 3),
+    SCATTER: new Float32Array(N * 3),
+    GATHER:  new Float32Array(N * 3),
+    SHELLR:  new Float32Array(N * 3),
+    CLUST6:  new Float32Array(N * 3),
+    STORM:   new Float32Array(N * 3),
+    GLOBE:   new Float32Array(N * 3),
+    FOCUSF:  new Float32Array(N * 3),
+    CABINET: new Float32Array(N * 3),
+    TIERS:   new Float32Array(N * 3),
+    FLOWS:   new Float32Array(N * 3),
+    REAL:    real,
   };
-  var rowDelay = new Float32Array(N);   // lattice rise stagger, per node
-  var ringA = new Float32Array(N);      // satellite ring angles (beat 3)
-  var turb = new Float32Array(N * 3);   // storm turbulence axes
-  var lobe = new Float32Array(N);       // alloy lobe sign
-  buildDrift(F.DRIFT, 40, 0.86, 7);
-  buildDrift(F.DRIFT2, 29, 0.82, 4);
-  buildDrift(F.SHELL, 23, 0.95, 2.4);           // thin sphere shell: shell = drift builder, tiny jitter
-  buildStorm(F.STORM, 168, 104);
-  buildGrid(F.GRID, -34, 148);
-  buildLattice(F.LATTICE, rowDelay, 92, 13);
-  buildStrata(F.STRATA, 5, 34, 84, 48);
-  buildCabinet(F.CABINET, 22, 10, 5.4, 5.8, 14);
-  buildTiers(F.TIERS, 3, 27, 55);
-  buildCore(F.ATOMC, 8, 1.8, 0.9, hubIdx);      // tight collapse, hub pinned at origin
-  buildCore(F.ALLOYM, 15, 1.4, 0.85, null);     // merged alloy core; lobes split at runtime
-  for (var r3 = 0; r3 < N; r3++) { ringA[r3] = rnd() * 6.283; lobe[r3] = (r3 & 1) ? 1 : -1; }
+  var ringA = new Float32Array(N);      // satellite ring angles (second-brain beat)
+  var turb = new Float32Array(N * 3);   // storm / scatter turbulence axes
+  buildDrift(F.DRIFT, 48, 0.82, 14);
+  buildDrift(F.DRIFT2, 40, 0.9, 9);
+  buildBox(F.SCATTER, 150, 92);
+  buildDrift(F.GATHER, 26, 0.92, 3);
+  buildDrift(F.SHELLR, 28, 0.96, 2);
+  buildClusters(F.CLUST6);
+  buildBox(F.STORM, 170, 100);
+  buildDrift(F.GLOBE, 30, 1.0, 0.5);           // the too-perfect globe
+  buildCore(F.FOCUSF, 9, 1.9, 0.9, hubIdx);    // tight collapse, hub pinned at origin
+  buildCabinet(F.CABINET, 34, 13, 5.0, 5.2, 24);
+  buildTiers(F.TIERS, 3, 32, 48);
+  buildFlow(F.FLOWS);
+  for (var r3 = 0; r3 < N; r3++) ringA[r3] = rnd() * 6.283;
   for (var t3 = 0; t3 < N * 3; t3 += 3) { turb[t3] = rnd() * 6.283; turb[t3 + 1] = rnd() * 6.283; turb[t3 + 2] = 0.6 + rnd() * 1.1; }
-  var RINGSTEP = 16; // every 16th node joins the satellite ring on beat 3
+  var RINGSTEP = 16; // every 16th slip joins the satellite ring on the second-brain beat
 
-  // formation per beat + morph-in window (fraction of the beat spent morphing)
-  // BEAT_FORM / TRANS / MEASE are columns of BEATS_DEF, derived above.
   (function checkForms() {
     for (var i = 0; i < NB; i++) {
       if (!F[BEAT_FORM[i]]) throw new Error("beat " + i + " (" + BEATS_DEF[i][0] + ") names an unknown formation: " + BEAT_FORM[i]);
@@ -1089,23 +1019,23 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
   function dprCap() { return Math.min(window.devicePixelRatio || 1, vw() < 900 ? 1.5 : 2); }
   renderer.setPixelRatio(dprCap());
   renderer.setSize(vw(), vh());
-  var BGC = new THREE.Color(0x080a16);   // site ground, one step up from #05060e so the vignette still reads
+  var BGC = new THREE.Color(0x0a0806);   // warm ground, one step up from the page so the fades read
   renderer.setClearColor(BGC, 1);
   var scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x080a16, 0.0042);
+  scene.fog = new THREE.FogExp2(0x0a0806, 0.0042);
   var camera = new THREE.PerspectiveCamera(54, vw() / vh(), 0.1, 900);
 
-  // particle attributes: near-white with subtle luminance variation by degree.
-  // No group hues. One amber accent, spent on: the atom hub, alloy top-degree, thesis edges.
+  // slip attributes: warm paper with subtle luminance variation by degree.
+  // One amber accent, spent on: the retrieval hub, thesis top-degree, thesis edges.
   var aSize = new Float32Array(N);
   var aLum = new Float32Array(N);
-  var aHot = new Float32Array(N);   // alloy-beat top-degree amber
-  var aFocA = new Float32Array(N);  // atom-beat focus (the single hub)
-  var aFocB = new Float32Array(N);  // molecule-beat focus set
+  var aHot = new Float32Array(N);   // top-degree amber (tiers / thesis)
+  var aFocA = new Float32Array(N);  // retrieval-beat focus (the single hub)
+  var aFocB = new Float32Array(N);  // case-study molecule focus set
   for (var p0 = 0; p0 < N; p0++) {
     var sd = Math.sqrt(deg[p0]);
-    aSize[p0] = 1.6 + Math.min(4.4, sd * 0.55);
-    aLum[p0] = 0.62 + 0.38 * Math.min(1, sd / 12);
+    aSize[p0] = 2.0 + Math.min(5.0, sd * 0.62);
+    aLum[p0] = 0.6 + 0.4 * Math.min(1, sd / 12);
     aHot[p0] = clamp01((deg[p0] / MAXDEG - 0.18) / 0.5);
     aFocA[p0] = (p0 === hubIdx) ? 1 : 0;
     aFocB[p0] = molSet[p0] ? 1 : 0;
@@ -1120,18 +1050,19 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
   geo.setAttribute("aFocA", new THREE.BufferAttribute(aFocA, 1));
   geo.setAttribute("aFocB", new THREE.BufferAttribute(aFocB, 1));
 
-  var INK = new THREE.Color(0xe0e6f0);   // --ink
-  var AMBER = new THREE.Color(0xff8a63); // --amber-hi: the section accent, lifted for emissive points
+  var PAPER = new THREE.Color(0xede4d2);  // unbleached card stock
+  var AMBER = new THREE.Color(0xff8a63);  // --amber-hi, lifted for emissive slips
   var mat = new THREE.ShaderMaterial({
     uniforms: {
       uScale:  { value: vh() * 0.5 },
       uOpac:   { value: 1.0 },
-      uAmber:  { value: 0.0 },   // alloy top-degree amber
-      uFocus:  { value: 0.0 },   // focus dimming strength (atom / molecule beats)
-      uFocSel: { value: 0.0 },   // 0 = atom set, 1 = molecule set
-      uInk:    { value: new THREE.Vector3(INK.r, INK.g, INK.b) },
+      uAmber:  { value: 0.0 },   // top-degree amber
+      uFocus:  { value: 0.0 },   // focus dimming strength (retrieval / case-study)
+      uFocSel: { value: 0.0 },   // 0 = hub, 1 = molecule set
+      uGrey:   { value: 0.0 },   // the trap: the globe drains to grey
+      uInk:    { value: new THREE.Vector3(PAPER.r, PAPER.g, PAPER.b) },
       uAmberC: { value: new THREE.Vector3(AMBER.r, AMBER.g, AMBER.b) },
-      // the text void: the field thins where the prose sits, instead of a plate sitting on it
+      // the text void: the field thins where the prose sits, instead of a plate over it
       uHole:   { value: new THREE.Vector4(0, 0, 0, 0) },  // centre.xy, half-extent.xy, in NDC
       uHoleAmt:{ value: 0.0 },
       uAspect: { value: vw() / Math.max(1, vh()) },
@@ -1150,11 +1081,11 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
       "  gl_Position = projectionMatrix * mv;",
       "  vNdc = gl_Position.xy / max(0.0001, gl_Position.w);",
       "  float boost = 1.0 + aHot * uAmber * 0.8 + vFocA * uFocus * 2.6;",
-      "  gl_PointSize = clamp(aSize * boost * uScale / max(1.0, -mv.z), 1.5, 30.0);",
+      "  gl_PointSize = clamp(aSize * boost * uScale / max(1.0, -mv.z), 1.5, 34.0);",
       "}"].join("\n"),
     fragmentShader: [
       "precision highp float;",
-      "uniform float uOpac; uniform float uAmber; uniform float uFocus;",
+      "uniform float uOpac; uniform float uAmber; uniform float uFocus; uniform float uGrey;",
       "uniform vec3 uInk; uniform vec3 uAmberC;",
       "uniform vec4 uHole; uniform float uHoleAmt; uniform float uAspect;",
       "varying float vLum; varying float vHot; varying float vFoc; varying float vFocA;",
@@ -1165,14 +1096,18 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
       "  return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0);",
       "}",
       "void main(){",
-      "  vec2 d = abs(gl_PointCoord - 0.5);",
-      "  float m = max(d.x, d.y);",
-      "  float a = smoothstep(0.5, 0.43, m);",
+      // each sprite is a small paper slip: a rounded rectangle, wider than tall
+      "  vec2 pc = gl_PointCoord - 0.5;",
+      "  vec2 q = abs(pc) - vec2(0.44, 0.27) + 0.08;",
+      "  float d = length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - 0.08;",
+      "  float a = 1.0 - smoothstep(-0.10, 0.02, d);",
       "  if (a <= 0.01) discard;",
       "  vec3 col = uInk * vLum;",
       "  col = mix(col, uAmberC, clamp(vHot * uAmber + vFocA * uFocus, 0.0, 1.0));",
-      "  float dim = 1.0 - uFocus * (1.0 - vFoc) * 0.92;",   // non-focus nodes drop to 8%
-      "  float k = 1.0 - smoothstep(-0.10, 0.52, holeSDF(vNdc));",   // 1 under the prose, 0 well clear of it
+      "  float g = dot(col, vec3(0.299, 0.587, 0.114));",
+      "  col = mix(col, vec3(g) * 0.82, uGrey);",   // the globe drains of warmth
+      "  float dim = 1.0 - uFocus * (1.0 - vFoc) * 0.92;",   // non-focus slips drop to 8%
+      "  float k = 1.0 - smoothstep(-0.10, 0.52, holeSDF(vNdc));",
       "  gl_FragColor = vec4(col, a * uOpac * dim * (1.0 - uHoleAmt * k));",
       "}"].join("\n"),
     transparent: true, depthWrite: false, depthTest: false, blending: THREE.NormalBlending,
@@ -1180,7 +1115,7 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
   var points = new THREE.Points(geo, mat);
   points.frustumCulled = false; scene.add(points);
 
-  // ---- edge layer: opacity-gated LineSegments with a traveling-pulse shader ----
+  // ---- edge layer: ink threads, opacity-gated LineSegments with a traveling pulse ----
   function edgeMaterial() {
     return new THREE.ShaderMaterial({
       uniforms: {
@@ -1188,7 +1123,7 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
         uPulse: { value: 0.0 },
         uTime:  { value: 0.0 },
         uMix:   { value: 0.0 }, // thesis amber tint
-        uCol:   { value: new THREE.Vector3(0.244, 0.408, 0.545) },  // --sky #5299c8, damped
+        uCol:   { value: new THREE.Vector3(0.55, 0.46, 0.34) },  // sepia ink, damped
         uAmberC:{ value: new THREE.Vector3(AMBER.r, AMBER.g, AMBER.b) },
         uHole:   { value: new THREE.Vector4(0, 0, 0, 0) },
         uHoleAmt:{ value: 0.0 },
@@ -1230,7 +1165,7 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
   var edges = new THREE.LineSegments(eGeo, eMat);
   edges.frustumCulled = false; scene.add(edges);
 
-  // active edge set: spine by default on graph beats, full on beat 15 when FPS is healthy
+  // active edge set: spine by default, full on the thesis beat while FPS is healthy
   var eIdx = ESPINE, eCount = ESPINE.length / 2, edgesDirty = true;
   function setEdgeSet(arr) {
     if (eIdx === arr) return;
@@ -1249,7 +1184,7 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     edgesDirty = false;
   }
 
-  // molecule sub-layer: the real edge subset around the chosen node (beat 11)
+  // molecule sub-layer: the real edge subset around the chosen note (case-study beat)
   var MC = molEdges.length / 2;
   var mPos = new Float32Array(MC * 6);
   var mPhase = new Float32Array(MC * 2);
@@ -1269,19 +1204,14 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     mGeo.attributes.position.needsUpdate = true;
   }
 
-  // ---- camera keyframes per beat (interpolated beat -> beat+1 by eased frac) ----
+  // ---- camera keyframes per beat (chased with damping; anticipates the next beat) ----
   var molCx = real[molIdx * 3], molCy = real[molIdx * 3 + 1], molCz = real[molIdx * 3 + 2];
-  // Camera keys are columns 7..14 of BEATS_DEF. `mol` (column 14) resolves here, now that
-  // the real graph positions exist: a non-zero value aims the look-at at the demonstrated
-  // molecule, scaled, which is how the molecule and case-study beats frame it.
-  // `hold` is the fraction of the beat the camera keeps its own frame before easing to the
-  // next key; low values create intra-beat moves (the context push-in, the stack dolly).
   var CAM = {
-    rad: col(7), phi: col(8), theta: col(9),
-    lookY: BEATS_DEF.map(function (r) { return r[14] ? molCy * r[14] : r[10]; }),
-    lookX: BEATS_DEF.map(function (r) { return r[14] ? molCx * r[14] : 0; }),
-    lookZ: BEATS_DEF.map(function (r) { return r[14] ? molCz * r[14] : r[11]; }),
-    pan: col(12), hold: col(13),
+    rad: col(6), phi: col(7), theta: col(8),
+    lookY: BEATS_DEF.map(function (r) { return r[12] ? molCy * r[12] : r[9]; }),
+    lookX: BEATS_DEF.map(function (r) { return r[12] ? molCx * r[12] : 0; }),
+    lookZ: BEATS_DEF.map(function (r) { return r[12] ? molCz * r[12] : r[10]; }),
+    pan: col(11),
   };
   (function checkCam() {
     for (var k in CAM) {
@@ -1295,10 +1225,11 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
   })();
   var _look = new THREE.Vector3(), _right = new THREE.Vector3();
   var cs = { rad: CAM.rad[0], phi: CAM.phi[0], theta: CAM.theta[0], lookY: 0, lookX: 0, lookZ: 0, pan: 0 };
-  var camT = { rad: 0, phi: 0, theta: 0, lookY: 0, lookX: 0, lookZ: 0, pan: 0 }; // reused target
+  var camT = { rad: 0, phi: 0, theta: 0, lookY: 0, lookX: 0, lookZ: 0, pan: 0 };
   function camTarget(beat, frac) {
-    var a = beat, b = Math.min(NB - 1, beat + 1), hold = CAM.hold[beat];
-    var t = inOutCubic(clamp01((frac - hold) / Math.max(0.0001, 1 - hold)));
+    var a = beat, b = Math.min(NB - 1, beat + 1);
+    // hold the frame while the section is read; ease toward the next key in the gap after it
+    var t = inOutCubic(clamp01((frac - 0.72) / 0.28));
     camT.rad = lerp(CAM.rad[a], CAM.rad[b], t);
     camT.phi = lerp(CAM.phi[a], CAM.phi[b], t);
     camT.theta = lerp(CAM.theta[a], CAM.theta[b], t);
@@ -1314,8 +1245,10 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     cs.rad += (t.rad - cs.rad) * k; cs.phi += (t.phi - cs.phi) * k; cs.theta += (t.theta - cs.theta) * k;
     cs.lookY += (t.lookY - cs.lookY) * k; cs.lookX += (t.lookX - cs.lookX) * k; cs.lookZ += (t.lookZ - cs.lookZ) * k;
     cs.pan += (t.pan - cs.pan) * k;
-    var sp = Math.sin(cs.phi), cp = Math.cos(cs.phi);
-    camera.position.set(cs.rad * sp * Math.sin(cs.theta), cs.rad * cp, cs.rad * sp * Math.cos(cs.theta));
+    var drift = RM ? 0 : Math.sin(time * 0.05) * 0.012;   // barely-there handheld drift
+    var sp = Math.sin(cs.phi + drift * 0.6), cp = Math.cos(cs.phi + drift * 0.6);
+    var th = cs.theta + drift;
+    camera.position.set(cs.rad * sp * Math.sin(th), cs.rad * cp, cs.rad * sp * Math.cos(th));
     _look.set(cs.lookX, cs.lookY, cs.lookZ);
     var viewH = 2 * cs.rad * Math.tan((camera.fov * Math.PI / 180) / 2);
     var panW = cs.pan * viewH * camera.aspect;
@@ -1333,49 +1266,59 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     var be = RM ? 1 : MEASE[beat](blend);
 
     var form = BEAT_FORM[beat];
-    var isDrift = form === "DRIFT" || form === "DRIFT2";
-    var isShell = form === "SHELL";
-    var isReal = form === "REAL";
     var spin = 0;
     if (!RM) {
-      if (isDrift) spin = time * 0.045;
-      else if (isShell) spin = time * 0.06;
-      else if (beat === B.thesis) spin = time * 0.06;  // the payoff reveal: slow auto-rotate
-      else if (isReal) spin = time * 0.025;
+      if (form === "DRIFT" || form === "DRIFT2" || form === "GATHER") spin = time * 0.04;
+      else if (form === "SHELLR") spin = time * 0.06;
+      else if (form === "GLOBE") spin = time * 0.05;
+      else if (form === "TIERS") spin = time * 0.015;
+      else if (form === "SCATTER") spin = time * 0.02;
+      else if (beat === B.thesis) spin = time * 0.055;  // the payoff reveal: slow auto-rotate
+      else if (form === "REAL") spin = time * 0.02;
     }
     var cy = Math.cos(spin), sy = Math.sin(spin);
 
     // hype storm: turbulence ramps with local progress
-    var stormAmp = (beat === B.hype && !RM) ? (6 + 16 * outQuart(frac)) : 0;
+    var stormAmp = (beat === B.hype && !RM) ? (7 + 15 * outQuart(frac)) : 0;
+    // the problem: slips adrift, each floating on its own current
+    var scatterAmp = (beat === B.context && !RM) ? 1.9 : 0;
     // second-brain satellite ring
     var ringT = beat === B.secondbrain ? outQuart(clamp01((frac - 0.15) / 0.5)) : 0;
     var ringSpin = RM ? 0 : time * 0.35;
-    // building lattice: rows rise with outExpo stagger (per-node blend overrides global)
-    var lattice = beat === B.building;
-    // alloy: two lobes merge toward the shared core
-    var mergeT = beat === B.alloy ? inOutCubic(clamp01((frac - 0.15) / 0.6)) : 1;
-    var lobeOff = beat === B.alloy ? 30 * (1 - mergeT) : 0;
-    var breathe = (isReal && !RM) ? (1 + Math.sin(time * 0.5) * 0.010) : 1;
+    // the tools: each pile bobs gently on its own beat
+    var bobAmp = (beat === B.glossary && !RM) ? 1.3 : 0;
+    // the trap: the globe slowly deflates as the beat argues it means nothing
+    var deflate = beat === B.trap ? 1 - 0.16 * inCubic(clamp01((frac - 0.5) / 0.5)) : 1;
+    // the workflow: a traveling wave runs down the stream
+    var waveAmp = (beat === B.stack && !RM) ? 1.6 : 0;
+    var breathe = (form === "REAL" && !RM) ? (1 + Math.sin(time * 0.5) * 0.010) : 1;
 
     for (var i = 0; i < N; i++) {
       var j = i * 3;
-      var t = be;
-      if (lattice) t = RM ? 1 : outExpo(clamp01((frac * 1.7 - rowDelay[i] * 0.9) / 0.55));
-      var x = PREV[j] + (A[j] - PREV[j]) * t;
-      var y = PREV[j + 1] + (A[j + 1] - PREV[j + 1]) * t;
-      var z = PREV[j + 2] + (A[j + 2] - PREV[j + 2]) * t;
+      var x = PREV[j] + (A[j] - PREV[j]) * be;
+      var y = PREV[j + 1] + (A[j + 1] - PREV[j + 1]) * be;
+      var z = PREV[j + 2] + (A[j + 2] - PREV[j + 2]) * be;
       if (ringT && i % RINGSTEP === 0) {
         var ra = ringA[i] + ringSpin;
-        x += (Math.cos(ra) * 36 - x) * ringT;
+        x += (Math.cos(ra) * 40 - x) * ringT;
         y += (Math.sin(ringA[i] * 3) * 4 - y) * ringT;
-        z += (Math.sin(ra) * 36 - z) * ringT;
+        z += (Math.sin(ra) * 40 - z) * ringT;
       }
-      if (lobeOff) x += lobe[i] * lobeOff;
+      if (scatterAmp) {
+        x += Math.sin(time * 0.22 + turb[j]) * scatterAmp;
+        y += Math.cos(time * 0.18 + turb[j + 1]) * scatterAmp * 0.8;
+      }
+      if (bobAmp) y += Math.sin(time * 0.4 + (i % 6)) * bobAmp;
       if (stormAmp) {
         x += Math.sin(time * turb[j + 2] + turb[j]) * stormAmp;
         y += Math.cos(time * turb[j + 2] + turb[j + 1]) * stormAmp * 0.7;
         z += Math.sin(time * turb[j + 2] * 0.9 + turb[j]) * stormAmp;
       }
+      if (waveAmp) {
+        x += Math.sin(time * 0.8 - flowS[i] * 7) * waveAmp;
+        y += Math.cos(time * 0.8 - flowS[i] * 7) * waveAmp * 0.55;
+      }
+      if (deflate !== 1) { x *= deflate; y *= deflate; z *= deflate; }
       if (breathe !== 1) { x *= breathe; y *= breathe; z *= breathe; }
       if (spin) { var nx = x * cy - z * sy; z = x * sy + z * cy; x = nx; }
       livePos[j] = x; livePos[j + 1] = y; livePos[j + 2] = z;
@@ -1384,39 +1327,37 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     edgesDirty = true;
   }
 
-  // ---- per-beat uniform state: focus, amber, edge opacity, pulse ----
+  // ---- per-beat uniform state: focus, amber, grey, edge opacity, pulse ----
   var edgeOp = 0, molOp = 0;
   function reveal(beat, frac) {
-    var focus = 0, focSel = 0, amber = 0, op = 1, eop = 0, mop = 0, pulse = 0, emix = 0;
-    if (beat === B.atom) {              // collapse, single accent hub, rest at 8%
-      focus = outQuart(clamp01((frac - 0.2) / 0.4)); focSel = 0;
-    } else if (beat === B.molecule) {   // spotlight the real cluster, edges draw in
-      focus = 1; focSel = outQuart(clamp01(frac / 0.25));
-      mop = outQuart(clamp01((frac - 0.3) / 0.45)) * 0.75;
-    } else if (beat === B.alloy) {      // release focus, ignite top-degree accent
-      focus = 1 - outQuart(clamp01(frac / 0.3)); focSel = 1;
-      mop = (1 - clamp01(frac / 0.2)) * 0.75;
-      amber = outQuart(clamp01((frac - 0.35) / 0.4));
-    } else if (beat === B.casestudy) {  // real graph framed close, light edges
-      amber = 1 - clamp01(frac / 0.3);
-      eop = outQuart(clamp01((frac - 0.2) / 0.5)) * 0.14;
-    } else if (beat === B.pipeline) {   // edge pulse traveling
-      eop = 0.14 + outQuart(clamp01(frac / 0.4)) * 0.10;
-      pulse = outQuart(clamp01((frac - 0.15) / 0.4));
-    } else if (beat === B.thesis) {     // full graph, edges at full opacity, accent glow
-      eop = 0.24 + outQuart(clamp01(frac / 0.35)) * 0.28;
-      pulse = 1 - clamp01(frac / 0.3);
+    var focus = 0, focSel = 0, amber = 0, grey = 0, op = 1, eop = 0, mop = 0, pulse = 0, emix = 0;
+    if (beat === B.trap) {              // the globe: beautiful, then drained of warmth
+      grey = 0.75 * outQuart(clamp01((frac - 0.25) / 0.5));
+    } else if (beat === B.retrieval) {  // the field goes dark; one slip stays lit
+      focus = outQuart(clamp01((frac - 0.15) / 0.4)); focSel = 0;
+    } else if (beat === B.zettelkasten) { // release the single slip into the cabinet
+      focus = 1 - outQuart(clamp01(frac / 0.3)); focSel = 0;
+    } else if (beat === B.tiers) {      // top-degree slips warm up: alloys forming
+      amber = 0.35 * outQuart(clamp01((frac - 0.3) / 0.5));
+    } else if (beat === B.casestudy) {  // real graph framed close, the molecule lit
+      eop = outQuart(clamp01((frac - 0.15) / 0.5)) * 0.16;
+      mop = outQuart(clamp01((frac - 0.25) / 0.45)) * 0.8;
+    } else if (beat === B.thesis) {     // full graph, threads lit, accent glow
+      eop = 0.2 + outQuart(clamp01(frac / 0.35)) * 0.3;
+      pulse = outQuart(clamp01((frac - 0.1) / 0.4));
       emix = outQuart(clamp01((frac - 0.2) / 0.5));
+      amber = 0.5 * outQuart(clamp01((frac - 0.2) / 0.5));
     } else if (beat === B.end) {        // dissolve back to drift
-      eop = 0.52 * (1 - inOutCubic(clamp01(frac / 0.5)));
+      eop = 0.5 * (1 - inOutCubic(clamp01(frac / 0.5)));
       emix = 1 - clamp01(frac / 0.4);
-      op = 1 - frac * 0.4;
-    } else if (beat === B.works) {      // near-static dim backdrop
-      op = 0.6 - frac * 0.15;
+      op = 1 - frac * 0.35;
+    } else if (beat === B.works) {      // near-static dim backdrop behind the archive
+      op = 0.55 - frac * 0.1;
     }
     mat.uniforms.uFocus.value = focus;
     mat.uniforms.uFocSel.value = focSel;
     mat.uniforms.uAmber.value = amber;
+    mat.uniforms.uGrey.value = grey;
     mat.uniforms.uOpac.value = op;
     eMat.uniforms.uOpac.value = eop;
     eMat.uniforms.uPulse.value = pulse;
@@ -1440,52 +1381,70 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
   }
   window.__FPS = function () { return fpsEMA; };
 
-  // ---- panels, folio, rail (crossfade band at boundaries, direct indexing) ----
+  // ---- scroll geometry: the essay flows, the field follows --------------------------
+  // Beat i is active from the moment its section top crosses ~62% of the viewport until
+  // the next one does; frac runs 0..1 over that span, gaps included, so the field morphs
+  // across the breathing room between sections.
   var panelEls = [];
   for (var pe = 0; pe < NB; pe++) panelEls.push(document.getElementById("b" + pe));
+  var anchors = new Float32Array(NB);
+  var scrollMax = 1;
+  function scrollY() { return window.scrollY || window.pageYOffset || 0; }
+  function measureAnchors() {
+    var sy = scrollY(), H = vh();
+    for (var i = 0; i < NB; i++) {
+      var el = panelEls[i]; if (!el) continue;
+      anchors[i] = Math.max(0, el.getBoundingClientRect().top + sy - H * 0.62);
+    }
+    anchors[0] = 0;
+    scrollMax = Math.max(1, document.documentElement.scrollHeight - H);
+    placeRailTicks();
+  }
+  var SB = { beat: 0, frac: 0 };
+  function beatAtScroll(sy) {
+    var b = 0;
+    for (var i = 0; i < NB; i++) { if (sy >= anchors[i]) b = i; }
+    var s = anchors[b], e = (b + 1 < NB) ? anchors[b + 1] : scrollMax;
+    SB.beat = b; SB.frac = clamp01((sy - s) / Math.max(1, e - s));
+    return SB;
+  }
+
+  // ---- chrome: folio, rail, readout, hint, nav ----
   var folioNo = document.getElementById("folio-no");
   var folioName = document.getElementById("folio-name");
   var railFill = document.getElementById("rail-fill");
   var rstate = document.getElementById("rstate");
   var hintEl = document.getElementById("hint");
-  var XFADE = 0.012;
   var lastActive = -1;
-  var panelOp = new Float32Array(NB); // scratch, reused
-  function applyPanels(p, beat) {
-    for (var i = 0; i < NB; i++) panelOp[i] = 0;
-    var dist = p - BEATS[beat].in;
-    if (dist < XFADE && beat > 0) {
-      var f = outQuart(clamp01(dist / XFADE));
-      panelOp[beat] = f; panelOp[beat - 1] = 1 - f;
-    } else { panelOp[beat] = 1; }
-    for (var b = 0; b < NB; b++) {
-      var el = panelEls[b], o = panelOp[b];
-      if (o > 0.001) {
-        el.classList.add("live");
-        el.classList.toggle("on", b === beat);
-        el.style.opacity = o.toFixed(3);
-      } else if (el.style.opacity !== "0") {
-        el.style.opacity = "0";
-        el.classList.remove("live"); el.classList.remove("on");
-      }
-    }
+  function applyChrome(sy, beat) {
     if (beat !== lastActive) {
       folioNo.textContent = String(beat).padStart(2, "0");
       folioName.textContent = BEAT_NAMES[beat];
       rstate.textContent = "field · " + STATE_LABEL[beat];
-      if (hintEl) hintEl.style.opacity = beat === 0 ? "0.75" : "0";
       lastActive = beat;
       markNav(beat);
-      if (beat > B.glossary) chipBeat(beat);   // terms are defined by then, so they can be recalled
-      measureHole(beat);
-      requestAnimationFrame(function () { markOverflow(beat); measureHole(beat); });
     }
-    railFill.style.width = (p * 100).toFixed(2) + "%";
+    if (hintEl) hintEl.style.opacity = sy > 60 ? "0" : "0.75";
+    railFill.style.width = (clamp01(sy / scrollMax) * 100).toFixed(2) + "%";
+  }
+  var railTicks = [];
+  (function buildRailTicks() {
+    var rail = document.getElementById("rail");
+    for (var i = 1; i < NB; i++) {
+      var t = document.createElement("span");
+      t.className = "rtick";
+      rail.appendChild(t); railTicks.push(t);
+    }
+  })();
+  function placeRailTicks() {
+    for (var i = 0; i < railTicks.length; i++) {
+      railTicks[i].style.left = (clamp01(anchors[i + 1] / scrollMax) * 100).toFixed(2) + "%";
+    }
   }
 
   // ---- the text void ---------------------------------------------------------
-  // The prose does not sit on a plate. The field itself thins where the prose is, measured
-  // from the live .ph box and eased so the void travels with the beat instead of cutting in.
+  // The prose does not sit on a plate. The field itself thins where the active section's
+  // text is, measured from the live .ph box and eased so the void travels with the scroll.
   var holeT = [0, 0, 0, 0], holeC = [0, 0, 0, 0];
   var holeAmtT = 0, holeAmtC = 0, holeReady = false;
   function measureHole(beat) {
@@ -1498,8 +1457,7 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     holeT[1] = 1 - (r.top + r.height * 0.5) / H * 2;
     holeT[2] = (r.width / W) * 0.88;
     holeT[3] = (r.height / H) * 0.86;
-    // centred beats are the airy turns: there the field steps back rather than clearing out
-    holeAmtT = el.classList.contains("side-c") ? 0.76 : 0.88;
+    holeAmtT = el.classList.contains("side-c") ? 0.8 : 0.86;
     if (!holeReady) {
       holeC[0] = holeT[0]; holeC[1] = holeT[1]; holeC[2] = holeT[2]; holeC[3] = holeT[3];
       holeAmtC = holeAmtT; holeReady = true;
@@ -1516,19 +1474,20 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     }
   }
 
-  // ---- master apply: one function drives everything from global progress ----
-  var progress = 0, seeking = false;
-  function applyAll(p, dt) {
-    var bb = beatAt(p);
+  // ---- master apply: one function drives the field from the scroll position ----
+  var seeking = false;
+  function applyAll(dt) {
+    var sy = scrollY();
+    var bb = beatAtScroll(sy);
     var beat = bb.beat, frac = bb.frac;
-    // edge set choice: full only on the thesis beat and only while FPS is healthy
     setEdgeSet((beat === B.thesis && !degraded) ? EFULL : ESPINE);
     morph(beat, frac);
     reveal(beat, frac);
     if (edgeOp > 0.001 && edgesDirty) syncEdges();      // skipped entirely on no-edge beats
     if (molOp > 0.001) syncMolEdges();
     applyCam(beat, frac, dt, seeking);
-    applyPanels(p, beat);
+    applyChrome(sy, beat);
+    measureHole(beat);
     writeHole(dt, seeking);
     renderer.render(scene, camera);
   }
@@ -1540,44 +1499,7 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     var dt = Math.min(0.05, (now - last) / 1000); last = now;
     time += dt;
     trackFPS(dt);
-    applyAll(progress, dt);
-  }
-
-  // ---- scroll wiring ----
-  var scrollRoot = document.getElementById("scroll-root");
-  function sizeScroll() { scrollRoot.style.height = Math.round(vh() * totalW * 1.05) + "px"; }
-  sizeScroll();
-
-  // per-beat ticks on the rail: the printed scale
-  (function buildRailTicks() {
-    var rail = document.getElementById("rail");
-    for (var i = 1; i < NB; i++) {
-      var t = document.createElement("span");
-      t.className = "rtick";
-      t.style.left = (BEATS[i].in * 100).toFixed(2) + "%";
-      rail.appendChild(t);
-    }
-  })();
-
-  function nativeScrollFallback() {
-    function onScroll() {
-      var m = document.documentElement.scrollHeight - vh();
-      progress = m > 0 ? clamp01((window.scrollY || window.pageYOffset || 0) / m) : 0;
-    }
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-  }
-  if (window.gsap && window.ScrollTrigger && !RM) {
-    gsap.registerPlugin(ScrollTrigger);
-    ScrollTrigger.create({
-      trigger: "#scroll-root", start: "top top", end: "bottom bottom",
-      scrub: 0.5,
-      onUpdate: function (self) { if (!seeking) progress = self.progress; },
-    });
-  } else {
-    // reduced motion, or libs missing: native scroll still drives the piece,
-    // formations jump instantly (RM branch in morph), opacity fades kept.
-    nativeScrollFallback();
+    applyAll(dt);
   }
 
   function onResize() {
@@ -1589,10 +1511,7 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     mat.uniforms.uAspect.value = asp;
     eMat.uniforms.uAspect.value = asp;
     mMat.uniforms.uAspect.value = asp;
-    syncTallAsides();
-    if (lastActive >= 0) { markOverflow(lastActive); measureHole(lastActive); }
-    sizeScroll();
-    if (window.ScrollTrigger) ScrollTrigger.refresh();
+    measureAnchors();
   }
   window.addEventListener("resize", onResize);
   if (window.visualViewport) window.visualViewport.addEventListener("resize", onResize);
@@ -1603,58 +1522,23 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     else if (!raf) { last = (typeof performance !== "undefined" ? performance.now() : 0); raf = requestAnimationFrame(tick); }
   });
 
-  // ---- one flow column per beat ---------------------------------------------
-  // Everything under the heading is collected into a single scrolling column, and the
-  // field note is lifted out beside it. Done here rather than in the markup so all
-  // eighteen beats stay editable as flat prose.
-  var SPLIT_MIN = 1181;              // matches the .ph.split collapse breakpoint in CSS
-  var TALL_ASIDES = [];
-  function syncTallAsides() {
-    var wide = vw() >= SPLIT_MIN;
-    for (var i = 0; i < TALL_ASIDES.length; i++) {
-      var t = TALL_ASIDES[i], inBox = t.aside.parentNode === t.box;
-      if (wide && inBox) { t.ph.appendChild(t.aside); t.ph.classList.add("split"); }
-      else if (!wide && !inBox) { t.box.appendChild(t.aside); t.ph.classList.remove("split"); }
-    }
+  // ---- entrance reveals: each section settles in once, then stays ----
+  function revealNow(el) { el.classList.add("on"); }
+  if (RM || !("IntersectionObserver" in window)) {
+    for (var ra = 0; ra < NB; ra++) if (panelEls[ra]) revealNow(panelEls[ra]);
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      for (var i = 0; i < entries.length; i++) {
+        if (entries[i].isIntersecting) { revealNow(entries[i].target); io.unobserve(entries[i].target); }
+      }
+    }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
+    for (var ro = 0; ro < NB; ro++) if (panelEls[ro]) io.observe(panelEls[ro]);
   }
-  (function buildFlow() {
-    for (var i = 0; i < panelEls.length; i++) {
-      var ph = panelEls[i] && panelEls[i].querySelector(".ph");
-      if (!ph) continue;
-      var box = ph.querySelector(":scope > .scrollbox");
-      if (box) {
-        // tall beats already own their scroll: only lift the field note out beside it,
-        // and only while there is width for two columns (see syncTallAsides)
-        var inner = box.querySelector(".essay");
-        if (inner) TALL_ASIDES.push({ ph: ph, box: box, aside: inner });
-        continue;
-      }
-      var kids = [].slice.call(ph.children);
-      var head = 0;
-      while (head < kids.length && (kids[head].classList.contains("kick") || kids[head].tagName === "H2")) head++;
-      // screens win the margin over the field note: a beat that shows the vault puts the
-      // vault beside the prose, and the field note rejoins the argument column
-      var aside = ph.querySelector(":scope > .ui-flow") || ph.querySelector(":scope > .essay");
-      var flow = document.createElement("div");
-      flow.className = "flow";
-      for (var k = head; k < kids.length; k++) { if (kids[k] !== aside) flow.appendChild(kids[k]); }
-      // centred beats are the turns: they stay one airy column, never a two-column spread,
-      // so their field note joins the flow rather than competing with it for height
-      if (aside && !panelEls[i].classList.contains("side-c")) {
-        ph.insertBefore(flow, aside); ph.classList.add("split");
-      } else {
-        if (aside) flow.appendChild(aside);
-        ph.appendChild(flow);
-      }
-    }
-    syncTallAsides();
-  })();
 
   // ---- term chips ------------------------------------------------------------
   // The glossary beat is the single source of truth: its six definitions are read out of
   // the markup, then the first mention of each term in every later beat becomes a chip
-  // carrying that definition. Done at runtime rather than in the prose so the copy stays
-  // plain text and a rewrite cannot break, or forget to re-apply, the markup.
+  // carrying that definition — a card pulled from the box, mid-sentence.
   var TERM_DEFS = {};
   (function buildTerms() {
     var g = panelEls[B.glossary];
@@ -1664,7 +1548,7 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
       var k = items[i].querySelector(".gk"), d = items[i].querySelector(".gd");
       if (!k || !d) continue;
       var word = k.textContent.trim().toLowerCase();
-      var def = d.textContent.replace(/^DRAFT, REWRITE ME\.\s*/, "").trim();
+      var def = d.textContent.trim();
       if (word) TERM_DEFS[word] = def;
     }
   })();
@@ -1717,6 +1601,8 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
       }
     }
   }
+  // terms are defined by the glossary, so every beat after it can recall them
+  for (var cb = B.glossary + 1; cb < NB; cb++) chipBeat(cb);
   // tap to open on touch, where there is no hover
   document.addEventListener("click", function (e) {
     var chip = e.target.closest && e.target.closest(".t");
@@ -1726,12 +1612,11 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
   });
 
   // ---- topbar beat index ----------------------------------------------------
-  // Seven landmarks. An eighteen-beat scroll piece with no way in but the wheel is a trap;
-  // these seek the document, not the engine, so the scroll position stays truthful.
+  // Seven landmarks. These seek the document itself, so the scroll position stays truthful.
   var NAV = [
-    { b: B.context, t: "Context" }, { b: B.pkm,      t: "PKM" },     { b: B.hype,   t: "Hype" },
-    { b: B.method,  t: "Method" },  { b: B.casestudy, t: "Case" },   { b: B.thesis, t: "Thesis" },
-    { b: B.works,   t: "Refs" },
+    { b: B.context,      t: "Context" }, { b: B.pkm,       t: "PKM" },    { b: B.hype,   t: "Hype" },
+    { b: B.zettelkasten, t: "Method" },  { b: B.casestudy, t: "Case" },   { b: B.thesis, t: "Thesis" },
+    { b: B.works,        t: "Refs" },
   ];
   var navBtns = [];
   (function buildNav() {
@@ -1749,11 +1634,10 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     }
   })();
   function scrollToBeat(idx) {
-    var b = BEATS[Math.max(0, Math.min(NB - 1, idx | 0))];
-    var p = b.in + (Math.min(b.out, 1) - b.in) * 0.5;
-    var m = document.documentElement.scrollHeight - vh();
-    if (m <= 0) return;
-    window.scrollTo({ top: Math.round(p * m), behavior: RM ? "auto" : "smooth" });
+    idx = Math.max(0, Math.min(NB - 1, idx | 0));
+    var el = panelEls[idx]; if (!el) return;
+    var top = el.getBoundingClientRect().top + scrollY() - vh() * 0.16;
+    window.scrollTo({ top: Math.max(0, Math.round(top)), behavior: RM ? "auto" : "smooth" });
   }
   function markNav(beat) {
     for (var i = 0; i < navBtns.length; i++) {
@@ -1762,53 +1646,39 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     }
   }
 
-  // ---- overflow affordance ---------------------------------------------------
-  // A column that outruns the panel gets a bottom fade, a cue, and working wheel scroll.
-  // Without this the references beat silently swallowed fifteen of its twenty-four entries.
-  function onRegionScroll(e) {
-    var r = e.currentTarget;
-    r.classList.toggle("at-end", r.scrollTop + r.clientHeight >= r.scrollHeight - 4);
+  // ---- boot: measure once now, again when fonts land, again if content reflows ----
+  measureAnchors();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(measureAnchors);
+  window.addEventListener("load", measureAnchors);
+  if ("ResizeObserver" in window) {
+    var mainEl = document.getElementById("panels");
+    if (mainEl) new ResizeObserver(function () { measureAnchors(); }).observe(mainEl);
   }
-  function markOverflow(beat) {
-    var el = panelEls[beat]; if (!el) return;
-    var ph = el.querySelector(".ph");
-    var regions = el.querySelectorAll(".flow, .scrollbox, .ph.split > .essay, .ph.split > .ui-flow");
-    var any = false;
-    for (var i = 0; i < regions.length; i++) {
-      var r = regions[i];
-      var over = (r.scrollHeight - r.clientHeight) > 12;   // above sub-pixel and trailing-margin noise
-      if (over) any = true;
-      r.classList.toggle("can-scroll", over);
-      r.classList.toggle("at-end", false);
-      if (over && !r.__wired) { r.__wired = true; r.addEventListener("scroll", onRegionScroll, { passive: true }); }
-    }
-    if (ph) ph.classList.toggle("has-overflow", any);
-  }
-  applyAll(0, 0.05);
+  applyAll(0.05);
   raf = requestAnimationFrame(tick);
 
   // ---- synchronous QA hooks: fully apply scroll state without rAF ----
   window.__SEEK = function (p) {
+    p = clamp01(p);
+    var x = p * NB, beat = Math.min(NB - 1, x | 0), frac = x - beat;
+    measureAnchors();
+    var s = anchors[beat], e = (beat + 1 < NB) ? anchors[beat + 1] : scrollMax;
+    window.scrollTo(0, Math.round(s + (e - s) * frac));
+    for (var r = 0; r <= beat; r++) if (panelEls[r]) panelEls[r].classList.add("on");
     seeking = true;
-    progress = clamp01(p);
-    // a few fixed-dt frames so morph, camera snap, uniforms, panels, folio all settle
-    for (var i = 0; i < 3; i++) { time += 0.05; applyAll(progress, 0.05); }
+    for (var i = 0; i < 3; i++) { time += 0.05; applyAll(0.05); }
     seeking = false;
-    var bb = beatAt(progress);
-    return { id: window.__SBF__, progress: progress, beat: bb.beat, frac: +bb.frac.toFixed(3),
+    var bb = beatAtScroll(scrollY());
+    return { id: window.__SBF__, progress: p, beat: bb.beat, frac: +bb.frac.toFixed(3),
       name: BEAT_NAMES[bb.beat], edgeOp: +edgeOp.toFixed(3), fps: +fpsEMA.toFixed(1) };
   };
   window.__SEEK_BEAT = function (idx, frac) {
     frac = (frac == null ? 0.6 : frac);
     idx = Math.max(0, Math.min(NB - 1, idx | 0));
-    var b = BEATS[idx];
-    return window.__SEEK(b.in + (Math.min(b.out, 1) - b.in) * frac);
+    return window.__SEEK((idx + frac) / NB);
   };
-  // Deterministic fingerprint of the whole visual state at a given progress. Used to prove
-  // that a refactor of the beat tables changed nothing: same input scroll, same numbers out.
-  // Reports the camera in its own spherical state, not world position: world position folds
-  // in a pan term scaled by viewport aspect, which would make the probe depend on window
-  // size. `time` is pinned so the spin-driven particle hash does not depend on wall clock.
+  // Deterministic fingerprint of the whole visual state at a given progress. `time` is
+  // pinned so the spin-driven particle hash does not depend on wall clock.
   window.__QA_FP = function (p) {
     time = 12.34;
     window.__SEEK(p);
@@ -1820,7 +1690,7 @@ window.__SBF = {"n":3066,"g":["atom","audit","author","citation","class","notebo
     return [r(cs.rad), r(cs.phi), r(cs.theta), r(cs.pan),
             r(cs.lookX), r(cs.lookY), r(cs.lookZ),
             h, r(mat.uniforms.uOpac.value), r(mat.uniforms.uAmber.value),
-            r(mat.uniforms.uFocus.value), r(mat.uniforms.uFocSel.value),
+            r(mat.uniforms.uFocus.value), r(mat.uniforms.uGrey.value),
             r(eMat.uniforms.uOpac.value), r(eMat.uniforms.uPulse.value),
             r(eMat.uniforms.uMix.value), r(mMat.uniforms.uOpac.value), eCount].join(",");
   };
